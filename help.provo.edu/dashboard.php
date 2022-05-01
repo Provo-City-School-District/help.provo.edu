@@ -29,7 +29,7 @@ print_r($repairs_results);
     if ($repairs_results->num_rows > 0) {
       // output data of each row
       while($row = $repairs_results->fetch_assoc()) {
-        echo "<li>id: " . $row["ID"]. " - Device: " . $row["device"]. " " . $row["notes"]. "</li>";
+        echo "<li>id: " . $row["ID"]. " - Device: " . $row["device"]. " Note: " . $row["notes"]. "</li>";
       }
     } else {
       echo "0 results";

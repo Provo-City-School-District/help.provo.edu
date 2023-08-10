@@ -1,11 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>PHP-FPM Docker Test</title>
-</head>
-<body>
-    <h1>Hello, PHP-FPM Docker!</h1>
-    <?php
+<?php
 // Define LDAP Server
 $ldap_host = "ldap://158.91.5.221";
 $ldap_port = 389;
@@ -13,16 +6,12 @@ $ldap_conn = ldap_connect($ldap_host, $ldap_port);
 if (!$ldap_conn) {
     die('Could not connect to LDAP server');
 }
-// Start session
 session_start();
-
 // Check if user is already logged in
 if (isset($_SESSION['username'])) {
-    header('Location: /home.php');
+    header('Location: home.php');
     exit();
 }
-
-
 
 // Check if login form is submitted
 if (isset($_POST['username']) && isset($_POST['password'])) {
@@ -69,8 +58,8 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
         $ldap_bind = @ldap_bind($ldap_conn, 'psd\\' . $_POST['username'], $_POST['password']);
     
         if ($ldap_bind) {
-            // User is authenticated
-            // echo 'User authenticated';
+            // session_start();
+            $_SESSION['username'] = $_POST['username'];
             header('Location: home.php');
         } else {
             // Authentication failed
@@ -87,8 +76,12 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
 
 
 }
-    ?>
-<?php include("includes/header.php"); ?>
+?>
+<?php 
+include("includes/header.php"); 
+?>
+
+
 <div id="loginWrapper">
     <h1>Login for Help</h1>
     <?php if (isset($error_msg)) {

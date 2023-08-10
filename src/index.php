@@ -13,6 +13,14 @@ $ldap_conn = ldap_connect($ldap_host, $ldap_port);
 if (!$ldap_conn) {
     die('Could not connect to LDAP server');
 }
+// Start session
+session_start();
+
+// Check if user is already logged in
+if (isset($_SESSION['username'])) {
+    header('Location: /home.php');
+    exit();
+}
 
 
 

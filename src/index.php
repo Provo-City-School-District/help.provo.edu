@@ -80,6 +80,7 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
 
 }
     ?>
+<?php include("includes/header.php"); ?>
 <div id="loginWrapper">
     <h1>Login for Help</h1>
     <?php if (isset($error_msg)) {
@@ -96,3 +97,5 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
     </form>
 </div>
 
+
+<?php include("includes/footer.php"); ?>

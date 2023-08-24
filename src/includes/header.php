@@ -1,5 +1,5 @@
 <?php
-$root_domain = 'https://localhost:8080';
+$root_domain = 'http://localhost:8080';
 // Checks if Session exists, if not starts one.
 if (!session_id()) {
     session_start();
@@ -20,7 +20,8 @@ function endsWith($haystack, $needle) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>help.provo.edu</title>
+    <link rel="stylesheet" href="<?= $root_domain; ?>/includes/css/main.css">
 </head>
 
 <body>

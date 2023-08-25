@@ -1,6 +1,6 @@
 <?php
 // Define LDAP Server
-$ldap_host = "ldap://158.91.5.221";
+$ldap_host = getenv('LDAPHOST');
 $ldap_port = 389;
 $ldap_conn = ldap_connect($ldap_host, $ldap_port);
 if (!$ldap_conn) {
@@ -13,74 +13,91 @@ if (isset($_SESSION['username'])) {
     exit();
 }
 
+require_once('includes/helpdbconnect.php');
+// Create the local users table if it doesn't exist
+createLocalUsersTableIfNeeded($database);
+
 // Check if login form is submitted
 if (isset($_POST['username']) && isset($_POST['password'])) {
-    // Attempt LDAP authentication
-
-    // ldap_set_option($ldap_conn, LDAP_OPT_PROTOCOL_VERSION, 3);
-    // ldap_set_option($ldap_conn, LDAP_OPT_REFERRALS, 0);
-
-    // $ldap_bind = @ldap_bind($ldap_conn, 'psd\\' . $_POST['username'], $_POST['password']);
-    // if ($ldap_bind) {
-    //     include("includes/helpdbconnect.php");
-    //     include("includes/userdb.php");
-
-    //     $query_str = "SELECT * FROM staff_temp WHERE email='". $_POST['username']. "@provo.edu'";
-    //     $result = mysqli_query($user_db, $query_str);
-    //     $result = $result->fetch_assoc();
-
-    //     $query = $database->prepare("SELECT * FROM users WHERE user='". $_POST['username']. "'");
-    //     $query->execute();
-    //     $exists = !empty($query->fetch(PDO::FETCH_ASSOC));
-
-    //     if (!$exists) {
-    //         // Create their user.
-    //         $query = $database->prepare("INSERT INTO users (user, `name`, email) VALUES (?, ?, ?)");
-    //         $query->execute([$_POST['username'], $result['firstname']. " ". $result['lastname'], $result['Email']]);
-    //     }
-        
-    //     $remember = md5(uniqid(mt_rand(),true));
-    //     $query = $database->prepare("INSERT INTO active_sessions (session_id, user) VALUES (?, ?)");
-    //     $query->execute([$remember, $_POST['username']]);
-        
-    //     $_SESSION['user'] = $_POST['username'];
-    //     $_SESSION['session_id'] = $remember;
-    //     header('Location: /home.php');
-    //     exit();
-    // } else {
-    //     // If authentication fails, display error message
-    //     $error_msg = 'Invalid username or password';
-    // }
-
-
     if ($ldap_conn) {
         // Bind to LDAP server
         $ldap_bind = @ldap_bind($ldap_conn, 'psd\\' . $_POST['username'], $_POST['password']);
-    
+
         if ($ldap_bind) {
-            // session_start();
+            // assign username to session
             $_SESSION['username'] = $_POST['username'];
+
+            //establish connection with the vault
+            require_once('includes/vaultdbconnect.php');
+            //Query User information from the vault DB
+            $query = "SELECT * FROM staff_temp WHERE Email='" . $_POST['username'] . "@provo.edu'";
+            $result = mysqli_query($user_db, $query);
+            
+            if ($result) {
+                //Fetch User Data
+                $user_data = mysqli_fetch_assoc($result);
+                // print_r(mysqli_fetch_assoc($result));
+                //check if user already exists in local database
+                //if not, insert their information into the local database
+                if (!userExistsLocally($user_data['Email'], $database)) {
+
+
+                    // Insert user data into the local database
+                    // Assuming $local_db is your local database connection
+                    $insert_query = "INSERT INTO users (username, email, lastname, firstname, ifasid, worksite, pre_name) VALUES ('" . $_POST['username'] . "', '" . $user_data['Email'] . "', '" . $user_data['lastname'] . "', '" . $user_data['firstname'] . "', '" . $user_data['ifasid'] . "', '" . $user_data['worksite'] . "', '" . $user_data['pre_name'] . "')";
+                    // mysqli_query($database, $insert_query);
+                    $insert_result = mysqli_query($database, $insert_query);
+                    if (!$insert_result) {
+                        echo 'Insert query error: ' . mysqli_error($database);
+                    }
+                }
+            }
+
+
             header('Location: home.php');
         } else {
             // Authentication failed
             echo 'Authentication failed';
         }
-    
+
         // Close LDAP connection
         ldap_close($ldap_conn);
     } else {
         // Failed to connect to LDAP server
         echo 'Failed to connect to LDAP server';
     }
+}
+function userExistsLocally($email, $database)
+{
+    $check_query = "SELECT * FROM users WHERE email = '$email'";
+    $result = mysqli_query($database, $check_query);
 
+    // If a row is returned, the user exists
+    return mysqli_num_rows($result) > 0;
+}
+function createLocalUsersTableIfNeeded($database)
+{
+    // Check if the users table exists in the local database
+    $check_table_query = "SHOW TABLES LIKE 'users'";
+    $table_exists = mysqli_query($database, $check_table_query);
 
-
+    if (!$table_exists) {
+        // Create the users table if it doesn't exist
+        $create_table_query = "CREATE TABLE users (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            username VARCHAR(255) NOT NULL,
+            email VARCHAR(255) NOT NULL,
+            lastname VARCHAR(255),
+            firstname VARCHAR(255),
+            ifasid VARCHAR(255),
+            worksite VARCHAR(255),
+            pre_name VARCHAR(255)
+        )";
+        mysqli_query($database, $create_table_query);
+    }
 }
 ?>
-<?php 
-include("includes/header.php"); 
-?>
-
+<?php include("includes/header.php"); ?>
 
 <div id="loginWrapper">
     <h1>Login for Help</h1>
@@ -97,6 +114,5 @@ include("includes/header.php");
         <input type="submit" value="Login">
     </form>
 </div>
-
 
 <?php include("includes/footer.php"); ?>

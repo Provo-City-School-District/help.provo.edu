@@ -26,10 +26,11 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
 
             //establish connection with the vault
             require_once('includes/vaultdbconnect.php');
+
             //Query User information from the vault DB
             $query = "SELECT * FROM staff_temp WHERE Email='" . $_POST['username'] . "@provo.edu'";
             $result = mysqli_query($user_db, $query);
-            
+
             if ($result) {
                 //Fetch User Data
                 $user_data = mysqli_fetch_assoc($result);
@@ -47,6 +48,13 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
                     if (!$insert_result) {
                         echo 'Insert query error: ' . mysqli_error($database);
                     }
+                }
+                // Update login timestamp
+                $update_query = "UPDATE users SET last_login = NOW() WHERE email = '" . $user_data['Email'] . "'";
+                $update_result = mysqli_query($database, $update_query);
+
+                if (!$update_result) {
+                    echo 'Update query error: ' . mysqli_error($database);
                 }
             }
 

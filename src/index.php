@@ -1,7 +1,7 @@
 <?php
 // Define LDAP Server
 $ldap_host = getenv('LDAPHOST');
-$ldap_port = 389;
+$ldap_port = getenv('LDAPPORT');
 $ldap_conn = ldap_connect($ldap_host, $ldap_port);
 if (!$ldap_conn) {
     die('Could not connect to LDAP server');

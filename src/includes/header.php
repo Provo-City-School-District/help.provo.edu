@@ -1,5 +1,5 @@
 <?php
-$root_domain = 'http://localhost:8080';
+$root_domain = getenv('ROOTDOMAIN');
 // Checks if Session exists, if not starts one.
 if (!session_id()) {
     session_start();

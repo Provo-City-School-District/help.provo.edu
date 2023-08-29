@@ -14,9 +14,6 @@ if (isset($_SESSION['username'])) {
 }
 
 require_once('includes/helpdbconnect.php');
-// Create the local users table if it doesn't exist
-createLocalUsersTableIfNeeded($database);
-
 // Check if login form is submitted
 if (isset($_POST['username']) && isset($_POST['password'])) {
     if ($ldap_conn) {
@@ -75,27 +72,7 @@ function userExistsLocally($email, $database)
     // If a row is returned, the user exists
     return mysqli_num_rows($result) > 0;
 }
-function createLocalUsersTableIfNeeded($database)
-{
-    // Check if the users table exists in the local database
-    $check_table_query = "SHOW TABLES LIKE 'users'";
-    $table_exists = mysqli_query($database, $check_table_query);
 
-    if (!$table_exists) {
-        // Create the users table if it doesn't exist
-        $create_table_query = "CREATE TABLE users (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            username VARCHAR(255) NOT NULL,
-            email VARCHAR(255) NOT NULL,
-            lastname VARCHAR(255),
-            firstname VARCHAR(255),
-            ifasid VARCHAR(255),
-            worksite VARCHAR(255),
-            pre_name VARCHAR(255)
-        )";
-        mysqli_query($database, $create_table_query);
-    }
-}
 ?>
 <?php include("includes/header.php"); ?>
 

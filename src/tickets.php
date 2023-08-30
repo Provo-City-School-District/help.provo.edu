@@ -1,5 +1,5 @@
 <?php include("includes/header.php"); ?>
 
-<h1> You logged in YAY!</h1>
+<h1> Tickets Page</h1>
 
 <?php include("includes/footer.php"); ?>

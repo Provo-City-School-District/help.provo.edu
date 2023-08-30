@@ -1,0 +1,47 @@
+@import url("reset.css?v=2.0");
+@import url("variables.css?v=1.0");
+@import url("headings.css?v=1.0");
+
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: var(--theme-grey);
+}
+a {
+	color: var(--do-site-blue);
+	text-decoration: none;
+}
+
+a:hover {
+	color: var(--do-site-yellow);
+}
+#wrapper {
+	width: 100%;
+    padding:1em;
+}
+#mainHeader {
+	background: linear-gradient(to bottom, var(--header-grad-start), var(--header-grad-end) 50%, var(--header-grad-end) 55%, var(--header-grad-start));
+	display: grid;
+	align-items: center;
+	grid-template-columns: 175px 1fr;
+	max-height: 75px;
+	padding-right: 1em;
+	padding-left: 1em;
+}
+#headerNav {
+	display: flex;
+	justify-content: end;
+}
+
+#headerNav a {
+	color: var(--theme-black);
+	padding: 1em;
+	border-radius: 4px;
+	text-align: center;
+}
+#headerNav a:hover {
+	background-color: var(--theme-grey);
+}
+#headerNav a.active {
+	background-color: var(--do-site-blue);
+	color: var(--theme-white);
+}

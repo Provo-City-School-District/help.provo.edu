@@ -28,8 +28,8 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
             require_once('includes/vaultdbconnect.php');
 
             //Query User information from the vault DB
-            $query = "SELECT * FROM staff_temp WHERE Email='" . $_POST['username'] . "@provo.edu'";
-            $result = mysqli_query($user_db, $query);
+            $vault_query = "SELECT * FROM staff_temp WHERE Email='" . $_POST['username'] . "@provo.edu'";
+            $result = mysqli_query($user_db, $vault_query);
 
             if ($result) {
                 //Fetch User Data
@@ -49,6 +49,24 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
                         echo 'Insert query error: ' . mysqli_error($database);
                     }
                 }
+
+                // Update login timestamp
+                $local_user_query = "SELECT * FROM users WHERE username = '" . $_SESSION['username'] . "'";
+                $local_query_results = mysqli_query($database, $local_user_query);
+                $local_query_data = mysqli_fetch_assoc($local_query_results);
+                // Retrieve user's permissions from the users table
+                $permissions = array(
+                    'can_view_tickets' => $local_query_data['can_view_tickets'],
+                    'can_create_tickets' => $local_query_data['can_create_tickets'],
+                    'can_edit_tickets' => $local_query_data['can_edit_tickets'],
+                    'can_delete_tickets' => $local_query_data['can_delete_tickets'],
+                    'is_admin' => $local_query_data['is_admin'],
+                );
+
+                // Store user's permissions in the session
+                $_SESSION['permissions'] = $permissions;
+
+
                 // Update login timestamp
                 $update_query = "UPDATE users SET last_login = NOW() WHERE email = '" . $user_data['Email'] . "'";
                 $update_result = mysqli_query($database, $update_query);

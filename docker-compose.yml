@@ -16,7 +16,7 @@ services:
     logging:
       driver: gelf
       options:
-        gelf-address: udp://158.91.5.82:10517
+        gelf-address: $GRAYLOGHOST
         tag: help_web_log
   help-db:
     container_name: help-db
@@ -34,11 +34,6 @@ services:
       - ./db_data:/var/lib/mysql
     networks:
       - help-network
-    # logging:
-    #   driver: gelf
-    #   options:
-    #     gelf-address: udp://158.91.5.82:10517
-    #     tag: public_clone_wp
   help_myadmin:
     container_name: help-myadmin
     image: phpmyadmin:5.2.0

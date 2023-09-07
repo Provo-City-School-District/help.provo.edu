@@ -22,7 +22,9 @@ if (isset($_SESSION['username'])) {
 $current_page = $_SERVER['REQUEST_URI'];
 // Define the URLs of the pages you want to highlight
 $home_page_url = '/home.php';
-$about_page_url = '/tickets.php';
+$ticket_page_url = '/tickets.php';
+$user_profile = '/profile.php';
+$admin_page = '/admin.php';
 
 // Function to check if the current page matches a given URL
 function isActivePage($current_page, $page_url)
@@ -51,7 +53,16 @@ function isActivePage($current_page, $page_url)
             ?>
                 <nav id="headerNav">
                     <a class="<?php echo isActivePage($current_page, $home_page_url); ?>" href="home.php">Home</a>
-                    <a class="<?php echo isActivePage($current_page, $about_page_url); ?>" href="tickets.php">Tickets</a>
+                    <a class="<?php echo isActivePage($current_page, $ticket_page_url); ?>" href="tickets.php">Tickets</a>
+                    <a class="<?php echo isActivePage($current_page, $user_profile); ?>" href="profile.php">Profile</a>
+                    <?php
+                    if ($_SESSION['permissions']['is_admin'] == 1) {
+                    ?>
+                        <a class="<?php echo isActivePage($current_page, $admin_page); ?>" href="admin.php">Admin</a>
+                    <?php
+                    }
+                    ?>
+
                     <a href="controllers/logout.php">Logout</a>
                 </nav>
             <?php

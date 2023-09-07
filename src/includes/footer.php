@@ -1,6 +1,6 @@
         </main>
         <footer id="mainFooter">
-            Main Footer
+            <p>&copy; 2023 Provo City School District</p>
         </footer>
     </div>
     <script src="<?= $root_domain; ?>/includes/js/main.js" type="text/javascript"></script>

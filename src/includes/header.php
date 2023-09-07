@@ -11,6 +11,13 @@ function endsWith($haystack, $needle)
     return substr($haystack, -strlen($needle)) === $needle;
 }
 
+// Function to check if the current page matches a given URL
+function isActivePage($current_page, $page_url)
+{
+    return ($current_page === $page_url) ? 'active' : '';
+}
+
+//Checks logged in status and bounces you to the login page if not logged in
 if (isset($_SESSION['username'])) {
     $is_logged_in = true;
 } elseif (!endsWith($_SERVER['PHP_SELF'], 'index.php')) {
@@ -27,11 +34,7 @@ $ticket_page_url = '/tickets.php';
 $user_profile = '/profile.php';
 $admin_page = '/admin.php';
 
-// Function to check if the current page matches a given URL
-function isActivePage($current_page, $page_url)
-{
-    return ($current_page === $page_url) ? 'active' : '';
-}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">

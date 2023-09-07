@@ -14,9 +14,14 @@ a {
 a:hover {
 	color: var(--do-site-yellow);
 }
+
 #wrapper {
 	width: 100%;
     /* padding:1em; */
+}
+#warning {
+	color: red;
+	display: inline;
 }
 /* =============================== Header Styles =============================== */
 #mainHeader {
@@ -52,4 +57,40 @@ a:hover {
 
 #pageContent {
 	padding: 1em;
+}
+
+
+/* =============================== Table Styles =============================== */
+table {
+	width: 100%;
+	border: 1px solid;
+	border-collapse: collapse;
+}
+th,
+td {
+	border: 1px solid;
+	background-color: var(--theme-white);
+	padding: 1em;
+}
+th {
+	background-color: #ccc;
+	border-bottom: 2px solid;
+}
+tr:nth-of-type(2n) td {
+	background-color: #eee;
+}
+@media(max-width: 750px) {
+	th {
+		display: none;
+	}
+
+	td {
+		display: block;
+	}
+
+	td::before {
+		content: attr(data-cell) ": ";
+		font-weight: 700;
+		text-transform: capitalize;
+	}
 }

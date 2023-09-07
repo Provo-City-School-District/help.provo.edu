@@ -20,6 +20,7 @@ if (isset($_SESSION['username'])) {
 
 // Get the current page URL
 $current_page = $_SERVER['REQUEST_URI'];
+
 // Define the URLs of the pages you want to highlight
 $home_page_url = '/home.php';
 $ticket_page_url = '/tickets.php';
@@ -40,6 +41,13 @@ function isActivePage($current_page, $page_url)
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>| Help For Provo City School District</title>
     <link rel="stylesheet" href="<?= $root_domain; ?>/includes/css/main.css">
+    <?php
+        if ($_SERVER['REQUEST_URI'] === '/index.php' || $_SERVER['REQUEST_URI'] === '/') {
+            ?>
+            <link rel="stylesheet" type="text/css" href="<?= $root_domain; ?>/includes/css/login-styles.css">
+            <?php
+        }
+    ?>
 </head>
 
 <body>
@@ -69,4 +77,4 @@ function isActivePage($current_page, $page_url)
             }
             ?>
         </header>
-        <main>
+        <main id="pageContent">

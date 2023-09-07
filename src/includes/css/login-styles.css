@@ -1,0 +1,30 @@
+/* 
+============================================== Login Form ==============================================
+*/
+#loginWrapper {
+
+	max-width: 400px;
+	margin: 0 auto;
+	margin-top: 5%;
+	background-color: var(--theme-white);
+	border-radius: 5px;
+	padding: 1em;
+}
+
+#loginWrapper h1 {
+	text-align: center;
+}
+
+#loginForm {
+	display: grid;
+	grid-template-columns: 100px 1fr;
+	row-gap: 1em;
+	align-content: center;
+	text-align: center;
+}
+
+/* #loginForm input[type=submit], */
+input[type=submit] {
+	grid-column: 1 / 3;
+	place-self: end;
+}

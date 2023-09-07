@@ -1,7 +1,7 @@
 @import url("reset.css?v=2.0");
 @import url("variables.css?v=1.0");
 @import url("headings.css?v=1.0");
-
+/* =============================== General Styles =============================== */
 body{
     font-family: Arial, Helvetica, sans-serif;
     background-color: var(--theme-grey);
@@ -16,8 +16,9 @@ a:hover {
 }
 #wrapper {
 	width: 100%;
-    padding:1em;
+    /* padding:1em; */
 }
+/* =============================== Header Styles =============================== */
 #mainHeader {
 	background: linear-gradient(to bottom, var(--header-grad-start), var(--header-grad-end) 50%, var(--header-grad-end) 55%, var(--header-grad-start));
 	display: grid;
@@ -26,7 +27,10 @@ a:hover {
 	max-height: 75px;
 	padding-right: 1em;
 	padding-left: 1em;
+
 }
+
+/* =============================== Navigation Styles =============================== */
 #headerNav {
 	display: flex;
 	justify-content: end;
@@ -44,4 +48,8 @@ a:hover {
 #headerNav a.active {
 	background-color: var(--do-site-blue);
 	color: var(--theme-white);
+}
+
+#pageContent {
+	padding: 1em;
 }

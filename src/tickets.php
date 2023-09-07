@@ -29,11 +29,9 @@ require_once('includes/helpdbconnect.php');
     <tbody>
         <?php
         // Execute the SQL query
-        $ticket_query = "SELECT tickets.*, notes.*
+        $ticket_query = "SELECT *
         FROM tickets
-        LEFT JOIN notes ON tickets.id = notes.linked_id
-        GROUP BY tickets.id
-        ORDER BY tickets.id ASC";
+        ORDER BY id ASC";
 
         $ticket_result = mysqli_query($database, $ticket_query);
         while ($row = mysqli_fetch_assoc($ticket_result)) {
@@ -57,10 +55,10 @@ require_once('includes/helpdbconnect.php');
                 <td data-cell="Assigned Employee"><?= $row['employee'] ?></td>
                 <td data-cell="Current Status"><?= $row['status'] ?></td>
                 <?php if ($overdue) { ?>
-                    <td data-cell="Dates">Created: <?= $created ?><br><br>Update: <?= $last_update ?><br><br>Due: <p id="warning"><?= $due_date ?></p>
+                    <td data-cell="Dates">Created: <?= $created ?><br><br>Updated: <?= $last_update ?><br><br>Due: <p id="warning"><?= $due_date ?></p>
                     </td>
                 <?php } else { ?>
-                    <td data-cell="Dates">Created: <?= $created ?><br><br>Update: <?= $last_update ?><br><br>Due: <?= $due_date ?></td>
+                    <td data-cell="Dates">Created: <?= $created ?><br><br>Updated: <?= $last_update ?><br><br>Due: <?= $due_date ?></td>
                 <?php } ?>
             </tr>
         <?php

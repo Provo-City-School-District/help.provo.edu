@@ -54,24 +54,24 @@ function isActivePage($current_page, $page_url)
     <div id="wrapper">
         <header id="mainHeader">
             <a href="home.php">
-                <img src="includes/img/pcsd-logo-website-header-160w.png" alt="Provo City School District Logo" />
+                <img src="<?= $root_domain; ?>/includes/img/pcsd-logo-website-header-160w.png" alt="Provo City School District Logo" />
             </a>
             <?php
             if ($is_logged_in) {
             ?>
                 <nav id="headerNav">
-                    <a class="<?php echo isActivePage($current_page, $home_page_url); ?>" href="home.php">Home</a>
-                    <a class="<?php echo isActivePage($current_page, $ticket_page_url); ?>" href="tickets.php">Tickets</a>
-                    <a class="<?php echo isActivePage($current_page, $user_profile); ?>" href="profile.php">Profile</a>
+                    <a class="<?php echo isActivePage($current_page, $home_page_url); ?>" href="<?= $root_domain; ?>/home.php">Home</a>
+                    <a class="<?php echo isActivePage($current_page, $ticket_page_url); ?>" href="<?= $root_domain; ?>/tickets.php">Tickets</a>
+                    <a class="<?php echo isActivePage($current_page, $user_profile); ?>" href="<?= $root_domain; ?>/profile.php">Profile</a>
                     <?php
                     if ($_SESSION['permissions']['is_admin'] == 1) {
                     ?>
-                        <a class="<?php echo isActivePage($current_page, $admin_page); ?>" href="admin.php">Admin</a>
+                        <a class="<?php echo isActivePage($current_page, $admin_page); ?>" href="<?= $root_domain; ?>/admin.php">Admin</a>
                     <?php
                     }
                     ?>
 
-                    <a href="controllers/logout.php">Logout</a>
+                    <a href="<?= $root_domain; ?>/controllers/logout.php">Logout</a>
                 </nav>
             <?php
             }

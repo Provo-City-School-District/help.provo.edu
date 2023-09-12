@@ -1,2 +1,4 @@
 /db_data
 .env
+/src/vendor
+/src/composer*

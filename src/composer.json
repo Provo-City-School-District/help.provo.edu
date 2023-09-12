@@ -1,6 +1,5 @@
 {
     "require": {
-        "monolog/monolog": "^3.4",
-        "brick/math": "^0.11.0"
+        "monolog/monolog": "^3.4"
     }
 }

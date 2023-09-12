@@ -4,63 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4d22a2d01a8d36841df3cd033497bac0",
+    "content-hash": "772120ab4ba07244b327eac9d305e386",
     "packages": [
-        {
-            "name": "brick/math",
-            "version": "0.11.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/brick/math.git",
-                "reference": "0ad82ce168c82ba30d1c01ec86116ab52f589478"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/brick/math/zipball/0ad82ce168c82ba30d1c01ec86116ab52f589478",
-                "reference": "0ad82ce168c82ba30d1c01ec86116ab52f589478",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^8.0"
-            },
-            "require-dev": {
-                "php-coveralls/php-coveralls": "^2.2",
-                "phpunit/phpunit": "^9.0",
-                "vimeo/psalm": "5.0.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Brick\\Math\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Arbitrary-precision arithmetic library",
-            "keywords": [
-                "Arbitrary-precision",
-                "BigInteger",
-                "BigRational",
-                "arithmetic",
-                "bigdecimal",
-                "bignum",
-                "brick",
-                "math"
-            ],
-            "support": {
-                "issues": "https://github.com/brick/math/issues",
-                "source": "https://github.com/brick/math/tree/0.11.0"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/BenMorel",
-                    "type": "github"
-                }
-            ],
-            "time": "2023-01-15T23:15:59+00:00"
-        },
         {
             "name": "monolog/monolog",
             "version": "3.4.0",

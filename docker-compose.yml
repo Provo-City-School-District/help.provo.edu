@@ -11,6 +11,7 @@ services:
       - "8080:80"
     volumes:
       - ./src:/var/www/html
+      - ./src/vendor:/var/www/html/vendor
     networks:
       - help-network
     logging:

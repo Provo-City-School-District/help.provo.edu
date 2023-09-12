@@ -24,5 +24,9 @@ RUN service apache2 restart
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Install a Composer package
-RUN composer require monolog/monolog --working-dir=/var/www/html
+# Copy in Composer config
+COPY /src/composer.json /var/www/html/
+COPY /src/composer.lock /var/www/html/
+
+# Install Composer packages
+RUN composer install --no-interaction --no-ansi --no-scripts --no-progress --prefer-dist

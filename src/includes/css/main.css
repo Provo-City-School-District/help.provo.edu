@@ -94,3 +94,15 @@ tr:nth-of-type(2n) td {
 		text-transform: capitalize;
 	}
 }
+
+/* =============================== Sub Menu Styles =============================== */
+#subMenu {
+	display: flex;
+	justify-content:end;
+	align-items: center;
+	background-color: var(--theme-white);
+	padding: 1em;
+	gap:2em;
+	margin-bottom: 1em;
+	margin-top: -1em;
+}

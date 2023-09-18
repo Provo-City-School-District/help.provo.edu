@@ -77,14 +77,14 @@ $admin_page = '/admin.php';
             // Check if the current page matches any of the specified URLs
             if (isCurrentPage($ticketPages)) {
                 // Display the sub-menu here
-                ?>
+            ?>
                 <ul id="subMenu">
-                    <li><a href="#">Create Ticket</a></li>
-                    <li><a href="#">My Tickets</a></li>
+                    <li><a href="<?= $root_domain; ?>/tickets.php">My Tickets</a></li>
                     <li><a href="#">Group Tickets</a></li>
                     <li><a href="#">Recent Tickets</a></li>
                     <li><a href="#">Search Tickets</a></li>
+                    <li><a href="#">Create Ticket</a></li>
                 </ul>
-                <?php
+            <?php
             }
             ?>

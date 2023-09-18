@@ -30,7 +30,6 @@ if (!$result) {
 $row = mysqli_fetch_assoc($result);
 
 ?>
-<a href="../../tickets.php">View All Tickets</a>
 <article id="ticketWrapper">
 
 <?php

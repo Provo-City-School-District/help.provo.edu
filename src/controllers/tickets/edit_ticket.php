@@ -14,7 +14,7 @@ require_once('../../includes/helpdbconnect.php');
 $ticket_id = $_GET['id'];
 
 // Query the ticket by ID and all notes for that ID
-$query = "SELECT tickets.*, GROUP_CONCAT(notes.note SEPARATOR '<br>') AS notes
+$query = "SELECT tickets.*, JSON_ARRAYAGG(notes.note) AS notes
           FROM tickets
           LEFT JOIN notes ON tickets.id = notes.linked_id
           WHERE tickets.id = $ticket_id
@@ -29,12 +29,30 @@ if (!$result) {
 // Fetch the ticket and notes from the result set
 $row = mysqli_fetch_assoc($result);
 
+?>
+<a href="../../tickets.php">View All Tickets</a>
+<article id="ticketWrapper">
+
+<?php
+
 // Display the ticket and notes
 echo "Ticket ID: " . $row['id'] . "<br>";
-echo "Ticket Title: " . $row['title'] . "<br>";
+echo "Ticket Title: " . $row['name'] . "<br>";
 echo "Ticket Description: " . $row['description'] . "<br>";
-echo "Notes: " . $row['notes'] . "<br><br>";
+
+// Loop through the notes and display them
+foreach (json_decode($row['notes']) as $note) {
+    echo "Note: " . $note . "<br>";
+}
+
 ?>
+</article>
+
+
+
+
+
+
 
 
 <?php include("../../includes/footer.php"); ?>

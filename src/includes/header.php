@@ -5,17 +5,9 @@ $is_logged_in = false;
 if (!session_id()) {
     session_start();
 }
-//Checks current page in $_SERVER variable.
-function endsWith($haystack, $needle)
-{
-    return substr($haystack, -strlen($needle)) === $needle;
-}
+// includes functions file
+include_once('functions.php');
 
-// Function to check if the current page matches a given URL
-function isActivePage($current_page, $page_url)
-{
-    return ($current_page === $page_url) ? 'active' : '';
-}
 
 //Checks logged in status and bounces you to the login page if not logged in
 if (isset($_SESSION['username'])) {
@@ -45,11 +37,11 @@ $admin_page = '/admin.php';
     <title>| Help For Provo City School District</title>
     <link rel="stylesheet" href="<?= $root_domain; ?>/includes/css/main.css">
     <?php
-        if ($_SERVER['REQUEST_URI'] === '/index.php' || $_SERVER['REQUEST_URI'] === '/') {
-            ?>
-            <link rel="stylesheet" type="text/css" href="<?= $root_domain; ?>/includes/css/login-styles.css">
-            <?php
-        }
+    if ($_SERVER['REQUEST_URI'] === '/index.php' || $_SERVER['REQUEST_URI'] === '/') {
+    ?>
+        <link rel="stylesheet" type="text/css" href="<?= $root_domain; ?>/includes/css/login-styles.css">
+    <?php
+    }
     ?>
 </head>
 
@@ -81,3 +73,14 @@ $admin_page = '/admin.php';
             ?>
         </header>
         <main id="pageContent">
+            <?php
+            // Check if the current page matches any of the specified URLs
+            if (isCurrentPage($ticketPages)) {
+                // Display the sub-menu here
+                echo '<ul>';
+                echo '<li><a href="#">Submenu Item 1</a></li>';
+                echo '<li><a href="#">Submenu Item 2</a></li>';
+                echo '<li><a href="#">Submenu Item 3</a></li>';
+                echo '</ul>';
+            }
+            ?>

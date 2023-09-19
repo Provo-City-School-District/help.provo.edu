@@ -4,18 +4,17 @@ require_once('../../includes/helpdbconnect.php');
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Handle the form submission to update the ticket information
     // Retrieve updated values from the form
-    $ticket_id = $_POST['ticket_id'];
-    $updatedClient = $_POST['client'];
-    $updatedEmployee = $_POST['employee'];
-    $updatedLocation = $_POST['location'];
-    $updatedRoom = $_POST['room'];
-    $updatedName = $_POST['name'];
-    $updatedDescription = $_POST['description'];
-    $updatedDueDate = $_POST['due_date'];
-    $updatedStatus = $_POST['status'];
+    $ticket_id = trim(htmlspecialchars($_POST['ticket_id']));
+    $updatedClient = trim(htmlspecialchars($_POST['client']));
+    $updatedEmployee = trim(htmlspecialchars($_POST['employee']));
+    $updatedLocation = trim(htmlspecialchars($_POST['location']));
+    $updatedRoom = trim(htmlspecialchars($_POST['room']));
+    $updatedName = trim(htmlspecialchars($_POST['name']));
+    $updatedDescription = trim(htmlspecialchars($_POST['description']));
+    $updatedDueDate = trim(htmlspecialchars($_POST['due_date']));
+    $updatedStatus = trim(htmlspecialchars($_POST['status']));
 
     // Perform SQL UPDATE queries to update the ticket and notes
-    // Example (you'll need to modify and expand this based on your database structure):
     $updateTicketQuery = "UPDATE tickets SET
         client = '$updatedClient',
         employee = '$updatedEmployee',
@@ -26,6 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         due_date = '$updatedDueDate',
         status = '$updatedStatus'
         WHERE id = $ticket_id";
+
+// echo "SQL Query: " . $updateTicketQuery;
 
     // Execute the update queries
     $updateTicketResult = mysqli_query($database, $updateTicketQuery);
@@ -39,5 +40,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
    header('Location: edit_ticket.php?id=' . $ticket_id);
    exit;
 }
-print_r($_SESSION);
 ?>

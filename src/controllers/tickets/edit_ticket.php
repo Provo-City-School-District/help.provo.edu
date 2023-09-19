@@ -82,12 +82,12 @@ if (isset($_SESSION['success_message'])) {
 
         <label for="status">Current Status:</label>
         <select id="status" name="status">
-            <option value="Open" <?= ($row['status'] == 'open') ? ' selected' : '' ?>>Open</option>
-            <option value="Closed" <?= ($row['status'] == 'closed') ? ' selected' : '' ?>>Closed</option>
-            <option value="Resolved" <?= ($row['status'] == 'resolved') ? ' selected' : '' ?>>Resolved</option>
-            <option value="Pending" <?= ($row['status'] == 'pending') ? ' selected' : '' ?>>Pending</option>
-            <option value="Vendor" <?= ($row['status'] == 'vendor') ? ' selected' : '' ?>>Vendor</option>
-            <option value="Maintenance" <?= ($row['status'] == 'maintenance') ? ' selected' : '' ?>>Maintenance</option>
+            <option value="open" <?= ($row['status'] == 'open') ? ' selected' : '' ?>>Open</option>
+            <option value="closed" <?= ($row['status'] == 'closed') ? ' selected' : '' ?>>Closed</option>
+            <option value="resolved" <?= ($row['status'] == 'resolved') ? ' selected' : '' ?>>Resolved</option>
+            <option value="pending" <?= ($row['status'] == 'pending') ? ' selected' : '' ?>>Pending</option>
+            <option value="vendor" <?= ($row['status'] == 'vendor') ? ' selected' : '' ?>>Vendor</option>
+            <option value="maintenance" <?= ($row['status'] == 'maintenance') ? ' selected' : '' ?>>Maintenance</option>
         </select><br>
 
         <h2>Notes</h2>

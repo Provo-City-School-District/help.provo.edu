@@ -29,13 +29,7 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
 
         <label for="description">Ticket Description:</label>
         <textarea id="description" name="description"></textarea><br>
-
-       
-
-
-
- 
-
+        
         <!-- Add a submit button to update the information -->
         <input type="submit" value="Create Ticket">
     </form>

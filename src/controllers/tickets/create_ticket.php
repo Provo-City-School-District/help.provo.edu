@@ -17,7 +17,7 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
     <h1>Create Ticket</h1>
     <!-- Form for updating ticket information -->
     <form method="POST" action="insert_ticket.php">
-        
+        <input type="hidden" name="client" value="<?= $_SESSION['username'] ?>">
         <label for="location">Location:</label>
         <input type="text" id="location" name="location" value=""><br>
 

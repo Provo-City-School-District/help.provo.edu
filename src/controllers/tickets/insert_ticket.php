@@ -8,6 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $room = filter_input(INPUT_POST, 'room', FILTER_SANITIZE_SPECIAL_CHARS);
     $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_SPECIAL_CHARS);
     $description = filter_input(INPUT_POST, 'description', FILTER_SANITIZE_SPECIAL_CHARS);
+    $client = $_POST['client'];
 
     // Check if required fields are empty
     if (empty($location) || empty($room) || empty($name) || empty($description)) {
@@ -16,8 +17,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Create an SQL INSERT query
-    $insertQuery = "INSERT INTO tickets (location, room, name, description, created, last_updated, due_date, status)
-                VALUES (?, ?, ?, ?, NOW(), NOW(), DATE_ADD(NOW(), INTERVAL 10 DAY), 'open')";
+    $insertQuery = "INSERT INTO tickets (location, room, name, description, created, last_updated, due_date, status, client)
+                VALUES (?, ?, ?, ?, NOW(), NOW(), DATE_ADD(NOW(), INTERVAL 10 DAY), 'open', ?)";
 
     // Prepare the SQL statement
     $stmt = mysqli_prepare($database, $insertQuery);
@@ -27,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Bind parameters
-    mysqli_stmt_bind_param($stmt, 'ssss', $location, $room, $name, $description);
+    mysqli_stmt_bind_param($stmt, 'sssss', $location, $room, $name, $description, $client);
 
     // Execute the prepared statement
     if (mysqli_stmt_execute($stmt)) {

@@ -27,6 +27,7 @@ function isCurrentPage($urls) {
 $ticketPages = array(
     '/tickets.php',
     '/edit_ticket.php',
+    '/create_ticket.php',
 );
 
 ?>

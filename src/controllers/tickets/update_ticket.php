@@ -1,6 +1,7 @@
 <?php
 require_once('../../includes/init.php');
 require_once('../../includes/helpdbconnect.php');
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Handle the form submission to update the ticket information
     // Retrieve updated values from the form
@@ -25,8 +26,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         due_date = '$updatedDueDate',
         status = '$updatedStatus'
         WHERE id = $ticket_id";
-
-// echo "SQL Query: " . $updateTicketQuery;
 
     // Execute the update queries
     $updateTicketResult = mysqli_query($database, $updateTicketQuery);

@@ -15,7 +15,17 @@ $ticket_id = $_GET['id'];
 
 // Query the ticket by ID and all notes for that ID
 $query = "SELECT
-tickets.*,
+tickets.id,
+tickets.client,
+tickets.employee,
+tickets.location,
+tickets.room,
+tickets.name,
+tickets.description,
+tickets.created,
+tickets.last_updated,
+tickets.due_date,
+tickets.status,
 JSON_ARRAYAGG(
     JSON_OBJECT(
         'note', notes.note,
@@ -44,16 +54,31 @@ if (!$result) {
 
 // Fetch the ticket and notes from the result set
 $row = mysqli_fetch_assoc($result);
+
+// Fetch the list of usernames from the users table
+$usernamesQuery = "SELECT username FROM users";
+$usernamesResult = mysqli_query($database, $usernamesQuery);
+
+if (!$usernamesResult) {
+    die('Error fetching usernames: ' . mysqli_error($database));
+}
+
+// Store the usernames in an array
+$usernames = array();
+while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
+    $usernames[] = $usernameRow['username'];
+}
+
 ?>
 <article id="ticketWrapper">
     <?php
     // Check if a success message is set
-if (isset($_SESSION['success_message'])) {
-    echo '<div class="success-message">' . $_SESSION['success_message'] . '</div>';
-    
-    // Unset the success message to clear it
-    unset($_SESSION['success_message']);
-}
+    if (isset($_SESSION['success_message'])) {
+        echo '<div class="success-message">' . $_SESSION['success_message'] . '</div>';
+
+        // Unset the success message to clear it
+        unset($_SESSION['success_message']);
+    }
     ?>
     <h1>Ticket #<?= $row['id'] ?></h1>
     <!-- Form for updating ticket information -->
@@ -63,8 +88,11 @@ if (isset($_SESSION['success_message'])) {
         <input type="text" id="client" name="client" value="<?= $row['client'] ?>"><br>
 
         <label for="employee">Assigned Tech:</label>
-        <input type="text" id="employee" name="employee" value="<?= $row['employee'] ?>"><br>
-
+        <select id="employee" name="employee">
+            <?php foreach ($usernames as $username) : ?>
+                <option value="<?= $username ?>" <?= $row['employee'] === $username ? 'selected' : '' ?>><?= $username ?></option>
+            <?php endforeach; ?>
+        </select><br>
         <label for="location">Location:</label>
         <input type="text" id="location" name="location" value="<?= $row['location'] ?>"><br>
 
@@ -90,16 +118,18 @@ if (isset($_SESSION['success_message'])) {
             <option value="maintenance" <?= ($row['status'] == 'maintenance') ? ' selected' : '' ?>>Maintenance</option>
         </select><br>
 
-        <h2>Notes</h2>
         <!-- Loop through the notes and display them -->
-        <?php foreach (json_decode($row['notes'], true) as $note) : ?>
-            <div class="note">
-                <p>Note: <?= $note['note'] ?></p>
-                <p>Created By: <?= $note['creator'] ?></p>
-                <p>Created At: <?= $note['created'] ?></p>
-                <p>Time: <?= $note['time'] ?></p>
-            </div>
-        <?php endforeach; ?>
+        <?php if ($row['notes'] !== null) : ?>
+            <?php foreach (json_decode($row['notes'], true) as $note) : ?>
+                <h2>Notes</h2>
+                <div class="note">
+                    <p>Note: <?= $note['note'] ?></p>
+                    <p>Created By: <?= $note['creator'] ?></p>
+                    <p>Created At: <?= $note['created'] ?></p>
+                    <p>Time: <?= $note['time'] ?></p>
+                </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
 
         <!-- Add a submit button to update the information -->
         <input type="submit" value="Update Ticket">

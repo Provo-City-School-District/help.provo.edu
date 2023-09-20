@@ -83,6 +83,8 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
     <h1>Ticket #<?= $row['id'] ?></h1>
     <!-- Form for updating ticket information -->
     <form method="POST" action="update_ticket.php">
+        <!-- Add a submit button to update the information -->
+        <input type="submit" value="Update Ticket"><br>
         <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
         <label for="client">Client:</label>
         <input type="text" id="client" name="client" value="<?= $row['client'] ?>"><br>
@@ -117,22 +119,30 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
             <option value="vendor" <?= ($row['status'] == 'vendor') ? ' selected' : '' ?>>Vendor</option>
             <option value="maintenance" <?= ($row['status'] == 'maintenance') ? ' selected' : '' ?>>Maintenance</option>
         </select><br>
+    </form>
+    <!-- Loop through the notes and display them -->
+    <?php if ($row['notes'] !== null) : ?>
+        <h2>Notes</h2>
+        <?php foreach (json_decode($row['notes'], true) as $note) : ?>
 
-        <!-- Loop through the notes and display them -->
-        <?php if ($row['notes'] !== null) : ?>
-            <?php foreach (json_decode($row['notes'], true) as $note) : ?>
-                <h2>Notes</h2>
-                <div class="note">
-                    <p>Note: <?= $note['note'] ?></p>
-                    <p>Created By: <?= $note['creator'] ?></p>
-                    <p>Created At: <?= $note['created'] ?></p>
-                    <p>Time: <?= $note['time'] ?></p>
-                </div>
-            <?php endforeach; ?>
-        <?php endif; ?>
+            <div class="note">
+                <p>Note: <?= $note['note'] ?></p>
+                <p>Created By: <?= $note['creator'] ?></p>
+                <p>Created At: <?= $note['created'] ?></p>
+                <p>Time: <?= $note['time'] ?></p>
+            </div>
+        <?php endforeach; ?>
+    <?php endif; ?>
+    <h2>Add Note</h2>
+    <form method="post" action="add_note_handler.php">
+        <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
+        <input type="hidden" name="username" value="<?= $_SESSION['username'] ?>">
+        <label for="note">Note:</label>
+        <textarea id="note" name="note"></textarea><br>
 
-        <!-- Add a submit button to update the information -->
-        <input type="submit" value="Update Ticket">
+        <label for="note_time">Time in Minutes:</label>
+        <input id="note_time" name="note_time"><br>
+        <input type="submit" value="Add Note">
     </form>
 </article>
 

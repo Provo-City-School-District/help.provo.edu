@@ -13,7 +13,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Check if required fields are empty
     if (empty($location) || empty($room) || empty($name) || empty($description)) {
         // Handle empty fields (e.g., show an error message)
-        die('All fields are required');
+        $error = 'All fields are required';
+        $formData = http_build_query($_POST);
+        $_SESSION['error_message'] = "All fields are required.";
+        header("Location: create_ticket.php?error=$error&$formData");
+        exit;
     }
 
     // Create an SQL INSERT query
@@ -34,16 +38,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (mysqli_stmt_execute($stmt)) {
         // After successfully inserting the ticket, set a success message;
         $_SESSION['success_message'] = "Ticket created successfully.";
-        
+
         // After successfully inserting the ticket, fetch the ID of the new ticket
-    $ticketId = mysqli_insert_id($database);
-    
-    // Redirect to the edit page for the new ticket
-    header('Location: edit_ticket.php?id=' . $ticketId);
+        $ticketId = mysqli_insert_id($database);
+
+        // Redirect to the edit page for the new ticket
+        header('Location: edit_ticket.php?id=' . $ticketId);
         exit;
     } else {
         // Handle the error (e.g., show an error message)
         die('Error creating ticket: ' . mysqli_error($database));
     }
 }
-?>

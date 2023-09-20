@@ -133,7 +133,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
             </div>
         <?php endforeach; ?>
     <?php endif; ?>
-    <h2>Add Note</h2>
+    <h3>Add Note</h3>
     <form method="post" action="add_note_handler.php">
         <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
         <input type="hidden" name="username" value="<?= $_SESSION['username'] ?>">

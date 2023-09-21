@@ -145,6 +145,49 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
         <input id="note_time" name="note_time"><br>
         <input type="submit" value="Add Note">
     </form>
+    <?php
+// Fetch the ticket logs for the current ticket
+$log_query = "SELECT field_name,user_id, old_value, new_value, created_at FROM ticket_logs WHERE ticket_id = ? ORDER BY created_at DESC";
+$log_stmt = mysqli_prepare($database, $log_query);
+mysqli_stmt_bind_param($log_stmt, "i", $ticket_id);
+mysqli_stmt_execute($log_stmt);
+$log_result = mysqli_stmt_get_result($log_stmt);
+
+// Display the ticket logs in a table
+if (mysqli_num_rows($log_result) > 0) {
+    ?>
+    <h2>Ticket History</h2>
+        <table>
+            <tr>
+                <th>Changed By</th>
+                <th>Created At</th>
+                <th>Changes made</th>
+            </tr>
+    <?php
+    while ($log_row = mysqli_fetch_assoc($log_result)) {
+        ?>
+        <tr>
+            <td><?= $log_row['user_id'] ?></td>
+            <td><?= $log_row['created_at'] ?></td>
+            <td>
+                <?php
+                if($log_row['field_name'] != 'note'){
+                    echo $log_row['field_name'] . ' from: ' . $log_row['old_value'] . ' to: ' . $log_row['new_value'];
+                }else{
+                    echo 'Note Created: ' . $log_row['new_value'];
+                }
+                ?>
+            </td>        
+        </tr>
+        <?php
+    }
+    ?>
+    </table>
+    <?php
+}
+?>
 </article>
+
+
 
 <?php include("../../includes/footer.php"); ?>

@@ -14,6 +14,14 @@ $stmt = mysqli_prepare($database, $query);
 mysqli_stmt_bind_param($stmt, "issss", $ticket_id, $timestamp, $username, $note, $note_time);
 mysqli_stmt_execute($stmt);
 
+// Log the creation of the new note in the ticket_logs table
+$log_query = "INSERT INTO ticket_logs (ticket_id, user_id, field_name, old_value, new_value, created_at) VALUES (?, ?, ?, NULL, ?, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'))";
+$log_stmt = mysqli_prepare($database, $log_query);
+
+$notecolumn = "note";
+mysqli_stmt_bind_param($log_stmt, "isss", $ticket_id, $username, $notecolumn, $note);
+mysqli_stmt_execute($log_stmt);
+
 // Redirect back to the edit ticket page
 header("Location: edit_ticket.php?id=$ticket_id");
 exit();

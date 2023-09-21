@@ -24,3 +24,6 @@ VAULT_READ_DATABASE=
 ROOTDOMAIN=
 GRAYLOGHOST=
 ```
+
+# Resources Used
+- Data Tables 1.13.6: https://datatables.net/

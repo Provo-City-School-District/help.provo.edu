@@ -29,3 +29,14 @@ function validateForm() {
     }
     return true; // Form is valid
 }
+
+
+// let table = new DataTable('#tickets-table');
+$(document).ready(function() {
+    $('.data-table').DataTable({
+        paging: true, // Enable pagination
+        pageLength: 10, // Set the number of rows per page
+        ordering: true, // Enable sorting
+        order: [[ 0, "asc" ]] // Set the default sort order
+    });
+});

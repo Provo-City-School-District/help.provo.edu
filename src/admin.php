@@ -46,7 +46,7 @@ if (!$result) {
 </tr>
 </table>
 <h2>All Tickets</h2>
-<table class="ticketsTable">
+<table class="ticketsTable data-table">
     <thead>
         <tr>
             <th class="tID">ID</th>

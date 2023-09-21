@@ -146,11 +146,4 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
     </form>
 </article>
 
-
-
-
-
-
-
-
 <?php include("../../includes/footer.php"); ?>

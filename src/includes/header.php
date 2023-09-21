@@ -29,7 +29,9 @@ $admin_page = '/admin.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>| Help For Provo City School District</title>
+    <link rel="stylesheet" href="<?= $root_domain; ?>/includes/js/dataTables-1.13.6/jquery.dataTables.min.css">
     <link rel="stylesheet" href="<?= $root_domain; ?>/includes/css/main.css">
+
     <?php
     if ($_SERVER['REQUEST_URI'] === '/index.php' || $_SERVER['REQUEST_URI'] === '/') {
     ?>
@@ -74,7 +76,7 @@ $admin_page = '/admin.php';
             ?>
                 <ul id="subMenu">
                     <li><a href="<?= $root_domain; ?>/tickets.php">My Tickets</a></li>
-                    <li><a href="#">Group Tickets</a></li>
+                    <!-- <li><a href="#">Group Tickets</a></li> -->
                     <li><a href="#">Recent Tickets</a></li>
                     <li><a href="#">Search Tickets</a></li>
                     <li><a href="<?= $root_domain; ?>/controllers/tickets/create_ticket.php">Create Ticket</a></li>

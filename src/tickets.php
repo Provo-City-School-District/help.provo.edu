@@ -13,7 +13,7 @@ require_once('includes/helpdbconnect.php');
 ?>
 
 <h1> Tickets Page</h1>
-<table class="ticketsTable">
+<table class="ticketsTable data-table">
     <thead>
         <tr>
             <th class="tID">ID</th>

@@ -28,6 +28,7 @@ tickets.due_date,
 tickets.status,
 JSON_ARRAYAGG(
     JSON_OBJECT(
+        'note_id', notes.note_id,
         'note', notes.note,
         'created', notes.created,
         'creator', notes.creator,
@@ -127,10 +128,12 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
         <?php foreach (json_decode($row['notes'], true) as $note) : ?>
 
             <div class="note">
+                <p>NoteID: <?= $note['note_id'] ?></p>
                 <p>Note: <?= $note['note'] ?></p>
                 <p>Created By: <?= $note['creator'] ?></p>
                 <p>Created At: <?= $note['created'] ?></p>
                 <p>Time: <?= $note['time'] ?></p>
+                <p><a href="edit_note.php?note_id=<?= $note['note_id'] ?>&ticket_id=<?= $ticket_id ?>">Edit Note</a></p>
             </div>
         <?php endforeach; ?>
     <?php endif; ?>
@@ -174,10 +177,15 @@ if (mysqli_num_rows($log_result) > 0) {
                 if($log_row['field_name'] != 'note'){
                     echo $log_row['field_name'] . ' from: ' . $log_row['old_value'] . ' to: ' . $log_row['new_value'];
                 }else{
-                    echo 'Note Created: ' . $log_row['new_value'];
+                    if($log_row['old_value'] != null){
+                        echo 'Note Updated: ' . $log_row['old_value'] . ' to: ' . $log_row['new_value'];
+                    }else{
+                        echo 'Note Created: ' . $log_row['new_value'];
+                    }
+                    
                 }
                 ?>
-            </td>        
+            </td>     
         </tr>
         <?php
     }

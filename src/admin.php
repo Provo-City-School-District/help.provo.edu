@@ -45,4 +45,58 @@ if (!$result) {
 ?>
 </tr>
 </table>
+<h2>All Tickets</h2>
+<table class="ticketsTable">
+    <thead>
+        <tr>
+            <th class="tID">ID</th>
+            <th>Subject</th>
+            <th>Request Detail</th>
+            <th class="tLocation">Location</th>
+            <th>Request Category</th>
+            <th class="tUser">Assigned Tech</th>
+            <th>Current Status</th>
+            <th class="tDate">Dates</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        // Execute the SQL query
+        $ticket_query = "SELECT *
+        FROM tickets
+        ORDER BY id ASC";
+
+        $ticket_result = mysqli_query($database, $ticket_query);
+        while ($row = mysqli_fetch_assoc($ticket_result)) {
+            $last_update = date("y-m-d", strtotime($row['last_updated']));
+            $created = $row['created']; // Get the value from the database
+
+            if ($created !== null) {
+                $created = date("y-m-d", strtotime($created)); // Convert to date if not null
+            } else {
+                $created = ''; // Set to an empty string or handle the case as needed
+            }
+            $due_date = date("y-m-d", strtotime($row['due_date']));
+            $overdue = strtotime($due_date) < strtotime(date("Y-m-d"));
+        ?>
+            <tr>
+                <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["id"]; ?>"><?= $row["id"] ?></a></td>
+                <td data-cell="Subject"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["id"]; ?>"><?= $row["name"] ?></a></td>
+                <td data-cell="Request Detail"><?= $row["description"] ?></td>
+                <td data-cell="Location"><?= $row["location"] ?> <br><br>RM <?= $row['room'] ?></td>
+                <td data-cell="Category"></td>
+                <td data-cell="Assigned Employee"><?= $row['employee'] ?></td>
+                <td data-cell="Current Status"><?= $row['status'] ?></td>
+                <?php if ($overdue) { ?>
+                    <td data-cell="Dates">Created: <?= $created ?><br><br>Updated: <?= $last_update ?><br><br>Due: <p id="warning"><?= $due_date ?></p>
+                    </td>
+                <?php } else { ?>
+                    <td data-cell="Dates">Created: <?= $created ?><br><br>Updated: <?= $last_update ?><br><br>Due: <?= $due_date ?></td>
+                <?php } ?>
+            </tr>
+        <?php
+        } // end while
+        ?>
+    </tbody>
+</table>
 <?php include("includes/footer.php"); ?>

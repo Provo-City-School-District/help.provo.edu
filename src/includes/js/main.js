@@ -31,7 +31,7 @@ function validateForm() {
 }
 
 
-// let table = new DataTable('#tickets-table');
+// initialize the data table library on the table with the class data-table
 $(document).ready(function() {
     $('.data-table').DataTable({
         paging: true, // Enable pagination

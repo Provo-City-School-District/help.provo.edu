@@ -31,6 +31,8 @@ require_once('includes/helpdbconnect.php');
         // Execute the SQL query
         $ticket_query = "SELECT *
         FROM tickets
+        WHERE status NOT IN ('Closed', 'Resolved')
+        AND employee = '" . $_SESSION['username'] . "'
         ORDER BY id ASC";
 
         $ticket_result = mysqli_query($database, $ticket_query);

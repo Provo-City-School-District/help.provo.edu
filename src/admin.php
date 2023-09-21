@@ -56,7 +56,9 @@ if (!$result) {
             <th>Request Category</th>
             <th class="tUser">Assigned Tech</th>
             <th>Current Status</th>
-            <th class="tDate">Dates</th>
+            <th class="tDate">Created</th>
+            <th class="tDate">Last Updated</th>
+            <th class="tDate">Due</th>
         </tr>
     </thead>
     <tbody>
@@ -87,11 +89,13 @@ if (!$result) {
                 <td data-cell="Category"></td>
                 <td data-cell="Assigned Employee"><?= $row['employee'] ?></td>
                 <td data-cell="Current Status"><?= $row['status'] ?></td>
+                <td data-cell="Created"><?= $created ?></td>
+                <td data-cell="Last Updated"><?= $last_update ?></td>
                 <?php if ($overdue) { ?>
-                    <td data-cell="Dates">Created: <?= $created ?><br><br>Updated: <?= $last_update ?><br><br>Due: <p id="warning"><?= $due_date ?></p>
+                    <td data-cell="Due"><p class="warning"><?= $due_date ?></p>
                     </td>
                 <?php } else { ?>
-                    <td data-cell="Dates">Created: <?= $created ?><br><br>Updated: <?= $last_update ?><br><br>Due: <?= $due_date ?></td>
+                    <td data-cell="Due"><?= $due_date ?></td>
                 <?php } ?>
             </tr>
         <?php

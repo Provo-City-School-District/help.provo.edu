@@ -19,7 +19,7 @@ a:hover {
 	width: 100%;
     /* padding:1em; */
 }
-#warning {
+.warning {
 	color: red;
 	display: inline;
 }

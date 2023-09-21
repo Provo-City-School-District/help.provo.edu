@@ -98,6 +98,11 @@ tr:nth-of-type(2n) td {
 	display:grid;
 	grid-template-columns: 150px 150px 1fr 90px;
 }
+.note table tr.totalTime {
+	display:grid;
+	grid-template-columns: 1fr 90px;
+	text-align: right;
+}
 /* =============================== Sub Menu Styles =============================== */
 #subMenu {
 	display: flex;

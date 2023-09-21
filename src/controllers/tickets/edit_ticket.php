@@ -86,6 +86,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
         <!-- Add a submit button to update the information -->
         <input type="submit" value="Update Ticket"><br>
         <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
+        <input type="hidden" name="madeby" value="<?= $_SESSION['username'] ?>">
         <label for="client">Client:</label>
         <input type="text" id="client" name="client" value="<?= $row['client'] ?>"><br>
 

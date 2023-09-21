@@ -14,6 +14,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $updatedDescription = trim(htmlspecialchars($_POST['description']));
     $updatedDueDate = trim(htmlspecialchars($_POST['due_date']));
     $updatedStatus = trim(htmlspecialchars($_POST['status']));
+    $updatedby = trim(htmlspecialchars($_POST['madeby']));
+    
+    // Get the old ticket data
+    $old_ticket_query = "SELECT * FROM tickets WHERE id = ?";
+    $old_ticket_stmt = mysqli_prepare($database, $old_ticket_query);
+    mysqli_stmt_bind_param($old_ticket_stmt, "i", $ticket_id);
+    mysqli_stmt_execute($old_ticket_stmt);
+    $old_ticket_result = mysqli_stmt_get_result($old_ticket_stmt);
+    $old_ticket_data = mysqli_fetch_assoc($old_ticket_result);
 
     // Perform SQL UPDATE queries to update the ticket and notes
     $updateTicketQuery = "UPDATE tickets SET
@@ -33,10 +42,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$updateTicketResult) {
         die('Error updating ticket: ' . mysqli_error($database));
     }
+    $clientColumn  = "client";
+    $employeeColumn  = "employee";
+    $locationColumn  = "location";
+    $roomColumn  = "room";
+    $nameColumn  = "name";
+    $descriptionColumn  = "description";
+    $dueDateColumn  = "due_date";
+    $statusColumn  = "status";
+
+    // Log the ticket changes
+    $log_query = "INSERT INTO ticket_logs (ticket_id, user_id, field_name, old_value, new_value, created_at) VALUES (?, ?, ?, ?, ?, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'))";
+    $log_stmt = mysqli_prepare($database, $log_query);
+    if ($old_ticket_data['client'] != $updatedClient) {
+        mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $clientColumn, $old_ticket_data['client'], $updatedClient);
+        mysqli_stmt_execute($log_stmt);
+    }
+    if ($old_ticket_data['employee'] != $updatedEmployee) {
+        mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $employeeColumn, $old_ticket_data['employee'], $updatedEmployee);
+        mysqli_stmt_execute($log_stmt);
+    }
+    if ($old_ticket_data['location'] != $updatedLocation) {
+        mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $locationColumn, $old_ticket_data['location'], $updatedLocation);
+        mysqli_stmt_execute($log_stmt);
+    }
+    if ($old_ticket_data['room'] != $updatedRoom) {
+        mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $roomColumn, $old_ticket_data['room'], $updatedRoom);
+        mysqli_stmt_execute($log_stmt);
+    }
+    if ($old_ticket_data['name'] != $updatedName) {
+        mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $nameColumn, $old_ticket_data['name'], $updatedName);
+        mysqli_stmt_execute($log_stmt);
+    }
+    if ($old_ticket_data['description'] != $updatedDescription) {
+        mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $descriptionColumn, $old_ticket_data['description'], $updatedDescription);
+        mysqli_stmt_execute($log_stmt);
+    }
+    if ($old_ticket_data['due_date'] != $updatedDueDate) {
+        mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $dueDateColumn, $old_ticket_data['due_date'], $updatedDueDate);
+        mysqli_stmt_execute($log_stmt);
+    }
+    if ($old_ticket_data['status'] != $updatedStatus) {
+        mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $statusColumn, $old_ticket_data['status'], $updatedStatus);
+        mysqli_stmt_execute($log_stmt);
+    }
+
     // After successfully updating the ticket, set a success message;
     $_SESSION['success_message'] = "Ticket updated successfully.";
-   // Redirect to the same page after successful update
-   header('Location: edit_ticket.php?id=' . $ticket_id);
-   exit;
+    // Redirect to the same page after successful update
+    header('Location: edit_ticket.php?id=' . $ticket_id);
+    exit;
 }
 ?>

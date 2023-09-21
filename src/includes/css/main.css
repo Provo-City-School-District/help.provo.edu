@@ -94,7 +94,10 @@ tr:nth-of-type(2n) td {
 		text-transform: capitalize;
 	}
 }
-
+.note table tr{
+	display:grid;
+	grid-template-columns: 150px 150px 1fr 90px;
+}
 /* =============================== Sub Menu Styles =============================== */
 #subMenu {
 	display: flex;

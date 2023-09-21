@@ -125,75 +125,84 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
     <!-- Loop through the notes and display them -->
     <?php if ($row['notes'] !== null) : ?>
         <h2>Notes</h2>
-        <?php foreach (json_decode($row['notes'], true) as $note) : ?>
+        <div class="note">
+            <table>
+                <tr>
+                    <th>Date</th>
+                    <th>Creator</th>
+                    <th>Note</th>
+                    <th>Time</th>
+                </tr>
+                <?php foreach (json_decode($row['notes'], true) as $note) : ?>
+                    <tr>
+                        <td><a href="edit_note.php?note_id=<?= $note['note_id'] ?>&ticket_id=<?= $ticket_id ?>"><?= $note['created'] ?></a></td>
+                        <td><?= $note['creator'] ?></td>
+                        <td><?= $note['note'] ?></td>
+                        <td><?= $note['time'] ?></td>
 
-            <div class="note">
-                <p>NoteID: <?= $note['note_id'] ?></p>
-                <p>Note: <?= $note['note'] ?></p>
-                <p>Created By: <?= $note['creator'] ?></p>
-                <p>Created At: <?= $note['created'] ?></p>
-                <p>Time: <?= $note['time'] ?></p>
-                <p><a href="edit_note.php?note_id=<?= $note['note_id'] ?>&ticket_id=<?= $ticket_id ?>">Edit Note</a></p>
-            </div>
-        <?php endforeach; ?>
-    <?php endif; ?>
-    <h3>Add Note</h3>
-    <form method="post" action="add_note_handler.php">
-        <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
-        <input type="hidden" name="username" value="<?= $_SESSION['username'] ?>">
-        <label for="note">Note:</label>
-        <textarea id="note" name="note"></textarea><br>
+                    </tr>
 
-        <label for="note_time">Time in Minutes:</label>
-        <input id="note_time" name="note_time"><br>
-        <input type="submit" value="Add Note">
-    </form>
-    <?php
-// Fetch the ticket logs for the current ticket
-$log_query = "SELECT field_name,user_id, old_value, new_value, created_at FROM ticket_logs WHERE ticket_id = ? ORDER BY created_at DESC";
-$log_stmt = mysqli_prepare($database, $log_query);
-mysqli_stmt_bind_param($log_stmt, "i", $ticket_id);
-mysqli_stmt_execute($log_stmt);
-$log_result = mysqli_stmt_get_result($log_stmt);
+                <?php endforeach; ?>
+            <?php endif; ?>
+            </table>
 
-// Display the ticket logs in a table
-if (mysqli_num_rows($log_result) > 0) {
-    ?>
-    <h2>Ticket History</h2>
-        <table>
-            <tr>
-                <th>Changed By</th>
-                <th>Created At</th>
-                <th>Changes made</th>
-            </tr>
-    <?php
-    while ($log_row = mysqli_fetch_assoc($log_result)) {
+        </div>
+        <h3>Add Note</h3>
+        <form method="post" action="add_note_handler.php">
+            <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
+            <input type="hidden" name="username" value="<?= $_SESSION['username'] ?>">
+            <label for="note">Note:</label>
+            <textarea id="note" name="note"></textarea><br>
+
+            <label for="note_time">Time in Minutes:</label>
+            <input id="note_time" name="note_time"><br>
+            <input type="submit" value="Add Note">
+        </form>
+        <?php
+        // Fetch the ticket logs for the current ticket
+        $log_query = "SELECT field_name,user_id, old_value, new_value, created_at FROM ticket_logs WHERE ticket_id = ? ORDER BY created_at DESC";
+        $log_stmt = mysqli_prepare($database, $log_query);
+        mysqli_stmt_bind_param($log_stmt, "i", $ticket_id);
+        mysqli_stmt_execute($log_stmt);
+        $log_result = mysqli_stmt_get_result($log_stmt);
+
+        // Display the ticket logs in a table
+        if (mysqli_num_rows($log_result) > 0) {
         ?>
-        <tr>
-            <td><?= $log_row['user_id'] ?></td>
-            <td><?= $log_row['created_at'] ?></td>
-            <td>
+            <h2>Ticket History</h2>
+            <table>
+                <tr>
+                    <th>Changed By</th>
+                    <th>Created At</th>
+                    <th>Changes made</th>
+                </tr>
                 <?php
-                if($log_row['field_name'] != 'note'){
-                    echo $log_row['field_name'] . ' from: ' . $log_row['old_value'] . ' to: ' . $log_row['new_value'];
-                }else{
-                    if($log_row['old_value'] != null){
-                        echo 'Note Updated: ' . $log_row['old_value'] . ' to: ' . $log_row['new_value'];
-                    }else{
-                        echo 'Note Created: ' . $log_row['new_value'];
-                    }
-                    
+                while ($log_row = mysqli_fetch_assoc($log_result)) {
+                ?>
+                    <tr>
+                        <td><?= $log_row['user_id'] ?></td>
+                        <td><?= $log_row['created_at'] ?></td>
+                        <td>
+                            <?php
+                            if ($log_row['field_name'] != 'note') {
+                                echo $log_row['field_name'] . ' from: ' . $log_row['old_value'] . ' to: ' . $log_row['new_value'];
+                            } else {
+                                if ($log_row['old_value'] != null) {
+                                    echo 'Note Updated: ' . $log_row['old_value'] . ' to: ' . $log_row['new_value'];
+                                } else {
+                                    echo 'Note Created: ' . $log_row['new_value'];
+                                }
+                            }
+                            ?>
+                        </td>
+                    </tr>
+                <?php
                 }
                 ?>
-            </td>     
-        </tr>
+            </table>
         <?php
-    }
-    ?>
-    </table>
-    <?php
-}
-?>
+        }
+        ?>
 </article>
 
 

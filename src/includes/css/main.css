@@ -1,11 +1,13 @@
 @import url("reset.css?v=2.0");
 @import url("variables.css?v=1.0");
 @import url("headings.css?v=1.0");
+
 /* =============================== General Styles =============================== */
-body{
-    font-family: Arial, Helvetica, sans-serif;
-    background-color: var(--theme-grey);
+body {
+	font-family: Arial, Helvetica, sans-serif;
+	background-color: var(--theme-grey);
 }
+
 a {
 	color: var(--do-site-blue);
 	text-decoration: none;
@@ -17,12 +19,14 @@ a:hover {
 
 #wrapper {
 	width: 100%;
-    /* padding:1em; */
+	/* padding:1em; */
 }
+
 .warning {
 	color: red;
 	display: inline;
 }
+
 /* =============================== Header Styles =============================== */
 #mainHeader {
 	background: linear-gradient(to bottom, var(--header-grad-start), var(--header-grad-end) 50%, var(--header-grad-end) 55%, var(--header-grad-start));
@@ -47,9 +51,11 @@ a:hover {
 	border-radius: 4px;
 	text-align: center;
 }
+
 #headerNav a:hover {
 	background-color: var(--theme-grey);
 }
+
 #headerNav a.active {
 	background-color: var(--do-site-blue);
 	color: var(--theme-white);
@@ -66,19 +72,23 @@ table {
 	border: 1px solid;
 	border-collapse: collapse;
 }
+
 th,
 td {
 	border: 1px solid;
 	background-color: var(--theme-white);
 	padding: 1em;
 }
+
 th {
 	background-color: #ccc;
 	border-bottom: 2px solid;
 }
+
 tr:nth-of-type(2n) td {
 	background-color: #eee;
 }
+
 @media(max-width: 750px) {
 	th {
 		display: none;
@@ -94,23 +104,26 @@ tr:nth-of-type(2n) td {
 		text-transform: capitalize;
 	}
 }
-.note table tr{
-	display:grid;
+
+.note table tr {
+	display: grid;
 	grid-template-columns: 150px 150px 1fr 90px;
 }
+
 .note table tr.totalTime {
-	display:grid;
+	display: grid;
 	grid-template-columns: 1fr 90px;
 	text-align: right;
 }
+
 /* =============================== Sub Menu Styles =============================== */
 #subMenu {
 	display: flex;
-	justify-content:end;
+	justify-content: end;
 	align-items: center;
 	background-color: var(--theme-white);
 	padding: 1em;
-	gap:2em;
+	gap: 2em;
 	margin-bottom: 1em;
 	margin-top: -1em;
 }
@@ -120,5 +133,5 @@ tr:nth-of-type(2n) td {
 #ticketWrapper {
 	display: block;
 	background-color: var(--theme-white);
-	padding:1em;
+	padding: 1em;
 }

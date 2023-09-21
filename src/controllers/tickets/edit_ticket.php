@@ -133,12 +133,12 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                     <th>Note</th>
                     <th>Time</th>
                 </tr>
-                <?php 
-                    $total_time = 0; // Initialize total time to 0
-                    foreach (json_decode($row['notes'], true) as $note) : 
+                <?php
+                $total_time = 0; // Initialize total time to 0
+                foreach (json_decode($row['notes'], true) as $note) :
                     $total_time += $note['time']; // Add note time to total time
-                    ?>
-                    
+                ?>
+
                     <tr>
                         <td><a href="edit_note.php?note_id=<?= $note['note_id'] ?>&ticket_id=<?= $ticket_id ?>"><?= $note['created'] ?></a></td>
                         <td><?= $note['creator'] ?></td>
@@ -153,7 +153,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                 <td>Total Time</td>
                 <td><?= $total_time ?></td>
             </tr>
-        </table>
+            </table>
 
         </div>
         <h3>Add Note</h3>

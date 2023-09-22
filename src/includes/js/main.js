@@ -46,3 +46,15 @@ tinymce.init({
     selector: '.tinyMCEtextarea',
     menubar: false
   });
+
+// hide/display new note form
+  var newNoteButton = document.getElementById('new-note-button');
+  var newNoteForm = document.getElementById('new-note-form');
+
+  newNoteButton.addEventListener('click', function() {
+      if (newNoteForm.style.display === 'none') {
+          newNoteForm.style.display = 'block';
+      } else {
+          newNoteForm.style.display = 'none';
+      }
+  });

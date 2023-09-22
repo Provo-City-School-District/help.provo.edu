@@ -53,7 +53,7 @@ require_once('includes/helpdbconnect.php');
             <tr>
                 <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["id"]; ?>"><?= $row["id"] ?></a></td>
                 <td data-cell="Subject"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["id"]; ?>"><?= $row["name"] ?></a></td>
-                <td data-cell="Request Detail"><?= html_entity_decode($row["description"]) ?></td>
+                <td data-cell="Request Detail"><?= limitChars(html_entity_decode($row["description"]), 100) ?></td>
                 <td data-cell="Location"><?= $row["location"] ?> <br><br>RM <?= $row['room'] ?></td>
                 <td data-cell="Category"></td>
                 <td data-cell="Assigned Employee"><?= $row['employee'] ?></td>

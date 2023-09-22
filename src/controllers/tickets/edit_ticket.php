@@ -1,6 +1,7 @@
 <?php
 include("../../includes/header.php");
-
+include("../../vendor/autoload.php");
+// Check if the user is logged in
 if ($_SESSION['permissions']['is_admin'] != 1) {
     // User is not an admin
     if ($_SESSION['permissions']['can_view_tickets'] == 0) {
@@ -107,7 +108,15 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
         <input type="text" id="name" name="name" value="<?= $row['name'] ?>"><br>
 
         <label for="description">Ticket Description:</label>
-        <textarea id="description" name="description"><?= $row['description'] ?></textarea><br>
+        <!--  -->
+        <div class="ticket-description">
+            <?= html_entity_decode($row['description']) ?>
+            <button id="edit-description-button" type="button">Edit</button>
+        </div>
+
+        <div id="edit-description-form" style="display: none;">
+            <textarea id="description" name="description" class="tinyMCEtextarea"><?= $row['description'] ?></textarea><br>
+        </div>
 
         <label for="due_date">Ticket Due:</label>
         <input type="date" id="due_date" name="due_date" value="<?= $row['due_date'] ?>"><br>
@@ -156,17 +165,20 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
             </table>
 
         </div>
-        <h3>Add Note</h3>
-        <form method="post" action="add_note_handler.php">
-            <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
-            <input type="hidden" name="username" value="<?= $_SESSION['username'] ?>">
-            <label for="note">Note:</label>
-            <textarea id="note" name="note"></textarea><br>
+        <button id="new-note-button">New Note</button>
+        <div id="new-note-form" style="display: none;">
+            <h3>Add Note</h3>
+            <form method="post" action="add_note_handler.php">
+                <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
+                <input type="hidden" name="username" value="<?= $_SESSION['username'] ?>">
+                <label for="note">Note:</label>
+                <textarea id="note" name="note" class="tinyMCEtextarea"></textarea><br>
 
-            <label for="note_time">Time in Minutes:</label>
-            <input id="note_time" name="note_time"><br>
-            <input type="submit" value="Add Note">
-        </form>
+                <label for="note_time">Time in Minutes:</label>
+                <input id="note_time" name="note_time"><br>
+                <input type="submit" value="Add Note">
+            </form>
+        </div>
         <?php
         // Fetch the ticket logs for the current ticket
         $log_query = "SELECT field_name,user_id, old_value, new_value, created_at FROM ticket_logs WHERE ticket_id = ? ORDER BY created_at DESC";

@@ -1,5 +1,6 @@
 {
     "require": {
-        "monolog/monolog": "^3.4"
+        "monolog/monolog": "^3.4",
+        "tinymce/tinymce": "^6.7"
     }
 }

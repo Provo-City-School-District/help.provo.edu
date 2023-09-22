@@ -40,3 +40,9 @@ $(document).ready(function() {
         order: [[ 0, "asc" ]] // Set the default sort order
     });
 });
+
+//initialize tinyMCE for for textarea with class tinyMCEtextarea
+tinymce.init({
+    selector: '.tinyMCEtextarea',
+    menubar: false
+  });

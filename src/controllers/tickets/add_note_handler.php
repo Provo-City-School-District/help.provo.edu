@@ -2,10 +2,10 @@
 require_once('../../includes/helpdbconnect.php');
 
 // Get the ticket ID and note from the form data
-$ticket_id = $_POST['ticket_id'];
-$note = $_POST['note'];
-$note_time = $_POST['note_time'];
-$username = $_POST['username'];
+$ticket_id = trim(htmlspecialchars($_POST['ticket_id']));
+$note = trim(htmlspecialchars($_POST['note']));
+$note_time = trim(htmlspecialchars($_POST['note_time']));
+$username = trim(htmlspecialchars($_POST['username']));
 $timestamp = date('Y-m-d H:i:s');
 
 // Insert the new note into the database

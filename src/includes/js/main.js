@@ -46,7 +46,7 @@ tinymce.init({
   menubar: false,
 });
 
-// hide/display new note form
+// display/hide new note form
 var newNoteButton = document.getElementById("new-note-button");
 var newNoteForm = document.getElementById("new-note-form");
 
@@ -58,7 +58,7 @@ newNoteButton.addEventListener("click", function () {
   }
 });
 
-// hide/display edit description form
+// Toggle description to make it editable
 var descriptionDiv = document.querySelector(".ticket-description");
 var editDescriptionButton = document.getElementById("edit-description-button");
 var editDescriptionForm = document.getElementById("edit-description-form");

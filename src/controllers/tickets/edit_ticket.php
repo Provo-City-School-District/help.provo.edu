@@ -224,12 +224,12 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                             <td>
                                 <?php
                                 if ($log_row['field_name'] != 'note') {
-                                    echo $log_row['field_name'] . ' from: ' . $log_row['old_value'] . ' to: ' . $log_row['new_value'];
+                                    echo $log_row['field_name'] . ' from: ' . html_entity_decode($log_row['old_value']) . ' to: ' . html_entity_decode($log_row['new_value']);
                                 } else {
                                     if ($log_row['old_value'] != null) {
-                                        echo 'Note Updated: ' . $log_row['old_value'] . ' to: ' . $log_row['new_value'];
+                                        echo 'Note Updated: ' . html_entity_decode($log_row['old_value']) . ' to: ' . html_entity_decode($log_row['new_value']);
                                     } else {
-                                        echo 'Note Created: ' . $log_row['new_value'];
+                                        echo 'Note Created: ' . html_entity_decode($log_row['new_value']);
                                     }
                                 }
                                 ?>

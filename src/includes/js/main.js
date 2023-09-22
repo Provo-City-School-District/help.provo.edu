@@ -58,3 +58,20 @@ tinymce.init({
           newNoteForm.style.display = 'none';
       }
   });
+
+
+// hide/display edit description form
+
+  var descriptionDiv = document.querySelector('.ticket-description');
+  var editDescriptionButton = document.getElementById('edit-description-button');
+  var editDescriptionForm = document.getElementById('edit-description-form');
+
+  editDescriptionButton.addEventListener('click', function() {
+      if (descriptionDiv.style.display === 'none') {
+          descriptionDiv.style.display = 'block';
+          editDescriptionForm.style.display = 'none';
+      } else {
+          descriptionDiv.style.display = 'none';
+          editDescriptionForm.style.display = 'block';
+      }
+  });

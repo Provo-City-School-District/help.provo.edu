@@ -12,7 +12,6 @@ a {
 	color: var(--do-site-blue);
 	text-decoration: none;
 }
-
 a:hover {
 	color: var(--do-site-yellow);
 }
@@ -105,17 +104,6 @@ tr:nth-of-type(2n) td {
 	}
 }
 
-.note table tr {
-	display: grid;
-	grid-template-columns: 150px 150px 1fr 90px;
-}
-
-.note table tr.totalTime {
-	display: grid;
-	grid-template-columns: 1fr 90px;
-	text-align: right;
-}
-
 /* =============================== Sub Menu Styles =============================== */
 #subMenu {
 	display: flex;
@@ -134,4 +122,26 @@ tr:nth-of-type(2n) td {
 	display: block;
 	background-color: var(--theme-white);
 	padding: 1em;
+}
+.ticketGrid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap:10px;
+}
+.ticketGrid>* {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+}
+.note,.ticket_log {
+	font-size: .8em;
+}
+.note table tr {
+	display: grid;
+	grid-template-columns: 150px 150px 1fr 90px;
+}
+
+.note table tr.totalTime {
+	display: grid;
+	grid-template-columns: 1fr 90px;
+	text-align: right;
 }

@@ -86,50 +86,67 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
     <!-- Form for updating ticket information -->
     <form method="POST" action="update_ticket.php">
         <!-- Add a submit button to update the information -->
-        <input type="submit" value="Update Ticket"><br>
-        <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
-        <input type="hidden" name="madeby" value="<?= $_SESSION['username'] ?>">
-        <label for="client">Client:</label>
-        <input type="text" id="client" name="client" value="<?= $row['client'] ?>"><br>
+        <input type="submit" value="Update Ticket">
+        <div class="ticketGrid">
+            <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
+            <input type="hidden" name="madeby" value="<?= $_SESSION['username'] ?>">
+            <div>
+                <label for="client">Client:</label>
+                <input type="text" id="client" name="client" value="<?= $row['client'] ?>">
+            </div>
 
-        <label for="employee">Assigned Tech:</label>
-        <select id="employee" name="employee">
-            <?php foreach ($usernames as $username) : ?>
-                <option value="<?= $username ?>" <?= $row['employee'] === $username ? 'selected' : '' ?>><?= $username ?></option>
-            <?php endforeach; ?>
-        </select><br>
-        <label for="location">Location:</label>
-        <input type="text" id="location" name="location" value="<?= $row['location'] ?>"><br>
+            <div> <label for="employee">Assigned Tech:</label>
+                <select id="employee" name="employee">
+                    <?php foreach ($usernames as $username) : ?>
+                        <option value="<?= $username ?>" <?= $row['employee'] === $username ? 'selected' : '' ?>><?= $username ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div>
+                <label for="location">Location:</label>
+                <input type="text" id="location" name="location" value="<?= $row['location'] ?>">
+            </div>
 
-        <label for="room">Room:</label>
-        <input type="text" id="room" name="room" value="<?= $row['room'] ?>"><br>
+            <div>
+                <label for="room">Room:</label>
+                <input type="text" id="room" name="room" value="<?= $row['room'] ?>">
+            </div>
 
-        <label for="name">Ticket Title:</label>
-        <input type="text" id="name" name="name" value="<?= $row['name'] ?>"><br>
+            <div>
+            <label for="name">Ticket Title:</label>
+            <input type="text" id="name" name="name" value="<?= $row['name'] ?>">
+            </div>
 
-        <label for="description">Ticket Description:</label>
-        <!--  -->
-        <div class="ticket-description">
-            <?= html_entity_decode($row['description']) ?>
-            <button id="edit-description-button" type="button">Edit</button>
+
+            <div>
+            <label for="due_date">Ticket Due:</label>
+            <input type="date" id="due_date" name="due_date" value="<?= $row['due_date'] ?>">
+            </div>
+
+            <div>
+            <label for="status">Current Status:</label>
+            <select id="status" name="status">
+                <option value="open" <?= ($row['status'] == 'open') ? ' selected' : '' ?>>Open</option>
+                <option value="closed" <?= ($row['status'] == 'closed') ? ' selected' : '' ?>>Closed</option>
+                <option value="resolved" <?= ($row['status'] == 'resolved') ? ' selected' : '' ?>>Resolved</option>
+                <option value="pending" <?= ($row['status'] == 'pending') ? ' selected' : '' ?>>Pending</option>
+                <option value="vendor" <?= ($row['status'] == 'vendor') ? ' selected' : '' ?>>Vendor</option>
+                <option value="maintenance" <?= ($row['status'] == 'maintenance') ? ' selected' : '' ?>>Maintenance</option>
+            </select>
+            </div>
+        </div>
+        <div class="detailContainer">
+            <label for="description">Request Detail:</label>
+            <div class="ticket-description">
+                <?= html_entity_decode($row['description']) ?>
+                <button id="edit-description-button" type="button">Edit Request Detail</button>
+            </div>
+
+            <div id="edit-description-form" style="display: none;">
+                <textarea id="description" name="description" class="tinyMCEtextarea"><?= $row['description'] ?></textarea>
+            </div>
         </div>
 
-        <div id="edit-description-form" style="display: none;">
-            <textarea id="description" name="description" class="tinyMCEtextarea"><?= $row['description'] ?></textarea><br>
-        </div>
-
-        <label for="due_date">Ticket Due:</label>
-        <input type="date" id="due_date" name="due_date" value="<?= $row['due_date'] ?>"><br>
-
-        <label for="status">Current Status:</label>
-        <select id="status" name="status">
-            <option value="open" <?= ($row['status'] == 'open') ? ' selected' : '' ?>>Open</option>
-            <option value="closed" <?= ($row['status'] == 'closed') ? ' selected' : '' ?>>Closed</option>
-            <option value="resolved" <?= ($row['status'] == 'resolved') ? ' selected' : '' ?>>Resolved</option>
-            <option value="pending" <?= ($row['status'] == 'pending') ? ' selected' : '' ?>>Pending</option>
-            <option value="vendor" <?= ($row['status'] == 'vendor') ? ' selected' : '' ?>>Vendor</option>
-            <option value="maintenance" <?= ($row['status'] == 'maintenance') ? ' selected' : '' ?>>Maintenance</option>
-        </select><br>
     </form>
     <!-- Loop through the notes and display them -->
     <?php if ($row['notes'] !== null) : ?>
@@ -172,10 +189,10 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                 <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
                 <input type="hidden" name="username" value="<?= $_SESSION['username'] ?>">
                 <label for="note">Note:</label>
-                <textarea id="note" name="note" class="tinyMCEtextarea"></textarea><br>
+                <textarea id="note" name="note" class="tinyMCEtextarea"></textarea>
 
                 <label for="note_time">Time in Minutes:</label>
-                <input id="note_time" name="note_time"><br>
+                <input id="note_time" name="note_time" type="number">
                 <input type="submit" value="Add Note">
             </form>
         </div>
@@ -190,37 +207,39 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
         // Display the ticket logs in a table
         if (mysqli_num_rows($log_result) > 0) {
         ?>
-            <h2>Ticket History</h2>
-            <table>
-                <tr>
-                    <th>Changed By</th>
-                    <th>Created At</th>
-                    <th>Changes made</th>
-                </tr>
-                <?php
-                while ($log_row = mysqli_fetch_assoc($log_result)) {
-                ?>
+            <div class="ticket_log">
+                <h2>Ticket History</h2>
+                <table>
                     <tr>
-                        <td><?= $log_row['user_id'] ?></td>
-                        <td><?= $log_row['created_at'] ?></td>
-                        <td>
-                            <?php
-                            if ($log_row['field_name'] != 'note') {
-                                echo $log_row['field_name'] . ' from: ' . $log_row['old_value'] . ' to: ' . $log_row['new_value'];
-                            } else {
-                                if ($log_row['old_value'] != null) {
-                                    echo 'Note Updated: ' . $log_row['old_value'] . ' to: ' . $log_row['new_value'];
-                                } else {
-                                    echo 'Note Created: ' . $log_row['new_value'];
-                                }
-                            }
-                            ?>
-                        </td>
+                        <th>Changed By</th>
+                        <th>Created At</th>
+                        <th>Changes made</th>
                     </tr>
-                <?php
-                }
-                ?>
-            </table>
+                    <?php
+                    while ($log_row = mysqli_fetch_assoc($log_result)) {
+                    ?>
+                        <tr>
+                            <td><?= $log_row['user_id'] ?></td>
+                            <td><?= $log_row['created_at'] ?></td>
+                            <td>
+                                <?php
+                                if ($log_row['field_name'] != 'note') {
+                                    echo $log_row['field_name'] . ' from: ' . $log_row['old_value'] . ' to: ' . $log_row['new_value'];
+                                } else {
+                                    if ($log_row['old_value'] != null) {
+                                        echo 'Note Updated: ' . $log_row['old_value'] . ' to: ' . $log_row['new_value'];
+                                    } else {
+                                        echo 'Note Created: ' . $log_row['new_value'];
+                                    }
+                                }
+                                ?>
+                            </td>
+                        </tr>
+                    <?php
+                    }
+                    ?>
+                </table>
+            </div>
         <?php
         }
         ?>

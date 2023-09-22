@@ -77,7 +77,7 @@ $admin_page = '/admin.php';
                 <ul id="subMenu">
                     <li><a href="<?= $root_domain; ?>/tickets.php">My Tickets</a></li>
                     <!-- <li><a href="#">Group Tickets</a></li> -->
-                    <li><a href="#">Recent Tickets</a></li>
+                    <li><a href="<?= $root_domain; ?>/recent_tickets.php">Recent Tickets</a></li>
                     <li><a href="#">Search Tickets</a></li>
                     <li><a href="<?= $root_domain; ?>/controllers/tickets/create_ticket.php">Create Ticket</a></li>
                 </ul>

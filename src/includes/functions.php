@@ -28,6 +28,7 @@ $ticketPages = array(
     '/tickets.php',
     '/edit_ticket.php',
     '/create_ticket.php',
+    '/recent_tickets.php',
 );
 
 //limit characters in a string

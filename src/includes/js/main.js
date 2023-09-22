@@ -29,15 +29,23 @@ function validateForm() {
   }
   return true; // Form is valid
 }
+// Define the table variable
+var table;
 
-// initialize the data table library on the table with the class data-table
+// Initialize the data table library on the table with the class data-table
 $(document).ready(function () {
-  $(".data-table").DataTable({
+  table = $(".data-table").DataTable({
     paging: true, // Enable pagination
     pageLength: 10, // Set the number of rows per page
     ordering: true, // Enable sorting
     order: [[0, "asc"]], // Set the default sort order
   });
+
+  // Change sorting column on specific page
+  if (window.location.pathname == "/recent_tickets.php") {
+    var column = table.column(8); // Get the column object for the 9th column (index 8)
+    column.order("desc").draw(); // Set the sorting order to ascending and redraw the table
+  }
 });
 
 //initialize tinyMCE for for textarea with class tinyMCEtextarea

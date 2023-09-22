@@ -1,77 +1,74 @@
 function sanitizeInput(input) {
-    // Replace potentially dangerous characters with their HTML entities
-    return input.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  // Replace potentially dangerous characters with their HTML entities
+  return input.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
 //login form validation
 function validateForm() {
-    var username = document.forms["loginForm"]["username"].value;
-    var password = document.forms["loginForm"]["password"].value;
+  var username = document.forms["loginForm"]["username"].value;
+  var password = document.forms["loginForm"]["password"].value;
 
-    // Sanitize the username and password
-    var sanitizedUsername = sanitizeInput(username);
-    var sanitizedPassword = sanitizeInput(password);
+  // Sanitize the username and password
+  var sanitizedUsername = sanitizeInput(username);
+  var sanitizedPassword = sanitizeInput(password);
 
-    // Update the form fields with the sanitized values
-    document.forms["loginForm"]["username"].value = sanitizedUsername;
-    document.forms["loginForm"]["password"].value = sanitizedPassword;
+  // Update the form fields with the sanitized values
+  document.forms["loginForm"]["username"].value = sanitizedUsername;
+  document.forms["loginForm"]["password"].value = sanitizedPassword;
 
-    // Validate the username
-    if (username === "") {
-        alert("Username must be filled out");
-        return false;
-    }
+  // Validate the username
+  if (username === "") {
+    alert("Username must be filled out");
+    return false;
+  }
 
-    // Validate the password
-    if (password === "") {
-        alert("Password must be filled out");
-        return false;
-    }
-    return true; // Form is valid
+  // Validate the password
+  if (password === "") {
+    alert("Password must be filled out");
+    return false;
+  }
+  return true; // Form is valid
 }
 
-
 // initialize the data table library on the table with the class data-table
-$(document).ready(function() {
-    $('.data-table').DataTable({
-        paging: true, // Enable pagination
-        pageLength: 10, // Set the number of rows per page
-        ordering: true, // Enable sorting
-        order: [[ 0, "asc" ]] // Set the default sort order
-    });
+$(document).ready(function () {
+  $(".data-table").DataTable({
+    paging: true, // Enable pagination
+    pageLength: 10, // Set the number of rows per page
+    ordering: true, // Enable sorting
+    order: [[0, "asc"]], // Set the default sort order
+  });
 });
 
 //initialize tinyMCE for for textarea with class tinyMCEtextarea
 tinymce.init({
-    selector: '.tinyMCEtextarea',
-    menubar: false
-  });
+  selector: ".tinyMCEtextarea",
+  menubar: false,
+});
 
 // hide/display new note form
-  var newNoteButton = document.getElementById('new-note-button');
-  var newNoteForm = document.getElementById('new-note-form');
+var newNoteButton = document.getElementById("new-note-button");
+var newNoteForm = document.getElementById("new-note-form");
 
-  newNoteButton.addEventListener('click', function() {
-      if (newNoteForm.style.display === 'none') {
-          newNoteForm.style.display = 'block';
-      } else {
-          newNoteForm.style.display = 'none';
-      }
-  });
-
+newNoteButton.addEventListener("click", function () {
+  if (newNoteForm.style.display === "none") {
+    newNoteForm.style.display = "block";
+  } else {
+    newNoteForm.style.display = "none";
+  }
+});
 
 // hide/display edit description form
+var descriptionDiv = document.querySelector(".ticket-description");
+var editDescriptionButton = document.getElementById("edit-description-button");
+var editDescriptionForm = document.getElementById("edit-description-form");
 
-  var descriptionDiv = document.querySelector('.ticket-description');
-  var editDescriptionButton = document.getElementById('edit-description-button');
-  var editDescriptionForm = document.getElementById('edit-description-form');
-
-  editDescriptionButton.addEventListener('click', function() {
-      if (descriptionDiv.style.display === 'none') {
-          descriptionDiv.style.display = 'block';
-          editDescriptionForm.style.display = 'none';
-      } else {
-          descriptionDiv.style.display = 'none';
-          editDescriptionForm.style.display = 'block';
-      }
-  });
+editDescriptionButton.addEventListener("click", function () {
+  if (descriptionDiv.style.display === "none") {
+    descriptionDiv.style.display = "block";
+    editDescriptionForm.style.display = "none";
+  } else {
+    descriptionDiv.style.display = "none";
+    editDescriptionForm.style.display = "block";
+  }
+});

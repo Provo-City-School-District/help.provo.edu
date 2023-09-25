@@ -168,7 +168,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                     <tr>
                         <td><a href="edit_note.php?note_id=<?= $note['note_id'] ?>&ticket_id=<?= $ticket_id ?>"><?= $note['created'] ?></a></td>
                         <td><?= $note['creator'] ?></td>
-                        <td><?= $note['note'] ?></td>
+                        <td><?= html_entity_decode($note['note']) ?><span class="note_id"><a href="edit_note.php?note_id=<?= $note['note_id'] ?>&ticket_id=<?= $ticket_id ?>">Note#: <?= html_entity_decode($note['note_id']) ?></a></span></td>
                         <td><?= $note['time'] ?></td>
 
                     </tr>

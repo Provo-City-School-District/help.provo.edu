@@ -48,15 +48,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit();
 }
 ?>
-
+<?php include("../../includes/header.php");?>
 <h2>Edit Note</h2>
 <form method="post">
     <input type="hidden" name="note_id" value="<?= $note_id ?>">
     <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
     <label for="note">Note:</label>
-    <textarea id="note" name="note"><?= $note['note'] ?></textarea><br>
+    <textarea id="note" name="note" class="tinyMCEtextarea"><?= $note['note'] ?></textarea><br>
 
     <label for="note_time">Time in Minutes:</label>
     <input id="note_time" name="note_time" value="<?= $note['time'] ?>"><br>
     <input type="submit" value="Save Note">
 </form>
+<?php include("../../includes/footer.php"); ?>

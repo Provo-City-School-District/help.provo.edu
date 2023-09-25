@@ -3,8 +3,8 @@ require_once('../../includes/init.php');
 require_once('../../includes/helpdbconnect.php');
 
 // Get the note ID and ticket ID from the query string
-$note_id = $_GET['note_id'];
-$ticket_id = $_GET['ticket_id'];
+$note_id = trim(htmlspecialchars($_GET['note_id']));
+$ticket_id = trim(htmlspecialchars($_GET['ticket_id']));
 
 // Fetch the note from the database
 $query = "SELECT * FROM notes WHERE note_id = ?";
@@ -26,8 +26,8 @@ if ($note['creator'] !== $_SESSION['username']) {
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Get the updated note and time from the form data
-    $updated_note = $_POST['note'];
-    $updated_time = $_POST['note_time'];
+    $updated_note = trim(htmlspecialchars($_POST['note']));
+    $updated_time = trim(htmlspecialchars($_POST['note_time']));
     $timestamp = date('Y-m-d H:i:s');
 
     // Update the note in the database

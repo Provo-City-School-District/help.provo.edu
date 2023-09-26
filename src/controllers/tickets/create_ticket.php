@@ -24,7 +24,7 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
     ?>
     <h1>Create Ticket</h1>
     <!-- Form for updating ticket information -->
-    <form method="POST" action="insert_ticket.php">
+    <form method="POST" action="insert_ticket.php" enctype="multipart/form-data">
         <input type="hidden" name="client" value="<?= $_SESSION['username'] ?>">
         <label for="location">Location:</label>
         <input type="text" id="location" name="location" value="<?= isset($_GET['location']) ? htmlspecialchars($_GET['location']) : '' ?>"><br>
@@ -38,9 +38,23 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
         <label for="description">Ticket Description:</label>
         <textarea id="description" name="description" class="tinyMCEtextarea"><?= isset($_GET['description']) ? htmlspecialchars($_GET['description']) : '' ?></textarea><br>
 
+        <div id="attachment-fields">
+            <label for="attachment">Attachment:</label>
+            <input type="file" id="attachment" name="attachment[]"><br>
+        </div>
+
+        <button type="button" id="add-attachment-field">Add Attachment</button><br>
         <!-- Add a submit button to create the ticket -->
         <input type="submit" value="Create Ticket">
     </form>
 </article>
-
+<script>
+        // Add a new file input field when the "Add Attachment" button is clicked
+        document.getElementById('add-attachment-field').addEventListener('click', function() {
+            var attachmentFields = document.getElementById('attachment-fields');
+            var newAttachmentField = document.createElement('div');
+            newAttachmentField.innerHTML = '<label for="attachment">Attachment:</label><input type="file" id="attachment" name="attachment[]"><br>';
+            attachmentFields.appendChild(newAttachmentField);
+        });
+    </script>
 <?php include("../../includes/footer.php"); ?>

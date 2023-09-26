@@ -2,6 +2,16 @@
 require_once('../../includes/init.php');
 require_once('../../includes/helpdbconnect.php');
 
+if ($_SESSION['permissions']['is_admin'] != 1) {
+    // User is not an admin
+    if ($_SESSION['permissions']['can_create_tickets'] == 0) {
+        // User does not have permission to view tickets
+        echo 'You do not have permission to Create tickets.';
+        exit;
+    }
+}
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Sanitize and validate user inputs
     $location = filter_input(INPUT_POST, 'location', FILTER_SANITIZE_SPECIAL_CHARS);
@@ -20,9 +30,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    // Handle file upload
+$uploadPaths = array();
+if (isset($_FILES['attachment'])) {
+    $attachmentCount = count($_FILES['attachment']['name']);
+
+    for ($i = 0; $i < $attachmentCount; $i++) {
+        $filename = $_FILES['attachment']['name'][$i];
+        $tmp_name = $_FILES['attachment']['tmp_name'][$i];
+        $error = $_FILES['attachment']['error'][$i];
+
+        if ($error === UPLOAD_ERR_OK) {
+            // Create uploads directory if it doesn't exist
+            if (!file_exists("uploads/")) {
+                mkdir("uploads/", 0777, true);
+            }
+
+            // Generate a unique filename using the current timestamp and the original filename
+            $uniqueFilename = date('Ymd_Hi') . '_' . $filename;
+            $uploadPath = "uploads/{$uniqueFilename}";
+            move_uploaded_file($tmp_name, $uploadPath);
+            $uploadPaths[] = $uploadPath;
+        }
+    }
+}
+
     // Create an SQL INSERT query
-    $insertQuery = "INSERT INTO tickets (location, room, name, description, created, last_updated, due_date, status, client)
-                VALUES (?, ?, ?, ?, NOW(), NOW(), DATE_ADD(NOW(), INTERVAL 10 DAY), 'open', ?)";
+    $insertQuery = "INSERT INTO tickets (location, room, name, description, created, last_updated, due_date, status, client,attachment_path)
+                VALUES (?, ?, ?, ?, NOW(), NOW(), DATE_ADD(NOW(), INTERVAL 10 DAY), 'open', ?, ?)";
 
     // Prepare the SQL statement
     $stmt = mysqli_prepare($database, $insertQuery);
@@ -30,9 +65,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($stmt === false) {
         die('Error preparing insert query: ' . mysqli_error($database));
     }
-
+    $uploadPath = array();
+    foreach ($uploadPaths as $attachmentPath) {
+        $uploadPath[] = $attachmentPath;
+    }
+    $attachmentPath = implode(',', $uploadPath);
+    // print_r($uploadPath);
     // Bind parameters
-    mysqli_stmt_bind_param($stmt, 'sssss', $location, $room, $name, $description, $client);
+    mysqli_stmt_bind_param($stmt, 'ssssss', $location, $room, $name, $description, $client, $attachmentPath);
 
     // Execute the prepared statement
     if (mysqli_stmt_execute($stmt)) {
@@ -46,7 +86,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: edit_ticket.php?id=' . $ticketId);
         exit;
     } else {
-        // Handle the error (e.g., show an error message)
-        die('Error creating ticket: ' . mysqli_error($database));
+        // Handle insert error (e.g., show an error message)
+        $error = 'Error creating ticket';
+        $formData = http_build_query($_POST);
+        $_SESSION['error_message'] = "Error creating ticket.";
+        header("Location: create_ticket.php?error=$error&$formData");
+        exit;
     }
 }

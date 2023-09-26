@@ -27,6 +27,7 @@ tickets.created,
 tickets.last_updated,
 tickets.due_date,
 tickets.status,
+tickets.attachment_path,
 JSON_ARRAYAGG(
     JSON_OBJECT(
         'note_id', notes.note_id,
@@ -149,6 +150,30 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
 
     </form>
     <!-- Loop through the notes and display them -->
+    <?php
+    $attachmentPaths = explode(',', $row['attachment_path']);
+    // Output links to the file attachments
+if (!empty($attachmentPaths)) {
+    echo '<p><strong>Attachments:</strong></p>';
+    echo '<ul>';
+    foreach ($attachmentPaths as $attachmentPath) {
+        echo '<li><a href="' . $attachmentPath . '">' . basename($attachmentPath) . '</a></li>';
+    }
+    echo '</ul>';
+}
+    ?>
+    <button id="toggle-file-upload-form">Upload Files</button>
+    <div id="file-upload-form" style="display: none;">
+    <h3>Upload Files</h3>
+    <form method="post" action="upload_files_handler.php" enctype="multipart/form-data">
+        <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
+        <input type="hidden" name="username" value="<?= $_SESSION['username'] ?>">
+        <label for="attachment">Attachment:</label>
+        <input id="attachment" name="attachment[]" type="file" multiple>
+        <input type="submit" value="Upload">
+    </form>
+    
+</div>
     <?php if ($row['notes'] !== null) : ?>
         <h2>Notes</h2>
         <div class="note">

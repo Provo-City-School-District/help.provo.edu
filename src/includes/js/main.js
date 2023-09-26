@@ -74,6 +74,20 @@ if (newNoteButton && newNoteForm) {
   });
 }
 
+    // Check if the toggle-file-upload-form and file-upload-form elements exist before adding the event listener
+    var toggleFileUploadForm = document.getElementById('toggle-file-upload-form');
+    var fileUploadForm = document.getElementById('file-upload-form');
+    if (toggleFileUploadForm && fileUploadForm) {
+        toggleFileUploadForm.addEventListener('click', function() {
+            if (fileUploadForm.style.display === 'none') {
+                fileUploadForm.style.display = 'block';
+            } else {
+                fileUploadForm.style.display = 'none';
+            }
+        });
+    }
+
+
 // Toggle description to make it editable
 var descriptionDiv = document.querySelector(".ticket-description");
 var editDescriptionButton = document.getElementById("edit-description-button");

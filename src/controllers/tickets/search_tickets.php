@@ -157,20 +157,5 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
             ?>
         </tbody>
     </table>
-
-
-
-
-
-
-
-
 </article>
-<script>
-    // reset search form
-    document.getElementById("resetBtn").addEventListener("click", function() {
-        document.getElementById("searchForm").reset();
-        window.location.href = 'search_tickets.php';
-    });
-</script>
 <?php include("../../includes/footer.php"); ?>

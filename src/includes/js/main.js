@@ -64,26 +64,37 @@ tinymce.init({
 // display/hide new note form
 var newNoteButton = document.getElementById("new-note-button");
 var newNoteForm = document.getElementById("new-note-form");
-
-newNoteButton.addEventListener("click", function () {
-  if (newNoteForm.style.display === "none") {
-    newNoteForm.style.display = "block";
-  } else {
-    newNoteForm.style.display = "none";
-  }
-});
+if (newNoteButton && newNoteForm) {
+  newNoteButton.addEventListener("click", function () {
+    if (newNoteForm.style.display === "none") {
+      newNoteForm.style.display = "block";
+    } else {
+      newNoteForm.style.display = "none";
+    }
+  });
+}
 
 // Toggle description to make it editable
 var descriptionDiv = document.querySelector(".ticket-description");
 var editDescriptionButton = document.getElementById("edit-description-button");
 var editDescriptionForm = document.getElementById("edit-description-form");
+if (descriptionDiv && editDescriptionButton && editDescriptionForm) {
+  editDescriptionButton.addEventListener("click", function () {
+    if (descriptionDiv.style.display === "none") {
+      descriptionDiv.style.display = "block";
+      editDescriptionForm.style.display = "none";
+    } else {
+      descriptionDiv.style.display = "none";
+      editDescriptionForm.style.display = "block";
+    }
+  });
+}
 
-editDescriptionButton.addEventListener("click", function () {
-  if (descriptionDiv.style.display === "none") {
-    descriptionDiv.style.display = "block";
-    editDescriptionForm.style.display = "none";
-  } else {
-    descriptionDiv.style.display = "none";
-    editDescriptionForm.style.display = "block";
-  }
-});
+ // reset search form
+ var resetBtn = document.getElementById("resetBtn");
+ if (resetBtn) {
+   resetBtn.addEventListener("click", function() {
+     document.getElementById("searchForm").reset();
+     window.location.href = 'search_tickets.php';
+   });
+ }

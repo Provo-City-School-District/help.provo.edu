@@ -1,5 +1,5 @@
 <?php
-include("includes/header.php");
+include("../../includes/header.php");
 
 if ($_SESSION['permissions']['is_admin'] != 1) {
     // User is not an admin
@@ -9,7 +9,7 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
         exit;
     }
 }
-require_once('includes/helpdbconnect.php');
+require_once('../../includes/helpdbconnect.php');
 ?>
 
 <h1> Tickets Page</h1>
@@ -72,4 +72,4 @@ require_once('includes/helpdbconnect.php');
     </tbody>
 </table>
 
-<?php include("includes/footer.php"); ?>
+<?php include("../../includes/footer.php"); ?>

@@ -41,8 +41,11 @@ $(document).ready(function () {
     order: [[0, "asc"]], // Set the default sort order
   });
 
-  // Change sorting column on specific page
-  if (window.location.pathname == "/recent_tickets.php") {
+  // Change default sorting on /recent_tickets.php
+  if (window.location.pathname == "/controllers/tickets/recent_tickets.php") {
+    var column = table.column(8); // Get the column object for the 9th column (index 8)
+    column.order("desc").draw(); // Set the sorting order to ascending and redraw the table
+  }
     var column = table.column(8); // Get the column object for the 9th column (index 8)
     column.order("desc").draw(); // Set the sorting order to ascending and redraw the table
   }

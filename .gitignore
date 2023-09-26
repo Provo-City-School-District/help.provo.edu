@@ -1,3 +1,4 @@
 /db_data
 .env
 /src/vendor
+/src/controllers/tickets/uploads

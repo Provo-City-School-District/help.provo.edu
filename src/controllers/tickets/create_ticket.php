@@ -36,7 +36,7 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
         <input type="text" id="name" name="name" value="<?= isset($_GET['name']) ? htmlspecialchars($_GET['name']) : '' ?>"><br>
 
         <label for="description">Ticket Description:</label>
-        <textarea id="description" name="description"><?= isset($_GET['description']) ? htmlspecialchars($_GET['description']) : '' ?></textarea><br>
+        <textarea id="description" name="description" class="tinyMCEtextarea"><?= isset($_GET['description']) ? htmlspecialchars($_GET['description']) : '' ?></textarea><br>
 
         <!-- Add a submit button to create the ticket -->
         <input type="submit" value="Create Ticket">

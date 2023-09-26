@@ -114,26 +114,26 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
             </div>
 
             <div>
-            <label for="name">Ticket Title:</label>
-            <input type="text" id="name" name="name" value="<?= $row['name'] ?>">
+                <label for="name">Ticket Title:</label>
+                <input type="text" id="name" name="name" value="<?= $row['name'] ?>">
             </div>
 
 
             <div>
-            <label for="due_date">Ticket Due:</label>
-            <input type="date" id="due_date" name="due_date" value="<?= $row['due_date'] ?>">
+                <label for="due_date">Ticket Due:</label>
+                <input type="date" id="due_date" name="due_date" value="<?= $row['due_date'] ?>">
             </div>
 
             <div>
-            <label for="status">Current Status:</label>
-            <select id="status" name="status">
-                <option value="open" <?= ($row['status'] == 'open') ? ' selected' : '' ?>>Open</option>
-                <option value="closed" <?= ($row['status'] == 'closed') ? ' selected' : '' ?>>Closed</option>
-                <option value="resolved" <?= ($row['status'] == 'resolved') ? ' selected' : '' ?>>Resolved</option>
-                <option value="pending" <?= ($row['status'] == 'pending') ? ' selected' : '' ?>>Pending</option>
-                <option value="vendor" <?= ($row['status'] == 'vendor') ? ' selected' : '' ?>>Vendor</option>
-                <option value="maintenance" <?= ($row['status'] == 'maintenance') ? ' selected' : '' ?>>Maintenance</option>
-            </select>
+                <label for="status">Current Status:</label>
+                <select id="status" name="status">
+                    <option value="open" <?= ($row['status'] == 'open') ? ' selected' : '' ?>>Open</option>
+                    <option value="closed" <?= ($row['status'] == 'closed') ? ' selected' : '' ?>>Closed</option>
+                    <option value="resolved" <?= ($row['status'] == 'resolved') ? ' selected' : '' ?>>Resolved</option>
+                    <option value="pending" <?= ($row['status'] == 'pending') ? ' selected' : '' ?>>Pending</option>
+                    <option value="vendor" <?= ($row['status'] == 'vendor') ? ' selected' : '' ?>>Vendor</option>
+                    <option value="maintenance" <?= ($row['status'] == 'maintenance') ? ' selected' : '' ?>>Maintenance</option>
+                </select>
             </div>
         </div>
         <div class="detailContainer">
@@ -153,27 +153,31 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
     <?php
     $attachmentPaths = explode(',', $row['attachment_path']);
     // Output links to the file attachments
-if (!empty($attachmentPaths)) {
-    echo '<p><strong>Attachments:</strong></p>';
-    echo '<ul>';
-    foreach ($attachmentPaths as $attachmentPath) {
-        echo '<li><a href="' . $attachmentPath . '">' . basename($attachmentPath) . '</a></li>';
-    }
-    echo '</ul>';
-}
+    if (!empty($attachmentPaths) && array_key_exists(1, $attachmentPaths)) {
     ?>
-    <button id="toggle-file-upload-form">Upload Files</button>
+        <h2>Attachments:</h2>
+        <ul>
+            <?php
+            foreach ($attachmentPaths as $attachmentPath) {
+                echo '<li><a href="' . $attachmentPath . '">' . basename($attachmentPath) . '</a></li>';
+            }
+            ?>
+        </ul>
+    <?php
+    }
+    ?>
+    <button id="toggle-file-upload-form">Attach Files</button>
     <div id="file-upload-form" style="display: none;">
-    <h3>Upload Files</h3>
-    <form method="post" action="upload_files_handler.php" enctype="multipart/form-data">
-        <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
-        <input type="hidden" name="username" value="<?= $_SESSION['username'] ?>">
-        <label for="attachment">Attachment:</label>
-        <input id="attachment" name="attachment[]" type="file" multiple>
-        <input type="submit" value="Upload">
-    </form>
-    
-</div>
+        <h3>Upload Files</h3>
+        <form method="post" action="upload_files_handler.php" enctype="multipart/form-data">
+            <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
+            <input type="hidden" name="username" value="<?= $_SESSION['username'] ?>">
+            <label for="attachment">Attachment:</label>
+            <input id="attachment" name="attachment[]" type="file" multiple>
+            <input type="submit" value="Upload">
+        </form>
+
+    </div>
     <?php if ($row['notes'] !== null) : ?>
         <h2>Notes</h2>
         <div class="note">
@@ -193,7 +197,8 @@ if (!empty($attachmentPaths)) {
                     <tr>
                         <td><a href="edit_note.php?note_id=<?= $note['note_id'] ?>&ticket_id=<?= $ticket_id ?>"><?= $note['created'] ?></a></td>
                         <td><?= $note['creator'] ?></td>
-                        <td><?= $note['note'] !== null ? html_entity_decode($note['note']) : '' ?><span class="note_id"><?php if ($note['note_id'] !== null) : ?><a href="edit_note.php?note_id=<?= $note['note_id'] ?>&ticket_id=<?= $ticket_id ?>">Note#: <?= html_entity_decode($note['note_id']) ?></a><?php endif; ?></span></td>                        <td><?= $note['time'] ?></td>
+                        <td><?= $note['note'] !== null ? html_entity_decode($note['note']) : '' ?><span class="note_id"><?php if ($note['note_id'] !== null) : ?><a href="edit_note.php?note_id=<?= $note['note_id'] ?>&ticket_id=<?= $ticket_id ?>">Note#: <?= html_entity_decode($note['note_id']) ?></a><?php endif; ?></span></td>
+                        <td><?= $note['time'] ?></td>
 
                     </tr>
 

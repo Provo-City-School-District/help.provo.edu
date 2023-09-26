@@ -1,5 +1,8 @@
 FROM php:8.2.10-apache
 
+# php adjustments.
+COPY config/customphp.ini /usr/local/etc/php/conf.d/
+
 RUN apt-get update \
   && apt-get install -y --no-install-recommends libpq-dev zip unzip git wget \
   && docker-php-ext-install mysqli pdo_pgsql pdo_mysql

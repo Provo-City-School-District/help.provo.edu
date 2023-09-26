@@ -78,7 +78,7 @@ $admin_page = '/admin.php';
                     <li><a href="<?= $root_domain; ?>/tickets.php">My Tickets</a></li>
                     <!-- <li><a href="#">Group Tickets</a></li> -->
                     <li><a href="<?= $root_domain; ?>/controllers/tickets/recent_tickets.php">Recent Tickets</a></li>
-                    <li><a href="#">Search Tickets</a></li>
+                    <li><a href="<?= $root_domain; ?>/controllers/tickets/search_tickets.php">Search Tickets</a></li>
                     <li><a href="<?= $root_domain; ?>/controllers/tickets/create_ticket.php">Create Ticket</a></li>
                 </ul>
             <?php

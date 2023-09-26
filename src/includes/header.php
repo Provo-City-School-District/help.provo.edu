@@ -9,7 +9,7 @@ include_once('functions.php');
 if (isset($_SESSION['username'])) {
     $is_logged_in = true;
 } elseif (!endsWith($_SERVER['PHP_SELF'], 'index.php')) {
-    header('Location: index.php');
+    header("Location: $root_domain/index.php");
     exit();
 }
 

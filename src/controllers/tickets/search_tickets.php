@@ -1,5 +1,6 @@
 <?php include("../../includes/header.php");
 require_once('../../includes/helpdbconnect.php');
+require_once('../../includes/swdbconnect.php');
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     // Get the search terms from the form
@@ -12,31 +13,65 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
 
     // Construct the SQL query based on the selected search options
-    $ticket_query = "SELECT * FROM tickets WHERE 1=1";
+    $ticket_query = "SELECT * FROM tickets WHERE 1=0";
     if (!empty($search_id)) {
         $search_id = intval($search_id);
-        $ticket_query .= " AND id LIKE '$search_id'";
+        $ticket_query .= " OR id LIKE '$search_id'";
     }
     if (!empty($search_name)) {
-        $ticket_query .= " AND (name LIKE '%$search_name%' OR description LIKE '%$search_name%')";
+        $ticket_query .= " OR (name LIKE '%$search_name%' OR description LIKE '%$search_name%')";
     }
     if (!empty($search_location)) {
-        $ticket_query .= " AND location LIKE '%$search_location%'";
+        $ticket_query .= " OR location LIKE '%$search_location%'";
     }
     if (!empty($search_employee)) {
-        $ticket_query .= " AND employee LIKE '%$search_employee%'";
+        $ticket_query .= " OR employee LIKE '%$search_employee%'";
     }
     if (!empty($search_client)) {
-        $ticket_query .= " AND client LIKE '%$search_client%'";
+        $ticket_query .= " OR client LIKE '%$search_client%'";
     }
     if (!empty($search_status)) {
-        $ticket_query .= " AND status LIKE '%$search_status%'";
+        $ticket_query .= " OR status LIKE '%$search_status%'";
     }
+
+    // Construct the SQL query for the old ticket database
+    $old_ticket_query = "SELECT CONCAT('A-', JOB_TICKET_ID) AS a_id,PROBLEM_TYPE_ID,SUBJECT,QUESTION_TEXT,REPORT_DATE,LAST_UPDATED,JOB_TIME,ASSIGNED_TECH_ID,LOCATION_ID FROM whd.job_ticket WHERE 1=0";
+    if (!empty($search_id)) {
+        $search_id = intval($search_id);
+        $old_ticket_query .= " OR JOB_TICKET_ID LIKE '$search_id'";
+    }
+    if (!empty($search_name)) {
+        $old_ticket_query .= " OR (SUBJECT LIKE '%$search_name%' OR QUESTION_TEXT LIKE '%$search_name%')";
+    }
+    if (!empty($search_location)) {
+        $old_ticket_query .= " OR LOCATION_ID LIKE '%$search_location%'";
+    }
+    if (!empty($search_employee)) {
+        $old_ticket_query .= " OR ASSIGNED_TECH_ID LIKE '%$search_employee%'";
+    }
+    if (!empty($search_client)) {
+        $old_ticket_query .= " OR CLIENT_ID LIKE '%$search_client%'";
+    }
+
+
 
     // Execute the SQL query to search for matching tickets
     $ticket_result = mysqli_query($database, $ticket_query);
-}
+    $old_ticket_result = mysqli_query($swdb, $old_ticket_query);
 
+
+    // Combine the results from both queries into a single array
+    $combined_results = array();
+    while ($row = mysqli_fetch_assoc($ticket_result)) {
+        $combined_results[] = $row;
+    }
+    while ($row = mysqli_fetch_assoc($old_ticket_result)) {
+        $combined_results[] = $row;
+    }
+}
+// echo "<pre>";
+// print_r($combined_results);
+// echo "</pre>";
 // Fetch the list of usernames from the users table
 $usernamesQuery = "SELECT username FROM users";
 $usernamesResult = mysqli_query($database, $usernamesQuery);
@@ -123,32 +158,65 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
         </thead>
         <tbody>
             <?php
-            //   print_r(mysqli_fetch_assoc($ticket_result));
-            // Display the search results in an HTML table
-            while ($row = mysqli_fetch_assoc($ticket_result)) {
 
+            // Display the search results in an HTML table
+            foreach ($combined_results as $row) {
             ?>
                 <?php
-                $due_date = date("y-m-d", strtotime($row['due_date']));
-                $overdue = strtotime($due_date) < strtotime(date("Y-m-d"));
+                // $due_date = date("y-m-d", strtotime($row['due_date']));
+                // $overdue = strtotime($due_date) < strtotime(date("Y-m-d"));
                 ?>
                 <tr>
-                    <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["id"]; ?>"><?= $row["id"] ?></a></td>
-                    <td data-cell="Subject"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["id"]; ?>"><?= $row["name"] ?></a></td>
-                    <td data-cell="Request Detail"><?= limitChars(html_entity_decode($row["description"]), 100) ?></td>
-                    <td data-cell="Location"><?= $row["location"] ?> <br><br>RM <?= $row['room'] ?></td>
-                    <td data-cell="Category"></td>
-                    <td data-cell="Assigned Employee"><?= $row['employee'] ?></td>
-                    <td data-cell="Current Status"><?= $row['status'] ?></td>
-                    <td data-cell="Created"><?= $row['created'] ?></td>
-                    <td data-cell="Last Updated"><?= $row['last_updated'] ?></td>
-                    <?php if ($overdue) { ?>
+                    <?php
+                    // echo "<pre>";
+                    // print_r($row);
+                    // echo "</pre>";
+                    if(isset($row['id'])){
+                        ?>
+                        <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["id"]; ?>"><?= $row["id"] ?></a></td>
+                        <td data-cell="Subject"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["id"]; ?>"><?= $row["name"] ?></a></td>
+                        <td data-cell="Request Detail"><?= limitChars(html_entity_decode($row["description"]), 100) ?></td>
+                        <td data-cell="Location"><?= $row["location"] ?> <br><br>RM <?= $row['room'] ?></td>
+                        <td data-cell="Category"></td>
+                        <td data-cell="Assigned Employee"><?= $row['employee'] ?></td>
+                        <td data-cell="Current Status"><?= $row['status'] ?></td>
+                        <td data-cell="Created"><?= $row['created'] ?></td>
+                        <td data-cell="Last Updated"><?= $row['last_updated'] ?></td>
+                        <td data-cell="Due"><?= $row['due_date'] ?></td>
+                        <?php
+                    }elseif(isset($row['a_id'])){
+                        ?>
+                        <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["a_id"]; ?>"><?= $row["a_id"] ?></a></td>
+                        <td data-cell="Subject"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["a_id"]; ?>"><?= $row["SUBJECT"] ?></a></td>
+                        <td data-cell="Request Detail"><?= limitChars(html_entity_decode($row["QUESTION_TEXT"]), 100) ?></td>
+                        <td data-cell="Location"><?= $row["LOCATION_ID"] ?> <br></td>
+                        <td data-cell="Category"></td>
+                        <td data-cell="Assigned Employee"><?= $row['ASSIGNED_TECH_ID'] ?></td>
+                        <td data-cell="Current Status"></td>
+                        <td data-cell="Created"><?= $row['REPORT_DATE'] ?></td>
+                        <td data-cell="Last Updated"><?= $row['LAST_UPDATED'] ?></td>
+                        <td data-cell="Due"></td>
+                        <?php
+                    }else{
+                        echo "Error";
+                    }
+                    ?>
+                    <!-- <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["id"]; ?>"><?= $row["id"] ?></a></td> -->
+                    <!-- <td data-cell="Subject"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["id"]; ?>"><?= $row["name"] ?></a></td> -->
+                    <!-- <td data-cell="Request Detail"><?= limitChars(html_entity_decode($row["description"]), 100) ?></td> -->
+                    <!-- <td data-cell="Location"><?= $row["location"] ?> <br><br>RM <?= $row['room'] ?></td> -->
+                    <!-- <td data-cell="Category"></td> -->
+                    <!-- <td data-cell="Assigned Employee"><?= $row['employee'] ?></td> -->
+                    <!-- <td data-cell="Current Status"><?= $row['status'] ?></td> -->
+                    <!-- <td data-cell="Created"><?= $row['created'] ?></td> -->
+                    <!-- <td data-cell="Last Updated"><?= $row['last_updated'] ?></td> -->
+                    <!-- <?php if ($overdue) { ?>
                         <td data-cell="Due">
                             <p class="warning"><?= $row['due_date'] ?></p>
                         </td>
                     <?php } else { ?>
                         <td data-cell="Due"><?= $row['due_date'] ?></td>
-                    <?php } ?>
+                    <?php } ?> -->
                 </tr>
 
             <?php

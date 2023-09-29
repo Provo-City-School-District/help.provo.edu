@@ -15,6 +15,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $updatedDueDate = trim(htmlspecialchars($_POST['due_date']));
     $updatedStatus = trim(htmlspecialchars($_POST['status']));
     $updatedby = trim(htmlspecialchars($_POST['madeby']));
+    $updatedPhone = filter_input(INPUT_POST, 'phone', FILTER_SANITIZE_SPECIAL_CHARS);
+
     
     // Get the old ticket data
     $old_ticket_query = "SELECT * FROM tickets WHERE id = ?";
@@ -33,7 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         name = '$updatedName',
         description = '$updatedDescription',
         due_date = '$updatedDueDate',
-        status = '$updatedStatus'
+        status = '$updatedStatus',
+        phone = '$updatedPhone'
         WHERE id = $ticket_id";
 
     // Execute the update queries
@@ -50,6 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $descriptionColumn  = "description";
     $dueDateColumn  = "due_date";
     $statusColumn  = "status";
+    $phoneColumn  = "phone";
 
     // Log the ticket changes
     $log_query = "INSERT INTO ticket_logs (ticket_id, user_id, field_name, old_value, new_value, created_at) VALUES (?, ?, ?, ?, ?, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'))";
@@ -84,6 +88,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     if ($old_ticket_data['status'] != $updatedStatus) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $statusColumn, $old_ticket_data['status'], $updatedStatus);
+        mysqli_stmt_execute($log_stmt);
+    }
+    if ($old_ticket_data['phone'] != $updatedPhone) {
+        mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $phoneColumn, $old_ticket_data['phone'], $updatedPhone);
         mysqli_stmt_execute($log_stmt);
     }
 

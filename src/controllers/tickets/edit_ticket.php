@@ -71,7 +71,9 @@ $usernames = array();
 while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
     $usernames[] = $usernameRow['username'];
 }
-
+// Query the sites table to get the site information
+$location_query = "SELECT sitenumber, location_name FROM locations";
+$location_result = mysqli_query($database, $location_query);
 ?>
 <article id="ticketWrapper">
     <?php
@@ -93,7 +95,12 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
             <input type="hidden" name="madeby" value="<?= $_SESSION['username'] ?>">
             <div>
                 <label for="client">Client:</label>
-                <input type="text" id="client" name="client" value="<?= $row['client'] ?>">
+                <!-- <input type="text" id="client" name="client" value="<?= $row['client'] ?>"> -->
+                <select id="client" name="client">
+                    <?php foreach ($usernames as $username) : ?>
+                        <option value="<?= $username ?>" <?= $row['client'] === $username ? 'selected' : '' ?>><?= $username ?></option>
+                    <?php endforeach; ?>
+                </select>
             </div>
 
             <div> <label for="employee">Assigned Tech:</label>
@@ -105,7 +112,18 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
             </div>
             <div>
                 <label for="location">Location:</label>
-                <input type="text" id="location" name="location" value="<?= $row['location'] ?>">
+                <select id="location" name="location">
+                    <?php
+                    // Loop through the results and create an option for each site
+                    while ($locations = mysqli_fetch_assoc($location_result)) {
+                        $selected = '';
+                        if ($locations['sitenumber'] == $row['location']) {
+                            $selected = 'selected';
+                        }
+                        echo '<option value="' . $locations['sitenumber'] . '" ' . $selected . '>' . $locations['location_name'] . '</option>';
+                    }
+                    ?>
+                </select>
             </div>
 
             <div>

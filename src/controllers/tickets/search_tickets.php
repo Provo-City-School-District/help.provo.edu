@@ -1,6 +1,5 @@
 <?php include("../../includes/header.php");
 require_once('../../includes/helpdbconnect.php');
-require_once('../../includes/swdbconnect.php');
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     // Get the search terms from the form
@@ -31,29 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $ticket_query .= " OR client LIKE '%$search_client%'";
     }
     if (!empty($search_status)) {
-        $ticket_query .= " OR status LIKE '%$search_status%'";
+        $ticket_query .= " AND status LIKE '%$search_status%'";
     }
-
-    // Construct the SQL query for the old ticket database
-    $old_ticket_query = "SELECT CONCAT('A-', JOB_TICKET_ID) AS a_id,PROBLEM_TYPE_ID,SUBJECT,QUESTION_TEXT,REPORT_DATE,LAST_UPDATED,JOB_TIME,ASSIGNED_TECH_ID,LOCATION_ID FROM whd.job_ticket WHERE 1=0";
-    if (!empty($search_id)) {
-        $search_id = intval($search_id);
-        $old_ticket_query .= " OR JOB_TICKET_ID LIKE '$search_id'";
-    }
-    if (!empty($search_name)) {
-        $old_ticket_query .= " OR (SUBJECT LIKE '%$search_name%' OR QUESTION_TEXT LIKE '%$search_name%')";
-    }
-    if (!empty($search_location)) {
-        $old_ticket_query .= " OR LOCATION_ID LIKE '%$search_location%'";
-    }
-    if (!empty($search_employee)) {
-        $old_ticket_query .= " OR ASSIGNED_TECH_ID LIKE '%$search_employee%'";
-    }
-    if (!empty($search_client)) {
-        $old_ticket_query .= " OR CLIENT_ID LIKE '%$search_client%'";
-    }
-
-
 
     // Execute the SQL query to search for matching tickets
     $ticket_result = mysqli_query($database, $ticket_query);
@@ -100,7 +78,19 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
         </div>
         <div class="form-group">
             <label for="search_location">Location:</label>
-            <input type="text" class="form-control" id="search_location" name="search_location" value="<?php echo htmlspecialchars($search_location); ?>">
+            <!-- <input type="text" class="form-control" id="search_location" name="search_location" value="<?php echo htmlspecialchars($search_location); ?>"> -->
+            <select id="search_location" name="search_location">
+                    <?php
+                    // Loop through the results and create an option for each site
+                    while ($locations = mysqli_fetch_assoc($location_result)) {
+                        $selected = '';
+                        if ($locations['sitenumber'] == $row['location']) {
+                            $selected = 'selected';
+                        }
+                        echo '<option value="' . $locations['sitenumber'] . '" ' . $selected . '>' . $locations['location_name'] . '</option>';
+                    }
+                    ?>
+                </select>
         </div>
         <div class="form-group">
             <label for="search_employee">Employee:</label>

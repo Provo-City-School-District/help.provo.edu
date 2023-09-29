@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     }
 
     // Construct the SQL query for the old ticket database
-    $old_ticket_query = "SELECT CONCAT('A-', JOB_TICKET_ID) AS a_id,PROBLEM_TYPE_ID,SUBJECT,QUESTION_TEXT,REPORT_DATE,LAST_UPDATED,JOB_TIME,ASSIGNED_TECH_ID,LOCATION_ID FROM whd.job_ticket WHERE 1=0";
+    $old_ticket_query = "SELECT CONCAT('A-', JOB_TICKET_ID) AS a_id,PROBLEM_TYPE_ID,SUBJECT,QUESTION_TEXT,REPORT_DATE,LAST_UPDATED,JOB_TIME,ASSIGNED_TECH_ID,ROOM,LOCATION_ID FROM whd.job_ticket WHERE 1=0";
     if (!empty($search_id)) {
         $search_id = intval($search_id);
         $old_ticket_query .= " OR JOB_TICKET_ID LIKE '$search_id'";
@@ -215,8 +215,8 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                     <?php
                     } elseif (isset($row['a_id'])) {
                     ?>
-                        <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["a_id"]; ?>"><?= $row["a_id"] ?></a></td>
-                        <td data-cell="Subject"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["a_id"]; ?>"><?= $row["SUBJECT"] ?></a></td>
+                        <td data-cell="ID"><a href="/controllers/tickets/archived_ticket_view.php?id=<?= $row["a_id"]; ?>"><?= $row["a_id"] ?></a></td>
+                        <td data-cell="Subject"><a href="/controllers/tickets/archived_ticket_view.php?id=<?= $row["a_id"]; ?>"><?= $row["SUBJECT"] ?></a></td>
                         <td data-cell="Request Detail"><?= limitChars(html_entity_decode($row["QUESTION_TEXT"]), 100) ?></td>
                         <td data-cell="Location">
                             <?php
@@ -226,7 +226,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                             $location_name = mysqli_fetch_assoc($location_result)['location_name'];
 
                             // Display the location name and room number
-                            echo $location_name;
+                            echo $location_name . '<br><br>RM ' . $row['ROOM'];
                             ?>
                         </td>
                         <td data-cell="Category"></td>

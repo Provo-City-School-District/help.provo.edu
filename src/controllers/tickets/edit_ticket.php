@@ -215,7 +215,6 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                 foreach (json_decode($row['notes'], true) as $note) :
                     $total_time += $note['time']; // Add note time to total time
                 ?>
-
                     <tr>
                         <td><a href="edit_note.php?note_id=<?= $note['note_id'] ?>&ticket_id=<?= $ticket_id ?>"><?= $note['created'] ?></a></td>
                         <td><?= $note['creator'] ?></td>
@@ -223,7 +222,6 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                         <td><?= $note['time'] ?></td>
 
                     </tr>
-
                 <?php endforeach; ?>
             <?php endif; ?>
             <tr class="totalTime">
@@ -231,7 +229,6 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                 <td><?= $total_time ?></td>
             </tr>
             </table>
-
         </div>
         <button id="new-note-button">New Note</button>
         <div id="new-note-form" style="display: none;">
@@ -241,7 +238,6 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                 <input type="hidden" name="username" value="<?= $_SESSION['username'] ?>">
                 <label for="note">Note:</label>
                 <textarea id="note" name="note" class="tinyMCEtextarea"></textarea>
-
                 <label for="note_time">Time in Minutes:</label>
                 <input id="note_time" name="note_time" type="number">
                 <input type="submit" value="Add Note">
@@ -295,7 +291,4 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
         }
         ?>
 </article>
-
-
-
 <?php include("../../includes/footer.php"); ?>

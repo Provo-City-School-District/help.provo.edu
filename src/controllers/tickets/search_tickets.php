@@ -84,9 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $combined_results[] = $row;
     }
 }
-// echo "<pre>";
-// print_r($combined_results);
-// echo "</pre>";
+
 // Fetch the list of usernames from the users table
 $usernamesQuery = "SELECT username FROM users";
 $usernamesResult = mysqli_query($database, $usernamesQuery);
@@ -190,15 +188,8 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
             // Display the search results in an HTML table
             foreach ($combined_results as $row) {
             ?>
-                <?php
-                // $due_date = date("y-m-d", strtotime($row['due_date']));
-                // $overdue = strtotime($due_date) < strtotime(date("Y-m-d"));
-                ?>
                 <tr>
                     <?php
-                    // echo "<pre>";
-                    // print_r($row);
-                    // echo "</pre>";
                     if (isset($row['id'])) {
                     ?>
                         <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["id"]; ?>"><?= $row["id"] ?></a></td>
@@ -228,16 +219,16 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                         <td data-cell="Subject"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["a_id"]; ?>"><?= $row["SUBJECT"] ?></a></td>
                         <td data-cell="Request Detail"><?= limitChars(html_entity_decode($row["QUESTION_TEXT"]), 100) ?></td>
                         <td data-cell="Location">
-                        <?php
-                    // Query the sites table to get the location name
-                    $location_query = "SELECT location_name FROM locations WHERE archived_location_id = " . $row["LOCATION_ID"];
-                    $location_result = mysqli_query($database, $location_query);
-                    $location_name = mysqli_fetch_assoc($location_result)['location_name'];
+                            <?php
+                            // Query the sites table to get the location name
+                            $location_query = "SELECT location_name FROM locations WHERE archived_location_id = " . $row["LOCATION_ID"];
+                            $location_result = mysqli_query($database, $location_query);
+                            $location_name = mysqli_fetch_assoc($location_result)['location_name'];
 
-                    // Display the location name and room number
-                    echo $location_name;
-                    ?>    
-                    </td>
+                            // Display the location name and room number
+                            echo $location_name;
+                            ?>
+                        </td>
                         <td data-cell="Category"></td>
                         <td data-cell="Assigned Employee"><?= $row['ASSIGNED_TECH_ID'] ?></td>
                         <td data-cell="Current Status"></td>
@@ -249,22 +240,6 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                         echo "Error";
                     }
                     ?>
-                    <!-- <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["id"]; ?>"><?= $row["id"] ?></a></td> -->
-                    <!-- <td data-cell="Subject"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["id"]; ?>"><?= $row["name"] ?></a></td> -->
-                    <!-- <td data-cell="Request Detail"><?= limitChars(html_entity_decode($row["description"]), 100) ?></td> -->
-                    <!-- <td data-cell="Location"><?= $row["location"] ?> <br><br>RM <?= $row['room'] ?></td> -->
-                    <!-- <td data-cell="Category"></td> -->
-                    <!-- <td data-cell="Assigned Employee"><?= $row['employee'] ?></td> -->
-                    <!-- <td data-cell="Current Status"><?= $row['status'] ?></td> -->
-                    <!-- <td data-cell="Created"><?= $row['created'] ?></td> -->
-                    <!-- <td data-cell="Last Updated"><?= $row['last_updated'] ?></td> -->
-                    <!-- <?php if ($overdue) { ?>
-                        <td data-cell="Due">
-                            <p class="warning"><?= $row['due_date'] ?></p>
-                        </td>
-                    <?php } else { ?>
-                        <td data-cell="Due"><?= $row['due_date'] ?></td>
-                    <?php } ?> -->
                 </tr>
 
             <?php

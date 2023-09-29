@@ -71,9 +71,7 @@ $usernames = array();
 while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
     $usernames[] = $usernameRow['username'];
 }
-// Query the sites table to get the site information
-$location_query = "SELECT sitenumber, location_name FROM locations";
-$location_result = mysqli_query($database, $location_query);
+
 ?>
 <article id="ticketWrapper">
     <?php
@@ -114,6 +112,9 @@ $location_result = mysqli_query($database, $location_query);
                 <label for="location">Location:</label>
                 <select id="location" name="location">
                     <?php
+                    // Query the sites table to get the site information
+                    $location_query = "SELECT sitenumber, location_name FROM locations";
+                    $location_result = mysqli_query($database, $location_query);
                     // Loop through the results and create an option for each site
                     while ($locations = mysqli_fetch_assoc($location_result)) {
                         $selected = '';

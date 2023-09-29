@@ -54,14 +54,25 @@ require_once('includes/helpdbconnect.php');
                 <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["id"]; ?>"><?= $row["id"] ?></a></td>
                 <td data-cell="Subject"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["id"]; ?>"><?= $row["name"] ?></a></td>
                 <td data-cell="Request Detail"><?= limitChars(html_entity_decode($row["description"]), 100) ?></td>
-                <td data-cell="Location"><?= $row["location"] ?> <br><br>RM <?= $row['room'] ?></td>
+                <td data-cell="Location">
+                    <?php
+                    // Query the sites table to get the location name
+                    $location_query = "SELECT location_name FROM locations WHERE sitenumber = " . $row["location"];
+                    $location_result = mysqli_query($database, $location_query);
+                    $location_name = mysqli_fetch_assoc($location_result)['location_name'];
+
+                    // Display the location name and room number
+                    echo $location_name . '<br><br>RM ' . $row['room'];
+                    ?>
+                </td>
                 <td data-cell="Category"></td>
                 <td data-cell="Assigned Employee"><?= $row['employee'] ?></td>
                 <td data-cell="Current Status"><?= $row['status'] ?></td>
                 <td data-cell="Created"><?= $created ?></td>
                 <td data-cell="Last Updated"><?= $last_update ?></td>
                 <?php if ($overdue) { ?>
-                    <td data-cell="Due"><p class="warning"><?= $due_date ?></p>
+                    <td data-cell="Due">
+                        <p class="warning"><?= $due_date ?></p>
                     </td>
                 <?php } else { ?>
                     <td data-cell="Due"><?= $due_date ?></td>

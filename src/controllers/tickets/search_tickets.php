@@ -40,25 +40,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $ticket_query .= " OR status LIKE '%$search_status%'";
     }
 
+    // Query the archived_location_id values for the given sitenumber
+    $archived_location_ids = array();
+    $arch_location_query = "SELECT archived_location_id FROM locations WHERE sitenumber = '$search_location'";
+    $arch_location_result = $database->query($arch_location_query);
+    if ($arch_location_result->num_rows > 0) {
+        while ($arch_row = $arch_location_result->fetch_assoc()) {
+            $archived_location_ids[] = $arch_row['archived_location_id'];
+        }
+    }
 
     // Construct the SQL query for the old ticket database
-$old_ticket_query = "SELECT CONCAT('A-', JOB_TICKET_ID) AS a_id,PROBLEM_TYPE_ID,SUBJECT,QUESTION_TEXT,REPORT_DATE,LAST_UPDATED,JOB_TIME,ASSIGNED_TECH_ID,LOCATION_ID FROM whd.job_ticket WHERE 1=0";
-if (!empty($search_id)) {
-    $search_id = intval($search_id);
-    $old_ticket_query .= " OR JOB_TICKET_ID LIKE '$search_id'";
-}
-if (!empty($search_name)) {
-    $old_ticket_query .= " OR (SUBJECT LIKE '%$search_name%' OR QUESTION_TEXT LIKE '%$search_name%')";
-}
-if (!empty($search_location)) {
-    $old_ticket_query .= " OR LOCATION_ID IN (SELECT archived_location_id FROM help_database.locations WHERE sitenumber = '$search_location')";
-}
-if (!empty($search_employee)) {
-    $old_ticket_query .= " OR ASSIGNED_TECH_ID LIKE '%$search_employee%'";
-}
-if (!empty($search_client)) {
-    $old_ticket_query .= " OR CLIENT_ID LIKE '%$search_client%'";
-}
+    $old_ticket_query = "SELECT CONCAT('A-', JOB_TICKET_ID) AS a_id,PROBLEM_TYPE_ID,SUBJECT,QUESTION_TEXT,REPORT_DATE,LAST_UPDATED,JOB_TIME,ASSIGNED_TECH_ID,LOCATION_ID FROM whd.job_ticket WHERE 1=0";
+    if (!empty($search_id)) {
+        $search_id = intval($search_id);
+        $old_ticket_query .= " OR JOB_TICKET_ID LIKE '$search_id'";
+    }
+    if (!empty($search_name)) {
+        $old_ticket_query .= " OR (SUBJECT LIKE '%$search_name%' OR QUESTION_TEXT LIKE '%$search_name%')";
+    }
+    if (!empty($search_location)) {
+        $old_ticket_query .= " OR LOCATION_ID IN (" . implode(",", $archived_location_ids) . ")";
+    }
+    if (!empty($search_employee)) {
+        $old_ticket_query .= " OR ASSIGNED_TECH_ID LIKE '%$search_employee%'";
+    }
+    if (!empty($search_client)) {
+        $old_ticket_query .= " OR CLIENT_ID LIKE '%$search_client%'";
+    }
 
 
     // Execute the SQL query to search for matching tickets
@@ -108,18 +117,18 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
             <label for="search_location">Location:</label>
             <!-- <input type="text" class="form-control" id="search_location" name="search_location" value="<?php echo htmlspecialchars($search_location); ?>"> -->
             <select id="search_location" name="search_location">
-                    <option value="" selected></option>
-                    <?php
-                    // Loop through the results and create an option for each site
-                    while ($locations = mysqli_fetch_assoc($location_result)) {
-                        $selected = '';
-                        if ($locations['sitenumber'] == $row['location']) {
-                            $selected = 'selected';
-                        }
-                        echo '<option value="' . $locations['sitenumber'] . '" ' . $selected . '>' . $locations['location_name'] . '</option>';
+                <option value="" selected></option>
+                <?php
+                // Loop through the results and create an option for each site
+                while ($locations = mysqli_fetch_assoc($location_result)) {
+                    $selected = '';
+                    if ($locations['sitenumber'] == $row['location']) {
+                        $selected = 'selected';
                     }
-                    ?>
-                </select>
+                    echo '<option value="' . $locations['sitenumber'] . '" ' . $selected . '>' . $locations['location_name'] . '</option>';
+                }
+                ?>
+            </select>
         </div>
         <div class="form-group">
             <label for="search_employee">Employee:</label>
@@ -190,33 +199,53 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                     // echo "<pre>";
                     // print_r($row);
                     // echo "</pre>";
-                    if(isset($row['id'])){
-                        ?>
+                    if (isset($row['id'])) {
+                    ?>
                         <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["id"]; ?>"><?= $row["id"] ?></a></td>
                         <td data-cell="Subject"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["id"]; ?>"><?= $row["name"] ?></a></td>
                         <td data-cell="Request Detail"><?= limitChars(html_entity_decode($row["description"]), 100) ?></td>
-                        <td data-cell="Location"><?= $row["location"] ?> <br><br>RM <?= $row['room'] ?></td>
+                        <td data-cell="Location">
+                            <?php
+                            // Query the sites table to get the location name
+                            $location_query = "SELECT location_name FROM locations WHERE sitenumber = " . $row["location"];
+                            $location_result = mysqli_query($database, $location_query);
+                            $location_name = mysqli_fetch_assoc($location_result)['location_name'];
+
+                            // Display the location name and room number
+                            echo $location_name . '<br><br>RM ' . $row['room'];
+                            ?>
+                        </td>
                         <td data-cell="Category"></td>
                         <td data-cell="Assigned Employee"><?= $row['employee'] ?></td>
                         <td data-cell="Current Status"><?= $row['status'] ?></td>
                         <td data-cell="Created"><?= $row['created'] ?></td>
                         <td data-cell="Last Updated"><?= $row['last_updated'] ?></td>
                         <td data-cell="Due"><?= $row['due_date'] ?></td>
-                        <?php
-                    }elseif(isset($row['a_id'])){
-                        ?>
+                    <?php
+                    } elseif (isset($row['a_id'])) {
+                    ?>
                         <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["a_id"]; ?>"><?= $row["a_id"] ?></a></td>
                         <td data-cell="Subject"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["a_id"]; ?>"><?= $row["SUBJECT"] ?></a></td>
                         <td data-cell="Request Detail"><?= limitChars(html_entity_decode($row["QUESTION_TEXT"]), 100) ?></td>
-                        <td data-cell="Location"><?= $row["LOCATION_ID"] ?> <br></td>
+                        <td data-cell="Location">
+                        <?php
+                    // Query the sites table to get the location name
+                    $location_query = "SELECT location_name FROM locations WHERE archived_location_id = " . $row["LOCATION_ID"];
+                    $location_result = mysqli_query($database, $location_query);
+                    $location_name = mysqli_fetch_assoc($location_result)['location_name'];
+
+                    // Display the location name and room number
+                    echo $location_name;
+                    ?>    
+                    </td>
                         <td data-cell="Category"></td>
                         <td data-cell="Assigned Employee"><?= $row['ASSIGNED_TECH_ID'] ?></td>
                         <td data-cell="Current Status"></td>
                         <td data-cell="Created"><?= $row['REPORT_DATE'] ?></td>
                         <td data-cell="Last Updated"><?= $row['LAST_UPDATED'] ?></td>
                         <td data-cell="Due"></td>
-                        <?php
-                    }else{
+                    <?php
+                    } else {
                         echo "Error";
                     }
                     ?>

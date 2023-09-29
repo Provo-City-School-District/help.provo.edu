@@ -25,4 +25,3 @@ mysqli_stmt_execute($log_stmt);
 // Redirect back to the edit ticket page
 header("Location: edit_ticket.php?id=$ticket_id");
 exit();
-?>

@@ -47,8 +47,8 @@ $(document).ready(function () {
     column.order("desc").draw(); // Set the sorting order to ascending and redraw the table
   }
 
-   // Change default sorting on /search_tickets.php
-   if (window.location.pathname == "/controllers/tickets/search_tickets.php") {
+  // Change default sorting on /search_tickets.php
+  if (window.location.pathname == "/controllers/tickets/search_tickets.php") {
     console.log("executing search_tickets.php");
     var column = table.column(8); // Get the column object for the 9th column (index 8)
     column.order("desc").draw(); // Set the sorting order to ascending and redraw the table
@@ -74,19 +74,18 @@ if (newNoteButton && newNoteForm) {
   });
 }
 
-    // Check if the toggle-file-upload-form and file-upload-form elements exist before adding the event listener
-    var toggleFileUploadForm = document.getElementById('toggle-file-upload-form');
-    var fileUploadForm = document.getElementById('file-upload-form');
-    if (toggleFileUploadForm && fileUploadForm) {
-        toggleFileUploadForm.addEventListener('click', function() {
-            if (fileUploadForm.style.display === 'none') {
-                fileUploadForm.style.display = 'block';
-            } else {
-                fileUploadForm.style.display = 'none';
-            }
-        });
+// Check if the toggle-file-upload-form and file-upload-form elements exist before adding the event listener
+var toggleFileUploadForm = document.getElementById("toggle-file-upload-form");
+var fileUploadForm = document.getElementById("file-upload-form");
+if (toggleFileUploadForm && fileUploadForm) {
+  toggleFileUploadForm.addEventListener("click", function () {
+    if (fileUploadForm.style.display === "none") {
+      fileUploadForm.style.display = "block";
+    } else {
+      fileUploadForm.style.display = "none";
     }
-
+  });
+}
 
 // Toggle description to make it editable
 var descriptionDiv = document.querySelector(".ticket-description");
@@ -104,11 +103,11 @@ if (descriptionDiv && editDescriptionButton && editDescriptionForm) {
   });
 }
 
- // reset search form
- var resetBtn = document.getElementById("resetBtn");
- if (resetBtn) {
-   resetBtn.addEventListener("click", function() {
-     document.getElementById("searchForm").reset();
-     window.location.href = 'search_tickets.php';
-   });
- }
+// reset search form
+var resetBtn = document.getElementById("resetBtn");
+if (resetBtn) {
+  resetBtn.addEventListener("click", function () {
+    document.getElementById("searchForm").reset();
+    window.location.href = "search_tickets.php";
+  });
+}

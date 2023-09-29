@@ -39,6 +39,3 @@ function limitChars($string, $limit) {
     }
     return $string;
 }
-
-
-?>

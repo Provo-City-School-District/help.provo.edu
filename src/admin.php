@@ -86,7 +86,7 @@ if (!$result) {
                 <td data-cell="Subject"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["id"]; ?>"><?= $row["name"] ?></a></td>
                 <td data-cell="Request Detail"><?= limitChars(html_entity_decode($row["description"]), 100) ?></td>
                 <td data-cell="Location">
-                <?php
+                    <?php
                     // Query the sites table to get the location name
                     $location_query = "SELECT location_name FROM locations WHERE sitenumber = " . $row["location"];
                     $location_result = mysqli_query($database, $location_query);
@@ -102,7 +102,8 @@ if (!$result) {
                 <td data-cell="Created"><?= $created ?></td>
                 <td data-cell="Last Updated"><?= $last_update ?></td>
                 <?php if ($overdue) { ?>
-                    <td data-cell="Due"><p class="warning"><?= $due_date ?></p>
+                    <td data-cell="Due">
+                        <p class="warning"><?= $due_date ?></p>
                     </td>
                 <?php } else { ?>
                     <td data-cell="Due"><?= $due_date ?></td>

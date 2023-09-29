@@ -18,7 +18,7 @@ $old_ticket_result = mysqli_query($swdb, $old_ticket_query);
 ?>
 <article id="ticketWrapper">
     <?php
-     print_r(mysqli_fetch_assoc($old_ticket_result));
+    print_r(mysqli_fetch_assoc($old_ticket_result));
     ?>
 </article>
 <?php

@@ -12,6 +12,7 @@ a {
 	color: var(--do-site-blue);
 	text-decoration: none;
 }
+
 a:hover {
 	color: var(--do-site-yellow);
 }
@@ -123,18 +124,23 @@ tr:nth-of-type(2n) td {
 	background-color: var(--theme-white);
 	padding: 1em;
 }
+
 .ticketGrid {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	gap:10px;
+	gap: 10px;
 }
+
 .ticketGrid>* {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 }
-.note,.ticket_log {
+
+.note,
+.ticket_log {
 	font-size: .8em;
 }
+
 .note table tr {
 	display: grid;
 	grid-template-columns: 150px 150px 1fr 90px;
@@ -145,6 +151,7 @@ tr:nth-of-type(2n) td {
 	grid-template-columns: 1fr 90px;
 	text-align: right;
 }
+
 .note .note_id {
 	font-size: 50%;
 	display: block;

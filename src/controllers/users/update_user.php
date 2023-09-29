@@ -38,4 +38,3 @@ mysqli_close($database);
 $_SESSION['user_updated'] = 'User updated successfully';
 header("Location: manage_user.php?id=$user_id");
 exit();
-?>

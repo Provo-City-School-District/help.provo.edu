@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit();
 }
 ?>
-<?php include("../../includes/header.php");?>
+<?php include("../../includes/header.php"); ?>
 <h2>Edit Note</h2>
 <form method="post">
     <input type="hidden" name="note_id" value="<?= $note_id ?>">

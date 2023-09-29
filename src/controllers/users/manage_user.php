@@ -44,14 +44,14 @@ mysqli_close($database);
 ?>
 <h1>Manage User: <?= ucwords(strtolower($firstname)) . ' ' . ucwords(strtolower($lastname)) ?></h1>
 <?php
-    // Check if a success message is set
-    if (isset($_SESSION['user_updated'])) {
-        echo '<div class="success-message">' . $_SESSION['user_updated'] . '</div>';
+// Check if a success message is set
+if (isset($_SESSION['user_updated'])) {
+    echo '<div class="success-message">' . $_SESSION['user_updated'] . '</div>';
 
-        // Unset the success message to clear it
-        unset($_SESSION['user_updated']);
-    }
-    ?>
+    // Unset the success message to clear it
+    unset($_SESSION['user_updated']);
+}
+?>
 Last Login: <?= $last_login ?><br>
 Username: <?= $username ?><br>
 <form action="update_user.php" method="post">

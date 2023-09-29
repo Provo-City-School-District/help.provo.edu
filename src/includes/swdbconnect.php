@@ -6,4 +6,3 @@ $swdb = mysqli_connect(getenv("SWHELPDESKHOST"), getenv("SWHELPDESKUSER"), geten
 if (!$swdb) {
     die('Connection failed: ' . mysqli_connect_error());
 }
-?>

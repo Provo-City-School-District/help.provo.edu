@@ -84,7 +84,7 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
         } else {
             // Authentication failed
             echo 'Authentication failed';
-            
+
             // Log the failed login attempt
             $logMessage = "Failed login attempt for username: " .  $input_username . " IP: " . $_SERVER["REMOTE_ADDR"] . " at " . date("Y-m-d H:i:s") . "\n";
             error_log($logMessage, 0);
@@ -92,7 +92,6 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
             // Clear the username and password to prevent resubmission
             unset($_POST["password"]);
             unset($_POST["username"]);
-            
         }
 
         // Close LDAP connection

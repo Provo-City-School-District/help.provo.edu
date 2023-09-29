@@ -5,5 +5,3 @@ $is_logged_in = false;
 if (!session_id()) {
     session_start();
 }
-
-?>

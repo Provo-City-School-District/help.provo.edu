@@ -127,7 +127,6 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                     ?>
                 </select>
             </div>
-
             <div>
                 <label for="room">Room:</label>
                 <input type="text" id="room" name="room" value="<?= $row['room'] ?>">
@@ -136,14 +135,10 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                 <label for="phone">Phone:</label>
                 <input type="text" id="phone" name="phone" value="<?= $row['phone'] ?>">
             </div>
-            
-
-
             <div>
                 <label for="due_date">Ticket Due:</label>
                 <input type="date" id="due_date" name="due_date" value="<?= $row['due_date'] ?>">
             </div>
-
             <div>
                 <label for="status">Current Status:</label>
                 <select id="status" name="status">
@@ -157,9 +152,9 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
             </div>
         </div>
         <div>
-                <label for="name">Ticket Title:</label>
-                <input type="text" id="name" name="name" value="<?= $row['name'] ?>">
-            </div>
+            <label for="name">Ticket Title:</label>
+            <input type="text" id="name" name="name" value="<?= $row['name'] ?>">
+        </div>
         <div class="detailContainer">
             <label for="description">Request Detail:</label>
             <div class="ticket-description">
@@ -175,7 +170,10 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
     </form>
     <!-- Loop through the notes and display them -->
     <?php
-    $attachmentPaths = explode(',', $row['attachment_path']);
+    if (isset($row['attachment_path']) && strlen($row['attachment_path']) > 8) {
+        $attachmentPaths = explode(',', $row['attachment_path']);
+    }
+
     // Output links to the file attachments
     if (!empty($attachmentPaths) && array_key_exists(0, $attachmentPaths)) {
     ?>

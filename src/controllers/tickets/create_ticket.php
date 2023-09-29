@@ -28,24 +28,26 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
         <input type="hidden" name="client" value="<?= $_SESSION['username'] ?>">
         <label for="location">Location:</label>
         <select id="location" name="location">
-                    <?php
-                    // Query the sites table to get the site information
-                    $location_query = "SELECT sitenumber, location_name FROM locations";
-                    $location_result = mysqli_query($database, $location_query);
-                    // Loop through the results and create an option for each site
-                    while ($locations = mysqli_fetch_assoc($location_result)) {
-                        $selected = '';
-                        if ($locations['sitenumber'] == $row['location']) {
-                            $selected = 'selected';
-                        }
-                        echo '<option value="' . $locations['sitenumber'] . '" ' . $selected . '>' . $locations['location_name'] . '</option>';
-                    }
-                    ?>
-                </select>
-
+            <?php
+            // Query the sites table to get the site information
+            $location_query = "SELECT sitenumber, location_name FROM locations";
+            $location_result = mysqli_query($database, $location_query);
+            // Loop through the results and create an option for each site
+            while ($locations = mysqli_fetch_assoc($location_result)) {
+                $selected = '';
+                if ($locations['sitenumber'] == $row['location']) {
+                    $selected = 'selected';
+                }
+                echo '<option value="' . $locations['sitenumber'] . '" ' . $selected . '>' . $locations['location_name'] . '</option>';
+            }
+            ?>
+        </select>
+        <br>
         <label for="room">Room:</label>
         <input type="text" id="room" name="room" value="<?= isset($_GET['room']) ? htmlspecialchars($_GET['room']) : '' ?>"><br>
 
+        <label for="phone">Phone:</label>
+        <input type="tel" id="phone" name="phone" required><br>
         <label for="name">Ticket Title:</label>
         <input type="text" id="name" name="name" value="<?= isset($_GET['name']) ? htmlspecialchars($_GET['name']) : '' ?>"><br>
 
@@ -63,12 +65,12 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
     </form>
 </article>
 <script>
-        // Add a new file input field when the "Add Attachment" button is clicked
-        document.getElementById('add-attachment-field').addEventListener('click', function() {
-            var attachmentFields = document.getElementById('attachment-fields');
-            var newAttachmentField = document.createElement('div');
-            newAttachmentField.innerHTML = '<label for="attachment">Attachment:</label><input type="file" id="attachment" name="attachment[]"><br>';
-            attachmentFields.appendChild(newAttachmentField);
-        });
-    </script>
+    // Add a new file input field when the "Add Attachment" button is clicked
+    document.getElementById('add-attachment-field').addEventListener('click', function() {
+        var attachmentFields = document.getElementById('attachment-fields');
+        var newAttachmentField = document.createElement('div');
+        newAttachmentField.innerHTML = '<label for="attachment">Attachment:</label><input type="file" id="attachment" name="attachment[]"><br>';
+        attachmentFields.appendChild(newAttachmentField);
+    });
+</script>
 <?php include("../../includes/footer.php"); ?>

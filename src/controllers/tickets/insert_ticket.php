@@ -19,9 +19,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_SPECIAL_CHARS);
     $description = filter_input(INPUT_POST, 'description', FILTER_SANITIZE_SPECIAL_CHARS);
     $client = $_POST['client'];
+    $phone = filter_input(INPUT_POST, 'phone', FILTER_SANITIZE_SPECIAL_CHARS);
 
     // Check if required fields are empty
-    if (empty($location) || empty($room) || empty($name) || empty($description)) {
+    if (empty($location) || empty($room) || empty($name) || empty($description) || empty($phone)) {
         // Handle empty fields (e.g., show an error message)
         $error = 'All fields are required';
         $formData = http_build_query($_POST);
@@ -56,8 +57,8 @@ if (isset($_FILES['attachment'])) {
 }
 
     // Create an SQL INSERT query
-    $insertQuery = "INSERT INTO tickets (location, room, name, description, created, last_updated, due_date, status, client,attachment_path)
-                VALUES (?, ?, ?, ?, NOW(), NOW(), DATE_ADD(NOW(), INTERVAL 10 DAY), 'open', ?, ?)";
+    $insertQuery = "INSERT INTO tickets (location, room, name, description, created, last_updated, due_date, status, client,attachment_path,phone)
+                VALUES (?, ?, ?, ?, NOW(), NOW(), DATE_ADD(NOW(), INTERVAL 10 DAY), 'open', ?, ?,?)";
 
     // Prepare the SQL statement
     $stmt = mysqli_prepare($database, $insertQuery);
@@ -72,7 +73,7 @@ if (isset($_FILES['attachment'])) {
     $attachmentPath = implode(',', $uploadPath);
     // print_r($uploadPath);
     // Bind parameters
-    mysqli_stmt_bind_param($stmt, 'ssssss', $location, $room, $name, $description, $client, $attachmentPath);
+    mysqli_stmt_bind_param($stmt, 'sssssss', $location, $room, $name, $description, $client, $attachmentPath, $phone);
 
     // Execute the prepared statement
     if (mysqli_stmt_execute($stmt)) {

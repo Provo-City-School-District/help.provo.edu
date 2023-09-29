@@ -28,6 +28,7 @@ tickets.last_updated,
 tickets.due_date,
 tickets.status,
 tickets.attachment_path,
+tickets.phone,
 JSON_ARRAYAGG(
     JSON_OBJECT(
         'note_id', notes.note_id,
@@ -131,11 +132,11 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                 <label for="room">Room:</label>
                 <input type="text" id="room" name="room" value="<?= $row['room'] ?>">
             </div>
-
             <div>
-                <label for="name">Ticket Title:</label>
-                <input type="text" id="name" name="name" value="<?= $row['name'] ?>">
+                <label for="phone">Phone:</label>
+                <input type="text" id="phone" name="phone" value="<?= $row['phone'] ?>">
             </div>
+            
 
 
             <div>
@@ -155,6 +156,10 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                 </select>
             </div>
         </div>
+        <div>
+                <label for="name">Ticket Title:</label>
+                <input type="text" id="name" name="name" value="<?= $row['name'] ?>">
+            </div>
         <div class="detailContainer">
             <label for="description">Request Detail:</label>
             <div class="ticket-description">
@@ -172,7 +177,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
     <?php
     $attachmentPaths = explode(',', $row['attachment_path']);
     // Output links to the file attachments
-    if (!empty($attachmentPaths) && array_key_exists(1, $attachmentPaths)) {
+    if (!empty($attachmentPaths) && array_key_exists(0, $attachmentPaths)) {
     ?>
         <h2>Attachments:</h2>
         <ul>

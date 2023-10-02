@@ -2,6 +2,8 @@
 require_once('../../includes/init.php');
 require_once('../../includes/helpdbconnect.php');
 
+include("ticket_utils.php");
+
 if ($_SESSION['permissions']['is_admin'] != 1) {
     // User is not an admin
     if ($_SESSION['permissions']['can_create_tickets'] == 0) {
@@ -19,6 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $description = filter_input(INPUT_POST, 'description', FILTER_SANITIZE_SPECIAL_CHARS);
     $client = $_POST['client'];
     $phone = filter_input(INPUT_POST, 'phone', FILTER_SANITIZE_SPECIAL_CHARS);
+    $cc_emails = filter_input(INPUT_POST, 'cc_emails', FILTER_SANITIZE_SPECIAL_CHARS);
+    $bcc_emails = filter_input(INPUT_POST, 'bcc_emails', FILTER_SANITIZE_SPECIAL_CHARS);
 
     // Check if required fields are empty
     if (empty($location) || empty($room) || empty($name) || empty($description) || empty($phone)) {
@@ -28,6 +32,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['error_message'] = "All fields are required.";
         header("Location: create_ticket.php?error=$error&$formData");
         exit;
+    }
+
+    $valid_cc_emails = array();
+    if (trim($cc_emails) !== "") {
+        $valid_cc_emails = split_email_string_to_arr($cc_emails);
+        if (!$valid_cc_emails) {
+            $error = 'Error parsing CC emails (invalid format)';
+            $formData = http_build_query($_POST);
+            $_SESSION['error_message'] = "Error parsing CC emails (invalid format)";
+            header("Location: create_ticket.php?error=$error&$formData");
+            exit;
+        }
+    }
+
+    $valid_bcc_emails = array();
+    if (trim($bcc_emails) !== "") {
+        $valid_bcc_emails = split_email_string_to_arr($bcc_emails);
+        if (!$valid_bcc_emails) {
+            $error = 'Error parsing BCC emails (invalid format)';
+            $formData = http_build_query($_POST);
+            $_SESSION['error_message'] = "Error parsing BCC emails (invalid format)";
+            header("Location: create_ticket.php?error=$error&$formData");
+            exit;
+        }
     }
 
     // Handle file upload
@@ -56,8 +84,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Create an SQL INSERT query
-    $insertQuery = "INSERT INTO tickets (location, room, name, description, created, last_updated, due_date, status, client,attachment_path,phone)
-                VALUES (?, ?, ?, ?, NOW(), NOW(), DATE_ADD(NOW(), INTERVAL 10 DAY), 'open', ?, ?,?)";
+    $insertQuery = "INSERT INTO tickets (location, room, name, description, created, last_updated, due_date, status, client,attachment_path,phone,cc_emails,bcc_emails)
+                VALUES (?, ?, ?, ?, NOW(), NOW(), DATE_ADD(NOW(), INTERVAL 10 DAY), 'open', ?, ?, ?, ?, ?)";
 
     // Prepare the SQL statement
     $stmt = mysqli_prepare($database, $insertQuery);
@@ -72,7 +100,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $attachmentPath = implode(',', $uploadPath);
     // print_r($uploadPath);
     // Bind parameters
-    mysqli_stmt_bind_param($stmt, 'sssssss', $location, $room, $name, $description, $client, $attachmentPath, $phone);
+    $cc_emails_clean = implode(',', $valid_cc_emails);
+    $bcc_emails_clean = implode(',', $valid_bcc_emails);
+    mysqli_stmt_bind_param($stmt, 'sssssssss', $location, $room, $name, $description, 
+        $client, $attachmentPath, $phone, $cc_emails_clean, $bcc_emails_clean);
+
 
     // Execute the prepared statement
     if (mysqli_stmt_execute($stmt)) {

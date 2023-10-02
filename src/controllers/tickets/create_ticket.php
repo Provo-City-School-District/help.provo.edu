@@ -30,7 +30,7 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
         <select id="location" name="location">
             <?php
             // Query the sites table to get the site information
-            $location_query = "SELECT sitenumber, location_name FROM locations";
+            $location_query = "SELECT sitenumber, location_name FROM locations ORDER BY location_name ASC";
             $location_result = mysqli_query($database, $location_query);
             // Loop through the results and create an option for each site
             while ($locations = mysqli_fetch_assoc($location_result)) {
@@ -53,6 +53,12 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
 
         <label for="description">Ticket Description:</label>
         <textarea id="description" name="description" class="tinyMCEtextarea"><?= isset($_GET['description']) ? htmlspecialchars($_GET['description']) : '' ?></textarea><br>
+        
+        <label for="cc_emails">Cc</label>
+        <input type="text" id="cc_emails" name="cc_emails" value="<?= isset($_GET['cc_emails']) ? htmlspecialchars($_GET['cc_emails']) : '' ?>"><br>
+
+        <label for="bcc_emails">Bcc</label>
+        <input type="text" id="bcc_emails" name="bcc_emails" value="<?= isset($_GET['bcc_emails']) ? htmlspecialchars($_GET['bcc_emails']) : '' ?>"><br>
 
         <div id="attachment-fields">
             <label for="attachment">Attachment:</label>

@@ -11,6 +11,15 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
     }
 }
 require_once('../../includes/helpdbconnect.php');
+
+// Check if a success message is set
+if (isset($_SESSION['error_message'])) {
+    echo '<div class="error_message-message">' . $_SESSION['error_message'] . '</div>';
+
+    // Unset the success message to clear it
+    unset($_SESSION['error_message']);
+}
+
 // Get the ticket ID from $_GET
 $ticket_id = $_GET['id'];
 
@@ -29,6 +38,8 @@ tickets.due_date,
 tickets.status,
 tickets.attachment_path,
 tickets.phone,
+tickets.cc_emails,
+tickets.bcc_emails,
 JSON_ARRAYAGG(
     JSON_OBJECT(
         'note_id', notes.note_id,
@@ -149,6 +160,14 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                     <option value="vendor" <?= ($row['status'] == 'vendor') ? ' selected' : '' ?>>Vendor</option>
                     <option value="maintenance" <?= ($row['status'] == 'maintenance') ? ' selected' : '' ?>>Maintenance</option>
                 </select>
+            </div>
+            <div>
+                <label for="cc_emails">CC:</label>
+                <input type="text" id="cc_emails" name="cc_emails" value="<?= $row['cc_emails'] ?>">
+            </div>
+            <div>
+                <label for="bcc_emails">BCC:</label>
+                <input type="text" id="bcc_emails" name="bcc_emails" value="<?= $row['bcc_emails'] ?>">
             </div>
         </div>
         <div>

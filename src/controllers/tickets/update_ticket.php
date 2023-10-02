@@ -2,6 +2,8 @@
 require_once('../../includes/init.php');
 require_once('../../includes/helpdbconnect.php');
 
+include("ticket_utils.php");
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Handle the form submission to update the ticket information
     // Retrieve updated values from the form
@@ -17,7 +19,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $updatedby = trim(htmlspecialchars($_POST['madeby']));
     $updatedPhone = filter_input(INPUT_POST, 'phone', FILTER_SANITIZE_SPECIAL_CHARS);
 
-    
+    $updatedCCEmails = filter_input(INPUT_POST, 'cc_emails', FILTER_SANITIZE_SPECIAL_CHARS);
+    $updatedBCCEmails = filter_input(INPUT_POST, 'bcc_emails', FILTER_SANITIZE_SPECIAL_CHARS);
+
+    $valid_cc_emails = array();
+    if (trim($updatedCCEmails) !== "") {
+        $valid_cc_emails = split_email_string_to_arr($updatedCCEmails);
+        if (!$valid_cc_emails) {
+            $error = 'Error parsing CC emails (invalid format)';
+            $formData = http_build_query($_POST);
+            $_SESSION['error_message'] = "Error parsing CC emails (invalid format)";
+            header("Location: edit_ticket.php?error=$error&$formData&id=$ticket_id");
+            exit;
+        }
+    }
+
+    $valid_bcc_emails = array();
+    if (trim($updatedBCCEmails) !== "") {
+        $valid_bcc_emails = split_email_string_to_arr($updatedBCCEmails);
+        if (!$valid_bcc_emails) {
+            $error = 'Error parsing BCC emails (invalid format)';
+            $formData = http_build_query($_POST);
+            $_SESSION['error_message'] = "Error parsing BCC emails (invalid format)";
+            header("Location: edit_ticket.php?error=$error&$formData&id=$ticket_id");
+            exit;
+        }
+    }
+
+
+    // TODO: Make sure client gets emailed
+    if ($updatedStatus == "resolved") {
+        
+    }
+
     // Get the old ticket data
     $old_ticket_query = "SELECT * FROM tickets WHERE id = ?";
     $old_ticket_stmt = mysqli_prepare($database, $old_ticket_query);
@@ -25,6 +59,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     mysqli_stmt_execute($old_ticket_stmt);
     $old_ticket_result = mysqli_stmt_get_result($old_ticket_stmt);
     $old_ticket_data = mysqli_fetch_assoc($old_ticket_result);
+
+    // Repack emails
+    $cc_emails_clean = implode(',', $valid_cc_emails);
+    $bcc_emails_clean = implode(',', $valid_bcc_emails);
 
     // Perform SQL UPDATE queries to update the ticket and notes
     $updateTicketQuery = "UPDATE tickets SET
@@ -36,7 +74,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         description = '$updatedDescription',
         due_date = '$updatedDueDate',
         status = '$updatedStatus',
-        phone = '$updatedPhone'
+        phone = '$updatedPhone',
+        cc_emails = '$cc_emails_clean',
+        bcc_emails = '$bcc_emails_clean'
         WHERE id = $ticket_id";
 
     // Execute the update queries

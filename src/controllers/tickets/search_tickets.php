@@ -206,7 +206,14 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                             echo $location_name . '<br><br>RM ' . $row['room'];
                             ?>
                         </td>
-                        <td data-cell="Category"><?= $row['request_type_id'] ?></td>
+                        <td data-cell="Category">
+                            <?php
+                            $request_type_query = "SELECT request_name FROM request_type WHERE request_id = " . $row['request_type_id'];
+                            $request_type_query_result = mysqli_query($database, $request_type_query);
+                            $request_type_name = mysqli_fetch_assoc($request_type_query_result)['request_name'];
+                            echo $request_type_name;
+                            ?>
+                        </td>
                         <td data-cell="Assigned Employee"><?= $row['employee'] ?></td>
                         <td data-cell="Current Status"><?= $row['status'] ?></td>
                         <td data-cell="Created"><?= $row['created'] ?></td>
@@ -229,7 +236,14 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                             echo $location_name . '<br><br>RM ' . $row['ROOM'];
                             ?>
                         </td>
-                        <td data-cell="Category"><?= $row['PROBLEM_TYPE_ID'] ?></td>
+                        <td data-cell="Category">
+                        <?php
+                            $request_type_query = "SELECT request_name FROM request_type WHERE archived_request_ID = " . $row['PROBLEM_TYPE_ID'];
+                            $request_type_query_result = mysqli_query($database, $request_type_query);
+                            $request_type_name = mysqli_fetch_assoc($request_type_query_result)['request_name'];
+                            echo $request_type_name;
+                            ?>
+                        </td>
                         <td data-cell="Assigned Employee"><?= $row['ASSIGNED_TECH_ID'] ?></td>
                         <td data-cell="Current Status"></td>
                         <td data-cell="Created"><?= $row['REPORT_DATE'] ?></td>

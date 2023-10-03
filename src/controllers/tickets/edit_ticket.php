@@ -40,6 +40,7 @@ tickets.attachment_path,
 tickets.phone,
 tickets.cc_emails,
 tickets.bcc_emails,
+tickets.request_type_id,
 JSON_ARRAYAGG(
     JSON_OBJECT(
         'note_id', notes.note_id,
@@ -68,7 +69,8 @@ if (!$result) {
 }
 
 // Fetch the ticket and notes from the result set
-$row = mysqli_fetch_assoc($result);
+$ticket = mysqli_fetch_assoc($result);
+
 
 // Fetch the list of usernames from the users table
 $usernamesQuery = "SELECT username FROM users";
@@ -95,7 +97,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
         unset($_SESSION['success_message']);
     }
     ?>
-    <h1>Ticket #<?= $row['id'] ?></h1>
+    <h1>Ticket #<?= $ticket['id'] ?></h1>
     <!-- Form for updating ticket information -->
     <form method="POST" action="update_ticket.php">
         <!-- Add a submit button to update the information -->
@@ -105,10 +107,10 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
             <input type="hidden" name="madeby" value="<?= $_SESSION['username'] ?>">
             <div>
                 <label for="client">Client:</label>
-                <!-- <input type="text" id="client" name="client" value="<?= $row['client'] ?>"> -->
+                <!-- <input type="text" id="client" name="client" value="<?= $ticket['client'] ?>"> -->
                 <select id="client" name="client">
                     <?php foreach ($usernames as $username) : ?>
-                        <option value="<?= $username ?>" <?= $row['client'] === $username ? 'selected' : '' ?>><?= $username ?></option>
+                        <option value="<?= $username ?>" <?= $ticket['client'] === $username ? 'selected' : '' ?>><?= $username ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -116,7 +118,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
             <div> <label for="employee">Assigned Tech:</label>
                 <select id="employee" name="employee">
                     <?php foreach ($usernames as $username) : ?>
-                        <option value="<?= $username ?>" <?= $row['employee'] === $username ? 'selected' : '' ?>><?= $username ?></option>
+                        <option value="<?= $username ?>" <?= $ticket['employee'] === $username ? 'selected' : '' ?>><?= $username ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -130,7 +132,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                     // Loop through the results and create an option for each site
                     while ($locations = mysqli_fetch_assoc($location_result)) {
                         $selected = '';
-                        if ($locations['sitenumber'] == $row['location']) {
+                        if ($locations['sitenumber'] == $ticket['location']) {
                             $selected = 'selected';
                         }
                         echo '<option value="' . $locations['sitenumber'] . '" ' . $selected . '>' . $locations['location_name'] . '</option>';
@@ -140,57 +142,124 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
             </div>
             <div>
                 <label for="room">Room:</label>
-                <input type="text" id="room" name="room" value="<?= $row['room'] ?>">
+                <input type="text" id="room" name="room" value="<?= $ticket['room'] ?>">
             </div>
             <div>
                 <label for="phone">Phone:</label>
-                <input type="text" id="phone" name="phone" value="<?= $row['phone'] ?>">
+                <input type="text" id="phone" name="phone" value="<?= $ticket['phone'] ?>">
             </div>
             <div>
+    <label for="request_type">Request Type:</label>
+    <select id="request_type" name="request_type">
+        <option value="">Select a request type</option>
+        <?php
+        // Fetch the top-level request types
+        $topLevelQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_parent IS NULL ORDER BY request_name";
+        $topLevelResult = $database->query($topLevelQuery);
+
+        // Add the top-level request types as options
+        while ($topLevelRow = $topLevelResult->fetch_assoc()) {
+            $selected = '';
+            if ($topLevelRow['request_id'] == $ticket['request_type_id']) {
+                $selected = 'selected';
+            } else {
+                // Check if the ticket's request type is a child or grandchild of this top-level request type
+                $childQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_id = " . $ticket['request_type_id'] . " AND request_parent = " . $topLevelRow['request_id'];
+                $childResult = $database->query($childQuery);
+                if ($childResult->num_rows > 0) {
+                    $selected = 'selected';
+                } else {
+                    $grandchildQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_id = " . $ticket['request_type_id'];
+                    $grandchildResult = $database->query($grandchildQuery);
+                    while ($grandchildRow = $grandchildResult->fetch_assoc()) {
+                        $childQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_id = " . $grandchildRow['request_parent'] . " AND request_parent = " . $topLevelRow['request_id'];
+                        $childResult = $database->query($childQuery);
+                        if ($childResult->num_rows > 0) {
+                            $selected = 'selected';
+                        }
+                    }
+                }
+            }
+            echo '<option value="' . $topLevelRow['request_id'] . '" ' . $selected . '>' . $topLevelRow['request_name'] . '</option>';
+
+            // Fetch the child request types
+            $childQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_parent = " . $topLevelRow['request_id'] . " ORDER BY request_name";
+            $childResult = $database->query($childQuery);
+
+            // Add the child request types as options
+            while ($childRow = $childResult->fetch_assoc()) {
+                $selected = '';
+                if ($childRow['request_id'] == $ticket['request_type_id']) {
+                    $selected = 'selected';
+                } else {
+                    // Check if the ticket's request type is a grandchild of this child request type
+                    $grandchildQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_id = " . $ticket['request_type_id'] . " AND request_parent = " . $childRow['request_id'];
+                    $grandchildResult = $database->query($grandchildQuery);
+                    if ($grandchildResult->num_rows > 0) {
+                        $selected = 'selected';
+                    }
+                }
+                echo '<option value="' . $childRow['request_id'] . '" ' . $selected . '>&nbsp;&nbsp;&nbsp;&nbsp;' . $childRow['request_name'] . '</option>';
+
+                // Fetch the grandchild request types
+                $grandchildQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_parent = " . $childRow['request_id'] . " ORDER BY request_name";
+                $grandchildResult = $database->query($grandchildQuery);
+
+                // Add the grandchild request types as options
+                while ($grandchildRow = $grandchildResult->fetch_assoc()) {
+                    $selected = ($grandchildRow['request_id'] == $ticket['request_type_id']) ? 'selected' : '';
+                    echo '<option value="' . $grandchildRow['request_id'] . '" ' . $selected . '>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . $grandchildRow['request_name'] . '</option>';
+                }
+            }
+        }
+        ?>
+    </select>
+</div>
+            <div>
                 <label for="due_date">Ticket Due:</label>
-                <input type="date" id="due_date" name="due_date" value="<?= $row['due_date'] ?>">
+                <input type="date" id="due_date" name="due_date" value="<?= $ticket['due_date'] ?>">
             </div>
             <div>
                 <label for="status">Current Status:</label>
                 <select id="status" name="status">
-                    <option value="open" <?= ($row['status'] == 'open') ? ' selected' : '' ?>>Open</option>
-                    <option value="closed" <?= ($row['status'] == 'closed') ? ' selected' : '' ?>>Closed</option>
-                    <option value="resolved" <?= ($row['status'] == 'resolved') ? ' selected' : '' ?>>Resolved</option>
-                    <option value="pending" <?= ($row['status'] == 'pending') ? ' selected' : '' ?>>Pending</option>
-                    <option value="vendor" <?= ($row['status'] == 'vendor') ? ' selected' : '' ?>>Vendor</option>
-                    <option value="maintenance" <?= ($row['status'] == 'maintenance') ? ' selected' : '' ?>>Maintenance</option>
+                    <option value="open" <?= ($ticket['status'] == 'open') ? ' selected' : '' ?>>Open</option>
+                    <option value="closed" <?= ($ticket['status'] == 'closed') ? ' selected' : '' ?>>Closed</option>
+                    <option value="resolved" <?= ($ticket['status'] == 'resolved') ? ' selected' : '' ?>>Resolved</option>
+                    <option value="pending" <?= ($ticket['status'] == 'pending') ? ' selected' : '' ?>>Pending</option>
+                    <option value="vendor" <?= ($ticket['status'] == 'vendor') ? ' selected' : '' ?>>Vendor</option>
+                    <option value="maintenance" <?= ($ticket['status'] == 'maintenance') ? ' selected' : '' ?>>Maintenance</option>
                 </select>
             </div>
             <div>
                 <label for="cc_emails">CC:</label>
-                <input type="text" id="cc_emails" name="cc_emails" value="<?= $row['cc_emails'] ?>">
+                <input type="text" id="cc_emails" name="cc_emails" value="<?= $ticket['cc_emails'] ?>">
             </div>
             <div>
                 <label for="bcc_emails">BCC:</label>
-                <input type="text" id="bcc_emails" name="bcc_emails" value="<?= $row['bcc_emails'] ?>">
+                <input type="text" id="bcc_emails" name="bcc_emails" value="<?= $ticket['bcc_emails'] ?>">
             </div>
         </div>
         <div>
             <label for="name">Ticket Title:</label>
-            <input type="text" id="name" name="name" value="<?= $row['name'] ?>">
+            <input type="text" id="name" name="name" value="<?= $ticket['name'] ?>">
         </div>
         <div class="detailContainer">
             <label for="description">Request Detail:</label>
             <div class="ticket-description">
-                <?= html_entity_decode($row['description']) ?>
+                <?= html_entity_decode($ticket['description']) ?>
                 <button id="edit-description-button" type="button">Edit Request Detail</button>
             </div>
 
             <div id="edit-description-form" style="display: none;">
-                <textarea id="description" name="description" class="tinyMCEtextarea"><?= $row['description'] ?></textarea>
+                <textarea id="description" name="description" class="tinyMCEtextarea"><?= $ticket['description'] ?></textarea>
             </div>
         </div>
 
     </form>
     <!-- Loop through the notes and display them -->
     <?php
-    if (isset($row['attachment_path']) && strlen($row['attachment_path']) > 8) {
-        $attachmentPaths = explode(',', $row['attachment_path']);
+    if (isset($ticket['attachment_path']) && strlen($ticket['attachment_path']) > 8) {
+        $attachmentPaths = explode(',', $ticket['attachment_path']);
     }
 
     // Output links to the file attachments
@@ -219,7 +288,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
         </form>
 
     </div>
-    <?php if ($row['notes'] !== null) : ?>
+    <?php if ($ticket['notes'] !== null) : ?>
         <h2>Notes</h2>
         <div class="note">
             <table>
@@ -231,7 +300,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                 </tr>
                 <?php
                 $total_time = 0; // Initialize total time to 0
-                foreach (json_decode($row['notes'], true) as $note) :
+                foreach (json_decode($ticket['notes'], true) as $note) :
                     $total_time += $note['time']; // Add note time to total time
                 ?>
                     <tr>

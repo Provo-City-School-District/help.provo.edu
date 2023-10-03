@@ -46,7 +46,8 @@ JSON_ARRAYAGG(
         'note', notes.note,
         'created', notes.created,
         'creator', notes.creator,
-        'time', notes.time
+        'time', notes.time,
+        'visible_to_client', notes.visible_to_client
     )
 ) AS notes
 FROM
@@ -232,14 +233,21 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                 <?php
                 $total_time = 0; // Initialize total time to 0
                 foreach (json_decode($row['notes'], true) as $note) :
+
+                    // Hidden notes should only be viewable by admins
+                    if ($note['visible_to_client'] == 0 &&
+                        $_SESSION['permissions']['is_admin'] != 1)
+                        continue;
+
                     $total_time += $note['time']; // Add note time to total time
-                ?>
+                    ?>
                     <tr>
                         <td><a href="edit_note.php?note_id=<?= $note['note_id'] ?>&ticket_id=<?= $ticket_id ?>"><?= $note['created'] ?></a></td>
                         <td><?= $note['creator'] ?></td>
-                        <td><?= $note['note'] !== null ? html_entity_decode($note['note']) : '' ?><span class="note_id"><?php if ($note['note_id'] !== null) : ?><a href="edit_note.php?note_id=<?= $note['note_id'] ?>&ticket_id=<?= $ticket_id ?>">Note#: <?= html_entity_decode($note['note_id']) ?></a><?php endif; ?></span></td>
-                        <td><?= $note['time'] ?></td>
-
+                        <td><?= $note['note'] !== null ? html_entity_decode($note['note']) : '' ?><span class="note_id"><?php if ($note['note_id'] !== null) : ?><a href="edit_note.php?note_id=<?= $note['note_id'] ?>&ticket_id=<?= $ticket_id ?>">Note#: <?= html_entity_decode($note['note_id']) ?></a><br><span class="note_footer">
+                            <?= $note['visible_to_client'] ? "Visible to Client" : "Invisible to Client"; ?></span><?php endif; ?></span></td>
+                        
+                        <td><?= $note['time'] ?></td>   
                     </tr>
                 <?php endforeach; ?>
             <?php endif; ?>
@@ -257,6 +265,11 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                 <input type="hidden" name="username" value="<?= $_SESSION['username'] ?>">
                 <label for="note">Note:</label>
                 <textarea id="note" name="note" class="tinyMCEtextarea"></textarea>
+                <!-- TODO: Hide the visible to client option for non admins,
+                        forms make this a pain because it needs to submit a value if false, system currentlyelies on not receiving
+                        a value to assume no (thus hiding it from client) -->
+                <label for="visible_to_client">Visible to Client:</label>
+                <input type="checkbox" id="visible_to_client" name="visible_to_client" checked="checked"><br>
                 <label for="note_time">Time in Minutes:</label>
                 <input id="note_time" name="note_time" type="number">
                 <input type="submit" value="Add Note">

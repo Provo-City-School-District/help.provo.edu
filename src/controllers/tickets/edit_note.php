@@ -30,10 +30,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $updated_time = trim(htmlspecialchars($_POST['note_time']));
     $timestamp = date('Y-m-d H:i:s');
 
+    // Get visible to client state
+    $visible_to_client = 0;
+    if (isset($_POST["visible_to_client"])) {
+        $visible_to_client = 1;
+    }
+
     // Update the note in the database
-    $query = "UPDATE notes SET note = ?, time = ? WHERE note_id = ?";
+    $query = "UPDATE notes SET note = ?, time = ?, visible_to_client = ? WHERE note_id = ?";
     $stmt = mysqli_prepare($database, $query);
-    mysqli_stmt_bind_param($stmt, "ssi", $updated_note, $updated_time, $note_id);
+    mysqli_stmt_bind_param($stmt, "ssii", $updated_note, $updated_time, $visible_to_client, $note_id);
     mysqli_stmt_execute($stmt);
 
     // Log the note update in the ticket_logs table
@@ -58,6 +64,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <label for="note_time">Time in Minutes:</label>
     <input id="note_time" name="note_time" value="<?= $note['time'] ?>"><br>
+        <!-- TODO: Hide the visible to client option for non admins,
+                forms make this a pain because it needs to submit a value if false, system currentlyelies on not receiving
+                a value to assume no (thus hiding it from client) 
+            
+                Although non admins maybe shouldn't be able to edit notes anyway?
+            -->
+    <label for="visible_to_client">Visible to Client:</label>
+    <input type="checkbox" id="visible_to_client" name="visible_to_client"
+    <?php
+        if ($note['visible_to_client'] == 1) {
+            echo "checked=\"checked\"";
+        }
+    ?> value="true">
+
     <input type="submit" value="Save Note">
 </form>
 <?php include("../../includes/footer.php"); ?>

@@ -64,7 +64,7 @@ require_once('../../includes/helpdbconnect.php');
                     echo $location_name . '<br><br>RM ' . $row['room'];
                     ?>
                 </td>
-                <td data-cell="Category"></td>
+                <td data-cell="Category"><?= $row['request_type_id'] ?></td>
                 <td data-cell="Assigned Employee"><?= $row['employee'] ?></td>
                 <td data-cell="Current Status"><?= $row['status'] ?></td>
                 <td data-cell="Created"><?= $created ?></td>

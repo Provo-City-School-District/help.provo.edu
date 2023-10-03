@@ -206,7 +206,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                             echo $location_name . '<br><br>RM ' . $row['room'];
                             ?>
                         </td>
-                        <td data-cell="Category"></td>
+                        <td data-cell="Category"><?= $row['request_type_id'] ?></td>
                         <td data-cell="Assigned Employee"><?= $row['employee'] ?></td>
                         <td data-cell="Current Status"><?= $row['status'] ?></td>
                         <td data-cell="Created"><?= $row['created'] ?></td>
@@ -229,7 +229,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                             echo $location_name . '<br><br>RM ' . $row['ROOM'];
                             ?>
                         </td>
-                        <td data-cell="Category"></td>
+                        <td data-cell="Category"><?= $row['PROBLEM_TYPE_ID'] ?></td>
                         <td data-cell="Assigned Employee"><?= $row['ASSIGNED_TECH_ID'] ?></td>
                         <td data-cell="Current Status"></td>
                         <td data-cell="Created"><?= $row['REPORT_DATE'] ?></td>

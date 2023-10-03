@@ -8,10 +8,16 @@ $note_time = trim(htmlspecialchars($_POST['note_time']));
 $username = trim(htmlspecialchars($_POST['username']));
 $timestamp = date('Y-m-d H:i:s');
 
+// Get visible to client state
+$visible_to_client = 0;
+if (isset($_POST["visible_to_client"])) {
+    $visible_to_client = 1;
+}
+
 // Insert the new note into the database
-$query = "INSERT INTO notes (linked_id, created, creator, note, time) VALUES (?, ?, ?, ?, ?)";
+$query = "INSERT INTO notes (linked_id, created, creator, note, time, visible_to_client) VALUES (?, ?, ?, ?, ?, ?)";
 $stmt = mysqli_prepare($database, $query);
-mysqli_stmt_bind_param($stmt, "issss", $ticket_id, $timestamp, $username, $note, $note_time);
+mysqli_stmt_bind_param($stmt, "issssi", $ticket_id, $timestamp, $username, $note, $note_time, $visible_to_client);
 mysqli_stmt_execute($stmt);
 
 // Log the creation of the new note in the ticket_logs table

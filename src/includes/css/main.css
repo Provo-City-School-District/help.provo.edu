@@ -152,7 +152,7 @@ tr:nth-of-type(2n) td {
 	text-align: right;
 }
 
-.note .note_id {
+.note .note_id .note_subtext {
 	font-size: 50%;
 	display: block;
 	text-align: right;

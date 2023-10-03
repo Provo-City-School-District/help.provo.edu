@@ -18,9 +18,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $updatedStatus = trim(htmlspecialchars($_POST['status']));
     $updatedby = trim(htmlspecialchars($_POST['madeby']));
     $updatedPhone = filter_input(INPUT_POST, 'phone', FILTER_SANITIZE_SPECIAL_CHARS);
-
     $updatedCCEmails = filter_input(INPUT_POST, 'cc_emails', FILTER_SANITIZE_SPECIAL_CHARS);
     $updatedBCCEmails = filter_input(INPUT_POST, 'bcc_emails', FILTER_SANITIZE_SPECIAL_CHARS);
+    $updatedRequestType = trim(htmlspecialchars($_POST['request_type']));
+
 
     $valid_cc_emails = array();
     if (trim($updatedCCEmails) !== "") {
@@ -49,7 +50,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // TODO: Make sure client gets emailed
     if ($updatedStatus == "resolved") {
-        
     }
 
     // Get the old ticket data
@@ -76,7 +76,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         status = '$updatedStatus',
         phone = '$updatedPhone',
         cc_emails = '$cc_emails_clean',
-        bcc_emails = '$bcc_emails_clean'
+        bcc_emails = '$bcc_emails_clean',
+        request_type_id = '$updatedRequestType'
         WHERE id = $ticket_id";
 
     // Execute the update queries
@@ -94,10 +95,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $dueDateColumn  = "due_date";
     $statusColumn  = "status";
     $phoneColumn  = "phone";
+    $requestTypeColumn  = "request_type_id";
 
     // Log the ticket changes
     $log_query = "INSERT INTO ticket_logs (ticket_id, user_id, field_name, old_value, new_value, created_at) VALUES (?, ?, ?, ?, ?, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'))";
     $log_stmt = mysqli_prepare($database, $log_query);
+    if ($old_ticket_data['request_type_id'] != $updatedRequestType) {
+        mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $requestTypeColumn, $old_ticket_data['request_type_id'], $updatedRequestType);
+        mysqli_stmt_execute($log_stmt);
+    }
     if ($old_ticket_data['client'] != $updatedClient) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $clientColumn, $old_ticket_data['client'], $updatedClient);
         mysqli_stmt_execute($log_stmt);

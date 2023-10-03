@@ -149,7 +149,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                 <label for="phone">Phone:</label>
                 <input type="text" id="phone" name="phone" value="<?= $ticket['phone'] ?>">
             </div>
-            <!-- <div>
+            <div>
                 <label for="request_type">Request Type:</label>
                 <select id="request_type" name="request_type">
                     <option value="">Select a request type</option>
@@ -181,7 +181,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                                 }
                             }
                         }
-                        echo '<option value="' . $topLevelRow['request_id'] . '" ' . $selected . '>' . $topLevelRow['request_name'] . '</option>';
+                        echo '<option disabled value="' . $topLevelRow['request_id'] . '" ' . $selected . '>' . $topLevelRow['request_name'] . '</option>';
 
                         // Fetch the child request types
                         $childQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_parent = " . $topLevelRow['request_id'] . " ORDER BY request_name";
@@ -215,17 +215,6 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                     }
                     ?>
                 </select>
-            </div> -->
-            <!-- 
-            TO FIX:    
-            the above code is replaced with the below code as once it was merged in it was not working.  The issue looks to be when a top level option is selected
-            it causes the rest of the page to not load.  an example is if you select Technology Support which is ID 209. the rest of the page will not load however
-            any other ID from the children or grandchildren didn't seem to have the problem.
-
-            i created a simple text input as a placeholder for this while we figure out what is going on. -->
-            <div>
-            <label for="request_type">Request Type:</label>
-            <input type="text" id="request_type" name="request_type" value="<?= $ticket['request_type_id'] ?>">
             </div>
             <div>
                 <label for="due_date">Ticket Due:</label>

@@ -44,7 +44,7 @@ $admin_page = '/admin.php';
 <body>
     <div id="wrapper">
         <header id="mainHeader">
-            <a href="home.php">
+            <a href="<?= $root_domain ?>/home.php">
                 <img src="<?= $root_domain; ?>/includes/img/pcsd-logo-website-header-160w.png" alt="Provo City School District Logo" />
             </a>
             <?php

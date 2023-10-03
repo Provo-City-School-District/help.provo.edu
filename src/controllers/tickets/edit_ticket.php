@@ -149,73 +149,77 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                 <label for="phone">Phone:</label>
                 <input type="text" id="phone" name="phone" value="<?= $ticket['phone'] ?>">
             </div>
-            <div>
-    <label for="request_type">Request Type:</label>
-    <select id="request_type" name="request_type">
-        <option value="">Select a request type</option>
-        <?php
-        // Fetch the top-level request types
-        $topLevelQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_parent IS NULL ORDER BY request_name";
-        $topLevelResult = $database->query($topLevelQuery);
-
-        // Add the top-level request types as options
-        while ($topLevelRow = $topLevelResult->fetch_assoc()) {
-            $selected = '';
-            if ($topLevelRow['request_id'] == $ticket['request_type_id']) {
-                $selected = 'selected';
-            } else {
-                // Check if the ticket's request type is a child or grandchild of this top-level request type
-                $childQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_id = " . $ticket['request_type_id'] . " AND request_parent = " . $topLevelRow['request_id'];
-                $childResult = $database->query($childQuery);
-                if ($childResult->num_rows > 0) {
-                    $selected = 'selected';
-                } else {
-                    $grandchildQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_id = " . $ticket['request_type_id'];
-                    $grandchildResult = $database->query($grandchildQuery);
-                    while ($grandchildRow = $grandchildResult->fetch_assoc()) {
-                        $childQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_id = " . $grandchildRow['request_parent'] . " AND request_parent = " . $topLevelRow['request_id'];
-                        $childResult = $database->query($childQuery);
-                        if ($childResult->num_rows > 0) {
+            <!-- <div>
+                <label for="request_type">Request Type:</label>
+                <select id="request_type" name="request_type">
+                    <option value="">Select a request type</option>
+                    <?php
+                    // Fetch the top-level request types
+                    $topLevelQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_parent IS NULL ORDER BY request_name";
+                    $topLevelResult = $database->query($topLevelQuery);
+                    
+                    // Add the top-level request types as options
+                    while ($topLevelRow = $topLevelResult->fetch_assoc()) {
+                        $selected = '';
+                        if ($topLevelRow['request_id'] == $ticket['request_type_id']) {
                             $selected = 'selected';
+                        } else {
+                            // Check if the ticket's request type is a child or grandchild of this top-level request type
+                            $childQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_id = " . $ticket['request_type_id'] . " AND request_parent = " . $topLevelRow['request_id'];
+                            $childResult = $database->query($childQuery);
+                            if ($childResult->num_rows > 0) {
+                                $selected = 'selected';
+                            } else {
+                                $grandchildQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_id = " . $ticket['request_type_id'];
+                                $grandchildResult = $database->query($grandchildQuery);
+                                while ($grandchildRow = $grandchildResult->fetch_assoc()) {
+                                    $childQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_id = " . $grandchildRow['request_parent'] . " AND request_parent = " . $topLevelRow['request_id'];
+                                    $childResult = $database->query($childQuery);
+                                    if ($childResult->num_rows > 0) {
+                                        $selected = 'selected';
+                                    }
+                                }
+                            }
+                        }
+                        echo '<option value="' . $topLevelRow['request_id'] . '" ' . $selected . '>' . $topLevelRow['request_name'] . '</option>';
+
+                        // Fetch the child request types
+                        $childQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_parent = " . $topLevelRow['request_id'] . " ORDER BY request_name";
+                        $childResult = $database->query($childQuery);
+
+                        // Add the child request types as options
+                        while ($childRow = $childResult->fetch_assoc()) {
+                            $selected = '';
+                            if ($childRow['request_id'] == $ticket['request_type_id']) {
+                                $selected = 'selected';
+                            } else {
+                                // Check if the ticket's request type is a grandchild of this child request type
+                                $grandchildQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_id = " . $ticket['request_type_id'] . " AND request_parent = " . $childRow['request_id'];
+                                $grandchildResult = $database->query($grandchildQuery);
+                                if ($grandchildResult->num_rows > 0) {
+                                    $selected = 'selected';
+                                }
+                            }
+                            echo '<option value="' . $childRow['request_id'] . '" ' . $selected . '>&nbsp;&nbsp;&nbsp;&nbsp;' . $childRow['request_name'] . '</option>';
+
+                            // Fetch the grandchild request types
+                            $grandchildQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_parent = " . $childRow['request_id'] . " ORDER BY request_name";
+                            $grandchildResult = $database->query($grandchildQuery);
+
+                            // Add the grandchild request types as options
+                            while ($grandchildRow = $grandchildResult->fetch_assoc()) {
+                                $selected = ($grandchildRow['request_id'] == $ticket['request_type_id']) ? 'selected' : '';
+                                echo '<option value="' . $grandchildRow['request_id'] . '" ' . $selected . '>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . $grandchildRow['request_name'] . '</option>';
+                            }
                         }
                     }
-                }
-            }
-            echo '<option value="' . $topLevelRow['request_id'] . '" ' . $selected . '>' . $topLevelRow['request_name'] . '</option>';
-
-            // Fetch the child request types
-            $childQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_parent = " . $topLevelRow['request_id'] . " ORDER BY request_name";
-            $childResult = $database->query($childQuery);
-
-            // Add the child request types as options
-            while ($childRow = $childResult->fetch_assoc()) {
-                $selected = '';
-                if ($childRow['request_id'] == $ticket['request_type_id']) {
-                    $selected = 'selected';
-                } else {
-                    // Check if the ticket's request type is a grandchild of this child request type
-                    $grandchildQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_id = " . $ticket['request_type_id'] . " AND request_parent = " . $childRow['request_id'];
-                    $grandchildResult = $database->query($grandchildQuery);
-                    if ($grandchildResult->num_rows > 0) {
-                        $selected = 'selected';
-                    }
-                }
-                echo '<option value="' . $childRow['request_id'] . '" ' . $selected . '>&nbsp;&nbsp;&nbsp;&nbsp;' . $childRow['request_name'] . '</option>';
-
-                // Fetch the grandchild request types
-                $grandchildQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_parent = " . $childRow['request_id'] . " ORDER BY request_name";
-                $grandchildResult = $database->query($grandchildQuery);
-
-                // Add the grandchild request types as options
-                while ($grandchildRow = $grandchildResult->fetch_assoc()) {
-                    $selected = ($grandchildRow['request_id'] == $ticket['request_type_id']) ? 'selected' : '';
-                    echo '<option value="' . $grandchildRow['request_id'] . '" ' . $selected . '>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . $grandchildRow['request_name'] . '</option>';
-                }
-            }
-        }
-        ?>
-    </select>
-</div>
+                    ?>
+                </select>
+            </div> -->
+            <div>
+            <label for="request_type">Request Type:</label>
+            <input type="text" id="request_type" name="request_type" value="<?= $ticket['request_type_id'] ?>">
+            </div>
             <div>
                 <label for="due_date">Ticket Due:</label>
                 <input type="date" id="due_date" name="due_date" value="<?= $ticket['due_date'] ?>">
@@ -304,18 +308,20 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
 
                 foreach (json_decode($ticket['notes'], true) as $note) :
                     // Hidden notes should only be viewable by admins
-                    if ($note['visible_to_client'] == 0 &&
-                        $_SESSION['permissions']['is_admin'] != 1)
+                    if (
+                        $note['visible_to_client'] == 0 &&
+                        $_SESSION['permissions']['is_admin'] != 1
+                    )
                         continue;
                     $total_time += $note['time']; // Add note time to total time
-                    ?>
+                ?>
                     <tr>
                         <td><a href="edit_note.php?note_id=<?= $note['note_id'] ?>&ticket_id=<?= $ticket_id ?>"><?= $note['created'] ?></a></td>
                         <td><?= $note['creator'] ?></td>
                         <td><?= $note['note'] !== null ? html_entity_decode($note['note']) : '' ?><span class="note_id"><?php if ($note['note_id'] !== null) : ?><a href="edit_note.php?note_id=<?= $note['note_id'] ?>&ticket_id=<?= $ticket_id ?>">Note#: <?= html_entity_decode($note['note_id']) ?></a><br><span class="note_footer">
-                            <?= $note['visible_to_client'] ? "Visible to Client" : "Invisible to Client"; ?></span><?php endif; ?></span></td>
-                        
-                        <td><?= $note['time'] ?></td>   
+                                        <?= $note['visible_to_client'] ? "Visible to Client" : "Invisible to Client"; ?></span><?php endif; ?></span></td>
+
+                        <td><?= $note['time'] ?></td>
                     </tr>
                 <?php endforeach; ?>
             <?php endif; ?>

@@ -152,12 +152,12 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
             <div>
                 <label for="request_type">Request Type:</label>
                 <select id="request_type" name="request_type">
-                    <option value="0">Select a request type</option>
+                    <option value="0">Select a more specific request type otherwise (Other)</option>
                     <?php
                     // Fetch the top-level request types
                     $topLevelQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_parent IS NULL ORDER BY request_name";
                     $topLevelResult = $database->query($topLevelQuery);
-                    
+
                     // Add the top-level request types as options
                     while ($topLevelRow = $topLevelResult->fetch_assoc()) {
                         $selected = '';
@@ -316,33 +316,33 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                         <td><?= $note['creator'] ?></td>
                         <td>
                             <?php
-                                /*
+                            /*
                                     May want to reference archived tickets in the future,
                                     ignoring for now though.
                                 */
-                                $pattern = "/WO#\\d{1,6}/";
-                                $note_data = $note['note'];
-                                if ($note_data !== null) {
-                                    $note_data = html_entity_decode($note_data);
+                            $pattern = "/WO#\\d{1,6}/";
+                            $note_data = $note['note'];
+                            if ($note_data !== null) {
+                                $note_data = html_entity_decode($note_data);
 
-                                    $matches = [];
-                                    $match_result = preg_match_all($pattern, $note_data, $matches);
-                                    
-                                    if ($match_result != false) {
-                                        foreach ($matches[0] as $match) {
-                                            $match_str = $match;
-                                            $url_ticket_id = substr($match_str, 3);
-                                            $url = "<a href=\"edit_ticket.php?id=$url_ticket_id\">$match_str</a>";
-                                            $note_data = str_replace($match_str, $url, $note_data);
-                                        }
-                                    } else {
-                                        // match failed
+                                $matches = [];
+                                $match_result = preg_match_all($pattern, $note_data, $matches);
+
+                                if ($match_result != false) {
+                                    foreach ($matches[0] as $match) {
+                                        $match_str = $match;
+                                        $url_ticket_id = substr($match_str, 3);
+                                        $url = "<a href=\"edit_ticket.php?id=$url_ticket_id\">$match_str</a>";
+                                        $note_data = str_replace($match_str, $url, $note_data);
                                     }
-                                    echo $note_data;
+                                } else {
+                                    // match failed
                                 }
+                                echo $note_data;
+                            }
                             ?>
                             <span class="note_id">
-                            <?php
+                                <?php
                                 $note_id = $note["note_id"];
                                 $visible_to_client = $note['visible_to_client'];
                                 if ($note_id !== null) {
@@ -350,7 +350,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                                     echo "<a href=\"edit_note.php?note_id=$note_id&ticket_id=$ticket_id\">Note#: $note_id_text</a><br>";
                                     echo $note['visible_to_client'] ? "Visible to Client" : "Invisible to Client";
                                 }
-                            ?>
+                                ?>
                             </span>
                         </td>
                         <td><?= $note['time'] ?></td>

@@ -314,17 +314,43 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                     <tr>
                         <td><a href="edit_note.php?note_id=<?= $note['note_id'] ?>&ticket_id=<?= $ticket_id ?>"><?= $note['created'] ?></a></td>
                         <td><?= $note['creator'] ?></td>
-                        <td><?= $note['note'] !== null ? html_entity_decode($note['note']) : '' ?>
-                            <span class="note_id">
-                                <?php 
-                                    $note_id = $note["note_id"];
-                                    $visible_to_client = $note['visible_to_client'];
-                                    if ($note_id !== null) {
-                                        $note_id_text =  html_entity_decode($note_id);
-                                        echo "<a href=\"edit_note.php?note_id=$note_id&ticket_id=$ticket_id\">Note#: $note_id_text</a><br>";
-                                        echo $note['visible_to_client'] ? "Visible to Client" : "Invisible to Client";
+                        <td>
+                            <?php
+                                /*
+                                    May want to reference archived tickets in the future,
+                                    ignoring for now though.
+                                */
+                                $pattern = "/WO#\\d{1,6}/";
+                                $note_data = $note['note'];
+                                if ($note_data !== null) {
+                                    $note_data = html_entity_decode($note_data);
+
+                                    $matches = [];
+                                    $match_result = preg_match_all($pattern, $note_data, $matches);
+                                    
+                                    if ($match_result != false) {
+                                        foreach ($matches[0] as $match) {
+                                            $match_str = $match;
+                                            $url_ticket_id = substr($match_str, 3);
+                                            $url = "<a href=\"edit_ticket.php?id=$url_ticket_id\">$match_str</a>";
+                                            $note_data = str_replace($match_str, $url, $note_data);
+                                        }
+                                    } else {
+                                        // match failed
                                     }
-                                ?>
+                                    echo $note_data;
+                                }
+                            ?>
+                            <span class="note_id">
+                            <?php
+                                $note_id = $note["note_id"];
+                                $visible_to_client = $note['visible_to_client'];
+                                if ($note_id !== null) {
+                                    $note_id_text =  html_entity_decode($note_id);
+                                    echo "<a href=\"edit_note.php?note_id=$note_id&ticket_id=$ticket_id\">Note#: $note_id_text</a><br>";
+                                    echo $note['visible_to_client'] ? "Visible to Client" : "Invisible to Client";
+                                }
+                            ?>
                             </span>
                         </td>
                         <td><?= $note['time'] ?></td>

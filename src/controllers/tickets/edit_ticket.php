@@ -152,7 +152,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
             <div>
                 <label for="request_type">Request Type:</label>
                 <select id="request_type" name="request_type">
-                    <option value="">Select a request type</option>
+                    <option value="0">Select a request type</option>
                     <?php
                     // Fetch the top-level request types
                     $topLevelQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_parent IS NULL ORDER BY request_name";

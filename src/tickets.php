@@ -67,10 +67,14 @@ require_once('includes/helpdbconnect.php');
                 </td>
                 <td data-cell="Category">
                     <?php
-                    $request_type_query = "SELECT request_name FROM request_type WHERE request_id = " . $row['request_type_id'];
-                    $request_type_query_result = mysqli_query($database, $request_type_query);
-                    $request_type_name = mysqli_fetch_assoc($request_type_query_result)['request_name'];
-                    echo $request_type_name;
+                    if ($row['request_type_id'] === '0') {
+                        echo "Other";
+                    } else {
+                        $request_type_query = "SELECT request_name FROM request_type WHERE request_id = " . $row['request_type_id'];
+                        $request_type_query_result = mysqli_query($database, $request_type_query);
+                        $request_type_name = mysqli_fetch_assoc($request_type_query_result)['request_name'];
+                        echo $request_type_name;
+                    }
                     ?>
                 </td>
                 <td data-cell="Assigned Employee"><?= $row['employee'] ?></td>

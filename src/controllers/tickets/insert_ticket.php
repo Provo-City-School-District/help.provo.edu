@@ -102,8 +102,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Bind parameters
     $cc_emails_clean = implode(',', $valid_cc_emails);
     $bcc_emails_clean = implode(',', $valid_bcc_emails);
-    mysqli_stmt_bind_param($stmt, 'sssssssss', $location, $room, $name, $description, 
-        $client, $attachmentPath, $phone, $cc_emails_clean, $bcc_emails_clean);
+    mysqli_stmt_bind_param(
+        $stmt,
+        'sssssssss',
+        $location,
+        $room,
+        $name,
+        $description,
+        $client,
+        $attachmentPath,
+        $phone,
+        $cc_emails_clean,
+        $bcc_emails_clean
+    );
 
 
     // Execute the prepared statement

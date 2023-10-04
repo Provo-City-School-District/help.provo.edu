@@ -40,6 +40,7 @@ tickets.attachment_path,
 tickets.phone,
 tickets.cc_emails,
 tickets.bcc_emails,
+tickets.priority,
 tickets.request_type_id,
 JSON_ARRAYAGG(
     JSON_OBJECT(
@@ -229,6 +230,18 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                     <option value="pending" <?= ($ticket['status'] == 'pending') ? ' selected' : '' ?>>Pending</option>
                     <option value="vendor" <?= ($ticket['status'] == 'vendor') ? ' selected' : '' ?>>Vendor</option>
                     <option value="maintenance" <?= ($ticket['status'] == 'maintenance') ? ' selected' : '' ?>>Maintenance</option>
+                </select>
+            </div>
+            <div>
+                <label for="priority">Priority:</label>
+                <select id="priority" name="priority">
+                    <option value="1" <?= ($ticket['priority'] == '1') ? ' selected' : '' ?>>Critical</option>
+                    <option value="3" <?= ($ticket['priority'] == '3') ? ' selected' : '' ?>>Urgent</option>
+                    <option value="5" <?= ($ticket['priority'] == '5') ? ' selected' : '' ?>>High</option>
+                    <option value="10" <?= ($ticket['priority'] == '10') ? ' selected' : '' ?>>Standard</option>
+                    <option value="15" <?= ($ticket['priority'] == '15') ? ' selected' : '' ?>>Client Response</option>
+                    <option value="30" <?= ($ticket['priority'] == '30') ? ' selected' : '' ?>>Project</option>
+                    <option value="60" <?= ($ticket['priority'] == '60') ? ' selected' : '' ?>>Meeting Support</option>
                 </select>
             </div>
             <div>

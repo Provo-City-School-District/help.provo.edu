@@ -220,10 +220,11 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
 
             <!-- 
                     need to build out a way to over ride the due date
+                -->
             <div>
                 <label for="due_date">Ticket Due Date Override:</label>
                 <input type="date" id="due_date" name="due_date" value="<?= $ticket['due_date'] ?>">
-            </div> -->
+            </div>
             <div>
                 <label for="status">Current Status:</label>
                 <select id="status" name="status">

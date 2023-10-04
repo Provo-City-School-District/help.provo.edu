@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!$valid_cc_emails) {
             $error = 'Error parsing CC emails (invalid format)';
             $formData = http_build_query($_POST);
-            $_SESSION['error_message'] = "Error parsing CC emails (invalid format)";
+            $_SESSION['error_message'] = $error;
             header("Location: edit_ticket.php?error=$error&$formData&id=$ticket_id");
             exit;
         }
@@ -41,15 +41,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!$valid_bcc_emails) {
             $error = 'Error parsing BCC emails (invalid format)';
             $formData = http_build_query($_POST);
-            $_SESSION['error_message'] = "Error parsing BCC emails (invalid format)";
+            $_SESSION['error_message'] = $error;
             header("Location: edit_ticket.php?error=$error&$formData&id=$ticket_id");
             exit;
         }
     }
 
-
-    // TODO: Make sure client gets emailed
+    /*
+    WIP:
+        Make sure client gets emailed
+        mail() doesn't seem to be working, might need config from server end
+        may use something else
+    */
+    $client_email_sent = false;
     if ($updatedStatus == "resolved") {
+        $client_email = email_address_from_username($updatedClient);
+        $ticket_subject = "Ticket ".$ticket_id;
+
+        $email_res = send_email($client_email, $ticket_subject, "Ticket ".$ticket_id." has been resolved.");
+        if (!$email_res) {
+            $error = 'Error sending email to client';
+            $formData = http_build_query($_POST);
+            $_SESSION['error_message'] = $error;
+            header("Location: edit_ticket.php?error=$error&$formData&id=$ticket_id");
+            exit;
+        } else {
+            $client_email_sent = true;
+        }
     }
 
     // Get the old ticket data
@@ -141,8 +159,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         mysqli_stmt_execute($log_stmt);
     }
 
+    $msg = "Ticket updated successfully.";
     // After successfully updating the ticket, set a success message;
-    $_SESSION['success_message'] = "Ticket updated successfully.";
+    if ($client_email_sent) {
+        $msg = "Ticket updated successfully. An email was sent to the client.";
+    }
+
+    $_SESSION['success_message'] = $msg;
     // Redirect to the same page after successful update
     header('Location: edit_ticket.php?id=' . $ticket_id);
     exit;

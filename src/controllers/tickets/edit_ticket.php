@@ -320,7 +320,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                                     May want to reference archived tickets in the future,
                                     ignoring for now though.
                                 */
-                            $pattern = "/WO#\\d{1,6}/";
+                            $pattern = "/#\\d{1,6}/";
                             $note_data = $note['note'];
                             if ($note_data !== null) {
                                 $note_data = html_entity_decode($note_data);
@@ -331,7 +331,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                                 if ($match_result != false) {
                                     foreach ($matches[0] as $match) {
                                         $match_str = $match;
-                                        $url_ticket_id = substr($match_str, 3);
+                                        $url_ticket_id = substr($match_str, 1);
                                         $url = "<a href=\"edit_ticket.php?id=$url_ticket_id\">$match_str</a>";
                                         $note_data = str_replace($match_str, $url, $note_data);
                                     }

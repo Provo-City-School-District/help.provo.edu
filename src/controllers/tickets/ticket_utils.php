@@ -1,6 +1,24 @@
 <?php
 require_once('../../includes/helpdbconnect.php');
 
+function email_address_from_username(string $username)
+{
+    return $username."@provo.edu";
+}
+
+function send_email(
+    string $recipient,
+    string $subject,
+    string $message)
+{
+    // Make sure line is 70 chars max and uses \r\n according to PHP docs
+    // https://www.php.net/manual/en/function.mail.php
+    $message = wordwrap($message, 70, "\r\n");
+
+    $res = mail($recipient, $subject, $message);
+    return $res;
+}
+
 function email_if_valid(string $email)
 {
     $clean_email = filter_var($email, FILTER_SANITIZE_EMAIL);

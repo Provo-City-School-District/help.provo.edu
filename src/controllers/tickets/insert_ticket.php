@@ -84,8 +84,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Create an SQL INSERT query
-    $insertQuery = "INSERT INTO tickets (location, room, name, description, created, last_updated, status, client,attachment_path,phone,cc_emails,bcc_emails,request_type_id,priority)
-                VALUES (?, ?, ?, ?, NOW(), NOW(), 'open', ?, ?, ?, ?, ?,0,10)";
+    $insertQuery = "INSERT INTO tickets (location, room, name, description, created, last_updated, due_date, status, client,attachment_path,phone,cc_emails,bcc_emails,request_type_id,priority)
+                VALUES (?, ?, ?, ?, NOW(), NOW(), DATE_ADD(NOW(), INTERVAL 10 DAY),'open', ?, ?, ?, ?, ?,0,10)";
 
     // Prepare the SQL statement
     $stmt = mysqli_prepare($database, $insertQuery);

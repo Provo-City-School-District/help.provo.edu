@@ -5,8 +5,8 @@ COPY config/customphp.ini /usr/local/etc/php/conf.d/
 
 # Create the uploads directory and set permissions
 RUN mkdir -p /var/www/html/src/controllers/tickets/uploads \
-    && chown -R www-data:www-data /var/www/html/src/controllers/tickets/uploads \
-    && chmod -R 755 /var/www/html/src/controllers/tickets/uploads
+  && chown -R www-data:www-data /var/www/html/src/controllers/tickets/uploads \
+  && chmod -R 755 /var/www/html/src/controllers/tickets/uploads
 
 RUN apt-get update \
   && apt-get install -y --no-install-recommends libpq-dev zip unzip git wget \

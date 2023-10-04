@@ -23,7 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $updatedRequestType = trim(htmlspecialchars($_POST['request_type']));
     $updatedPriority = trim(htmlspecialchars($_POST['priority']));
 
-
     $valid_cc_emails = array();
     if (trim($updatedCCEmails) !== "") {
         $valid_cc_emails = split_email_string_to_arr($updatedCCEmails);
@@ -57,9 +56,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $client_email_sent = false;
     if ($updatedStatus == "resolved") {
         $client_email = email_address_from_username($updatedClient);
-        $ticket_subject = "Ticket ".$ticket_id;
+        $ticket_subject = "Ticket " . $ticket_id;
 
-        $email_res = send_email($client_email, $ticket_subject, "Ticket ".$ticket_id." has been resolved.");
+        $email_res = send_email($client_email, $ticket_subject, "Ticket " . $ticket_id . " has been resolved.");
         if (!$email_res) {
             $error = 'Error sending email to client';
             $formData = http_build_query($_POST);
@@ -125,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $priorityColumn, $old_ticket_data['priority'], $updatedPriority);
         mysqli_stmt_execute($log_stmt);
     }
-    
+
     if ($old_ticket_data['request_type_id'] != $updatedRequestType) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $requestTypeColumn, $old_ticket_data['request_type_id'], $updatedRequestType);
         mysqli_stmt_execute($log_stmt);

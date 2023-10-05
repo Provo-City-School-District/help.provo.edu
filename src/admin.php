@@ -45,6 +45,39 @@ if (!$user_result) {
 ?>
 </tr>
 </table>
+
+<h1>Add Exclude Day</h1>
+
+<form method="POST" action="<?= $root_domain ?>/controllers/admin/exclude_days.php">
+    <div>
+        <label for="exclude_day">Exclude Day:</label>
+        <input type="date" id="exclude_day" name="exclude_day">
+    </div>
+    <button type="submit">Add Exclude Day</button>
+</form>
+<h1>Exclude Days</h1>
+<?php
+// Fetch the exclude days from the database
+$exclude_query = "SELECT * FROM exclude_days ORDER BY exclude_day";
+$exclude_result = mysqli_query($database, $exclude_query);
+?>
+<table class="exclude_days data-table">
+    <thead>
+        <tr>
+            <th>Exclude Day</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php while ($exclude_row = mysqli_fetch_assoc($exclude_result)) : ?>
+            <tr>
+                <td><?= $exclude_row['exclude_day'] ?></td>
+                <td><a href="<?= $root_domain ?>/controllers/admin/delete_exclude_day.php?id=<?= $exclude_row['id'] ?>">Delete</a></td>
+            </tr>
+        <?php endwhile; ?>
+    </tbody>
+</table>
+
 <h2>All Tickets</h2>
 <table class="ticketsTable data-table">
     <thead>
@@ -125,4 +158,6 @@ if (!$user_result) {
         ?>
     </tbody>
 </table>
+
+
 <?php include("includes/footer.php"); ?>

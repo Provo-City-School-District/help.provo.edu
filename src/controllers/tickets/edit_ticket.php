@@ -11,7 +11,7 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
     }
 }
 require_once('../../includes/helpdbconnect.php');
-
+include("ticket_functions.php");
 // Check if a success message is set
 if (isset($_SESSION['error_message'])) {
     echo '<div class="error_message-message">' . $_SESSION['error_message'] . '</div>';
@@ -100,6 +100,28 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
     }
     ?>
     <h1>Ticket #<?= $ticket['id'] ?></h1>
+    created: <?= $ticket['created'] ?><br>
+    last updated: <?= $ticket['last_updated'] ?><br>
+    <?php
+    // Get the priority value from the ticket row
+    $priority = $ticket['priority'];
+    // Calculate the due date by adding the priority days to the created date
+    $created_date = new DateTime($ticket['created']);
+    $due_date = clone $created_date;
+    $due_date->modify("+{$priority} weekdays");
+
+    // Check if the due date falls on a weekend or excluded date
+    while (isWeekend($due_date)) {
+        $due_date->modify("+1 day");
+    }
+    $count = hasExcludedDate($created_date->format('Y-m-d'), $due_date->format('Y-m-d'));
+    if ($count > 0) {
+        $due_date->modify("{$count} day");
+    }
+    // Format the due date as a string
+    $due_date = $due_date->format('Y-m-d');
+    ?>
+    due date: <?= $due_date ?><br>
     <!-- Form for updating ticket information -->
     <form method="POST" action="update_ticket.php">
         <!-- Add a submit button to update the information -->
@@ -219,11 +241,11 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
             </div>
 
             <!-- 
-                    need to build out a way to over ride the due date
+                    need to build out a way to over ride the due date.
                 -->
             <div>
                 <label for="due_date">Ticket Due Date Override:</label>
-                <input type="date" id="due_date" name="due_date" value="<?= $ticket['due_date'] ?>">
+                <input type="date" id="due_date" name="due_date" value="<?= $due_date ?>">
             </div>
             <div>
                 <label for="status">Current Status:</label>

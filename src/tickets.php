@@ -10,6 +10,7 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
     }
 }
 require_once('includes/helpdbconnect.php');
+include("controllers/tickets/ticket_functions.php");
 ?>
 
 <h1> Tickets Page</h1>
@@ -39,16 +40,7 @@ require_once('includes/helpdbconnect.php');
 
         $ticket_result = mysqli_query($database, $ticket_query);
         while ($ticket_row = mysqli_fetch_assoc($ticket_result)) {
-            // $last_update = date("y-m-d", strtotime($ticket_row['last_updated']));
-            // $created = $ticket_row['created']; // Get the value from the database
 
-            // if ($created !== null) {
-            //     $created = date("y-m-d", strtotime($created)); // Convert to date if not null
-            // } else {
-            //     $created = ''; // Set to an empty string or handle the case as needed
-            // }
-            // $due_date = date("y-m-d", strtotime($ticket_row['due_date']));
-            // $overdue = strtotime($due_date) < strtotime(date("Y-m-d"));
         ?>
             <tr>
                 <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id=<?= $ticket_row["id"]; ?>"><?= $ticket_row["id"] ?></a></td>
@@ -81,14 +73,26 @@ require_once('includes/helpdbconnect.php');
                 <td data-cell="Current Status"><?= $ticket_row['status'] ?></td>
                 <td data-cell="Created"><?= $ticket_row['created'] ?></td>
                 <td data-cell="Last Updated"><?= $ticket_row['last_updated'] ?></td>
-                <td data-cell="Due"></td>
-                <!-- <?php if ($overdue) { ?>
-                    <td data-cell="Due">
-                        <p class="warning"><?= $due_date ?></p>
-                    </td>
-                <?php } else { ?>
-                    <td data-cell="Due"><?= $due_date ?></td>
-                <?php } ?> -->
+                <?php
+                // Get the priority value from the ticket row
+                $priority = $ticket_row['priority'];
+                // Calculate the due date by adding the priority days to the created date
+                $created_date = new DateTime($ticket_row['created']);
+                $due_date = clone $created_date;
+                $due_date->modify("+{$priority} weekdays");
+
+                // Check if the due date falls on a weekend or excluded date
+                while (isWeekend($due_date)) {
+                    $due_date->modify("+1 day");
+                }
+                $count = hasExcludedDate($created_date->format('Y-m-d'), $due_date->format('Y-m-d'));
+                if ($count > 0) {
+                    $due_date->modify("{$count} day");
+                }
+                // Format the due date as a string
+                $due_date = $due_date->format('Y-m-d');
+                ?>
+                <td data-cell="Due"><?= $due_date ?></td>
             </tr>
         <?php
         } // end while

@@ -1,7 +1,7 @@
 <?php include("../../includes/header.php");
 require_once('../../includes/helpdbconnect.php');
 require_once('../../includes/swdbconnect.php');
-
+include("ticket_functions.php");
 
 // Query the sites table to get the site information
 $location_query = "SELECT sitenumber, location_name FROM locations";
@@ -222,7 +222,26 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                         <td data-cell="Current Status"><?= $row['status'] ?></td>
                         <td data-cell="Created"><?= $row['created'] ?></td>
                         <td data-cell="Last Updated"><?= $row['last_updated'] ?></td>
-                        <td data-cell="Due"><?= $row['due_date'] ?></td>
+                        <?php
+                        // Get the priority value from the ticket row
+                        $priority = $row['priority'];
+                        // Calculate the due date by adding the priority days to the created date
+                        $created_date = new DateTime($row['created']);
+                        $due_date = clone $created_date;
+                        $due_date->modify("+{$priority} weekdays");
+
+                        // Check if the due date falls on a weekend or excluded date
+                        while (isWeekend($due_date)) {
+                            $due_date->modify("+1 day");
+                        }
+                        $count = hasExcludedDate($created_date->format('Y-m-d'), $due_date->format('Y-m-d'));
+                        if ($count > 0) {
+                            $due_date->modify("{$count} day");
+                        }
+                        // Format the due date as a string
+                        $due_date = $due_date->format('Y-m-d');
+                        ?>
+                        <td data-cell="Due"><?= $due_date ?></td>
                     <?php
                     } elseif (isset($row['a_id'])) {
                     ?>

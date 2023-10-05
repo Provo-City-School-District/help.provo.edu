@@ -8,10 +8,10 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
 }
 require_once('includes/helpdbconnect.php');
 // Execute the SELECT query to retrieve all users from the users table
-$query = "SELECT * FROM users";
-$result = mysqli_query($database, $query);
+$users_query = "SELECT * FROM users";
+$user_result = mysqli_query($database, $users_query);
 // Check if the query was successful
-if (!$result) {
+if (!$user_result) {
     die("Query failed: " . mysqli_error($conn));
 }
 ?>
@@ -29,16 +29,16 @@ if (!$result) {
     </tr>
     <tr>
         <?php // Display the results in an HTML table
-        while ($row = mysqli_fetch_assoc($result)) {
+        while ($user_row = mysqli_fetch_assoc($user_result)) {
         ?>
     <tr>
-        <td><a href="controllers/users/manage_user.php?id=<?= $row['id'] ?>"><?= $row['username'] ?></a></td>
-        <td><?= ucwords(strtolower($row['firstname'])) ?></td>
-        <td><?= ucwords(strtolower($row['lastname'])) ?></td>
-        <td><?= $row['email'] ?></td>
-        <td><?= ($row['is_admin'] == 1 ? 'Yes' : 'No') ?></td>
-        <td><?= $row['ifasid'] ?></td>
-        <td><?= $row['last_login'] ?></td>
+        <td><a href="controllers/users/manage_user.php?id=<?= $user_row['id'] ?>"><?= $user_row['username'] ?></a></td>
+        <td><?= ucwords(strtolower($user_row['firstname'])) ?></td>
+        <td><?= ucwords(strtolower($user_row['lastname'])) ?></td>
+        <td><?= $user_row['email'] ?></td>
+        <td><?= ($user_row['is_admin'] == 1 ? 'Yes' : 'No') ?></td>
+        <td><?= $user_row['ifasid'] ?></td>
+        <td><?= $user_row['last_login'] ?></td>
     </tr>
 <?php
         }

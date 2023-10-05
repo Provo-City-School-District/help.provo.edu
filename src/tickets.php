@@ -39,16 +39,16 @@ require_once('includes/helpdbconnect.php');
 
         $ticket_result = mysqli_query($database, $ticket_query);
         while ($ticket_row = mysqli_fetch_assoc($ticket_result)) {
-            $last_update = date("y-m-d", strtotime($ticket_row['last_updated']));
-            $created = $ticket_row['created']; // Get the value from the database
+            // $last_update = date("y-m-d", strtotime($ticket_row['last_updated']));
+            // $created = $ticket_row['created']; // Get the value from the database
 
-            if ($created !== null) {
-                $created = date("y-m-d", strtotime($created)); // Convert to date if not null
-            } else {
-                $created = ''; // Set to an empty string or handle the case as needed
-            }
-            $due_date = date("y-m-d", strtotime($ticket_row['due_date']));
-            $overdue = strtotime($due_date) < strtotime(date("Y-m-d"));
+            // if ($created !== null) {
+            //     $created = date("y-m-d", strtotime($created)); // Convert to date if not null
+            // } else {
+            //     $created = ''; // Set to an empty string or handle the case as needed
+            // }
+            // $due_date = date("y-m-d", strtotime($ticket_row['due_date']));
+            // $overdue = strtotime($due_date) < strtotime(date("Y-m-d"));
         ?>
             <tr>
                 <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id=<?= $ticket_row["id"]; ?>"><?= $ticket_row["id"] ?></a></td>
@@ -79,15 +79,16 @@ require_once('includes/helpdbconnect.php');
                 </td>
                 <td data-cell="Assigned Employee"><?= $ticket_row['employee'] ?></td>
                 <td data-cell="Current Status"><?= $ticket_row['status'] ?></td>
-                <td data-cell="Created"><?= $created ?></td>
-                <td data-cell="Last Updated"><?= $last_update ?></td>
-                <?php if ($overdue) { ?>
+                <td data-cell="Created"><?= $ticket_row['created'] ?></td>
+                <td data-cell="Last Updated"><?= $ticket_row['last_updated'] ?></td>
+                <td data-cell="Due"></td>
+                <!-- <?php if ($overdue) { ?>
                     <td data-cell="Due">
                         <p class="warning"><?= $due_date ?></p>
                     </td>
                 <?php } else { ?>
                     <td data-cell="Due"><?= $due_date ?></td>
-                <?php } ?>
+                <?php } ?> -->
             </tr>
         <?php
         } // end while

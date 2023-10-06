@@ -1,24 +1,6 @@
 <?php
-// I dont think this is required here. I think it is already included in the pages we are including this file into 
-//require_once('../../includes/helpdbconnect.php');
-
-function email_address_from_username(string $username)
-{
-    return $username."@provo.edu";
-}
-
-function send_email(
-    string $recipient,
-    string $subject,
-    string $message)
-{
-    // Make sure line is 70 chars max and uses \r\n according to PHP docs
-    // https://www.php.net/manual/en/function.mail.php
-    $message = wordwrap($message, 70, "\r\n");
-
-    $res = mail($recipient, $subject, $message);
-    return $res;
-}
+// Leaving it because it will only include if necessary and hasExcludedDate relies on it
+require_once('../../includes/helpdbconnect.php');
 
 function email_if_valid(string $email)
 {

@@ -2,7 +2,8 @@
 require_once('../../includes/init.php');
 require_once('../../includes/helpdbconnect.php');
 
-include("ticket_utils.php");
+require("ticket_utils.php");
+require("../../includes/email_utils.php");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Handle the form submission to update the ticket information

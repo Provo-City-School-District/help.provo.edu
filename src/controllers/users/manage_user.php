@@ -31,6 +31,7 @@ $firstname = $row['firstname'];
 $lastname = $row['lastname'];
 $email = $row['email'];
 $is_admin = $row['is_admin'];
+$is_tech = $row['is_tech'];
 $ifasid = $row['ifasid'];
 $last_login = $row['last_login'];
 $can_view_tickets = $row['can_view_tickets'];
@@ -64,6 +65,8 @@ Username: <?= $username ?><br>
     <input type="email" id="email" name="email" value="<?= $email ?>"><br>
     <label for="is_admin">Is Admin:</label>
     <input type="checkbox" id="is_admin" name="is_admin" <?= $is_admin == 1 ? 'checked' : '' ?>><br>
+    <label for="is_tech">Is Tech:</label>
+    <input type="checkbox" id="is_tech" name="is_tech" <?= $is_tech == 1 ? 'checked' : '' ?>><br>
     <label for="ifasid">Employee ID:</label>
     <input type="text" id="ifasid" name="ifasid" value="<?= $ifasid ?>"><br>
     <label for="can_view_tickets">Can View Tickets:</label>
@@ -74,6 +77,7 @@ Username: <?= $username ?><br>
     <input type="checkbox" id="can_edit_tickets" name="can_edit_tickets" <?= $can_edit_tickets == 1 ? 'checked' : '' ?>><br>
     <label for="can_delete_tickets">Can Delete Tickets:</label>
     <input type="checkbox" id="can_delete_tickets" name="can_delete_tickets" <?= $can_delete_tickets == 1 ? 'checked' : '' ?>><br>
+    
     <input type="submit" value="Update">
 </form>
 

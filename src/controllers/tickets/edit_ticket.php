@@ -242,7 +242,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
             </div>
 
             <!-- 
-                    need to build out a way to over ride the due date.
+                   TODO: need to build out a way to over ride the due date. currently this field just and sets the value to the calculated due date.
                 -->
             <div>
                 <label for="due_date">Ticket Due Date Override:</label>

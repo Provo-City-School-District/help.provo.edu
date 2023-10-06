@@ -1,6 +1,5 @@
 <?php
-// Leaving it because it will only include if necessary and hasExcludedDate relies on it
-require_once('../../includes/helpdbconnect.php');
+// DB connection can fail if not included first, TODO fix maybe
 
 function email_if_valid(string $email)
 {

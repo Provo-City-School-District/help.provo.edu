@@ -67,6 +67,7 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
                     'can_edit_tickets' => $local_query_data['can_edit_tickets'],
                     'can_delete_tickets' => $local_query_data['can_delete_tickets'],
                     'is_admin' => $local_query_data['is_admin'],
+                    'is_tech' => $local_query_data['is_tech'],
                 );
 
                 // Store user's permissions in the session

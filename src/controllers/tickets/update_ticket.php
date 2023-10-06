@@ -51,13 +51,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $sendEmails = isset($_POST['send_emails']) && ($_POST['send_emails'] == "send_emails");
     if ($sendEmails) {
         $client_email = email_address_from_username($updatedClient);
-        $ticket_subject = "Ticket ".$ticket_id;
+        $ticket_subject = "Ticket " . $ticket_id;
 
         $ticket_body = "";
         if ($updatedStatus == "resolved") {
-            $ticket_body = "Ticket ".$ticket_id." has been resolved.";
+            $ticket_body = "Ticket " . $ticket_id . " has been resolved.";
         } else {
-            $ticket_body = "Ticket ".$ticket_id." has been updated.";
+            $ticket_body = "Ticket " . $ticket_id . " has been updated.";
         }
 
         $email_res = send_email($client_email, $ticket_subject, $ticket_body, $valid_cc_emails, $valid_bcc_emails);
@@ -70,8 +70,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     } else if ($updatedStatus == "resolved") {
         $client_email = email_address_from_username($updatedClient);
-        $ticket_subject = "Ticket ".$ticket_id;
-        $ticket_body = "Ticket ".$ticket_id." has been resolved.";
+        $ticket_subject = "Ticket " . $ticket_id;
+        $ticket_body = "Ticket " . $ticket_id . " has been resolved.";
         $email_res = send_email($client_email, $ticket_subject, $ticket_body);
         if (!$email_res) {
             $error = 'Error sending email to client';

@@ -64,19 +64,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <label for="note_time">Time in Minutes:</label>
     <input id="note_time" name="note_time" value="<?= $note['time'] ?>"><br>
-        <!-- TODO: Hide the visible to client option for non admins,
+    <!-- TODO: Hide the visible to client option for non admins,
                 forms make this a pain because it needs to submit a value if false, system currentlyelies on not receiving
                 a value to assume no (thus hiding it from client) 
             
                 Although non admins maybe shouldn't be able to edit notes anyway?
             -->
     <label for="visible_to_client">Visible to Client:</label>
-    <input type="checkbox" id="visible_to_client" name="visible_to_client"
-    <?php
-        if ($note['visible_to_client'] == 1) {
-            echo "checked=\"checked\"";
-        }
-    ?> value="true">
+    <input type="checkbox" id="visible_to_client" name="visible_to_client" <?php
+                                                                            if ($note['visible_to_client'] == 1) {
+                                                                                echo "checked=\"checked\"";
+                                                                            }
+                                                                            ?> value="true">
 
     <input type="submit" value="Save Note">
 </form>

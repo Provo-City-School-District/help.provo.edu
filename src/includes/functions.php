@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 //Checks current page in $_SERVER variable.
 function endsWith($haystack, $needle)
@@ -13,7 +13,8 @@ function isActivePage($current_page, $page_url)
 }
 
 // Function to check if the current URL matches any of the specified URLs
-function isCurrentPage($urls) {
+function isCurrentPage($urls)
+{
     $currentPage = $_SERVER['REQUEST_URI'];
     foreach ($urls as $url) {
         if (strpos($currentPage, $url) !== false) {
@@ -33,7 +34,8 @@ $ticketPages = array(
 );
 
 //limit characters in a string
-function limitChars($string, $limit) {
+function limitChars($string, $limit)
+{
     if (strlen($string) > $limit) {
         $string = substr($string, 0, $limit) . '...';
     }

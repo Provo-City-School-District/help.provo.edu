@@ -69,4 +69,3 @@ function send_email(
 
     return true;
 }
-?>

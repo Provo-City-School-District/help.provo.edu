@@ -10,7 +10,6 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
     }
 }
 // require_once('../../includes/helpdbconnect.php');
-
 ?>
 <article id="ticketWrapper">
     <?php

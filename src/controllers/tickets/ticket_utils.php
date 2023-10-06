@@ -49,5 +49,3 @@ function isWeekend($date)
     $dayOfWeek = $date->format('N');
     return ($dayOfWeek == 6 || $dayOfWeek == 7);
 }
-
-?>

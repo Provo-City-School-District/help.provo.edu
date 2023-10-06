@@ -17,8 +17,8 @@ function send_email(
     string $recipient,
     string $subject,
     string $message,
-    array $cc = [],
-    array $bcc = []
+    array $cc_recipients = [],
+    array $bcc_recipients = []
     )
 {
 
@@ -47,6 +47,18 @@ function send_email(
         // Make sure line is 70 chars max and uses \r\n (RFC 2822)
         $email_body = wordwrap($message, 70, "\r\n");
         $mailer->Body = $email_body;
+
+        if ($cc_recipients) {
+            foreach ($cc_recipients as $cc_recipient) {
+                $mailer->addCC($cc_recipient);
+            }
+        }   
+
+        if ($bcc_recipients) {
+            foreach ($bcc_recipients as $bcc_recipient) {
+                $mailer->addBCC($bcc_recipient);
+            }
+        }
 
         // Send the email
         $mailer->send();

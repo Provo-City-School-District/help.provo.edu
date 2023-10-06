@@ -48,26 +48,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    /*
-    WIP:
-        Make sure client gets emailed
-        mail() doesn't seem to be working, might need config from server end
-        may use something else
-    */
-    $client_email_sent = false;
-    if ($updatedStatus == "resolved") {
+    $sendEmails = isset($_POST['send_emails']) && ($_POST['send_emails'] == "send_emails");
+    if ($sendEmails) {
         $client_email = email_address_from_username($updatedClient);
-        $ticket_subject = "Ticket " . $ticket_id;
+        $ticket_subject = "Ticket ".$ticket_id;
 
-        $email_res = send_email($client_email, $ticket_subject, "Ticket " . $ticket_id . " has been resolved.");
+        $ticket_body = "";
+        if ($updatedStatus == "resolved") {
+            $ticket_body = "Ticket ".$ticket_id." has been resolved.";
+        } else {
+            $ticket_body = "Ticket ".$ticket_id." has been updated.";
+        }
+
+        $email_res = send_email($client_email, $ticket_subject, $ticket_body, $valid_cc_emails, $valid_bcc_emails);
+        if (!$email_res) {
+            $error = 'Error sending email to client, CC and BCC';
+            $formData = http_build_query($_POST);
+            $_SESSION['error_message'] = $error;
+            header("Location: edit_ticket.php?error=$error&$formData&id=$ticket_id");
+            exit;
+        }
+    } else if ($updatedStatus == "resolved") {
+        $client_email = email_address_from_username($updatedClient);
+        $ticket_subject = "Ticket ".$ticket_id;
+        $ticket_body = "Ticket ".$ticket_id." has been resolved.";
+        $email_res = send_email($client_email, $ticket_subject, $ticket_body);
         if (!$email_res) {
             $error = 'Error sending email to client';
             $formData = http_build_query($_POST);
             $_SESSION['error_message'] = $error;
             header("Location: edit_ticket.php?error=$error&$formData&id=$ticket_id");
             exit;
-        } else {
-            $client_email_sent = true;
         }
     }
 
@@ -169,7 +180,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $msg = "Ticket updated successfully.";
     // After successfully updating the ticket, set a success message;
-    if ($client_email_sent) {
+    if ($sendEmails) {
+        $msg = "Ticket updated successfully. An email was sent to the client, CC and BCC emails.";
+    } else if ($updatedStatus == "resolved") {
         $msg = "Ticket updated successfully. An email was sent to the client.";
     }
 

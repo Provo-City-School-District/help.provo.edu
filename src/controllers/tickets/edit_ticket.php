@@ -121,11 +121,12 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
     // Format the due date as a string
     $due_date = $due_date->format('Y-m-d');
     ?>
-    due date: <?= $due_date ?><br>
+    due date: <?= $due_date ?><br><br>
     <!-- Form for updating ticket information -->
     <form method="POST" action="update_ticket.php">
         <!-- Add a submit button to update the information -->
-        <input type="submit" value="Update Ticket">
+        <input type="submit" value="Update Ticket"><br>
+        Send Emails on Update:<input type="checkbox" name="send_emails" value="send_emails"><br><br>
         <div class="ticketGrid">
             <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
             <input type="hidden" name="madeby" value="<?= $_SESSION['username'] ?>">

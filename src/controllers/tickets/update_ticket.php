@@ -128,6 +128,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $phoneColumn  = "phone";
     $priorityColumn  = "priority";
     $requestTypeColumn  = "request_type_id";
+    $ccEmailsColumn = "cc_emails";
+    $bccEmailsColumn = "bcc_emails";
 
     // Log the ticket changes
     $log_query = "INSERT INTO ticket_logs (ticket_id, user_id, field_name, old_value, new_value, created_at) VALUES (?, ?, ?, ?, ?, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'))";
@@ -175,6 +177,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     if ($old_ticket_data['phone'] != $updatedPhone) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $phoneColumn, $old_ticket_data['phone'], $updatedPhone);
+        mysqli_stmt_execute($log_stmt);
+    }
+    if ($old_ticket_data['cc_emails'] != $updatedCCEmails) {
+        mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $ccEmailsColumn, $old_ticket_data['cc_emails'], $updatedCCEmails);
+        mysqli_stmt_execute($log_stmt);
+    }
+    if ($old_ticket_data['bcc_emails'] != $updatedBCCEmails) {
+        mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $bccEmailsColumn, $old_ticket_data['bcc_emails'], $updatedBCCEmails);
         mysqli_stmt_execute($log_stmt);
     }
 

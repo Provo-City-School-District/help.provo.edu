@@ -26,7 +26,11 @@ a:hover {
 	color: red;
 	display: inline;
 }
-
+.grid2 {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 10px;
+}
 /* =============================== Header Styles =============================== */
 #mainHeader {
 	background: linear-gradient(to bottom, var(--header-grad-start), var(--header-grad-end) 50%, var(--header-grad-end) 55%, var(--header-grad-start));
@@ -135,7 +139,17 @@ tr:nth-of-type(2n) td {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 }
-
+.detailContainer {
+	margin-top: 1em;
+}
+.ticketSubject {
+	grid-template-columns: 150px 1fr;
+	align-items: center;
+}
+.ticketSubject span,.ticketSubject label{
+	font-size: 1.5em;
+	font-weight: 700;
+}
 .note,
 .ticket_log {
 	font-size: .8em;

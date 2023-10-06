@@ -280,12 +280,13 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                 <input type="text" id="bcc_emails" name="bcc_emails" value="<?= $ticket['bcc_emails'] ?>">
             </div>
         </div>
-        <div>
+        
+        <div class="detailContainer">
+        <div class="grid2 ticketSubject">
             <label for="name">Ticket Title:</label>
             <input type="text" id="name" name="name" value="<?= $ticket['name'] ?>">
         </div>
-        <div class="detailContainer">
-            <label for="description">Request Detail:</label>
+        <label for="description">Request Detail:</label>
             <div class="ticket-description">
                 <?= html_entity_decode($ticket['description']) ?>
                 <button id="edit-description-button" type="button">Edit Request Detail</button>

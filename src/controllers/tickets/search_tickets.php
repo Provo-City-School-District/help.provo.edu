@@ -1,7 +1,7 @@
 <?php include("../../includes/header.php");
 require_once('../../includes/helpdbconnect.php');
 require_once('../../includes/swdbconnect.php');
-include("ticket_functions.php");
+include("ticket_utils.php");
 
 // Query the sites table to get the site information
 $location_query = "SELECT sitenumber, location_name FROM locations";

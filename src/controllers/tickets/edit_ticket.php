@@ -11,7 +11,7 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
     }
 }
 require_once('../../includes/helpdbconnect.php');
-include("ticket_functions.php");
+include("ticket_utils.php");
 // Check if a success message is set
 if (isset($_SESSION['error_message'])) {
     echo '<div class="error_message-message">' . $_SESSION['error_message'] . '</div>';

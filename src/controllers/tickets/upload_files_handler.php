@@ -36,7 +36,6 @@ if (isset($_FILES['attachment'])) {
             // Move the file to the uploads directory
             if (move_uploaded_file($tmpFilePath, $newFilePath)) {
                 // File was uploaded successfully, insert the file path into the database
-                require_once('../../includes/helpdbconnect.php');
 
                 $query = "UPDATE tickets SET attachment_path = CONCAT(attachment_path, ',', ?) WHERE id = ?";
                 $stmt = mysqli_prepare($database, $query);

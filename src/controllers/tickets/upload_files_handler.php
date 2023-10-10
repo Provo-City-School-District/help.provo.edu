@@ -20,6 +20,9 @@ if (!isset($_POST['ticket_id'])) {
 $ticket_id = $_POST['ticket_id'];
 $username = $_POST['username'];
 
+// Define the allowed file extensions
+$allowed_extensions = array('jpg', 'jpeg', 'png', 'pdf');
+
 // Check if any files were uploaded
 if (isset($_FILES['attachment'])) {
     // Loop through the uploaded files
@@ -28,8 +31,9 @@ if (isset($_FILES['attachment'])) {
         $fileName = $_FILES['attachment']['name'][$i];
         $tmpFilePath = $_FILES['attachment']['tmp_name'][$i];
 
-        // Check if the file was uploaded successfully
-        if ($tmpFilePath != "") {
+        $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+        // Check if the file was uploaded successfully and has an allowed extension
+        if ($tmpFilePath != "" && in_array($fileExtension, $allowed_extensions)) {
             // Generate a unique file name
             $newFilePath = "uploads/" . $ticket_id . "-" . $fileName;
 
@@ -48,6 +52,9 @@ if (isset($_FILES['attachment'])) {
                 // File upload failed, set an error message
                 $_SESSION['error_message'] = "File upload failed.";
             }
+        } else {
+            // File type not allowed, set an error message
+            $_SESSION['error_message'] = "File type not allowed.";
         }
     }
 }

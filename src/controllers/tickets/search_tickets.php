@@ -123,7 +123,9 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                     if ($locations['sitenumber'] == $row['location']) {
                         $selected = 'selected';
                     }
-                    echo '<option value="' . $locations['sitenumber'] . '" ' . $selected . '>' . $locations['location_name'] . '</option>';
+                ?>
+                    <option value="<?= $locations['sitenumber'] ?>" <?= $search_location === $locations['sitenumber'] ? 'selected' : '' ?>><?= $locations['location_name'] ?></option>
+                <?php
                 }
                 ?>
             </select>

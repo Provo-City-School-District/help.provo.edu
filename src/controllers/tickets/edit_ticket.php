@@ -11,6 +11,7 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
     }
 }
 require_once('../../includes/helpdbconnect.php');
+require_once("../../includes/vault_utils.php");
 include("ticket_utils.php");
 // Check if a success message is set
 if (isset($_SESSION['error_message'])) {
@@ -361,24 +362,39 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                                     May want to reference archived tickets in the future,
                                     ignoring for now though.
                                 */
-                            $pattern = "/#\\d{1,6}/";
+                            $ticket_pattern = "/WO#\\d{1,6}/";
+                            $asset_tag_pattern = "/BC#\\d{6}/";
                             $note_data = $note['note'];
                             if ($note_data !== null) {
                                 $note_data = html_entity_decode($note_data);
 
-                                $matches = [];
-                                $match_result = preg_match_all($pattern, $note_data, $matches);
+                                $ticket_matches = [];
+                                $ticket_match_result = preg_match_all($ticket_pattern, $note_data, $ticket_matches);
 
-                                if ($match_result != false) {
-                                    foreach ($matches[0] as $match) {
-                                        $match_str = $match;
-                                        $url_ticket_id = substr($match_str, 1);
+                                if ($ticket_match_result) {
+                                    foreach ($ticket_matches[0] as $match_str) {
+                                        $url_ticket_id = substr($match_str, 3);
                                         $url = "<a href=\"edit_ticket.php?id=$url_ticket_id\">$match_str</a>";
                                         $note_data = str_replace($match_str, $url, $note_data);
                                     }
-                                } else {
-                                    // match failed
                                 }
+/*
+                                See vault_utils.php for information on why this isn't used
+
+                                $asset_tag_matches = [];
+                                $asset_tag_match_result = preg_match_all($asset_tag_pattern, $note_data, $asset_tag_matches);
+                                
+                                if ($asset_tag_match_result) {
+                                    foreach ($asset_tag_matches[0] as $match_str) {
+                                        $url_vault_id = substr($match_str, 3);
+                                        $vault_asset_id = get_vault_id_from_barcode($url_vault_id);
+                                        // when doing https:// the : kept disappearing, not sure why
+                                        // will just let it choose https automatically
+                                        $url = "<a href=\"//vault.provo.edu/nac_edit.php?id=$vault_asset_id\">$match_str</a>";
+                                        $note_data = str_replace($match_str, $url, $note_data);
+                                    }
+                                }
+*/
                                 echo $note_data;
                             }
                             ?>

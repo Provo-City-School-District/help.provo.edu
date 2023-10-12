@@ -35,7 +35,7 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
 
             //Query User information from the vault DB
             $vault_query = "SELECT * FROM staff_temp WHERE Email='" . $input_username . "@provo.edu'";
-            $result = mysqli_query($user_db, $vault_query);
+            $result = mysqli_query($vault_db, $vault_query);
 
             if ($result) {
                 //Fetch User Data

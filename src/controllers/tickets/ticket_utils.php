@@ -5,7 +5,7 @@ function email_if_valid(string $email)
 {
     $clean_email = filter_var($email, FILTER_SANITIZE_EMAIL);
 
-    if (filter_var($clean_email, FILTER_VALIDATE_EMAIL)){
+    if (filter_var($clean_email, FILTER_VALIDATE_EMAIL)) {
         return $clean_email;
     } else {
         return null;
@@ -48,4 +48,23 @@ function isWeekend($date)
 {
     $dayOfWeek = $date->format('N');
     return ($dayOfWeek == 6 || $dayOfWeek == 7);
+}
+
+
+// Function to sanitize numeric
+function sanitize_numeric_input($input)
+{
+    // Validate the input
+    if (isset($input) && is_numeric($input)) {
+        $input = (int) $input;
+    } else {
+        // Invalid ticket ID, redirect to error page. this page isn't created yet, but we may change how this is handled.
+        header("Location: error.php");
+        exit;
+    }
+
+    // Sanitize the input
+    $input = filter_var($input, FILTER_SANITIZE_NUMBER_INT);
+
+    return $input;
 }

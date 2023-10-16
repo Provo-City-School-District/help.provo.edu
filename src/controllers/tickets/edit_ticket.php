@@ -1,4 +1,7 @@
 <?php
+include("ticket_utils.php");
+$ticket_id = sanitize_numeric_input($_GET['id']);
+
 include("../../includes/header.php");
 include("../../vendor/autoload.php");
 // Check if the user is logged in
@@ -12,7 +15,7 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
 }
 require_once('../../includes/helpdbconnect.php');
 require_once("../../includes/vault_utils.php");
-include("ticket_utils.php");
+
 // Check if a success message is set
 if (isset($_SESSION['error_message'])) {
     echo '<div class="error_message-message">' . $_SESSION['error_message'] . '</div>';
@@ -20,10 +23,6 @@ if (isset($_SESSION['error_message'])) {
     // Unset the success message to clear it
     unset($_SESSION['error_message']);
 }
-
-// Get the ticket ID from $_GET
-$ticket_id = $_GET['id'];
-
 // Query the ticket by ID and all notes for that ID
 $query = "SELECT
 tickets.id,

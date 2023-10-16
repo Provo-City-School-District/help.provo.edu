@@ -6,6 +6,10 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
     echo 'You do not have permission to view this page.';
     exit;
 }
+
+if (isset($_GET["status"])) {
+    echo $_GET["status"];
+}
 require_once('includes/helpdbconnect.php');
 include("controllers/tickets/ticket_utils.php");
 // Execute the SELECT query to retrieve all users from the users table

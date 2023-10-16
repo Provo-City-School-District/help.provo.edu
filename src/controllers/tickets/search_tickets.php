@@ -194,8 +194,8 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                     <?php
                     if (isset($row['id'])) {
                     ?>
-                        <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["id"]; ?>"><?= $row["id"] ?></a></td>
-                        <td data-cell="Subject"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["id"]; ?>"><?= $row["name"] ?></a></td>
+                        <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["id"]; ?>&nr=1"><?= $row["id"] ?></a></td>
+                        <td data-cell="Subject"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["id"]; ?>&nr=1"><?= $row["name"] ?></a></td>
                         <td data-cell="Request Detail"><?= limitChars(html_entity_decode($row["description"]), 100) ?></td>
                         <td data-cell="Location">
                             <?php

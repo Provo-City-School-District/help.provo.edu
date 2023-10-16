@@ -77,8 +77,14 @@ $exclude_result = mysqli_query($database, $exclude_query);
             </tr>
         <?php endwhile; ?>
     </tbody>
-</table>
-
+</table><br>
+<h2>Merge Tickets</h2>
+<form method="POST" action="<?= $root_domain ?>/controllers/tickets/merge_tickets_handler.php">
+    <input type="hidden" name="username" value="<?= $_SESSION['username'] ?>">
+    Host Ticket ID: <input type="text" id="ticket_id_host" name="ticket_id_host" value=""><br>
+    Source Ticket ID:<input type="text" id="ticket_id_source" name="ticket_id_source" value=""><br>
+    <button type="submit">Merge</button><br>
+</form>
 <h2>All Tickets</h2>
 <table class="ticketsTable data-table">
     <thead>
@@ -162,6 +168,4 @@ $exclude_result = mysqli_query($database, $exclude_query);
         ?>
     </tbody>
 </table>
-
-
 <?php include("includes/footer.php"); ?>

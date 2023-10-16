@@ -1,4 +1,5 @@
 <?php
+ob_start();
 include("ticket_utils.php");
 $ticket_id = sanitize_numeric_input($_GET['id']);
 
@@ -42,6 +43,7 @@ tickets.cc_emails,
 tickets.bcc_emails,
 tickets.priority,
 tickets.request_type_id,
+tickets.merged_into_id,
 JSON_ARRAYAGG(
     JSON_OBJECT(
         'note_id', notes.note_id,
@@ -51,6 +53,7 @@ JSON_ARRAYAGG(
         'time', notes.time,
         'visible_to_client', notes.visible_to_client
     )
+    ORDER BY notes.created
 ) AS notes
 FROM
 tickets
@@ -72,7 +75,14 @@ if (!$result) {
 
 // Fetch the ticket and notes from the result set
 $ticket = mysqli_fetch_assoc($result);
+$ticket_merged_id = $ticket["merged_into_id"];
+$should_redirect = isset($_GET["nr"]) ? $_GET["nr"] != 1 : true;
 
+if ($ticket_merged_id != null && $should_redirect) {
+    header("Location: edit_ticket.php?id=$ticket_merged_id");
+    die();
+}
+ob_end_flush();
 
 // Fetch the list of usernames from the users table
 $usernamesQuery = "SELECT username FROM users";
@@ -92,7 +102,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
 <article id="ticketWrapper">
     <?php
     // Check if a success message is set
-    if (isset($_SESSION['success_message'])) {
+    if (isset($_SESSION['   success_message'])) {
         echo '<div class="success-message">' . $_SESSION['success_message'] . '</div>';
 
         // Unset the success message to clear it
@@ -378,7 +388,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                                     }
                                 }
 /*
-                                See vault_utils.php for information on why this isn't used
+                                //See vault_utils.php for information on why this isn't used
 
                                 $asset_tag_matches = [];
                                 $asset_tag_match_result = preg_match_all($asset_tag_pattern, $note_data, $asset_tag_matches);

@@ -2,10 +2,8 @@
 ob_start();
 include("ticket_utils.php");
 $ticket_id = sanitize_numeric_input($_GET['id']);
-
-include("../../includes/header.php");
-include("../../vendor/autoload.php");
 // Check if the user is logged in
+include("../../includes/header.php");
 if ($_SESSION['permissions']['is_admin'] != 1) {
     // User is not an admin
     if ($_SESSION['permissions']['can_view_tickets'] == 0) {
@@ -14,6 +12,7 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
         exit;
     }
 }
+include("../../vendor/autoload.php");
 require_once('../../includes/helpdbconnect.php');
 require_once("../../includes/vault_utils.php");
 
@@ -290,13 +289,13 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                 <input type="text" id="bcc_emails" name="bcc_emails" value="<?= $ticket['bcc_emails'] ?>">
             </div>
         </div>
-        
+
         <div class="detailContainer">
-        <div class="grid2 ticketSubject">
-            <label for="name">Ticket Title:</label>
-            <input type="text" id="name" name="name" value="<?= $ticket['name'] ?>">
-        </div>
-        <label for="description">Request Detail:</label>
+            <div class="grid2 ticketSubject">
+                <label for="name">Ticket Title:</label>
+                <input type="text" id="name" name="name" value="<?= $ticket['name'] ?>">
+            </div>
+            <label for="description">Request Detail:</label>
             <div class="ticket-description">
                 <?= html_entity_decode($ticket['description']) ?>
                 <button id="edit-description-button" type="button">Edit Request Detail</button>
@@ -388,7 +387,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                                     }
                                 }
 /*
-                                //See vault_utils.php for information on why this isn't used
+                                See vault_utils.php for information on why this isn't used
 
                                 $asset_tag_matches = [];
                                 $asset_tag_match_result = preg_match_all($asset_tag_pattern, $note_data, $asset_tag_matches);

@@ -51,7 +51,7 @@ $admin_page = '/admin.php';
             if ($is_logged_in) {
             ?>
                 <nav id="headerNav">
-                    <a class="<?php echo isActivePage($current_page, $home_page_url); ?>" href="<?= $root_domain; ?>/home.php">Home</a>
+                    <!-- <a class="<?php echo isActivePage($current_page, $home_page_url); ?>" href="<?= $root_domain; ?>/home.php">Home</a> -->
                     <a class="<?php echo isActivePage($current_page, $ticket_page_url); ?>" href="<?= $root_domain; ?>/tickets.php">Tickets</a>
                     <a class="<?php echo isActivePage($current_page, $user_profile); ?>" href="<?= $root_domain; ?>/profile.php">Profile</a>
                     <?php

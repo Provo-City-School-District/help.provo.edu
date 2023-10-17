@@ -81,7 +81,7 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
                     echo 'Update query error: ' . mysqli_error($database);
                 }
             }
-            header('Location: home.php');
+            header('Location: tickets.php');
         } else {
             // Authentication failed
             echo 'Authentication failed';

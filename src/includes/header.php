@@ -76,15 +76,17 @@ $admin_page = '/admin.php';
             ?>
                 <ul id="subMenu">
                     <li><a href="<?= $root_domain; ?>/controllers/tickets/create_ticket.php">Create Ticket</a></li>
-                    <li><a href="<?= $root_domain; ?>/tickets.php">My Tickets</a></li>
+                   
                     <?php
                     if ($_SESSION['permissions']['is_tech'] == 1) {
                     ?>
+                        <li><a href="<?= $root_domain; ?>/tickets.php">Assigned Tickets</a></li>
                         <li><a href="<?= $root_domain; ?>/controllers/tickets/recent_tickets.php">Recent Tickets</a></li>
                         <li><a href="<?= $root_domain; ?>/controllers/tickets/search_tickets.php">Search Tickets</a></li>
                     <?php
                     } else {
                     ?>
+                        <li><a href="<?= $root_domain; ?>/controllers/tickets/client_tickets.php">My Tickets</a></li>
                         <!-- This page needs to be built -->
                         <li><a href="<?= $root_domain; ?>/controllers/tickets/ticket_history.php">Ticket History</a></li>
                     <?php

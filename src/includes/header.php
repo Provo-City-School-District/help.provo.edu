@@ -86,7 +86,7 @@ $admin_page = '/admin.php';
                     <?php
                     } else {
                     ?>
-                        <li><a href="<?= $root_domain; ?>/controllers/tickets/client_tickets.php">My Tickets</a></li>
+                        <li><a href="<?= $root_domain; ?>/tickets.php">My Tickets</a></li>
                         <!-- This page needs to be built -->
                         <li><a href="<?= $root_domain; ?>/controllers/tickets/ticket_history.php">Ticket History</a></li>
                     <?php

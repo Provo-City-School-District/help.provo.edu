@@ -87,7 +87,7 @@ $admin_page = '/admin.php';
                     ?>
                         <!-- This page needs to be built -->
                         <li><a href="<?= $root_domain; ?>/controllers/tickets/ticket_history.php">Ticket History</a></li>
-                        <?php
+                    <?php
                     }
                     ?>
 

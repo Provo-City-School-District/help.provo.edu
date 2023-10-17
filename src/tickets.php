@@ -14,7 +14,7 @@ include("controllers/tickets/ticket_utils.php");
 ?>
 
 <?php
-if($_SESSION['permissions']['is_tech'] == 1) {
+if ($_SESSION['permissions']['is_tech'] == 1) {
     include("controllers/tickets/assigned_tickets.php");
 } else {
     include("controllers/tickets/client_tickets.php");

@@ -76,7 +76,7 @@ $admin_page = '/admin.php';
             ?>
                 <ul id="subMenu">
                     <li><a href="<?= $root_domain; ?>/controllers/tickets/create_ticket.php">Create Ticket</a></li>
-                   
+
                     <?php
                     if ($_SESSION['permissions']['is_tech'] == 1) {
                     ?>

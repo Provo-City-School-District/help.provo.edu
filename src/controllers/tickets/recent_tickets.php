@@ -13,7 +13,7 @@ require_once('../../includes/helpdbconnect.php');
 include("ticket_utils.php");
 ?>
 
-<h1> Tickets Page</h1>
+<h1>Recent Tickets</h1>
 <table class="ticketsTable data-table recent_tickets">
     <thead>
         <tr>

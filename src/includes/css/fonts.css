@@ -1,0 +1,10 @@
+@import url("//hello.myfonts.net/count/4cfc42");
+  
+@font-face {
+  font-family: "Campton-Light";
+  src: url('../fonts/CamptonLight/font.woff2') format('woff2'), url('../fonts/CamptonLight/font.woff') format('woff');
+}
+@font-face {
+  font-family: "Campton-Medium";
+  src: url('../fonts/CamptonLight/ont.woff2') format('woff2'), url('../fonts/CamptonLight/font.woff') format('woff');
+}

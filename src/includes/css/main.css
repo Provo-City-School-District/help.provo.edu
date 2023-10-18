@@ -2,6 +2,7 @@
 @import url("variables.css?v=1.0");
 @import url("headings.css?v=1.0");
 @import url("fonts.css?v=1.0");
+
 /* =============================== General Styles =============================== */
 body {
 	/* font-family: Arial, Helvetica, sans-serif; */
@@ -27,11 +28,13 @@ a:hover {
 	color: red;
 	display: inline;
 }
+
 .grid2 {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	gap: 10px;
 }
+
 /* =============================== Header Styles =============================== */
 #mainHeader {
 	background: linear-gradient(to bottom, var(--header-grad-start), var(--header-grad-end) 50%, var(--header-grad-end) 55%, var(--header-grad-start));
@@ -132,25 +135,57 @@ tr:nth-of-type(2n) td {
 
 .ticketGrid {
 	display: grid;
-	grid-template-columns: 1fr 1fr;
-	gap: 10px;
+	margin-bottom: 1em;
 }
 
 .ticketGrid>* {
 	display: grid;
-	grid-template-columns: 1fr 1fr;
+	grid-template-columns: minmax(min-content, 150px) 1fr;
+	align-items: center;
 }
+
+.ticketGrid label {
+	background-color: var(--theme-grey);
+	padding: .5em;
+}
+
+.ticketGrid input,
+select {
+	border: 1px solid var(--theme-grey);
+}
+
+.ticketGrid input {
+	padding: .5em;
+}
+
+.ticketGrid select {
+	height: 30px;
+	background-color: var(--theme-white);
+	border-radius: none;
+}
+
+@media screen and (min-width: 750px) {
+	.ticketGrid {
+		grid-template-columns: 1fr 1fr;
+		gap: 1em;
+	}
+}
+
 .detailContainer {
 	margin-top: 1em;
 }
+
 .ticketSubject {
 	grid-template-columns: 150px 1fr;
 	align-items: center;
 }
-.ticketSubject span,.ticketSubject label{
+
+.ticketSubject span,
+.ticketSubject label {
 	font-size: 1.5em;
 	font-weight: 700;
 }
+
 .note,
 .ticket_log {
 	font-size: .8em;

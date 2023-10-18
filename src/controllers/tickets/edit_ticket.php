@@ -386,8 +386,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                                         $note_data = str_replace($match_str, $url, $note_data);
                                     }
                                 }
-/*
-                                See vault_utils.php for information on why this isn't used
+
 
                                 $asset_tag_matches = [];
                                 $asset_tag_match_result = preg_match_all($asset_tag_pattern, $note_data, $asset_tag_matches);
@@ -402,7 +401,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                                         $note_data = str_replace($match_str, $url, $note_data);
                                     }
                                 }
-*/
+
                                 echo $note_data;
                             }
                             ?>

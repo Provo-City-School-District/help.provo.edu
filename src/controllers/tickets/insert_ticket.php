@@ -29,8 +29,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Handle empty fields (e.g., show an error message)
         $error = 'All fields are required';
         $formData = http_build_query($_POST);
-        $_SESSION['error_message'] = "All fields are required.";
-        header("Location: create_ticket.php?error=$error&$formData");
+        $_SESSION['current_status'] = $error;
+        $_SESSION['status_type'] = 'error';
+
+        header("Location: create_ticket.php?$formData");
         exit;
     }
 
@@ -40,8 +42,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!$valid_cc_emails) {
             $error = 'Error parsing CC emails (invalid format)';
             $formData = http_build_query($_POST);
-            $_SESSION['error_message'] = "Error parsing CC emails (invalid format)";
-            header("Location: create_ticket.php?error=$error&$formData");
+            $_SESSION['current_status'] = $error;
+            $_SESSION['status_type'] = 'error';
+
+            header("Location: create_ticket.php?$formData");
             exit;
         }
     }
@@ -52,8 +56,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!$valid_bcc_emails) {
             $error = 'Error parsing BCC emails (invalid format)';
             $formData = http_build_query($_POST);
-            $_SESSION['error_message'] = "Error parsing BCC emails (invalid format)";
-            header("Location: create_ticket.php?error=$error&$formData");
+            $_SESSION['current_status'] = $error;
+            $_SESSION['status_type'] = 'error';
+            header("Location: create_ticket.php?$formData");
             exit;
         }
     }
@@ -120,20 +125,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Execute the prepared statement
     if (mysqli_stmt_execute($stmt)) {
         // After successfully inserting the ticket, set a success message;
-        $_SESSION['success_message'] = "Ticket created successfully.";
-
+        $_SESSION['current_status'] = "Ticket created successfully.";
+        $_SESSION['status_type'] = "success";
         // After successfully inserting the ticket, fetch the ID of the new ticket
         $ticketId = mysqli_insert_id($database);
 
         // Redirect to the edit page for the new ticket
-        header('Location: edit_ticket.php?id=' . $ticketId);
+        header("Location: edit_ticket.php?id=$ticketId");
         exit;
     } else {
         // Handle insert error (e.g., show an error message)
         $error = 'Error creating ticket';
         $formData = http_build_query($_POST);
-        $_SESSION['error_message'] = "Error creating ticket.";
-        header("Location: create_ticket.php?error=$error&$formData");
+        $_SESSION['current_status'] = "Error creating ticket.";
+        $_SESSION['status_type'] = 'error';
+
+        header("Location: create_ticket.php?$formData");
         exit;
     }
 }

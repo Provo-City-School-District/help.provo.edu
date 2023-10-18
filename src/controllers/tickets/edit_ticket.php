@@ -15,13 +15,32 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
 include("../../vendor/autoload.php");
 require_once('../../includes/helpdbconnect.php');
 require_once("../../includes/vault_utils.php");
+include("status_popup.php");
 
-// Check if a success message is set
-if (isset($_SESSION['error_message'])) {
-    echo '<div class="error_message-message">' . $_SESSION['error_message'] . '</div>';
+// Check if an error message is set
+if (isset($_SESSION['current_status'])) {
+    $status_title = "";
 
-    // Unset the success message to clear it
-    unset($_SESSION['error_message']);
+    $status_type = $_SESSION['status_type'];
+    if ($status_type == "success") {
+        $status_title = "Success";
+    } else if ($status_type == "error") {
+        $status_title = "Error";
+    } else if ($status_type == "info") {
+        $status_title = "Info";
+    } else {
+        die("status_type is not recognized");
+    }
+
+    $status_popup = new Template("status_popup.phtml");
+    $status_popup->message_body = $_SESSION['current_status'];
+    $status_popup->message_title = $status_title;
+    $status_popup->alert_type = $status_type;
+
+    echo $status_popup;
+
+    unset($_SESSION['current_status']);
+    unset($_SESSION['status_type']);
 }
 // Query the ticket by ID and all notes for that ID
 $query = "SELECT
@@ -99,15 +118,6 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
 
 ?>
 <article id="ticketWrapper">
-    <?php
-    // Check if a success message is set
-    if (isset($_SESSION['   success_message'])) {
-        echo '<div class="success-message">' . $_SESSION['success_message'] . '</div>';
-
-        // Unset the success message to clear it
-        unset($_SESSION['success_message']);
-    }
-    ?>
     <h1>Ticket #<?= $ticket['id'] ?></h1>
     created: <?= $ticket['created'] ?><br>
     last updated: <?= $ticket['last_updated'] ?><br>

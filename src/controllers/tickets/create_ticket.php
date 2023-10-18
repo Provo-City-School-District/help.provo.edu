@@ -9,18 +9,36 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
         exit;
     }
 }
-// require_once('../../includes/helpdbconnect.php');
-?>
-<article id="ticketWrapper">
-    <?php
-    // Check if a success message is set
-    if (isset($_SESSION['error_message'])) {
-        echo '<div class="error_message-message">' . $_SESSION['error_message'] . '</div>';
+include("status_popup.php");
 
-        // Unset the success message to clear it
-        unset($_SESSION['error_message']);
+// Check if an error message is set
+if (isset($_SESSION['current_status'])) {
+    $status_title = "";
+
+    $status_type = $_SESSION['status_type'];
+    if ($status_type == "success") {
+        $status_title = "Success";
+    } else if ($status_type == "error") {
+        $status_title = "Error";
+    } else if ($status_type == "info") {
+        $status_title = "Info";
+    } else {
+        die("status_type is not recognized");
     }
-    ?>
+
+    $status_popup = new Template("status_popup.phtml");
+    $status_popup->message_body = $_SESSION['current_status'];
+    $status_popup->message_title = $status_title;
+    $status_popup->alert_type = $status_type;
+
+    echo $status_popup;
+
+    unset($_SESSION['current_status']);
+    unset($_SESSION['status_type']);
+}
+?>
+
+<article id="ticketWrapper">
     <h1>Create Ticket</h1>
     <!-- Form for updating ticket information -->
     <form method="POST" action="insert_ticket.php" enctype="multipart/form-data">

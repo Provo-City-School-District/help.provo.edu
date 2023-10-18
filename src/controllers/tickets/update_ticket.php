@@ -30,8 +30,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!$valid_cc_emails) {
             $error = 'Error parsing CC emails (invalid format)';
             $formData = http_build_query($_POST);
-            $_SESSION['error_message'] = $error;
-            header("Location: edit_ticket.php?error=$error&$formData&id=$ticket_id");
+            $_SESSION['current_status'] = $error;
+            $_SESSION['status_type'] = 'error';
+            header("Location: edit_ticket.php?$formData&id=$ticket_id");
             exit;
         }
     }
@@ -42,8 +43,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!$valid_bcc_emails) {
             $error = 'Error parsing BCC emails (invalid format)';
             $formData = http_build_query($_POST);
-            $_SESSION['error_message'] = $error;
-            header("Location: edit_ticket.php?error=$error&$formData&id=$ticket_id");
+            $_SESSION['current_status'] = $error;
+            $_SESSION['status_type'] = 'error';
+            header("Location: edit_ticket.php?$formData&id=$ticket_id");
             exit;
         }
     }
@@ -64,8 +66,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!$email_res) {
             $error = 'Error sending email to client, CC and BCC';
             $formData = http_build_query($_POST);
-            $_SESSION['error_message'] = $error;
-            header("Location: edit_ticket.php?error=$error&$formData&id=$ticket_id");
+            $_SESSION['current_status'] = $error;
+            $_SESSION['status_type'] = 'error';
+            header("Location: edit_ticket.php?$formData&id=$ticket_id");
             exit;
         }
     } else if ($updatedStatus == "resolved") {
@@ -76,8 +79,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!$email_res) {
             $error = 'Error sending email to client';
             $formData = http_build_query($_POST);
-            $_SESSION['error_message'] = $error;
-            header("Location: edit_ticket.php?error=$error&$formData&id=$ticket_id");
+            $_SESSION['current_status'] = $error;
+            $_SESSION['status_type'] = 'error';
+            header("Location: edit_ticket.php?$formData&id=$ticket_id");
             exit;
         }
     }
@@ -196,7 +200,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $msg = "Ticket updated successfully. An email was sent to the client.";
     }
 
-    $_SESSION['success_message'] = $msg;
+    $_SESSION['current_status'] = $msg;
+    $_SESSION['status_type'] = "success";
+
     // Redirect to the same page after successful update
     header('Location: edit_ticket.php?id=' . $ticket_id);
     exit;

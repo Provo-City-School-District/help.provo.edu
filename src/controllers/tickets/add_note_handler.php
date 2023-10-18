@@ -1,4 +1,5 @@
 <?php
+require_once('../../includes/init.php');
 require_once('../../includes/helpdbconnect.php');
 
 // Get the ticket ID and note from the form data
@@ -7,6 +8,16 @@ $note = trim(htmlspecialchars($_POST['note']));
 $note_time = trim(htmlspecialchars($_POST['note_time']));
 $username = trim(htmlspecialchars($_POST['username']));
 $timestamp = date('Y-m-d H:i:s');
+
+
+if (intval($note_time) <= 0) {
+    $error = "Note time must be greater than 0";
+    $_SESSION['current_status'] = $error;
+    $_SESSION['status_type'] = "error";
+    $formData = http_build_query($_POST);
+    header("Location: edit_ticket.php?id=$ticket_id&$formData");
+    exit;
+}
 
 // Get visible to client state
 $visible_to_client = 0;

@@ -28,6 +28,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Get the updated note and time from the form data
     $updated_note = trim(htmlspecialchars($_POST['note']));
     $updated_time = trim(htmlspecialchars($_POST['note_time']));
+
+    if (intval($updated_time) <= 0) {
+        $error = "Note time must be greater than 0";
+        $_SESSION['current_status'] = $error;
+        $_SESSION['status_type'] = "error";
+        $formData = http_build_query($_POST);
+        header("Location: edit_ticket.php?id=$ticket_id&$formData");
+        exit;
+    }
     $timestamp = date('Y-m-d H:i:s');
 
     // Get visible to client state

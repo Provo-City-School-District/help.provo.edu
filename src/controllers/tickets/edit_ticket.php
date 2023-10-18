@@ -393,11 +393,10 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                                 
                                 if ($asset_tag_match_result) {
                                     foreach ($asset_tag_matches[0] as $match_str) {
-                                        $url_vault_id = substr($match_str, 3);
-                                        $vault_asset_id = get_vault_id_from_barcode($url_vault_id);
+                                        $barcode = substr($match_str, 3);
                                         // when doing https:// the : kept disappearing, not sure why
                                         // will just let it choose https automatically
-                                        $url = "<a href=\"//vault.provo.edu/nac_edit.php?id=$vault_asset_id\">$match_str</a>";
+                                        $url = "<a href=\"//vault.provo.edu/nac_edit.php?id=$barcode\">$match_str</a>";
                                         $note_data = str_replace($match_str, $url, $note_data);
                                     }
                                 }

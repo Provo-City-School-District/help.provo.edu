@@ -23,6 +23,8 @@ $username = $_POST['username'];
 // Define the allowed file extensions
 $allowed_extensions = array('jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx','xls','xlsx','txt');
 
+$failed_files = [];
+
 // Check if any files were uploaded
 if (isset($_FILES['attachment'])) {
     // Loop through the uploaded files
@@ -30,8 +32,9 @@ if (isset($_FILES['attachment'])) {
         // Get the file name and temporary file path
         $fileName = $_FILES['attachment']['name'][$i];
         $tmpFilePath = $_FILES['attachment']['tmp_name'][$i];
-
+        
         $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+        
         // Check if the file was uploaded successfully and has an allowed extension
         if ($tmpFilePath != "" && in_array($fileExtension, $allowed_extensions)) {
             // Generate a unique file name
@@ -46,17 +49,32 @@ if (isset($_FILES['attachment'])) {
                 mysqli_stmt_bind_param($stmt, "si", $newFilePath, $ticket_id);
                 mysqli_stmt_execute($stmt);
 
-                // Close the database connection
-                mysqli_close($database);
             } else {
-                // File upload failed, set an error message
-                $_SESSION['error_message'] = "File upload failed.";
+                $failed_files[] = $fileName;
             }
         } else {
-            // File type not allowed, set an error message
-            $_SESSION['error_message'] = "File type not allowed.";
+            $failed_files[] = $fileName;
         }
     }
+}
+
+$failed_files_count = count($failed_files);
+if ($failed_files_count != 0) {
+    $error_str = 'Failed to upload files: ';
+
+    for ($i = 0; $i < $failed_files_count; $i++) {
+        $filename = $failed_files[$i];
+        if ($i == $failed_files_count - 1)
+            $error_str .= "$filename";
+        else
+            $error_str .= "$filename, ";
+    }
+
+    $_SESSION['current_status'] = $error_str;
+    $_SESSION['status_type'] = 'error';
+} else {
+    $_SESSION['current_status'] = "File(s) successfully uploaded";
+    $_SESSION['status_type'] = 'success';
 }
 
 // Redirect back to the ticket

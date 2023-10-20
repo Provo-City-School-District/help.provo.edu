@@ -30,7 +30,7 @@ $admin_page = '/admin.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>| Help For Provo City School District</title>
     <link rel="stylesheet" href="<?= $root_domain; ?>/includes/js/dataTables-1.13.6/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="<?= $root_domain; ?>/includes/css/main.css?v=1.0.01">
+    <link rel="stylesheet" href="<?= $root_domain; ?>/includes/css/main.css?v=1.0.02">
 
     <?php
     if ($_SERVER['REQUEST_URI'] === '/index.php' || $_SERVER['REQUEST_URI'] === '/') {

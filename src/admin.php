@@ -1,6 +1,6 @@
 <?php
 include("includes/header.php");
-
+include("includes/status_popup.php");
 if ($_SESSION['permissions']['is_admin'] != 1) {
     // User is not an admin
     echo 'You do not have permission to view this page.';
@@ -19,6 +19,32 @@ $user_result = mysqli_query($database, $users_query);
 if (!$user_result) {
     die("Query failed: " . mysqli_error($conn));
 }
+
+// Check if an error message is set
+if (isset($_SESSION['current_status'])) {
+    $status_title = "";
+
+    $status_type = $_SESSION['status_type'];
+    if ($status_type == "success") {
+        $status_title = "Success";
+    } else if ($status_type == "error") {
+        $status_title = "Error";
+    } else if ($status_type == "info") {
+        $status_title = "Info";
+    } else {
+        die("status_type is not recognized");
+    }
+
+    $status_popup = new Template("includes/status_popup.phtml");
+    $status_popup->message_body = $_SESSION['current_status'];
+    $status_popup->message_title = $status_title;
+    $status_popup->alert_type = $status_type;
+
+    echo $status_popup;
+
+    unset($_SESSION['current_status']);
+    unset($_SESSION['status_type']);
+}
 ?>
 <h1>Admin</h1><br>
 <h2>Reports</h2><br>
@@ -33,7 +59,7 @@ if (!$user_result) {
 <?php
 // not super clean
 // Query open tickets based on tech
-$query = "SELECT employee FROM tickets WHERE status = 'open'";
+$query = "SELECT employee FROM tickets WHERE status NOT IN ('closed', 'resolved')";
 $query_result = mysqli_query($database, $query);
 
 $tech_count = [];
@@ -44,7 +70,7 @@ while ($row = mysqli_fetch_assoc($query_result)) {
         $emp = "unassigned";
 
     if (!isset($tech_count[$emp]))
-        $tech_count[$emp] = 0;
+        $tech_count[$emp] = 1;
     else
         $tech_count[$emp]++;
 }
@@ -53,7 +79,7 @@ foreach($tech_count as $name => $count) {
     echo "<tr><td>$name</td><td>$count</td></tr>";
 }
 ?>
-</table>
+</table><br>
 
 <h2>Users</h2>
 <table>

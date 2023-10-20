@@ -9,7 +9,7 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
         exit;
     }
 }
-include("status_popup.php");
+include("../../includes/status_popup.php");
 
 // Check if an error message is set
 if (isset($_SESSION['current_status'])) {
@@ -26,7 +26,7 @@ if (isset($_SESSION['current_status'])) {
         die("status_type is not recognized");
     }
 
-    $status_popup = new Template("status_popup.phtml");
+    $status_popup = new Template("../../includes/status_popup.phtml");
     $status_popup->message_body = $_SESSION['current_status'];
     $status_popup->message_title = $status_title;
     $status_popup->alert_type = $status_type;

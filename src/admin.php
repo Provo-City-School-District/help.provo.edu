@@ -20,7 +20,41 @@ if (!$user_result) {
     die("Query failed: " . mysqli_error($conn));
 }
 ?>
-<h1>Admin</h1>
+<h1>Admin</h1><br>
+<h2>Reports</h2><br>
+
+<h3>Open Tickets</h4>
+<table>
+    <tr>
+        <th>Tech</th>
+        <th>Assigned Tickets</th>
+    </tr>
+
+<?php
+// not super clean
+// Query open tickets based on tech
+$query = "SELECT employee FROM tickets WHERE status = 'open'";
+$query_result = mysqli_query($database, $query);
+
+$tech_count = [];
+
+while ($row = mysqli_fetch_assoc($query_result)) {
+    $emp = $row["employee"];
+    if ($emp == null || $emp == "")
+        $emp = "unassigned";
+
+    if (!isset($tech_count[$emp]))
+        $tech_count[$emp] = 0;
+    else
+        $tech_count[$emp]++;
+}
+arsort($tech_count);
+foreach($tech_count as $name => $count) {
+    echo "<tr><td>$name</td><td>$count</td></tr>";
+}
+?>
+</table>
+
 <h2>Users</h2>
 <table>
     <tr>

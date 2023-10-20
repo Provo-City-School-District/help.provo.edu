@@ -406,7 +406,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                                         $barcode = substr($match_str, 3);
                                         // when doing https:// the : kept disappearing, not sure why
                                         // will just let it choose https automatically
-                                        $url = "<a href=\"//vault.provo.edu/nac_edit.php?id=$barcode\">$match_str</a>";
+                                        $url = "<a href=\"//vault.provo.edu/nac_edit.php?barcode=$barcode\">$match_str</a>";
                                         $note_data = str_replace($match_str, $url, $note_data);
                                     }
                                 }

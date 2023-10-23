@@ -29,6 +29,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $updated_note = trim(htmlspecialchars($_POST['note']));
     $updated_time = trim(htmlspecialchars($_POST['note_time']));
 
+    $updated_date_override = null;
+    if (isset($_POST["date_override_enable"])) {
+
+        // validate it can be created into a date
+        $updated_date_override = date('Y-m-d H:i:s', strtotime($_POST["date_override"]));
+        if (!$updated_date_override) {
+            $error = "Date override was invalid";
+            $_SESSION['current_status'] = $error;
+            $_SESSION['status_type'] = "error";
+            $formData = http_build_query($_POST);
+            header("Location: edit_ticket.php?id=$ticket_id&$formData");
+            exit;
+        }
+    }
+
     if (intval($updated_time) <= 0) {
         $error = "Note time must be greater than 0";
         $_SESSION['current_status'] = $error;
@@ -46,9 +61,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Update the note in the database
-    $query = "UPDATE notes SET note = ?, time = ?, visible_to_client = ? WHERE note_id = ?";
+    $query = "UPDATE notes SET note = ?, time = ?, visible_to_client = ?, date_override = ? WHERE note_id = ?";
     $stmt = mysqli_prepare($database, $query);
-    mysqli_stmt_bind_param($stmt, "ssii", $updated_note, $updated_time, $visible_to_client, $note_id);
+    mysqli_stmt_bind_param($stmt, "ssisi", $updated_note, $updated_time, $visible_to_client, $updated_date_override, $note_id);
     mysqli_stmt_execute($stmt);
 
     // Log the note update in the ticket_logs table
@@ -84,8 +99,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                                             if ($note['visible_to_client'] == 1) {
                                                                                 echo "checked=\"checked\"";
                                                                             }
-                                                                            ?> value="true">
-
+                                                                            ?> value="true"><br>
+    <label for="date_override_enable">Date Override:</label>
+    <input <?php 
+        if ($note['date_override'] != null) 
+            echo "checked=\"checked\""; ?> type="checkbox" id="date_override_enable" name="date_override_enable">
+    <input <?php 
+        if ($note['date_override'] == null) 
+            echo "style=\"display:none;\""; ?> id="date_override_input" type="datetime-local" name="date_override" value="<?= $note['date_override']?>"><br>
     <input type="submit" value="Save Note">
 </form>
+<script src="../../includes/js/jquery-3.7.1.min.js"></script>
+<script>
+    $('input[name=date_override_enable]').on('change', function() {
+        if (!this.checked) {
+            $('#date_override_input').hide();
+        } else {
+            $('#date_override_input').show();
+        }
+    });
+</script>
 <?php include("../../includes/footer.php"); ?>

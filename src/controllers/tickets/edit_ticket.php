@@ -69,7 +69,8 @@ JSON_ARRAYAGG(
         'created', notes.created,
         'creator', notes.creator,
         'time', notes.time,
-        'visible_to_client', notes.visible_to_client
+        'visible_to_client', notes.visible_to_client,
+        'date_override', notes.date_override
     )
     ORDER BY notes.created
 ) AS notes
@@ -372,7 +373,14 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                     $total_time += $note['time']; // Add note time to total time (doesn't add for non-admins)
                 ?>
                     <tr>
-                        <td><a href="edit_note.php?note_id=<?= $note['note_id'] ?>&ticket_id=<?= $ticket_id ?>"><?= $note['created'] ?></a></td>
+                        <td><a href="edit_note.php?note_id=<?= $note['note_id'] ?>&ticket_id=<?= $ticket_id ?>">
+                        <?php
+                        $date_override = $note['date_override'];
+                        if ($date_override != null)
+                            echo $date_override."*";
+                        else
+                            echo $note['created'];
+                        ?></a></td>
                         <td><?= $note['creator'] ?></td>
                         <td>
                             <?php
@@ -450,9 +458,22 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                 <label for="visible_to_client">Visible to Client:</label>
                 <input type="checkbox" id="visible_to_client" name="visible_to_client" checked="checked"><br>
                 <label for="note_time">Time in Minutes:</label>
-                <input id="note_time" name="note_time" type="number">
+                <input id="note_time" name="note_time" type="number"><br>
+                <label for="date_override_enable">Date Override:</label>
+                <input type="checkbox" id="date_override_enable" name="date_override_enable"><br>
+                <input style="display:none;" id="date_override_input" type="datetime-local" name="date_override"><br>
                 <input type="submit" value="Add Note">
             </form>
+            <script src="../../includes/js/jquery-3.7.1.min.js"></script>
+            <script>
+                $('input[name=date_override_enable]').on('change', function() {
+                    if (!this.checked) {
+                        $('#date_override_input').hide();
+                    } else {
+                        $('#date_override_input').show();
+                    }
+                });
+            </script>
         </div>
         <?php
         // Fetch the ticket logs for the current ticket

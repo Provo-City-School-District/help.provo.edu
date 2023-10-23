@@ -287,7 +287,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                 <label for="name">Ticket Title:</label>
                 <input type="text" id="name" name="name" value="<?= $ticket['name'] ?>">
             </div>
-            <label for="description">Request Detail:</label>
+            <label for="description" class="heading2">Request Detail:</label>
             <div class="ticket-description">
                 <?= html_entity_decode($ticket['description']) ?><br>
                 <button id="edit-description-button" type="button">Edit Request Detail</button>

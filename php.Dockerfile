@@ -26,6 +26,9 @@ RUN a2enmod http2 ssl
 # # Update Apache configuration to enable HTTP/2
 RUN echo "Protocols h2 http/1.1" >> /etc/apache2/apache2.conf
 
+# # Set ServerName
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+
 # # Restart Apache to apply the changes
 RUN service apache2 restart
 

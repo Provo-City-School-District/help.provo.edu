@@ -112,7 +112,7 @@ if (!$usernamesResult) {
 }
 
 // Store the usernames in an array
-$usernames = array();
+$usernames = [];
 while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
     $usernames[] = $usernameRow['username'];
 }

@@ -7,9 +7,6 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
     exit;
 }
 
-if (isset($_GET["status"])) {
-    echo $_GET["status"];
-}
 require_once('includes/helpdbconnect.php');
 require("controllers/tickets/ticket_utils.php");
 

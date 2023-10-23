@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    $valid_cc_emails = array();
+    $valid_cc_emails = [];
     if (trim($cc_emails) !== "") {
         $valid_cc_emails = split_email_string_to_arr($cc_emails);
         if (!$valid_cc_emails) {
@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    $valid_bcc_emails = array();
+    $valid_bcc_emails = [];
     if (trim($bcc_emails) !== "") {
         $valid_bcc_emails = split_email_string_to_arr($bcc_emails);
         if (!$valid_bcc_emails) {
@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Handle file upload
-    $uploadPaths = array();
+    $uploadPaths = [];
     if (isset($_FILES['attachment'])) {
         $attachmentCount = count($_FILES['attachment']['name']);
 
@@ -98,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($stmt === false) {
         die('Error preparing insert query: ' . mysqli_error($database));
     }
-    $uploadPath = array();
+    $uploadPath = [];
     foreach ($uploadPaths as $attachmentPath) {
         $uploadPath[] = $attachmentPath;
     }

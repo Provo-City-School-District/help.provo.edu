@@ -68,6 +68,17 @@ if (isset($_SESSION['current_status'])) {
         <label for="name">Ticket Title:</label>
         <input type="text" id="name" name="name" value="<?= isset($_GET['name']) ? htmlspecialchars($_GET['name']) : '' ?>"><br>
 
+        <label for="priority">Priority:</label>
+            <select id="priority" name="priority">
+                <option value="1">Critical</option>
+                <option value="3">Urgent</option>
+                <option value="5">High</option>
+                <option value="10" selected>Standard</option>
+                <option value="15">Client Response</option>
+                <option value="30">Project</option>
+                <option value="60">Meeting Support</option>
+            </select>
+        <br>
         <label for="description">Ticket Description:</label>
         <textarea id="description" name="description" class="tinyMCEtextarea"><?= isset($_GET['description']) ? htmlspecialchars($_GET['description']) : '' ?></textarea><br>
         

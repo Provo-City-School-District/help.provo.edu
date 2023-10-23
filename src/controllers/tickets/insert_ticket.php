@@ -23,6 +23,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $phone = filter_input(INPUT_POST, 'phone', FILTER_SANITIZE_SPECIAL_CHARS);
     $cc_emails = filter_input(INPUT_POST, 'cc_emails', FILTER_SANITIZE_SPECIAL_CHARS);
     $bcc_emails = filter_input(INPUT_POST, 'bcc_emails', FILTER_SANITIZE_SPECIAL_CHARS);
+    $priority = filter_input(INPUT_POST, 'priority', FILTER_SANITIZE_SPECIAL_CHARS);
+
+    if (intval($priority) <= 0) {
+        $error = 'Error parsing priority';
+        $formData = http_build_query($_POST);
+        $_SESSION['current_status'] = $error;
+        $_SESSION['status_type'] = 'error';
+        header("Location: create_ticket.php?$formData");
+        exit;
+    }
 
     // Check if required fields are empty
     if (empty($location) || empty($room) || empty($name) || empty($description) || empty($phone)) {
@@ -87,10 +97,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
+    
 
     // Create an SQL INSERT query
     $insertQuery = "INSERT INTO tickets (location, room, name, description, created, last_updated, due_date, status, client,attachment_path,phone,cc_emails,bcc_emails,request_type_id,priority)
-                VALUES (?, ?, ?, ?, NOW(), NOW(), DATE_ADD(NOW(), INTERVAL 10 DAY),'open', ?, ?, ?, ?, ?,0,10)";
+                VALUES (?, ?, ?, ?, ?, ?, ?,'open', ?, ?, ?, ?, ?,0,10)";
 
     // Prepare the SQL statement
     $stmt = mysqli_prepare($database, $insertQuery);
@@ -107,13 +118,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Bind parameters
     $cc_emails_clean = implode(',', $valid_cc_emails);
     $bcc_emails_clean = implode(',', $valid_bcc_emails);
+
+    $created_time = date("Y-m-d");
+    // Calculate the due date by adding the priority days to the created date
+    $created_date = new DateTime($created_time);
+    $due_date = clone $created_date;
+    $due_date->modify("+{$priority} weekdays");
+
+    // Check if the due date falls on a weekend or excluded date
+    while (isWeekend($due_date)) {
+        $due_date->modify("+1 day");
+    }
+    $count = hasExcludedDate($created_date->format('Y-m-d'), $due_date->format('Y-m-d'));
+    if ($count > 0) {
+        $due_date->modify("{$count} day");
+    }
+    // Format the due date as a string
+    $due_date = $due_date->format('Y-m-d');
+
     mysqli_stmt_bind_param(
         $stmt,
-        'sssssssss',
+        'ssssssssssss',
         $location,
         $room,
         $name,
         $description,
+        $created_time,
+        $created_time,
+        $due_date,
         $client,
         $attachmentPath,
         $phone,

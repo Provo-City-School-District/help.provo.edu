@@ -113,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         bcc_emails = '$bcc_emails_clean',
         priority = '$updatedPriority',
         request_type_id = '$updatedRequestType'
-        WHERE id = $ticket_id";
+        WHERE id = '$ticket_id'";
 
     // Execute the update queries
     $updateTicketResult = mysqli_query($database, $updateTicketQuery);

@@ -119,29 +119,10 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
 
 ?>
 <article id="ticketWrapper">
-    <h1>Ticket #<?= $ticket['id'] ?></h1>
-    created: <?= $ticket['created'] ?><br>
-    last updated: <?= $ticket['last_updated'] ?><br>
-    <?php
-    // Get the priority value from the ticket row
-    $priority = $ticket['priority'];
-    // Calculate the due date by adding the priority days to the created date
-    $created_date = new DateTime($ticket['created']);
-    $due_date = clone $created_date;
-    $due_date->modify("+{$priority} weekdays");
-
-    // Check if the due date falls on a weekend or excluded date
-    while (isWeekend($due_date)) {
-        $due_date->modify("+1 day");
-    }
-    $count = hasExcludedDate($created_date->format('Y-m-d'), $due_date->format('Y-m-d'));
-    if ($count > 0) {
-        $due_date->modify("{$count} day");
-    }
-    // Format the due date as a string
-    $due_date = $due_date->format('Y-m-d');
-    ?>
-    due date: <?= $due_date ?><br><br>
+    <h1>Ticket #<?= $ticket['id'] ?></h1><br>
+    Created: <?= $ticket['created'] ?><br>
+    Last Updated: <?= $ticket['last_updated'] ?><br>
+    Due Date: <?= $ticket['due_date'] ?><br><br>
     <!-- Form for updating ticket information -->
     <form method="POST" action="update_ticket.php">
         <!-- Add a submit button to update the information -->
@@ -265,8 +246,8 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                    TODO: need to build out a way to over ride the due date. currently this field just and sets the value to the calculated due date.
                 -->
             <div>
-                <label for="due_date">Ticket Due Date Override:</label>
-                <input type="date" id="due_date" name="due_date" value="<?= $due_date ?>">
+                <label for="due_date">Due Date:</label>
+                <input type="date" id="due_date" name="due_date" value="<?= $ticket['due_date'] ?>">
             </div>
             <div>
                 <label for="status">Current Status:</label>
@@ -308,7 +289,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
             </div>
             <label for="description">Request Detail:</label>
             <div class="ticket-description">
-                <?= html_entity_decode($ticket['description']) ?>
+                <?= html_entity_decode($ticket['description']) ?><br>
                 <button id="edit-description-button" type="button">Edit Request Detail</button>
             </div>
 
@@ -444,7 +425,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
             </tr>
             </table>
         </div>
-        <button id="new-note-button">New Note</button>
+        <button id="new-note-button">New Note</button><br><br>
         <div id="new-note-form" style="display: none;">
             <h3>Add Note</h3>
             <form method="post" action="add_note_handler.php">
@@ -463,7 +444,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                 <input type="checkbox" id="date_override_enable" name="date_override_enable"><br>
                 <input style="display:none;" id="date_override_input" type="datetime-local" name="date_override"><br>
                 <input type="submit" value="Add Note">
-            </form>
+            </form><br>
             <script src="../../includes/js/jquery-3.7.1.min.js"></script>
             <script>
                 $('input[name=date_override_enable]').on('change', function() {

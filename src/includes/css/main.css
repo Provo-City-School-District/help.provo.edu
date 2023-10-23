@@ -47,6 +47,12 @@ a:hover {
 
 }
 
+/* =============================== Footer Styles =============================== */
+#mainFooter {
+	padding-left: 1em;
+	padding-bottom: 1em;
+}
+
 /* =============================== Navigation Styles =============================== */
 #headerNav {
 	display: flex;
@@ -206,4 +212,11 @@ select {
 	font-size: 50%;
 	display: block;
 	text-align: right;
+}
+
+.ticket-description {
+	background-color: #b3d4fd;
+	padding: 10px;
+	margin: 5px 0px 5px 0px;
+	border-radius: 7px;
 }

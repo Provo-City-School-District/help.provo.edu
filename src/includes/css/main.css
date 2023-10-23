@@ -215,8 +215,8 @@ select {
 }
 
 .ticket-description {
-	background-color: #b3d4fd;
-	padding: 10px;
-	margin: 5px 0px 5px 0px;
+	border: 20px solid var(--do-light-blue);
 	border-radius: 7px;
+	padding:1em;
+	margin: 5px 0;
 }

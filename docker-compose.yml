@@ -17,7 +17,7 @@ services:
     # logging:
     #   driver: gelf
     #   options:
-    #     gelf-address: $GRAYLOGHOST
+    #     gelf-address: $UDPGRAYLOGHOST
     #     tag: help_web_log
   help-db:
     container_name: help-db

@@ -1,6 +1,6 @@
 <?php
 include("includes/header.php");
-include("includes/status_popup.php");
+require("includes/status_popup.php");
 if ($_SESSION['permissions']['is_admin'] != 1) {
     // User is not an admin
     echo 'You do not have permission to view this page.';
@@ -11,7 +11,8 @@ if (isset($_GET["status"])) {
     echo $_GET["status"];
 }
 require_once('includes/helpdbconnect.php');
-include("controllers/tickets/ticket_utils.php");
+require("controllers/tickets/ticket_utils.php");
+
 // Execute the SELECT query to retrieve all users from the users table
 $users_query = "SELECT * FROM users";
 $user_result = mysqli_query($database, $users_query);

@@ -32,8 +32,8 @@ if ($merged["merged_into_id"] != null) {
 $username = trim(htmlspecialchars($_POST['username']));
 
 // Deep copy all source ticket's notes
-$query = "INSERT INTO notes (linked_id, created, creator, note, time, idx, visible_to_client)
-    SELECT $ticket_id_host, created, creator, note, time, idx, visible_to_client FROM notes WHERE linked_id = $ticket_id_source
+$query = "INSERT INTO notes (linked_id, created, creator, note, time, idx, visible_to_client, date_override)
+    SELECT $ticket_id_host, created, creator, note, time, idx, visible_to_client, date_override FROM notes WHERE linked_id = $ticket_id_source
 ";
 
 $result = mysqli_query($database, $query);

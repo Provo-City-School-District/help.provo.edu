@@ -69,7 +69,7 @@ if (isset($_SESSION['current_status'])) {
         <input type="text" id="name" name="name" value="<?= isset($_GET['name']) ? htmlspecialchars($_GET['name']) : '' ?>"><br>
 
         <label for="priority">Priority:</label>
-            <select id="priority" name="priority">
+            <select type="hidden" id="priority" name="priority">
                 <option value="1">Critical</option>
                 <option value="3">Urgent</option>
                 <option value="5">High</option>

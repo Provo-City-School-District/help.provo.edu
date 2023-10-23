@@ -14,11 +14,11 @@ services:
       - /var/www/html/vendor
     networks:
       - help-network
-    logging:
-      driver: gelf
-      options:
-        gelf-address: $GRAYLOGHOST
-        tag: help_web_log
+    # logging:
+    #   driver: gelf
+    #   options:
+    #     gelf-address: $GRAYLOGHOST
+    #     tag: help_web_log
   help-db:
     container_name: help-db
     build:

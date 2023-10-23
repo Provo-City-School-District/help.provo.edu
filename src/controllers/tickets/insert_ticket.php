@@ -75,13 +75,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if ($error === UPLOAD_ERR_OK) {
                 // Create uploads directory if it doesn't exist
-                if (!file_exists("uploads/")) {
-                    mkdir("uploads/", 0777, true);
+                if (!file_exists("../../uploads/")) {
+                    mkdir("../../uploads/", 0777, true);
                 }
 
                 // Generate a unique filename using the current timestamp and the original filename
                 $uniqueFilename = date('Ymd_Hi') . '_' . $filename;
-                $uploadPath = "uploads/{$uniqueFilename}";
+                $uploadPath = "../../uploads/{$uniqueFilename}";
                 move_uploaded_file($tmp_name, $uploadPath);
                 $uploadPaths[] = $uploadPath;
             }

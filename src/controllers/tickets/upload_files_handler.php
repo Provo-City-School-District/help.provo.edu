@@ -38,7 +38,7 @@ if (isset($_FILES['attachment'])) {
         // Check if the file was uploaded successfully and has an allowed extension
         if ($tmpFilePath != "" && in_array($fileExtension, $allowed_extensions)) {
             // Generate a unique file name
-            $newFilePath = "uploads/" . $ticket_id . "-" . $fileName;
+            $newFilePath = "../../uploads/" . $ticket_id . "-" . $fileName;
 
             // Move the file to the uploads directory
             if (move_uploaded_file($tmpFilePath, $newFilePath)) {

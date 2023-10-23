@@ -13,8 +13,9 @@ $date_override = null;
 if (isset($_POST["date_override_enable"])) {
 
     // validate it can be created into a date
-    $date_override = date('Y-m-d H:i:s', strtotime($_POST["date_override"]));
-    if (!$date_override) {
+    $date_override_timestamp = strtotime($_POST["date_override"]);
+    $date_override = date('Y-m-d H:i:s', $date_override_timestamp);
+    if (!$date_override || !$date_override_timestamp) {
         $error = "Date override was invalid";
         $_SESSION['current_status'] = $error;
         $_SESSION['status_type'] = "error";

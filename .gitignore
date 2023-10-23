@@ -3,3 +3,5 @@
 /src/vendor
 /src/controllers/tickets/uploads
 .DS_Store
+src/info.php
+src/uploads/

@@ -100,13 +100,13 @@ if (isset($_SESSION['current_status'])) {
             while ($user_row = mysqli_fetch_assoc($user_result)) {
             ?>
         <tr>
-            <td><a href="controllers/users/manage_user.php?id=<?= $user_row['id'] ?>"><?= $user_row['username'] ?></a></td>
-            <td><?= ucwords(strtolower($user_row['firstname'])) ?></td>
-            <td><?= ucwords(strtolower($user_row['lastname'])) ?></td>
-            <td><?= $user_row['email'] ?></td>
-            <td><?= ($user_row['is_admin'] == 1 ? 'Yes' : 'No') ?></td>
-            <td><?= $user_row['ifasid'] ?></td>
-            <td><?= $user_row['last_login'] ?></td>
+            <td data-cell="User Name"><a href="controllers/users/manage_user.php?id=<?= $user_row['id'] ?>"><?= $user_row['username'] ?></a></td>
+            <td data-cell="First Name"><?= ucwords(strtolower($user_row['firstname'])) ?></td>
+            <td data-cell="Last Name"><?= ucwords(strtolower($user_row['lastname'])) ?></td>
+            <td data-cell="Email"><?= $user_row['email'] ?></td>
+            <td data-cell="Is an Admin"><?= ($user_row['is_admin'] == 1 ? 'Yes' : 'No') ?></td>
+            <td data-cell="Employee ID"><?= $user_row['ifasid'] ?></td>
+            <td data-cell="Last Login"><?= $user_row['last_login'] ?></td>
         </tr>
     <?php
             }
@@ -139,8 +139,8 @@ if (isset($_SESSION['current_status'])) {
         <tbody>
             <?php while ($exclude_row = mysqli_fetch_assoc($exclude_result)) : ?>
                 <tr>
-                    <td><?= $exclude_row['exclude_day'] ?></td>
-                    <td><a href="<?= $root_domain ?>/controllers/admin/delete_exclude_day.php?id=<?= $exclude_row['id'] ?>">Delete</a></td>
+                    <td data-cell="Excluded Day"><?= $exclude_row['exclude_day'] ?></td>
+                    <td data-cell="Remove Excluded Day"><a href="<?= $root_domain ?>/controllers/admin/delete_exclude_day.php?id=<?= $exclude_row['id'] ?>">Delete</a></td>
                 </tr>
             <?php endwhile; ?>
         </tbody>

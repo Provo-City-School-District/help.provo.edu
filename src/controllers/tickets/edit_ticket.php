@@ -333,8 +333,8 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
     </div>
     <?php if ($ticket['notes'] !== null) : ?>
         <h2>Notes</h2>
-        <div class="note">
-            <table>
+        <!-- <div class="note"> -->
+            <table class="ticketsTable">
                 <tr>
                     <th>Date</th>
                     <th>Creator</th>
@@ -354,7 +354,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                     $total_time += $note['time']; // Add note time to total time (doesn't add for non-admins)
                 ?>
                     <tr>
-                        <td><a href="edit_note.php?note_id=<?= $note['note_id'] ?>&ticket_id=<?= $ticket_id ?>">
+                        <td data-cell="Date"><a href="edit_note.php?note_id=<?= $note['note_id'] ?>&ticket_id=<?= $ticket_id ?>">
                         <?php
                         $date_override = $note['date_override'];
                         if ($date_override != null)
@@ -362,8 +362,8 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                         else
                             echo $note['created'];
                         ?></a></td>
-                        <td><?= $note['creator'] ?></td>
-                        <td>
+                        <td  data-cell="Created By"><?= $note['creator'] ?></td>
+                        <td data-cell="Note Message">
                             <?php
                             /*
                                     May want to reference archived tickets in the future,
@@ -415,7 +415,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                                 ?>
                             </span>
                         </td>
-                        <td><?= $note['time'] ?></td>
+                        <td data-cell="Time Taken"><?= $note['time'] ?></td>
                     </tr>
                 <?php endforeach; ?>
             <?php endif; ?>
@@ -424,7 +424,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                 <td><?= $total_time ?></td>
             </tr>
             </table>
-        </div>
+        <!-- </div> -->
         <button id="new-note-button">New Note</button><br><br>
         <div id="new-note-form" style="display: none;">
             <h3>Add Note</h3>
@@ -479,9 +479,9 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                     while ($log_row = mysqli_fetch_assoc($log_result)) {
                     ?>
                         <tr>
-                            <td><?= $log_row['user_id'] ?></td>
-                            <td><?= $log_row['created_at'] ?></td>
-                            <td>
+                            <td data-cell="Created by"><?= $log_row['user_id'] ?></td>
+                            <td data-cell="Date"><?= $log_row['created_at'] ?></td>
+                            <td data-cell="Change Made">
                                 <?php
                                 if ($log_row['field_name'] != 'note') {
                                     echo $log_row['field_name'] . ' from: ' . html_entity_decode($log_row['old_value']) . ' to: ' . html_entity_decode($log_row['new_value']);

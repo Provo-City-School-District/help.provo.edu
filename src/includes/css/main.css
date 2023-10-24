@@ -145,13 +145,18 @@ tr:nth-of-type(2n) td {
 	display: grid;
 	margin-bottom: 1em;
 }
-
 .ticketGrid>* {
-	display: grid;
-	grid-template-columns: minmax(min-content, 150px) 1fr;
-	align-items: center;
+	display:grid;
+	grid-template-columns: 1fr;;
 }
 
+@media (min-width:575px) {
+	.ticketGrid>* {
+		display: grid;
+		grid-template-columns: minmax(min-content, 150px) 1fr;
+		align-items: center;
+	}
+}
 .ticketGrid label {
 	background-color: var(--theme-grey);
 	padding: .5em;
@@ -194,27 +199,27 @@ select {
 	font-weight: 700;
 }
 
-.note,
-.ticket_log {
+/* .note, */
+/* .ticket_log {
 	font-size: .8em;
-}
+} */
 
-.note table tr {
+/* .note table tr {
 	display: grid;
 	grid-template-columns: 150px 150px 1fr 90px;
-}
+} */
 
-.note table tr.totalTime {
+/* .note table tr.totalTime td {
 	display: grid;
 	grid-template-columns: 1fr 90px;
 	text-align: right;
-}
+} */
 
-.note .note_id {
+/* .note .note_id {
 	font-size: 50%;
 	display: block;
 	text-align: right;
-}
+} */
 
 .ticket-description {
 	border: 20px solid var(--do-light-blue);

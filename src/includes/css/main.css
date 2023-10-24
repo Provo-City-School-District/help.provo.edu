@@ -86,7 +86,9 @@ table {
 	border: 1px solid;
 	border-collapse: collapse;
 }
-
+table[style] {
+	width: 100%!important;
+}
 th,
 td {
 	border: 1px solid;

@@ -39,9 +39,9 @@ a:hover {
 #mainHeader {
 	background: linear-gradient(to bottom, var(--header-grad-start), var(--header-grad-end) 50%, var(--header-grad-end) 55%, var(--header-grad-start));
 	display: grid;
-	grid-template-columns:1fr;
+	grid-template-columns: 1fr;
 	max-height: 120px;
-	padding:1em;
+	padding: 1em;
 	justify-items: center;
 
 }
@@ -74,16 +74,18 @@ a:hover {
 #pageContent {
 	padding: 1em;
 }
+
 @media(min-width: 800px) {
 	#mainHeader {
 		grid-template-columns: 175px 1fr;
-			align-items: center;
-			justify-items:end;
+		align-items: center;
+		justify-items: end;
 	}
+
 	#headerNav {
-	display: flex;
-	justify-content: end;
-}
+		display: flex;
+		justify-content: end;
+	}
 }
 
 
@@ -93,9 +95,11 @@ table {
 	border: 1px solid;
 	border-collapse: collapse;
 }
+
 table[style] {
-	width: 100%!important;
+	width: 100% !important;
 }
+
 th,
 td {
 	border: 1px solid;
@@ -152,9 +156,11 @@ tr:nth-of-type(2n) td {
 	display: grid;
 	margin-bottom: 1em;
 }
+
 .ticketGrid>* {
-	display:grid;
-	grid-template-columns: 1fr;;
+	display: grid;
+	grid-template-columns: 1fr;
+	;
 }
 
 @media (min-width:575px) {
@@ -164,6 +170,7 @@ tr:nth-of-type(2n) td {
 		align-items: center;
 	}
 }
+
 .ticketGrid label {
 	background-color: var(--theme-grey);
 	padding: .5em;
@@ -231,6 +238,6 @@ select {
 .ticket-description {
 	border: 20px solid var(--do-light-blue);
 	border-radius: 7px;
-	padding:1em;
+	padding: 1em;
 	margin: 5px 0;
 }

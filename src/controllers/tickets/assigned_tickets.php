@@ -7,9 +7,9 @@
             <th>Request Detail</th>
             <th class="tLocation">Location</th>
             <th>Request Category</th>
-            <th class="tUser">Assigned Tech</th>
+            <!-- <th class="tUser">Assigned Tech</th> -->
             <th>Current Status</th>
-            <th class="tDate">Created</th>
+            <!-- <th class="tDate">Created</th> -->
             <th class="tDate">Last Updated</th>
             <th class="tDate">Due</th>
         </tr>
@@ -54,9 +54,9 @@
                     }
                     ?>
                 </td>
-                <td data-cell="Assigned Employee"><?= $ticket_row['employee'] ?></td>
+                <!-- <td data-cell="Assigned Employee"><?= $ticket_row['employee'] ?></td> -->
                 <td data-cell="Current Status"><?= $ticket_row['status'] ?></td>
-                <td data-cell="Created"><?= $ticket_row['created'] ?></td>
+                <!-- <td data-cell="Created"><?= $ticket_row['created'] ?></td> -->
                 <td data-cell="Last Updated"><?= $ticket_row['last_updated'] ?></td>
                 <?php
                 // Get the priority value from the ticket row

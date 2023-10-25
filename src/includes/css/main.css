@@ -39,11 +39,10 @@ a:hover {
 #mainHeader {
 	background: linear-gradient(to bottom, var(--header-grad-start), var(--header-grad-end) 50%, var(--header-grad-end) 55%, var(--header-grad-start));
 	display: grid;
-	align-items: center;
-	grid-template-columns: 175px 1fr;
-	max-height: 75px;
-	padding-right: 1em;
-	padding-left: 1em;
+	grid-template-columns:1fr;
+	max-height: 120px;
+	padding:1em;
+	justify-items: center;
 
 }
 
@@ -54,10 +53,7 @@ a:hover {
 }
 
 /* =============================== Navigation Styles =============================== */
-#headerNav {
-	display: flex;
-	justify-content: end;
-}
+
 
 #headerNav a {
 	color: var(--theme-black);
@@ -70,13 +66,24 @@ a:hover {
 	background-color: var(--theme-grey);
 }
 
-#headerNav a.active {
+/* #headerNav a.active {
 	background-color: var(--do-site-blue);
 	color: var(--theme-white);
-}
+} */
 
 #pageContent {
 	padding: 1em;
+}
+@media(min-width: 800px) {
+	#mainHeader {
+		grid-template-columns: 175px 1fr;
+			align-items: center;
+			justify-items:end;
+	}
+	#headerNav {
+	display: flex;
+	justify-content: end;
+}
 }
 
 
@@ -105,7 +112,7 @@ tr:nth-of-type(2n) td {
 	background-color: #eee;
 }
 
-@media(max-width: 750px) {
+@media(max-width: 800px) {
 	th {
 		display: none;
 	}

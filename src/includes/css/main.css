@@ -253,3 +253,6 @@ select {
 	padding: 1em;
 	margin: 5px 0;
 }
+.ticket-description p:not(:first-child) {
+	margin: 1em 0;
+}

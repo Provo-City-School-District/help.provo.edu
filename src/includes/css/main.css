@@ -87,7 +87,11 @@ a:hover {
 		justify-content: end;
 	}
 }
-
+@media (max-width: 400px) {
+    #headerNav,#subMenu {
+		font-size: 12px;
+	}
+}
 
 /* =============================== Table Styles =============================== */
 table {

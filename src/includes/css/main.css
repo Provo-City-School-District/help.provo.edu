@@ -18,7 +18,15 @@ a {
 a:hover {
 	color: var(--do-site-yellow);
 }
+button,input[type=submit] {
+	background-color: var(--do-site-blue);
+	color: var(--theme-white);
+	border: none;
+	padding: 1em;
+	border-radius: 4px;
+	cursor: pointer;
 
+}
 #wrapper {
 	width: 100%;
 	/* padding:1em; */

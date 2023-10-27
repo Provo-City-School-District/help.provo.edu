@@ -68,3 +68,11 @@ function sanitize_numeric_input($input)
 
     return $input;
 }
+function formatFieldName($str)
+{
+    // Remove underscores and replace with spaces
+    $str = str_replace('_', ' ', $str);
+    // Capitalize the first letter of each word
+    $str = ucwords($str);
+    return $str;
+}

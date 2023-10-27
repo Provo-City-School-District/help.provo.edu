@@ -420,7 +420,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                 <?php endforeach; ?>
             <?php endif; ?>
             <tr class="totalTime">
-                <td colspan=4>Total Time: <?= $total_time ?></td>
+                <td data-cell="Total Time" colspan=4><span>Total Time: </span> <?= $total_time ?></td>
                 
             </tr>
             </table>

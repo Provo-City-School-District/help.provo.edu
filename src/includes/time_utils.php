@@ -1,6 +1,10 @@
 <?php
 require_once('helpdbconnect.php');
 
+/*
+Inputs: string of username, array of day unix timestamps to add up note totals for
+Output: array of note totals for in the same indexing order as the input array
+*/
 function get_note_time_for_days(string $user, array $days)
 {
     global $database;

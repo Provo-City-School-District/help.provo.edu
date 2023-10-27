@@ -271,3 +271,9 @@ select {
 		font-size: 12px;
 	}
 }
+
+.note .note_id {
+	font-size: 50%;
+	display: block;
+	text-align: right;
+}

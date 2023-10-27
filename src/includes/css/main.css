@@ -5,7 +5,6 @@
 
 /* =============================== General Styles =============================== */
 body {
-	/* font-family: Arial, Helvetica, sans-serif; */
 	font-family: "Campton-Medium";
 	background-color: var(--theme-grey);
 }
@@ -18,7 +17,9 @@ a {
 a:hover {
 	color: var(--do-site-yellow);
 }
-button,input[type=submit] {
+
+button,
+input[type=submit] {
 	background-color: var(--do-site-blue);
 	color: var(--theme-white);
 	border: none;
@@ -27,6 +28,7 @@ button,input[type=submit] {
 	cursor: pointer;
 
 }
+
 #wrapper {
 	width: 100%;
 	/* padding:1em; */
@@ -61,8 +63,6 @@ button,input[type=submit] {
 }
 
 /* =============================== Navigation Styles =============================== */
-
-
 #headerNav a {
 	color: var(--theme-black);
 	padding: 1em;
@@ -74,32 +74,11 @@ button,input[type=submit] {
 	background-color: var(--theme-grey);
 }
 
-/* #headerNav a.active {
-	background-color: var(--do-site-blue);
-	color: var(--theme-white);
-} */
-
 #pageContent {
 	padding: 1em;
 }
 
-@media(min-width: 800px) {
-	#mainHeader {
-		grid-template-columns: 175px 1fr;
-		align-items: center;
-		justify-items: end;
-	}
 
-	#headerNav {
-		display: flex;
-		justify-content: end;
-	}
-}
-@media (max-width: 400px) {
-    #headerNav,#subMenu {
-		font-size: 12px;
-	}
-}
 
 /* =============================== Table Styles =============================== */
 table {
@@ -120,7 +99,7 @@ td {
 }
 
 th {
-	background-color: #ccc;
+	background-color: var(--darker-grey);
 	border-bottom: 2px solid;
 }
 
@@ -128,20 +107,18 @@ tr:nth-of-type(2n) td {
 	background-color: #eee;
 }
 
-@media(max-width: 800px) {
-	th {
-		display: none;
-	}
+th {
+	display: none;
+}
 
-	td {
-		display: block;
-	}
+td {
+	display: block;
+}
 
-	td::before {
-		content: attr(data-cell) ": ";
-		font-weight: 700;
-		text-transform: capitalize;
-	}
+td::before {
+	content: attr(data-cell) ": ";
+	font-weight: 700;
+	text-transform: capitalize;
 }
 
 /* =============================== Sub Menu Styles =============================== */
@@ -172,15 +149,6 @@ tr:nth-of-type(2n) td {
 .ticketGrid>* {
 	display: grid;
 	grid-template-columns: 1fr;
-	;
-}
-
-@media (min-width:575px) {
-	.ticketGrid>* {
-		display: grid;
-		grid-template-columns: minmax(min-content, 150px) 1fr;
-		align-items: center;
-	}
 }
 
 .ticketGrid label {
@@ -203,13 +171,6 @@ select {
 	border-radius: none;
 }
 
-@media screen and (min-width: 750px) {
-	.ticketGrid {
-		grid-template-columns: 1fr 1fr;
-		gap: 1em;
-	}
-}
-
 .detailContainer {
 	margin-top: 1em;
 }
@@ -225,27 +186,9 @@ select {
 	font-weight: 700;
 }
 
-/* .note, */
-/* .ticket_log {
-	font-size: .8em;
-} */
-
-/* .note table tr {
-	display: grid;
-	grid-template-columns: 150px 150px 1fr 90px;
-} */
-
-/* .note table tr.totalTime td {
-	display: grid;
-	grid-template-columns: 1fr 90px;
-	text-align: right;
-} */
-
-/* .note .note_id {
-	font-size: 50%;
-	display: block;
-	text-align: right;
-} */
+.totalTime span {
+	display: none;
+}
 
 .ticket-description {
 	border: 20px solid var(--do-light-blue);
@@ -253,6 +196,62 @@ select {
 	padding: 1em;
 	margin: 5px 0;
 }
+
 .ticket-description p:not(:first-child) {
 	margin: 1em 0;
+}
+
+/* =============================== Responsive Styles =============================== */
+@media(min-width: 800px) {
+	#mainHeader {
+		grid-template-columns: 175px 1fr;
+		align-items: center;
+		justify-items: end;
+	}
+
+	#headerNav {
+		display: flex;
+		justify-content: end;
+	}
+
+	.totalTime {
+		text-align: right;
+	}
+
+	.totalTime span {
+		display: inline-block;
+	}
+
+	th,
+	td {
+		display: table-cell;
+	}
+
+	td::before {
+		content: unset;
+		font-weight: unset;
+		text-transform: unset;
+	}
+}
+
+@media (min-width: 750px) {
+	.ticketGrid {
+		grid-template-columns: 1fr 1fr;
+		gap: 1em;
+	}
+}
+
+@media (min-width:575px) {
+	.ticketGrid>* {
+		display: grid;
+		grid-template-columns: minmax(min-content, 150px) 1fr;
+		align-items: center;
+	}
+}
+
+@media (max-width: 400px) {
+	#headerNav,
+	#subMenu {
+		font-size: 12px;
+	}
 }

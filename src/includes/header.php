@@ -17,9 +17,9 @@ if (isset($_SESSION['username'])) {
 $current_page = $_SERVER['REQUEST_URI'];
 
 // Define the URLs of the pages you want to highlight
-$home_page_url = '/home.php';
+$home_page_url = '/profile.php';
 $ticket_page_url = '/tickets.php';
-$user_profile = '/profile.php';
+//$user_profile = '/profile.php';
 $admin_page = '/admin.php';
 ?>
 <!DOCTYPE html>
@@ -44,7 +44,7 @@ $admin_page = '/admin.php';
 <body>
     <div id="wrapper">
         <header id="mainHeader">
-            <a href="<?= $root_domain ?>/home.php">
+            <a href="<?= $root_domain ?>/profile.php">
                 <img src="<?= $root_domain; ?>/includes/img/pcsd-logo-website-header-160w.png" alt="Provo City School District Logo" />
             </a>
             <?php
@@ -52,8 +52,8 @@ $admin_page = '/admin.php';
             ?>
                 <nav id="headerNav">
                     <!-- <a class="<?php echo isActivePage($current_page, $home_page_url); ?>" href="<?= $root_domain; ?>/home.php">Home</a> -->
-                    <a class="<?php echo isActivePage($current_page, $ticket_page_url); ?>" href="<?= $root_domain; ?>/tickets.php">Tickets</a>
                     <a class="<?php echo isActivePage($current_page, $user_profile); ?>" href="<?= $root_domain; ?>/profile.php">Profile</a>
+                    <a class="<?php echo isActivePage($current_page, $ticket_page_url); ?>" href="<?= $root_domain; ?>/tickets.php">Tickets</a>
                     <?php
                     if ($_SESSION['permissions']['is_admin'] == 1) {
                     ?>

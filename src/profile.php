@@ -31,6 +31,9 @@ $user_times["friday"] = get_days_note_time($friday_timestamp, $user) / 60;
 $user_times["total"] = $user_times["monday"] + $user_times["tuesday"] +
     $user_times["wednesday"] + $user_times["thursday"] + $user_times["friday"];
 ?>
+
+<h2>Profile For <?= $user_data['firstname'] . ' ' . $user_data['lastname'] ?> (<span><?= $user_data['username'] ?></span>)</h2>
+<br>
 <table>
     <tr>
         <th>Monday</th>
@@ -49,11 +52,5 @@ $user_times["total"] = $user_times["monday"] + $user_times["tuesday"] +
         <td><?= number_format($user_times["total"], 2) ?> hrs</td>
     </tr>
 </table>
-<h1>Profile For <?= $user_data['firstname'] . ' ' . $user_data['lastname'] ?> (<span><?= $user_data['username'] ?></span>)</h1>
-Potential features
--profile modifications
--see ticket stats?
--see ticket history
--timeclock info in the future
 
 <?php include("includes/footer.php"); ?>

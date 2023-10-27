@@ -201,6 +201,13 @@ select {
 	margin: 1em 0;
 }
 
+.ticket_log td:nth-child(1),
+.ticket_log td:nth-child(2),
+.note td:nth-child(1),
+.note td:nth-child(2) {
+	font-size: 80%;
+}
+
 /* =============================== Responsive Styles =============================== */
 @media(min-width: 800px) {
 	#mainHeader {
@@ -232,6 +239,14 @@ select {
 		font-weight: unset;
 		text-transform: unset;
 	}
+
+	.ticket_log table th:nth-child(1) {
+		width: 100px;
+	}
+
+	.ticket_log table th:nth-child(2) {
+		width: 150px;
+	}
 }
 
 @media (min-width: 750px) {
@@ -250,6 +265,7 @@ select {
 }
 
 @media (max-width: 400px) {
+
 	#headerNav,
 	#subMenu {
 		font-size: 12px;

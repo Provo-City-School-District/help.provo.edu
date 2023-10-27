@@ -333,7 +333,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
     </div>
     <?php if ($ticket['notes'] !== null) : ?>
         <h2>Notes</h2>
-        <!-- <div class="note"> -->
+        <div class="note">
             <table class="ticketsTable">
                 <tr>
                     <th>Date</th>
@@ -424,7 +424,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                 
             </tr>
             </table>
-        <!-- </div> -->
+        </div>
         <button id="new-note-button">New Note</button><br><br>
         <div id="new-note-form" style="display: none;">
             <h3>Add Note</h3>

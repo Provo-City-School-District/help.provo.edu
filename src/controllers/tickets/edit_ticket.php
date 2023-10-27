@@ -355,14 +355,14 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                 ?>
                     <tr>
                         <td data-cell="Date"><a href="edit_note.php?note_id=<?= $note['note_id'] ?>&ticket_id=<?= $ticket_id ?>">
-                        <?php
-                        $date_override = $note['date_override'];
-                        if ($date_override != null)
-                            echo $date_override."*";
-                        else
-                            echo $note['created'];
-                        ?></a></td>
-                        <td  data-cell="Created By"><?= $note['creator'] ?></td>
+                                <?php
+                                $date_override = $note['date_override'];
+                                if ($date_override != null)
+                                    echo $date_override . "*";
+                                else
+                                    echo $note['created'];
+                                ?></a></td>
+                        <td data-cell="Created By"><?= $note['creator'] ?></td>
                         <td data-cell="Note Message">
                             <?php
                             /*
@@ -389,7 +389,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
 
                                 $asset_tag_matches = [];
                                 $asset_tag_match_result = preg_match_all($asset_tag_pattern, $note_data, $asset_tag_matches);
-                                
+
                                 if ($asset_tag_match_result) {
                                     foreach ($asset_tag_matches[0] as $match_str) {
                                         $barcode = substr($match_str, 3);
@@ -421,7 +421,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
             <?php endif; ?>
             <tr class="totalTime">
                 <td data-cell="Total Time" colspan=4><span>Total Time: </span> <?= $total_time ?></td>
-                
+
             </tr>
             </table>
         </div>
@@ -471,16 +471,16 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                 <h2>Ticket History</h2>
                 <table>
                     <tr>
-                        <th>Changed By</th>
                         <th>Created At</th>
+                        <th>Changed By</th>
                         <th>Changes made</th>
                     </tr>
                     <?php
                     while ($log_row = mysqli_fetch_assoc($log_result)) {
                     ?>
                         <tr>
-                            <td data-cell="Created by"><?= $log_row['user_id'] ?></td>
                             <td data-cell="Date"><?= $log_row['created_at'] ?></td>
+                            <td data-cell="Created by"><?= $log_row['user_id'] ?></td>
                             <td data-cell="Change Made">
                                 <?php
                                 if ($log_row['field_name'] != 'note') {

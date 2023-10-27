@@ -21,20 +21,22 @@ $wednesday_timestamp = strtotime('+2 day', $monday_timestamp);
 $thursday_timestamp = strtotime('+3 day', $monday_timestamp);
 $friday_timestamp = strtotime('+4 day', $monday_timestamp);
 
-$user_times = [];
-$user_times["monday"] = get_days_note_time($monday_timestamp, $user) / 60;
-$user_times["tuesday"] = get_days_note_time($tuesday_timestamp, $user) / 60;
-$user_times["wednesday"] = get_days_note_time($wednesday_timestamp, $user) / 60;
-$user_times["thursday"] = get_days_note_time($thursday_timestamp, $user) / 60;
-$user_times["friday"] = get_days_note_time($friday_timestamp, $user) / 60;
+$user_times = get_note_time_for_days($user, [$monday_timestamp, $tuesday_timestamp, $wednesday_timestamp, $thursday_timestamp, $friday_timestamp]);
 
-$user_times["total"] = $user_times["monday"] + $user_times["tuesday"] +
-    $user_times["wednesday"] + $user_times["thursday"] + $user_times["friday"];
+// Convert times to hours
+$user_times[0] /= 60;
+$user_times[1] /= 60;
+$user_times[2] /= 60;
+$user_times[3] /= 60;
+$user_times[4] /= 60;
+
+// Add up all the hours for the total
+$user_times[5] = array_sum($user_times);
 ?>
 
 <h2>Profile For <?= $user_data['firstname'] . ' ' . $user_data['lastname'] ?> (<span><?= $user_data['username'] ?></span>)</h2>
 <br>
-<table>
+<table id="profile_time_table">
     <tr>
         <th>Monday</th>
         <th>Tuesday</th>
@@ -44,12 +46,12 @@ $user_times["total"] = $user_times["monday"] + $user_times["tuesday"] +
         <th>Total</th>
     </tr>
     <tr>
-        <td><?= number_format($user_times["monday"], 2) ?> hrs</td>
-        <td><?= number_format($user_times["tuesday"], 2) ?> hrs</td>
-        <td><?= number_format($user_times["wednesday"], 2) ?> hrs</td>
-        <td><?= number_format($user_times["thursday"], 2) ?> hrs</td>
-        <td><?= number_format($user_times["friday"], 2) ?> hrs</td>
-        <td><?= number_format($user_times["total"], 2) ?> hrs</td>
+        <td><?= number_format($user_times[0], 2) ?> hrs</td>
+        <td><?= number_format($user_times[1], 2) ?> hrs</td>
+        <td><?= number_format($user_times[2], 2) ?> hrs</td>
+        <td><?= number_format($user_times[3], 2) ?> hrs</td>
+        <td><?= number_format($user_times[4], 2) ?> hrs</td>
+        <td><?= number_format($user_times[5], 2) ?> hrs</td>
     </tr>
 </table>
 

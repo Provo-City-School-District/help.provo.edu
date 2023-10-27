@@ -277,3 +277,7 @@ select {
 	display: block;
 	text-align: right;
 }
+
+#profile_time_table {
+	max-width: 800px;
+}

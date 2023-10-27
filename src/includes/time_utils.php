@@ -1,15 +1,19 @@
 <?php
 require_once('helpdbconnect.php');
 
-function get_days_note_time(int $date_timestamp, string $user)
+function get_note_time_for_days(string $user, array $days)
 {
     global $database;
+
+    $times = [];
+    // set times to 0
+    for ($i = 0; $i < count($days); $i++)
+        $times[$i] = 0;
 
     $user_sanitized = trim(htmlspecialchars($user));
     $query = "SELECT created, date_override, time from notes WHERE creator = '$user_sanitized'";
     $query_result = mysqli_query($database, $query);
 
-    $total_time = 0;
     while ($row = mysqli_fetch_assoc($query_result))  {
         $created = $row["created"];
         $date_override = $row["date_override"];
@@ -20,13 +24,15 @@ function get_days_note_time(int $date_timestamp, string $user)
             $used_date = $date_override;
 
         $note_date = date("Y-m-d", strtotime($used_date));
-        $input_date = date("Y-m-d", $date_timestamp);
 
         // Compare the date strings
-        if ($note_date == $input_date) {
-            $total_time += $time;
+        for ($i = 0; $i < count($days); $i++) {
+            $input_date = date("Y-m-d", $days[$i]);
+            if ($note_date == $input_date) {
+                $times[$i] += $time;
+            }
         }
     }
 
-    return $total_time;
+    return $times;
 }

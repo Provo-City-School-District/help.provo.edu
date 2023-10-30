@@ -46,12 +46,12 @@ $user_times[5] = array_sum($user_times);
         <th>Total</th>
     </tr>
     <tr>
-        <td><?= number_format($user_times[0], 2) ?> hrs</td>
-        <td><?= number_format($user_times[1], 2) ?> hrs</td>
-        <td><?= number_format($user_times[2], 2) ?> hrs</td>
-        <td><?= number_format($user_times[3], 2) ?> hrs</td>
-        <td><?= number_format($user_times[4], 2) ?> hrs</td>
-        <td><?= number_format($user_times[5], 2) ?> hrs</td>
+        <td data-cell="Monday"><?= number_format($user_times[0], 2) ?> hrs</td>
+        <td data-cell="Tuesday"><?= number_format($user_times[1], 2) ?> hrs</td>
+        <td data-cell="Wednesday"><?= number_format($user_times[2], 2) ?> hrs</td>
+        <td data-cell="Thursday"><?= number_format($user_times[3], 2) ?> hrs</td>
+        <td data-cell="Friday"><?= number_format($user_times[4], 2) ?> hrs</td>
+        <td data-cell="Week Total"><?= number_format($user_times[5], 2) ?> hrs</td>
     </tr>
 </table>
 

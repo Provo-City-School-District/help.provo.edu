@@ -14,8 +14,12 @@ services:
       - /var/www/html/vendor
     networks:
       - help-network
-    # logging:
-    #   driver: gelf
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://localhost:514"
+        tag: "help-web"
+    # driver: gelf
     #   options:
     #     gelf-address: $UDPGRAYLOGHOST
     #     tag: help_web_log

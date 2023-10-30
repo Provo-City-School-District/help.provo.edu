@@ -15,7 +15,12 @@ $user_data = mysqli_fetch_assoc($user_result);
 $user = $_SESSION["username"];
 
 // Get day for M-F belonging to current work week
-$monday_timestamp = strtotime("last Monday");
+$monday_timestamp = null;
+if (strtolower(date('l')) == "monday")
+    $monday_timestamp = strtotime("today");
+else
+    $monday_timestamp = strtotime("last Monday");
+
 $tuesday_timestamp = strtotime('+1 day', $monday_timestamp);
 $wednesday_timestamp = strtotime('+2 day', $monday_timestamp);
 $thursday_timestamp = strtotime('+3 day', $monday_timestamp);

@@ -14,8 +14,7 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
 }
 include("../../vendor/autoload.php");
 require_once('../../includes/helpdbconnect.php');
-require_once("../../includes/vault_utils.php");
-include("../../includes/status_popup.php");
+require_once("../../includes/status_popup.php");
 
 // Check if an error message is set
 if (isset($_SESSION['current_status'])) {

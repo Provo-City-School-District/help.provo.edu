@@ -54,6 +54,9 @@ $notecolumn = "note";
 mysqli_stmt_bind_param($log_stmt, "isss", $ticket_id, $username, $notecolumn, $note);
 mysqli_stmt_execute($log_stmt);
 
+$_SESSION['current_status'] = "Note added";
+$_SESSION['status_type'] = "success";
+
 // Redirect back to the edit ticket page
 header("Location: edit_ticket.php?id=$ticket_id");
 exit();

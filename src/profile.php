@@ -16,7 +16,7 @@ $user = $_SESSION["username"];
 
 // Get day for M-F belonging to current work week
 $monday_timestamp = null;
-if (strtolower(date('l')) == "monday")
+if (date('w') == 1)
     $monday_timestamp = strtotime("today");
 else
     $monday_timestamp = strtotime("last Monday");

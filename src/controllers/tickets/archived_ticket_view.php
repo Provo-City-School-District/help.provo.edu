@@ -112,8 +112,12 @@ while ($client_note_row = mysqli_fetch_assoc($client_notes_result)) {
     ];
 }
 
+// Sort tickets by date
 usort($all_notes, function ($item1, $item2) {
-    return $item1['date'] <=> $item2['date'];
+    // filter out * which could be added by date override
+    $item1_str_clean = str_replace("*", "", $item1["date"]);
+    $item2_str_clean = str_replace("*", "", $item2["date"]);
+    return strtotime($item1_str_clean) <=> strtotime($item2_str_clean);
 });
 
 ?>

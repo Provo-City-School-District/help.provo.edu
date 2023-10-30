@@ -81,6 +81,9 @@ while ($tech_note_row = mysqli_fetch_assoc($tech_notes_result)) {
     $hidden = $tech_note_row["HIDDEN"];
     $effective_date = $tech_note_row["TECH_NOTE_DATE"];
     $note_time = $tech_note_row["BILLING_MINUTES"];
+    
+    if ($note_time == null)
+        $note_time = 0;
 
     $note_date = $effective_date;
     if ($created_date != $effective_date) {

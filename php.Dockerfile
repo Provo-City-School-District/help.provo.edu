@@ -1,4 +1,4 @@
-FROM php:8.2.12-apache
+FROM php:8.2-apache
 
 # php adjustments.
 COPY config/customphp.ini /usr/local/etc/php/conf.d/

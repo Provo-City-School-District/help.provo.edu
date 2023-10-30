@@ -41,6 +41,11 @@ services:
       - ./db_data:/var/lib/mysql
     networks:
       - help-network
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://localhost:514"
+        tag: "help-db"
   help_myadmin:
     container_name: help-myadmin
     image: phpmyadmin:5.2.0
@@ -53,6 +58,11 @@ services:
       - help-db
     networks:
       - help-network
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://localhost:514"
+        tag: "help-myadmin"
 networks:
   help-network:
 volumes:

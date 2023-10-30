@@ -336,7 +336,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
             <table class="ticketsTable">
                 <tr>
                     <th>Date</th>
-                    <th>Creator</th>
+                    <th>Created By</th>
                     <th>Note</th>
                     <th>Time</th>
                 </tr>

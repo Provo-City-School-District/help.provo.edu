@@ -155,9 +155,6 @@ usort($all_notes, function ($item1, $item2) {
         <div>
             Question: <?= $arch_ticket_data['QUESTION_TEXT'] ?>
         </div>
-        <div>
-            Job Time: <?= $arch_ticket_data['JOB_TIME'] ?>
-        </div>
 </article>
 
 <h2>Notes</h2>
@@ -165,7 +162,7 @@ usort($all_notes, function ($item1, $item2) {
     <table class="ticketsTable">
         <tr>
             <th>Date</th>
-            <th>Creator</th>
+            <th>Created By</th>
             <th>Note</th>
             <th>Time</th>
         </tr>
@@ -178,18 +175,19 @@ usort($all_notes, function ($item1, $item2) {
         $note_hidden = $note["hidden"];
     ?>
         <tr>
-            <td><?= $note_date ?></td>
-            <td><?= $note_creator ?></td>
-            <td><?= $note_text ?>
+            <td data-cell="Date"><?= $note_date ?></td>
+            <td data-cell="Created By"><?= $note_creator ?></td>
+            <td data-cell="Note Message"><?= $note_text ?>
             <span class="note_id">
-            <?php
-                echo !$note_hidden ? "Visible to Client" : "Invisible to Client";
-            ?>
+                <?= !$note_hidden ? "Visible to Client" : "Invisible to Client"; ?>
             </span>
             </td>
-            <td><?= $note_time ?></td>
+            <td data-cell="Time Taken"><?= $note_time ?></td>
         </tr>
     <?php endforeach; ?>
+    <tr class="totalTime">
+        <td data-cell="Total Time" colspan=4><span>Total Time: </span> <?= $arch_ticket_data['JOB_TIME'] ?></td>
+    </tr>
     </table>
 </div>
 <?php

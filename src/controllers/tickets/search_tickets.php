@@ -255,10 +255,15 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                             // Query the sites table to get the location name
                             $location_query = "SELECT location_name FROM locations WHERE archived_location_id = " . $row["LOCATION_ID"];
                             $location_result = mysqli_query($database, $location_query);
-                            $location_name = mysqli_fetch_assoc($location_result)['location_name'];
+                            $location_data = mysqli_fetch_assoc($location_result);
 
-                            // Display the location name and room number
-                            echo $location_name . '<br><br>RM ' . $row['ROOM'];
+                            // TODO support archived tickets
+                            if ($location_data != null) {
+                                $location_name = $location_data['location_name'];
+
+                                // Display the location name and room number
+                                echo $location_name . '<br><br>RM ' . $row['ROOM'];
+                            }
                             ?>
                         </td>
                         <td data-cell="Category">

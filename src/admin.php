@@ -206,7 +206,11 @@ if (isset($_SESSION['current_status'])) {
                         }
                         ?>
                     </td>
-                    <td data-cell="Assigned Employee"><?php if($ticket_row['employee'] == NULL) {echo 'unassigned';}else{echo $ticket_row['employee'];}  ?></td>
+                    <td data-cell="Assigned Employee"><?php if ($ticket_row['employee'] == NULL) {
+                                                            echo 'unassigned';
+                                                        } else {
+                                                            echo $ticket_row['employee'];
+                                                        }  ?></td>
                     <td data-cell="Current Status"><?= $ticket_row['status'] ?></td>
                     <td data-cell="Created"><?= $ticket_row['created'] ?></td>
                     <td data-cell="Last Updated"><?= $ticket_row['last_updated'] ?></td>

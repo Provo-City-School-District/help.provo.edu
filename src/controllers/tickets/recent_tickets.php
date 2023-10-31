@@ -31,10 +31,11 @@ include("ticket_utils.php");
     </thead>
     <tbody>
         <?php
-        // Execute the SQL query
-        $ticket_query = "SELECT *
-        FROM tickets
-        WHERE employee = '" . $_SESSION['username'] . "'
+        $ticket_query = "(SELECT * FROM tickets WHERE employee = '" . $_SESSION['username'] . "')
+        UNION
+        (SELECT tickets.* FROM tickets 
+        JOIN notes ON tickets.id = notes.linked_id 
+        WHERE notes.creator = '" . $_SESSION['username'] . "')
         ORDER BY last_updated DESC";
 
         $ticket_result = mysqli_query($database, $ticket_query);

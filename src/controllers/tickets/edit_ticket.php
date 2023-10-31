@@ -142,6 +142,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
 
             <div> <label for="employee">Assigned Tech:</label>
                 <select id="employee" name="employee">
+                <option value="unassigned">Unassigned</option>
                     <?php foreach ($usernames as $username) : ?>
                         <option value="<?= $username ?>" <?= $ticket['employee'] === $username ? 'selected' : '' ?>><?= $username ?></option>
                     <?php endforeach; ?>

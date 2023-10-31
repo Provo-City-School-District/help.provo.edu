@@ -152,7 +152,7 @@ if (isset($_SESSION['current_status'])) {
         Source Ticket ID:<input type="text" id="ticket_id_source" name="ticket_id_source" value=""><br>
         <button type="submit">Merge</button><br>
     </form>
-    <h2>All Tickets</h2>
+    <h2>Unassigned Tickets</h2>
     <table class="ticketsTable data-table">
         <thead>
             <tr>
@@ -173,6 +173,7 @@ if (isset($_SESSION['current_status'])) {
             // Execute the SQL query
             $ticket_query = "SELECT *
         FROM tickets
+        WHERE employee IS NULL
         ORDER BY id ASC";
 
             $ticket_result = mysqli_query($database, $ticket_query);

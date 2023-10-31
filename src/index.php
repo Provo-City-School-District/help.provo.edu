@@ -10,7 +10,7 @@ session_start();
 
 // Check if user is already logged in
 if (isset($_SESSION['username'])) {
-    header('Location: home.php');
+    header('Location: tickets.php');
     exit();
 }
 

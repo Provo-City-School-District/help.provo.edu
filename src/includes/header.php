@@ -54,17 +54,17 @@ $admin_page = '/admin.php';
                     <?php
                     if ($_SESSION['permissions']['is_tech'] == 1) {
                     ?>
-                        <a class="<?php echo isActivePage($current_page, $user_profile); ?>" href="<?= $root_domain; ?>/profile.php">Profile</a>
+                        <a href="<?= $root_domain; ?>/profile.php">Profile</a>
                     <?php
                     }
                     ?>
-                    <!-- <a class="<?php echo isActivePage($current_page, $home_page_url); ?>" href="<?= $root_domain; ?>/home.php">Home</a> -->
+                    <!-- <a href="<?= $root_domain; ?>/home.php">Home</a> -->
 
-                    <a class="<?php echo isActivePage($current_page, $ticket_page_url); ?>" href="<?= $root_domain; ?>/tickets.php">Tickets</a>
+                    <a href="<?= $root_domain; ?>/tickets.php">Tickets</a>
                     <?php
                     if ($_SESSION['permissions']['is_admin'] == 1) {
                     ?>
-                        <a class="<?php echo isActivePage($current_page, $admin_page); ?>" href="<?= $root_domain; ?>/admin.php">Admin</a>
+                        <a href="<?= $root_domain; ?>/admin.php">Admin</a>
                     <?php
                     }
                     ?>

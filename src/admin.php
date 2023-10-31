@@ -11,7 +11,7 @@ require_once('includes/helpdbconnect.php');
 require("controllers/tickets/ticket_utils.php");
 
 // Execute the SELECT query to retrieve all users from the users table
-$users_query = "SELECT * FROM users";
+$users_query = "SELECT * FROM users ORDER BY username ASC";
 $user_result = mysqli_query($database, $users_query);
 // Check if the query was successful
 if (!$user_result) {

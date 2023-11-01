@@ -290,7 +290,7 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
             </div>
             <div>
                 <label for="parent_ticket">Parent Ticket:</label>
-                <input type="number" id="parent_ticket" name="parent_ticket" value="<?= $ticket['parent_ticket'] ?>">
+                <input type="number" id="parent_ticket" name="parent_ticket" value="<?= $ticket['parent_ticket'] == 0 ? '' : $ticket['parent_ticket'] ?>">
             </div>
             <div>
                 <label for="cc_emails">CC:</label>

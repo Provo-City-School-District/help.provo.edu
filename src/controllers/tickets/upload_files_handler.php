@@ -60,9 +60,6 @@ function compress_and_resize_image(string $image_path, string $image_type)
 
 }
 
-// IN: 4000x2000
-// WH_RATIO=1500/4000
-// W=1500, H=
 // Get the ticket ID and username from the POST data
 $ticket_id = $_POST['ticket_id'];
 $username = $_POST['username'];

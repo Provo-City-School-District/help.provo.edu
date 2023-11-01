@@ -1,4 +1,6 @@
 <?php
+require_once("includes/status_popup.php");
+
 // Define LDAP Server
 $ldap_host = getenv('LDAPHOST');
 $ldap_port = getenv('LDAPPORT');
@@ -84,7 +86,8 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
             header('Location: tickets.php');
         } else {
             // Authentication failed
-            echo 'Authentication failed';
+            $_SESSION['current_status'] = 'Authentication failed';
+            $_SESSION['status_type'] = 'error';
 
             // Log the failed login attempt
             $logMessage = "Failed login attempt for username: " .  $input_username . " IP: " . $_SERVER["REMOTE_ADDR"] . " at " . date("Y-m-d H:i:s") . "\n";
@@ -99,7 +102,8 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
         ldap_close($ldap_conn);
     } else {
         // Failed to connect to LDAP server
-        echo 'Failed to connect to LDAP server';
+        $_SESSION['current_status'] = 'Failed to connect to LDAP server';
+        $_SESSION['status_type'] = 'error';
     }
 }
 
@@ -113,7 +117,33 @@ function userExistsLocally($email, $database)
 }
 
 ?>
-<?php include("includes/header.php"); ?>
+<?php include("includes/header.php"); 
+
+if (isset($_SESSION['current_status'])) {
+    $status_title = "";
+    $status_type = $_SESSION['status_type'];
+
+    if ($status_type == "success") {
+        $status_title = "Success";
+    } else if ($status_type == "error") {
+        $status_title = "Error";
+    } else if ($status_type == "info") {
+        $status_title = "Info";
+    } else {
+        die("status_type is not recognized");
+    }
+
+    $status_popup = new Template("includes/status_popup.phtml");
+    $status_popup->message_body = $_SESSION['current_status'];
+    $status_popup->message_title = $status_title;
+    $status_popup->alert_type = $status_type;
+
+    echo $status_popup;
+
+    unset($_SESSION['current_status']);
+    unset($_SESSION['status_type']);
+}
+?>
 
 <div id="loginWrapper">
     <h1>Login for Help</h1>

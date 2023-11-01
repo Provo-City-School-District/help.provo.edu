@@ -92,6 +92,7 @@ if (isset($_SESSION['current_status'])) {
             <th>Last Name</th>
             <th>Email</th>
             <th>Is Admin</th>
+                <th>Is Tech</th>
             <th>Employee ID</th>
             <th>Last Login</th>
         </tr>
@@ -105,6 +106,7 @@ if (isset($_SESSION['current_status'])) {
             <td data-cell="Last Name"><?= ucwords(strtolower($user_row['lastname'])) ?></td>
             <td data-cell="Email"><?= $user_row['email'] ?></td>
             <td data-cell="Is an Admin"><?= ($user_row['is_admin'] == 1 ? 'Yes' : 'No') ?></td>
+                    <td data-cell="Is an Tech"><?= ($user_row['is_tech'] == 1 ? 'Yes' : 'No') ?></td>
             <td data-cell="Employee ID"><?= $user_row['ifasid'] ?></td>
             <td data-cell="Last Login"><?= $user_row['last_login'] ?></td>
         </tr>

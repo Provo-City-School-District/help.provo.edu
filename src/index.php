@@ -83,12 +83,14 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
                     echo 'Update query error: ' . mysqli_error($database);
                 }
             }
+            $loginMessage = "Successful login for username: " .  $input_username . " IP: " . $_SERVER["REMOTE_ADDR"] . " at " . date("Y-m-d H:i:s") . "\n";
+            error_log($loginMessage, 0);
             header('Location: tickets.php');
         } else {
             // Authentication failed
             $_SESSION['current_status'] = 'Authentication failed';
             $_SESSION['status_type'] = 'error';
-
+            
             // Log the failed login attempt
             $logMessage = "Failed login attempt for username: " .  $input_username . " IP: " . $_SERVER["REMOTE_ADDR"] . " at " . date("Y-m-d H:i:s") . "\n";
             error_log($logMessage, 0);
@@ -104,6 +106,8 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
         // Failed to connect to LDAP server
         $_SESSION['current_status'] = 'Failed to connect to LDAP server';
         $_SESSION['status_type'] = 'error';
+        $failedLDAP = "failed to connect to LDAP server";
+        error_log($failedLDAP, 0);
     }
 }
 
@@ -117,7 +121,7 @@ function userExistsLocally($email, $database)
 }
 
 ?>
-<?php include("includes/header.php"); 
+<?php include("includes/header.php");
 
 if (isset($_SESSION['current_status'])) {
     $status_title = "";

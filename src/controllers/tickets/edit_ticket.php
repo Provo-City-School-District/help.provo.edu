@@ -104,17 +104,23 @@ if ($ticket_merged_id != null && $should_redirect) {
 ob_end_flush();
 
 // Fetch the list of usernames from the users table
-$usernamesQuery = "SELECT username FROM users";
+$usernamesQuery = "SELECT username,is_tech FROM users";
 $usernamesResult = mysqli_query($database, $usernamesQuery);
 
 if (!$usernamesResult) {
     die('Error fetching usernames: ' . mysqli_error($database));
 }
-
+// print_r($usernamesResult);
+// print_r(mysqli_fetch_assoc($usernamesResult));
 // Store the usernames in an array
-$usernames = [];
+$clientusernames = [];
+$techusernames = [];
 while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
-    $usernames[] = $usernameRow['username'];
+    if($usernameRow['is_tech'] == 1) {
+        $techusernames[] = $usernameRow['username'];
+    } else {
+        $clientusernames[] = $usernameRow['username'];
+    }
 }
 
 //fetch child tickets
@@ -144,7 +150,7 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
                 <label for="client">Client:</label>
                 <!-- <input type="text" id="client" name="client" value="<?= $ticket['client'] ?>"> -->
                 <select id="client" name="client">
-                    <?php foreach ($usernames as $username) : ?>
+                    <?php foreach ($clientusernames as $username) : ?>
                         <option value="<?= $username ?>" <?= $ticket['client'] === $username ? 'selected' : '' ?>><?= $username ?></option>
                     <?php endforeach; ?>
                 </select>
@@ -153,6 +159,7 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
             <div> <label for="employee">Assigned Tech:</label>
                 <select id="employee" name="employee">
                 <option value="unassigned">Unassigned</option>
+                    <?php foreach ($techusernames as $username) : ?>
                         <option value="<?= $username ?>" <?= $ticket['employee'] === $username ? 'selected' : '' ?>><?= $username ?></option>
                     <?php endforeach; ?>
                 </select>

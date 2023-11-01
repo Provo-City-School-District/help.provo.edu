@@ -43,50 +43,51 @@ if (isset($_SESSION['current_status'])) {
     <!-- Form for updating ticket information -->
     <form method="POST" action="insert_ticket.php" enctype="multipart/form-data">
         <input type="hidden" name="client" value="<?= $_SESSION['username'] ?>">
-        <label for="location">Location:</label>
-        <select id="location" name="location">
-            <?php
-            // Query the sites table to get the site information
-            $location_query = "SELECT sitenumber, location_name FROM locations ORDER BY location_name ASC";
-            $location_result = mysqli_query($database, $location_query);
-            // Loop through the results and create an option for each site
-            while ($locations = mysqli_fetch_assoc($location_result)) {
-                $selected = '';
-                if ($locations['sitenumber'] == $row['location']) {
-                    $selected = 'selected';
-                }
-                echo '<option value="' . $locations['sitenumber'] . '" ' . $selected . '>' . $locations['location_name'] . '</option>';
-            }
-            ?>
-        </select>
-        <br>
-        <label for="room">Room:</label>
-        <input type="text" id="room" name="room" value="<?= isset($_GET['room']) ? htmlspecialchars($_GET['room']) : '' ?>"><br>
+        <div class="ticketGrid">
+            <div>
+                <label for="location">Location:</label>
+                <select id="location" name="location">
+                    <?php
+                    // Query the sites table to get the site information
+                    $location_query = "SELECT sitenumber, location_name FROM locations ORDER BY location_name ASC";
+                    $location_result = mysqli_query($database, $location_query);
+                    // Loop through the results and create an option for each site
+                    while ($locations = mysqli_fetch_assoc($location_result)) {
+                        $selected = '';
+                        if ($locations['sitenumber'] == $row['location']) {
+                            $selected = 'selected';
+                        }
+                        echo '<option value="' . $locations['sitenumber'] . '" ' . $selected . '>' . $locations['location_name'] . '</option>';
+                    }
+                    ?>
+                </select>
+            </div>
+            <div>
+                <label for="room">Room:</label>
+                <input type="text" id="room" name="room" value="<?= isset($_GET['room']) ? htmlspecialchars($_GET['room']) : '' ?>">
+            </div>
+            <div>
+                <label for="phone">Phone:</label>
+                <input type="tel" id="phone" name="phone" required>
+            </div>
+            <div>
+                <label for="cc_emails">Cc</label>
+                <input type="text" id="cc_emails" name="cc_emails" value="<?= isset($_GET['cc_emails']) ? htmlspecialchars($_GET['cc_emails']) : '' ?>">
+            </div>
+            <div>
+                <label for="bcc_emails">Bcc</label>
+                <input type="text" id="bcc_emails" name="bcc_emails" value="<?= isset($_GET['bcc_emails']) ? htmlspecialchars($_GET['bcc_emails']) : '' ?>">
+            </div>
+        </div>
+        <div class="detailContainer">
+            <div class="grid2 ticketSubject">
+                <label for="name">Ticket Title:</label>
+                <input type="text" id="name" name="name" value="<?= isset($_GET['name']) ? htmlspecialchars($_GET['name']) : '' ?>">
+            </div>
 
-        <label for="phone">Phone:</label>
-        <input type="tel" id="phone" name="phone" required><br>
-        <label for="name">Ticket Title:</label>
-        <input type="text" id="name" name="name" value="<?= isset($_GET['name']) ? htmlspecialchars($_GET['name']) : '' ?>"><br>
-
-        <!-- <label for="priority">Priority:</label>
-            <select type="hidden" id="priority" name="priority">
-                <option value="1">Critical</option>
-                <option value="3">Urgent</option>
-                <option value="5">High</option>
-                <option value="10" selected>Standard</option>
-                <option value="15">Client Response</option>
-                <option value="30">Project</option>
-                <option value="60">Meeting Support</option>
-            </select> -->
-        <br>
-        <label for="description">Ticket Description:</label>
-        <textarea id="description" name="description" class="tinyMCEtextarea"><?= isset($_GET['description']) ? htmlspecialchars($_GET['description']) : '' ?></textarea><br>
-        
-        <label for="cc_emails">Cc</label>
-        <input type="text" id="cc_emails" name="cc_emails" value="<?= isset($_GET['cc_emails']) ? htmlspecialchars($_GET['cc_emails']) : '' ?>"><br>
-
-        <label for="bcc_emails">Bcc</label>
-        <input type="text" id="bcc_emails" name="bcc_emails" value="<?= isset($_GET['bcc_emails']) ? htmlspecialchars($_GET['bcc_emails']) : '' ?>"><br>
+            <label for="description" class="heading2">Ticket Description:</label>
+            <textarea id="description" name="description" class="tinyMCEtextarea"><?= isset($_GET['description']) ? htmlspecialchars($_GET['description']) : '' ?></textarea>
+        </div>
 
         <div id="attachment-fields">
             <label for="attachment">Attachment:</label>
@@ -95,8 +96,6 @@ if (isset($_SESSION['current_status'])) {
         <!-- Commented out since the input we have allows multi file uploads -->
         <!-- <button type="button" id="add-attachment-field">Add Attachment</button> -->
 
-        <button type="button" id="add-attachment-field">Add Attachment</button><br>
-        <!-- Add a submit button to create the ticket -->
         <input type="submit" value="Create Ticket">
     </form>
 </article>

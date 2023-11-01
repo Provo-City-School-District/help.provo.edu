@@ -31,6 +31,7 @@ $admin_page = '/admin.php';
     <title>Help For Provo City School District</title>
     <link rel="stylesheet" href="<?= $root_domain; ?>/includes/js/dataTables-1.13.6/jquery.dataTables.min.css">
     <link rel="stylesheet" href="<?= $root_domain; ?>/includes/css/main.css?v=1.0.09">
+	<link rel="icon" type="image/png" href="<?= $root_domain; ?>/includes/img/favicons/favicon-16x16.png" sizes="16x16">
 
     <?php
     if ($_SERVER['REQUEST_URI'] === '/index.php' || $_SERVER['REQUEST_URI'] === '/') {

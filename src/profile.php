@@ -39,8 +39,10 @@ $user_times[4] /= 60;
 $user_times[5] = array_sum($user_times);
 ?>
 
-<h2>Profile For <?= $user_data['firstname'] . ' ' . $user_data['lastname'] ?> (<span><?= $user_data['username'] ?></span>)</h2>
+<h2>Profile For <?= ucfirst(strtolower($user_data['firstname'])).' '.ucfirst(strtolower($user_data['lastname'])) ?> (<span><?= $user_data['username'] ?></span>)</h2>
 <br>
+
+<h3>Current Week Work Order Hours</h3>
 <table id="profile_time_table">
     <tr>
         <th>Monday</th>

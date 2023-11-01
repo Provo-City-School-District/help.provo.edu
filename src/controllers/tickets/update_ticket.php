@@ -23,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $updatedBCCEmails = filter_input(INPUT_POST, 'bcc_emails', FILTER_SANITIZE_SPECIAL_CHARS);
     $updatedRequestType = trim(htmlspecialchars($_POST['request_type']));
     $updatedPriority = trim(htmlspecialchars($_POST['priority']));
+    $updatedParentTicket = trim(htmlspecialchars($_POST['parent_ticket']));
 
     $valid_cc_emails = array();
     if (trim($updatedCCEmails) !== "") {
@@ -112,7 +113,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         cc_emails = '$cc_emails_clean',
         bcc_emails = '$bcc_emails_clean',
         priority = '$updatedPriority',
-        request_type_id = '$updatedRequestType'
+        request_type_id = '$updatedRequestType',
+        parent_ticket = '$updatedParentTicket'
         WHERE id = '$ticket_id'";
 
     // Execute the update queries
@@ -134,6 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $requestTypeColumn  = "request_type_id";
     $ccEmailsColumn = "cc_emails";
     $bccEmailsColumn = "bcc_emails";
+    $parentTicketColumn = "parent_ticket";
 
     // Log the ticket changes
     $log_query = "INSERT INTO ticket_logs (ticket_id, user_id, field_name, old_value, new_value, created_at) VALUES (?, ?, ?, ?, ?, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'))";
@@ -191,7 +194,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $bccEmailsColumn, $old_ticket_data['bcc_emails'], $updatedBCCEmails);
         mysqli_stmt_execute($log_stmt);
     }
-
+    if($old_ticket_data['parent_ticket'] != $updatedParentTicket) {
+        mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $parentTicketColumn, $old_ticket_data['parent_ticket'], $updatedParentTicket);
+        mysqli_stmt_execute($log_stmt);
+    }
     $msg = "Ticket updated successfully.";
     // After successfully updating the ticket, set a success message;
     if ($sendEmails) {

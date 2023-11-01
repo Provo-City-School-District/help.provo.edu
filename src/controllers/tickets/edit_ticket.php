@@ -61,6 +61,7 @@ tickets.bcc_emails,
 tickets.priority,
 tickets.request_type_id,
 tickets.merged_into_id,
+tickets.parent_ticket,
 JSON_ARRAYAGG(
     JSON_OBJECT(
         'note_id', notes.note_id,
@@ -271,6 +272,10 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                     <option value="30" <?= ($ticket['priority'] == '30') ? ' selected' : '' ?>>Project</option>
                     <option value="60" <?= ($ticket['priority'] == '60') ? ' selected' : '' ?>>Meeting Support</option>
                 </select>
+            </div>
+            <div>
+                <label for="parent_ticket">Parent Ticket:</label>
+                <input type="number" id="parent_ticket" name="parent_ticket" value="<?= $ticket['parent_ticket'] ?>">
             </div>
             <div>
                 <label for="cc_emails">CC:</label>

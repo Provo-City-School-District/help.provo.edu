@@ -117,6 +117,15 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
     $usernames[] = $usernameRow['username'];
 }
 
+//fetch child tickets
+$child_ticket_query = "SELECT * FROM tickets WHERE parent_ticket = ?";
+$child_ticket_stmt = $database->prepare($child_ticket_query);
+$child_ticket_stmt->bind_param("i", $ticket_id);
+$child_ticket_stmt->execute();
+
+$child_ticket_result = $child_ticket_stmt->get_result();
+$child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
+
 ?>
 <article id="ticketWrapper">
     <h1>Ticket #<?= $ticket['id'] ?></h1><br>
@@ -337,6 +346,39 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
     <div id="maximum-file-size-text">
         Maximum of 50MiB
     </div>
+
+    <?php
+    if (count($child_tickets) > 0) {
+    ?>
+        <div class="childTickets">
+            <h2>Child Tickets</h2>
+            <table>
+                <tr>
+                    <th>Ticket ID</th>
+                    <th>Ticket Status</th>
+                    <th>Ticket Assigned To</th>
+                    <th>Ticket Title</th>
+                    <th>Ticket Description</th>
+                </tr>
+                <?php
+                foreach ($child_tickets as $child_ticket) {
+                ?>
+                    <tr>
+                        <td><a href="edit_ticket.php?id=<?= $child_ticket['id'] ?>"><?= $child_ticket['id'] ?></a></td>
+                        <td><?= $child_ticket['status'] ?></td>
+                        <td><?= $child_ticket['employee'] ?></td>
+                        <td><?= $child_ticket['name'] ?></td>
+                        <td><?= html_entity_decode($child_ticket['description']) ?></td>
+                    </tr>
+                <?php
+                }
+                ?>
+            </table>
+
+        </div>
+    <?php
+    }
+    ?>
     <?php if ($ticket['notes'] !== null) : ?>
         <h2>Notes</h2>
         <div class="note">

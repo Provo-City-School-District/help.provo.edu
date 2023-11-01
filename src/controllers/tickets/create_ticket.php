@@ -90,8 +90,10 @@ if (isset($_SESSION['current_status'])) {
 
         <div id="attachment-fields">
             <label for="attachment">Attachment:</label>
-            <input type="file" id="attachment" name="attachment[]"><br>
+            <input type="file" id="attachment" name="attachment[]" type="file" multiple>
         </div>
+        <!-- Commented out since the input we have allows multi file uploads -->
+        <!-- <button type="button" id="add-attachment-field">Add Attachment</button> -->
 
         <button type="button" id="add-attachment-field">Add Attachment</button><br>
         <!-- Add a submit button to create the ticket -->

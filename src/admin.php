@@ -85,35 +85,40 @@ if (isset($_SESSION['current_status'])) {
     </table><br>
 
     <h2>Users</h2>
-    <table>
-        <tr>
-            <th>Username</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Email</th>
-            <th>Is Admin</th>
+    <table class="allUsers data-table">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Is Admin</th>
                 <th>Is Tech</th>
-            <th>Employee ID</th>
-            <th>Last Login</th>
-        </tr>
-        <tr>
+                <th>Employee ID</th>
+                <th>Last Login</th>
+            </tr>
+        </thead>
+        <tbody>
             <?php // Display the results in an HTML table
             while ($user_row = mysqli_fetch_assoc($user_result)) {
+
             ?>
-        <tr>
-            <td data-cell="User Name"><a href="controllers/users/manage_user.php?id=<?= $user_row['id'] ?>"><?= $user_row['username'] ?></a></td>
-            <td data-cell="First Name"><?= ucwords(strtolower($user_row['firstname'])) ?></td>
-            <td data-cell="Last Name"><?= ucwords(strtolower($user_row['lastname'])) ?></td>
-            <td data-cell="Email"><?= $user_row['email'] ?></td>
-            <td data-cell="Is an Admin"><?= ($user_row['is_admin'] == 1 ? 'Yes' : 'No') ?></td>
+                <tr>
+                    <td data-cell="User Name"><a href="controllers/users/manage_user.php?id=<?= $user_row['id'] ?>"><?= $user_row['username'] ?></a></td>
+                    <td data-cell="First Name"><?= ucwords(strtolower($user_row['firstname'])) ?></td>
+                    <td data-cell="Last Name"><?= ucwords(strtolower($user_row['lastname'])) ?></td>
+                    <td data-cell="Email"><?= $user_row['email'] ?></td>
+                    <td data-cell="Is an Admin"><?= ($user_row['is_admin'] == 1 ? 'Yes' : 'No') ?></td>
                     <td data-cell="Is an Tech"><?= ($user_row['is_tech'] == 1 ? 'Yes' : 'No') ?></td>
-            <td data-cell="Employee ID"><?= $user_row['ifasid'] ?></td>
-            <td data-cell="Last Login"><?= $user_row['last_login'] ?></td>
-        </tr>
-    <?php
+                    <td data-cell="Employee ID"><?= $user_row['ifasid'] ?></td>
+                    <td data-cell="Last Login"><?= $user_row['last_login'] ?></td>
+                </tr>
+            <?php
             }
-    ?>
-    </tr>
+            ?>
+        </tbody>
+
+
     </table>
 
     <h1>Add Exclude Day</h1>

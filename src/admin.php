@@ -84,7 +84,7 @@ if (isset($_SESSION['current_status'])) {
         ?>
     </table><br>
 
-    <h2>Users</h2>
+    <h2>All Users</h2>
     <table class="allUsers data-table">
         <thead>
             <tr>

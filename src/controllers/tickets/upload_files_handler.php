@@ -16,13 +16,39 @@ if (!isset($_POST['ticket_id'])) {
     exit;
 }
 
+function KiB(int $bytes)
+{
+    return $bytes * 1024;
+}
+
+function MiB(int $bytes)
+{
+    return KiB($bytes) * 1024;
+}
+
 // Get the ticket ID and username from the POST data
 $ticket_id = $_POST['ticket_id'];
 $username = $_POST['username'];
 
 // Define the allowed file extensions
-$allowed_extensions = array('jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx','xls','xlsx','txt');
+$allowed_extensions = ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt'];
+$allowed_mime_types = [
+    'txt' => 'text/plain',
+    'png' => 'image/png',
+    'jpeg' => 'image/jpeg',
+    'jpg' => 'image/jpeg',
+    'pdf' => 'application/pdf',
+    'doc' => 'application/msword',
+    'xls' => 'application/vnd.ms-excel',
+    'docx' => 'application/msword',
+    'xlsx' => 'application/vnd.ms-excel',
+];
 
+// Define max filesize
+// TODO: make 100, however POST length needs to be increased
+$maxFileSize = MiB(50);
+
+// Array of arrays 
 $failed_files = [];
 
 // Check if any files were uploaded
@@ -34,40 +60,70 @@ if (isset($_FILES['attachment'])) {
         $tmpFilePath = $_FILES['attachment']['tmp_name'][$i];
         
         $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-        
-        // Check if the file was uploaded successfully and has an allowed extension
-        if ($tmpFilePath != "" && in_array($fileExtension, $allowed_extensions)) {
-            // Generate a unique file name
-            $newFilePath = "../../uploads/" . $ticket_id . "-" . $fileName;
+        $fileType = mime_content_type($tmpFilePath);
 
-            // Move the file to the uploads directory
-            if (move_uploaded_file($tmpFilePath, $newFilePath)) {
-                // File was uploaded successfully, insert the file path into the database
+        // Filesize in bytes
+        $fileSize = filesize($tmpFilePath);
+        // Check if the file was uploaded successfully and has an allowed extension / file type
+        // Will also check the file to validate the file is what it claims (eg: cant rename .exe to .png)
+        if ($tmpFilePath != "") {
 
-                $query = "UPDATE tickets SET attachment_path = CONCAT(attachment_path, ',', ?) WHERE id = ?";
-                $stmt = mysqli_prepare($database, $query);
-                mysqli_stmt_bind_param($stmt, "si", $newFilePath, $ticket_id);
-                mysqli_stmt_execute($stmt);
+            // Max upload size
+            if ($fileSize <= $maxFileSize) {
+                if (in_array($fileExtension, $allowed_extensions) &&
+                    in_array($fileType, $allowed_mime_types)) {
+                    // Generate a unique file name
+                    $newFilePath = "../../uploads/" . $ticket_id . "-" . $fileName;
 
+                    // Move the file to the uploads directory
+                    if (move_uploaded_file($tmpFilePath, $newFilePath)) {
+                        // File was uploaded successfully, insert the file path into the database
+
+                        $query = "UPDATE tickets SET attachment_path = CONCAT(attachment_path, ',', ?) WHERE id = ?";
+                        $stmt = mysqli_prepare($database, $query);
+                        mysqli_stmt_bind_param($stmt, "si", $newFilePath, $ticket_id);
+                        mysqli_stmt_execute($stmt);
+
+                    } else {
+                        $failed_files[] = [
+                            "filename" => $fileName, 
+                            "fail_reason" => "Failed to move file to the uploads directory"
+                        ];
+                    }
+                } else {
+                    $failed_files[] = [
+                        "filename" => $fileName, 
+                        "fail_reason" => "'$fileExtension' or '$fileType' not allowed"
+                    ];
+                }
             } else {
-                $failed_files[] = $fileName;
+                $failed_files[] = [
+                    "filename" => $fileName, 
+                    "fail_reason" => "File size is too large ($fileSize MiB > $maxFileSize MiB)"
+                ];
             }
         } else {
-            $failed_files[] = $fileName;
+            $failed_files[] = [
+                "filename" => $fileName, 
+                "fail_reason" => "Failed to upload file to the server"
+            ];
         }
     }
 }
 
 $failed_files_count = count($failed_files);
 if ($failed_files_count != 0) {
-    $error_str = 'Failed to upload files: ';
+    $error_str = 'Failed to upload file(s): ';
 
     for ($i = 0; $i < $failed_files_count; $i++) {
-        $filename = $failed_files[$i];
+        $failed_file = $failed_files[$i];
+        $filename = $failed_file["filename"];
+        $fail_reason = $failed_file["fail_reason"];
+
         if ($i == $failed_files_count - 1)
-            $error_str .= "$filename";
+            $error_str .= "$filename (Reason: $fail_reason)";
         else
-            $error_str .= "$filename, ";
+            $error_str .= "$filename (Reason: $fail_reason), ";
     }
 
     $_SESSION['current_status'] = $error_str;

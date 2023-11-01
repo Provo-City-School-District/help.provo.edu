@@ -281,3 +281,9 @@ select {
 #profile_time_table {
 	max-width: 800px;
 }
+
+#maximum-file-size-text {
+	padding: 3px;
+	margin-top: 5px;
+	font-size: 80%;
+}

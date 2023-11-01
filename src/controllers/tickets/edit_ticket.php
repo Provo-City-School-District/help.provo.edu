@@ -143,7 +143,6 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
 
             <div> <label for="employee">Assigned Tech:</label>
                 <select id="employee" name="employee">
-                    <option value="unassigned">Unassigned</option>
                     <?php foreach ($usernames as $username) : ?>
                         <option value="<?= $username ?>" <?= $ticket['employee'] === $username ? 'selected' : '' ?>><?= $username ?></option>
                     <?php endforeach; ?>
@@ -334,7 +333,9 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
             <input id="attachment" name="attachment[]" type="file" multiple>
             <input type="submit" value="Upload">
         </form>
-
+    </div>
+    <div id="maximum-file-size-text">
+        Maximum of 50MiB
     </div>
     <?php if ($ticket['notes'] !== null) : ?>
         <h2>Notes</h2>

@@ -11,6 +11,7 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
     }
 }
 
+// TODO could cache these
 function get_client_name_from_id(string $client_sw_id)
 {
     global $swdb;
@@ -23,9 +24,11 @@ function get_client_name_from_id(string $client_sw_id)
     return $client_name;
 }
 
+// TODO could cache these
 function get_tech_name_from_id(string $tech_sw_id)
 {
     global $swdb;
+
     $tech_name_query = "SELECT FIRST_NAME, LAST_NAME FROM tech WHERE CLIENT_ID = '$tech_sw_id'";
     $tech_name_result = mysqli_query($swdb, $tech_name_query);
     $tech_name_data = mysqli_fetch_assoc($tech_name_result);
@@ -34,6 +37,7 @@ function get_tech_name_from_id(string $tech_sw_id)
     return $tech_name;
 }
 
+// TODO could cache these
 function get_location_name_from_id(string $location_sw_id)
 {
     global $swdb;

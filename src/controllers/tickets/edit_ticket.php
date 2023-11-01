@@ -152,7 +152,7 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
 
             <div> <label for="employee">Assigned Tech:</label>
                 <select id="employee" name="employee">
-                    <?php foreach ($usernames as $username) : ?>
+                <option value="unassigned">Unassigned</option>
                         <option value="<?= $username ?>" <?= $ticket['employee'] === $username ? 'selected' : '' ?>><?= $username ?></option>
                     <?php endforeach; ?>
                 </select>

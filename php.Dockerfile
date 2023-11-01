@@ -34,6 +34,12 @@ RUN echo "Protocols h2 http/1.1" >> /etc/apache2/apache2.conf
 # # Set ServerName
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
+# Enable mod_remoteip / Set RemoteIPInternalProxy
+RUN a2enmod remoteip
+RUN echo "RemoteIPHeader X-Forwarded-For"  >> /etc/apache2/apache2.conf
+RUN echo "RemoteIPInternalProxy 158.91.1.103/24" >> /etc/apache2/apache2.conf
+
+
 # # Restart Apache to apply the changes
 RUN service apache2 restart
 

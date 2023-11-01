@@ -28,7 +28,7 @@ $admin_page = '/admin.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>| Help For Provo City School District</title>
+    <title>Help For Provo City School District</title>
     <link rel="stylesheet" href="<?= $root_domain; ?>/includes/js/dataTables-1.13.6/jquery.dataTables.min.css">
     <link rel="stylesheet" href="<?= $root_domain; ?>/includes/css/main.css?v=1.0.09">
 

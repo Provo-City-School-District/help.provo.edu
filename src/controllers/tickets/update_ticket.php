@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $updatedBCCEmails = filter_input(INPUT_POST, 'bcc_emails', FILTER_SANITIZE_SPECIAL_CHARS);
     $updatedRequestType = trim(htmlspecialchars($_POST['request_type']));
     $updatedPriority = trim(htmlspecialchars($_POST['priority']));
-    $updatedParentTicket = trim(htmlspecialchars($_POST['parent_ticket']));
+    $updatedParentTicket = intval(trim(htmlspecialchars($_POST['parent_ticket'])));
 
     $valid_cc_emails = array();
     if (trim($updatedCCEmails) !== "") {

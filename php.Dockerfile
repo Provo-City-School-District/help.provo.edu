@@ -13,9 +13,14 @@ RUN mkdir -p /var/www/html/src/uploads \
   && chown -R www-data:www-data /var/www/html/src/uploads \
   && chmod -R 755 /var/www/html/src/uploads
 
+
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends libpq-dev zip unzip git wget \
-  && docker-php-ext-install mysqli pdo_pgsql pdo_mysql
+  && apt-get install -y --no-install-recommends libpq-dev libzip-dev zip unzip git wget libpng-dev libjpeg-dev zlib1g-dev \
+  && docker-php-ext-install mysqli pdo_pgsql pdo_mysql zip
+
+RUN docker-php-ext-configure gd --with-jpeg=/usr
+RUN docker-php-ext-install gd
+
 
 # Enable Apache ldap auth module
 RUN apt-get update -y --fix-missing && apt-get upgrade -y

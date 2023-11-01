@@ -26,6 +26,43 @@ function MiB(int $bytes)
     return KiB($bytes) * 1024;
 }
 
+function compress_and_resize_image(string $image_path, string $image_type)
+{
+    $newWidth = 1500;
+
+    $image = null;
+    if ($image_type == "image/jpeg")
+        $image = imagecreatefromjpeg($image_path);
+    else if ($image_type == "image/png")
+        $image = imagecreatefrompng($image_path);
+    else 
+        return false;
+
+
+    $size = getimagesize($image_path);
+    $oldWidth = $size[0];
+    $oldHeight = $size[1];
+    
+    $image_to_compress = $image;
+    if ($oldWidth > $newWidth) {
+        $width_change_ratio = $newWidth / $oldWidth;
+        $newHeight = $size[1] * $width_change_ratio;
+    
+        $image_to_compress = imagescale($image, $newWidth, $newHeight);
+    }
+
+    // Already validated it's jpg or png above
+    if ($image_type == "image/jpeg")
+        return imagejpeg($image_to_compress, $image_path, 90);
+    else
+        // Uses default zlib compression
+        return imagepng($image_to_compress, $image_path);
+
+}
+
+// IN: 4000x2000
+// WH_RATIO=1500/4000
+// W=1500, H=
 // Get the ticket ID and username from the POST data
 $ticket_id = $_POST['ticket_id'];
 $username = $_POST['username'];
@@ -67,13 +104,15 @@ if (isset($_FILES['attachment'])) {
         // Check if the file was uploaded successfully and has an allowed extension / file type
         // Will also check the file to validate the file is what it claims (eg: cant rename .exe to .png)
         if ($tmpFilePath != "") {
-
             // Max upload size
             if ($fileSize <= $maxFileSize) {
                 if (in_array($fileExtension, $allowed_extensions) &&
                     in_array($fileType, $allowed_mime_types)) {
                     // Generate a unique file name
                     $newFilePath = "../../uploads/" . $ticket_id . "-" . $fileName;
+
+                    if ($fileType == "image/png" || $fileType == "image/jpeg")
+                        compress_and_resize_image($tmpFilePath, $fileType);
 
                     // Move the file to the uploads directory
                     if (move_uploaded_file($tmpFilePath, $newFilePath)) {

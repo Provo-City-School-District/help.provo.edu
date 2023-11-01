@@ -1,4 +1,4 @@
-<h1>My Created Tickets</h1>
+<h1>My Tickets</h1>
 <table class="ticketsTable data-table">
     <thead>
         <tr>

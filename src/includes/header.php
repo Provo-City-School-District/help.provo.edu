@@ -46,7 +46,7 @@ $admin_page = '/admin.php';
     <div id="wrapper">
         <header id="mainHeader">
             <a href="<?= $root_domain ?>/profile.php">
-                <img src="<?= $root_domain; ?>/includes/img/pcsd-logo-website-header-160w.png" alt="Provo City School District Logo" />
+                <img id="pcsd-logo" src="<?= $root_domain; ?>/includes/img/pcsd-logo-website-header-160w.png" alt="Provo City School District Logo" />
             </a>
             <?php
             if ($is_logged_in) {

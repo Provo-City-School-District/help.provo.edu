@@ -1,13 +1,12 @@
 :root {
-    --header-grad-start: #dce3e8;
-    --header-grad-end: #f6f9fb;
+
     --theme-grey: #eee;
     --darker-grey: #ccc;
     --theme-white: #fff;
     --theme-black: #000;
     --do-site-grey: #DCE0E3;
     --do-site-blue: #25384C;
-    --do-site-brown: #9B5831;
+    --do-site-brown: #9B5831 ;
     --do-site-yellow: #D8A233;
     --do-light-blue: #dde0e7;
     /* migrated district variables    */
@@ -18,4 +17,27 @@
     --odd-color: #dbe1e7;
     --theme-white: #fff;
     --main-ltblue-color: #dde0e7; */
+}
+@media (prefers-color-scheme: light) {
+    :root {
+        --header-grad-start: #dce3e8;
+        --header-grad-end: #f6f9fb;
+        --theme-url-color: #25384C;
+        --theme-text-color: #000;
+        --theme-tertiary: #ccc;
+        --theme-secondary: #eee;
+        --theme-primary: #fff;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --header-grad-start: #484848;
+        --header-grad-end: #282828;
+        --theme-url-color: #8bedf7;
+        --theme-text-color: #fff;
+        --theme-tertiary: #404040;
+        --theme-secondary: #303030;
+        --theme-primary: #181818;
+    }
 }

@@ -76,7 +76,7 @@ input[type=submit] {
 }
 
 #headerNav a:hover {
-	background-color: var(--theme-grey);
+	background-color: var(--theme-secondary);
 }
 
 #pageContent {

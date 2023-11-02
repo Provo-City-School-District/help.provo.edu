@@ -1,8 +1,6 @@
 {
     "require": {
-        "monolog/monolog": "^3.4",
         "tinymce/tinymce": "^6.7",
-        "phpmailer/phpmailer": "^6.8",
-        "graylog2/gelf-php": "^2.0"
+        "phpmailer/phpmailer": "^6.8"
     }
 }

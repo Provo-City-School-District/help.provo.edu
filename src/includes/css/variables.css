@@ -32,8 +32,8 @@
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --header-grad-start: #484848;
-        --header-grad-end: #282828;
+        --header-grad-start: #181818;
+        --header-grad-end: #242424;
         --theme-url-color: #8bedf7;
         --theme-text-color: #fff;
         --theme-tertiary: #404040;

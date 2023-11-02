@@ -2,11 +2,10 @@
 ============================================== Login Form ==============================================
 */
 #loginWrapper {
-
 	max-width: 400px;
 	margin: 0 auto;
 	margin-top: 5%;
-	background-color: var(--theme-white);
+	background-color: var(--theme-secondary);
 	border-radius: 5px;
 	padding: 1em;
 }

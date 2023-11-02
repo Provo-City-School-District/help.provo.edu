@@ -5,11 +5,6 @@
 
 /* =============================== General Styles =============================== */
 
-
-input[type="text"], input[type="number"], select {
-	border: 1px solid var(--theme-grey);
-}
-
 body {
 	font-family: "Campton-Medium";
 	background-color: var(--theme-primary);
@@ -159,8 +154,9 @@ td::before {
 
 
 @media (prefers-color-scheme: dark) {
-	input[type="text"], input[type="number"], select {
+	input[type="text"], input[type="number"], input[type="password"], select {
 		background-color: var(--theme-black);
+		border: 1px solid var(--theme-grey);
 	}
 	
 	.ticketGrid input[type="date"] {
@@ -189,7 +185,6 @@ td::before {
 .ticketGrid input,
 select {
 	border: 1px solid var(--theme-grey);
-	
 }
 
 .ticketGrid input {

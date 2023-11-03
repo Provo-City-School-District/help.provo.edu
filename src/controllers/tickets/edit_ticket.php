@@ -116,7 +116,7 @@ if (!$usernamesResult) {
 $clientusernames = [];
 $techusernames = [];
 while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
-    if($usernameRow['is_tech'] == 1) {
+    if ($usernameRow['is_tech'] == 1) {
         $techusernames[] = $usernameRow['username'];
     } else {
         $clientusernames[] = $usernameRow['username'];
@@ -158,7 +158,7 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
 
             <div> <label for="employee">Assigned Tech:</label>
                 <select id="employee" name="employee">
-                <option value="unassigned">Unassigned</option>
+                    <option value="unassigned">Unassigned</option>
                     <?php foreach ($techusernames as $username) : ?>
                         <option value="<?= $username ?>" <?= $ticket['employee'] === $username ? 'selected' : '' ?>><?= $username ?></option>
                     <?php endforeach; ?>
@@ -349,10 +349,11 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
             <input id="attachment" name="attachment[]" type="file" multiple>
             <input type="submit" value="Upload">
         </form>
+        <div id="maximum-file-size-text">
+            Maximum of 50MiB
+        </div>
     </div>
-    <div id="maximum-file-size-text">
-        Maximum of 50MiB
-    </div>
+
 
     <?php
     if (count($child_tickets) > 0) {

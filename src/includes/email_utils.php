@@ -69,25 +69,3 @@ function send_email(
 
     return true;
 }
-
-// handles input validation
-function parse_incoming_email(
-    string $sender,
-    string $subject,
-    string $message)
-{
-    $email_note = [];
-    
-    // subject "ticket 30" -> 30
-    $subject_split = explode(' ', $subject);
-    $ticket_value = intval($subject_split[1]);
-    if ((strtolower($subject_split[0]) == "ticket") && (count($subject_split) == 2) && ($ticket_value > 0))
-        $email_note["ticket"] = $ticket_value;
-    else
-        $email_note["ticket"] = null;
-
-    $email_note["content"] = trim(htmlspecialchars($message));
-    $email_note["sender"] = trim(htmlspecialchars($sender));
-    
-    return $email_note;
-}

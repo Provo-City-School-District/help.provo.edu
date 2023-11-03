@@ -15,11 +15,12 @@ RUN mkdir -p /var/www/html/src/uploads \
 
 
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends libpq-dev libzip-dev zip unzip git wget libpng-dev libjpeg-dev zlib1g-dev \
+  && apt-get install -y --no-install-recommends libc-client-dev libkrb5-dev libpq-dev libzip-dev zip unzip git wget libpng-dev libjpeg-dev zlib1g-dev \
   && docker-php-ext-install mysqli pdo_pgsql pdo_mysql zip
 
 RUN docker-php-ext-configure gd --with-jpeg=/usr
-RUN docker-php-ext-install gd
+RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl
+RUN docker-php-ext-install gd imap
 
 
 # Enable Apache ldap auth module

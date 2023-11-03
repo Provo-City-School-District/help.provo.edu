@@ -14,7 +14,7 @@ function email_if_valid(string $email)
 
 function split_email_string_to_arr(string $email_str)
 {
-    $valid_emails = array();
+    $valid_emails = [];
     $invalid_found = false;
 
     // Check that emails are valid

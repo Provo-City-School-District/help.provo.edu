@@ -1,6 +1,8 @@
 :root {
-
     --theme-grey: #eee;
+    --theme-white: #fff;
+    --theme-black: #000;
+    /* --theme-grey: #eee;
     --darker-grey: #ccc;
     --theme-white: #fff;
     --theme-black: #000;
@@ -8,7 +10,9 @@
     --do-site-blue: #25384C;
     --do-site-brown: #9B5831 ;
     --do-site-yellow: #D8A233;
-    --do-light-blue: #dde0e7;
+    --do-light-blue: #dde0e7; */
+
+
     /* migrated district variables    */
     /* --main-color: #1c2f4a;
     --sec-color: rgb(3, 132, 3);

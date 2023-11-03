@@ -7,7 +7,7 @@
 
 body {
 	font-family: "Campton-Medium";
-	background-color: var(--theme-primary);
+	background-color: var(--page-background);
 }
 
 a {
@@ -21,7 +21,7 @@ a:hover {
 
 button,
 input[type=submit] {
-	background-color: var(--do-site-blue);
+	background-color: var(--theme-primary);
 	color: var(--theme-white);
 	border: none;
 	padding: 1em;
@@ -76,6 +76,7 @@ input[type=submit] {
 
 #pageContent {
 	padding: 1em;
+	background-color: var(--page-background);
 }
 
 
@@ -92,17 +93,20 @@ table[style] {
 
 th,
 td {
-	border: 1px solid var(--theme-grey);
+	border: 1px solid var(--theme-primary);
 	padding: 1em;
 }
 
 th {
-	background-color: var(--theme-tertiary);
+	background-color: var(--theme-primary);
 	border-bottom: 2px solid;
+	color:var(--theme-white);
 }
-
+tr {
+	background-color: var(--odd-color);
+}
 tr:nth-of-type(2n) td {
-	background-color: var(--theme-secondary);
+	background-color: var(--even-color);
 }
 
 th {
@@ -128,6 +132,7 @@ td::before {
 	gap: 2em;
 	margin-bottom: 1em;
 	margin-top: -1em;
+	background-color: var(--theme-white);
 }
 
 /* =============================== Tickets Styles =============================== */
@@ -150,10 +155,8 @@ td::before {
 .ticketGrid label {
 	background-color: var(--theme-secondary);
 	padding: .5em;
+	color:var(--theme-white);
 }
-
-
-
 
 .ticketGrid input,
 select {

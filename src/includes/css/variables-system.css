@@ -4,9 +4,12 @@
         --header-grad-end: #f6f9fb;
         --theme-url-color: #25384C;
         --theme-text-color: #000;
-        --theme-tertiary: #ccc;
-        --theme-secondary: #eee;
-        --theme-primary: #fff;
+        --theme-tertiary: #C25400;
+        --theme-secondary: #2c4938;
+        --theme-primary: #1c2f4a;
+        --page-background: #f5f5f5;
+        --even-color: #f1f5f9;
+        --odd-color: #dbe1e7;
     }
 }
 
@@ -19,5 +22,8 @@
         --theme-tertiary: #404040;
         --theme-secondary: #303030;
         --theme-primary: #181818;
+        --page-background: #181818;
+        --even-color: #f1f5f9;
+        --odd-color: #dbe1e7;
     }
 }

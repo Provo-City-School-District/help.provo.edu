@@ -153,7 +153,7 @@ td::before {
 }
 
 .ticketGrid label {
-	background-color: var(--theme-secondary);
+	background-color: var(--theme-primary);
 	padding: .5em;
 	color:var(--theme-white);
 }
@@ -192,7 +192,7 @@ select {
 }
 
 .ticket-description {
-	border: 20px solid var(--do-light-blue);
+	border: 20px solid var(--theme-primary);
 	border-radius: 7px;
 	padding: 1em;
 	margin: 5px 0;

@@ -2,17 +2,23 @@
 include("includes/header.php");
 include("includes/helpdbconnect.php");
 require("includes/time_utils.php");
-$user_query = "SELECT * FROM users WHERE username = '" . $_SESSION['username'] . "'";
+
+$user = $_SESSION["username"];
+$user_query = "SELECT * FROM users WHERE username = '" . $user . "'";
 $user_result = mysqli_query($database, $user_query);
 // Check if the query was successful
 if (!$user_result) {
     die("Query failed: " . mysqli_error($conn));
 }
 $user_data = mysqli_fetch_assoc($user_result);
-//print_r($user_data);
 
+$user_id = $user_data['id'];
+$username = $user_data['username'];
+$firstname = $user_data['firstname'];
+$lastname = $user_data['lastname'];
+$email = $user_data['email'];
+$current_color_scheme = $user_data['color_scheme'];
 
-$user = $_SESSION["username"];
 
 // Get day for M-F belonging to current work week
 $monday_timestamp = null;
@@ -37,12 +43,27 @@ $user_times[4] /= 60;
 
 // Add up all the hours for the total
 $user_times[5] = array_sum($user_times);
+
+// Check if a success message is set
+if (isset($_SESSION['user_updated'])) {
+    echo '<div class="success-message">' . $_SESSION['user_updated'] . '</div>';
+
+    // Unset the success message to clear it
+    unset($_SESSION['user_updated']);
+}
+
 ?>
 
-<h2>Profile For <?= ucfirst(strtolower($user_data['firstname'])).' '.ucfirst(strtolower($user_data['lastname'])) ?> (<span><?= $user_data['username'] ?></span>)</h2>
-<br>
+<h1>Profile For <?= ucfirst(strtolower($user_data['firstname'])) . ' ' . ucfirst(strtolower($user_data['lastname'])) ?> (<span><?= $user_data['username'] ?></span>)</h1>
+<h2>My Information</h2>
+<ul>
+    <li>Name: <?= ucfirst(strtolower($user_data['firstname'])) . ' ' . ucfirst(strtolower($user_data['lastname'])) ?></li>
+    <li>Email: <?= $email ?></li>
+    <li>Employee ID: <?= $user_data['ifasid'] ?></li>
+</ul>
 
-<h3>Current Week Work Order Hours</h3>
+
+<h2>Current Week Work Order Hours</h2>
 <table id="profile_time_table">
     <tr>
         <th>Monday</th>
@@ -61,5 +82,22 @@ $user_times[5] = array_sum($user_times);
         <td data-cell="Week Total"><?= number_format($user_times[5], 2) ?> hrs</td>
     </tr>
 </table>
+<h2>My Settings</h2>
+<p>Changes require logging out and back in </p>
+<form action="controllers/users/update_user_settings.php" method="post">
+    <input type="hidden" name="id" value="<?= $user_id ?>">
+    <input type="hidden" name="referer" value="profile.php">
+    <label for="color_scheme">Color Scheme:</label>
+    <select id="color_scheme" name="color_scheme">
+        <option value="system" <?= $current_color_scheme == 'system' ? 'selected' : '' ?>>System Select</option>
+        <option value="dark" <?= $current_color_scheme == 'dark' ? 'selected' : '' ?>>Dark Mode</option>
+        <option value="light" <?= $current_color_scheme == 'light' ? 'selected' : '' ?>>Light Mode</option>
+    </select>
+
+
+    <br>
+    <input type="submit" value="Update">
+</form>
+
 
 <?php include("includes/footer.php"); ?>

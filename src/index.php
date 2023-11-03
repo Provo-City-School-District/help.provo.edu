@@ -70,7 +70,10 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
                     'can_delete_tickets' => $local_query_data['can_delete_tickets'],
                     'is_admin' => $local_query_data['is_admin'],
                     'is_tech' => $local_query_data['is_tech'],
+                    
                 );
+                // Set color scheme
+                $_SESSION['color_scheme'] = $local_query_data['color_scheme'];
 
                 // Store user's permissions in the session
                 $_SESSION['permissions'] = $permissions;

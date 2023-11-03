@@ -1,0 +1,9 @@
+:root {
+    --header-grad-start: #dce3e8;
+    --header-grad-end: #f6f9fb;
+    --theme-url-color: #25384C;
+    --theme-text-color: #000;
+    --theme-tertiary: #ccc;
+    --theme-secondary: #eee;
+    --theme-primary: #fff;
+}

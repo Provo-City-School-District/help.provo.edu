@@ -7,3 +7,32 @@
     --theme-secondary: #303030;
     --theme-primary: #181818;
 }
+
+@media (prefers-color-scheme: dark) {
+	input[type="text"], input[type="number"], input[type="password"], select {
+		background-color: var(--theme-black);
+		border: 1px solid var(--theme-grey);
+	}
+	
+	.ticketGrid input[type="date"] {
+		background-color: var(--theme-black);
+	}
+	
+	input[type="date"]::-webkit-calendar-picker-indicator {
+		-webkit-filter: invert(100%);
+		filter: invert(100%);
+	}
+
+	.ticketGrid select {
+		background-color: var(--theme-black);
+	}
+
+	* {
+		color: var(--theme-text-color);
+	}
+
+	#pcsd-logo {
+		-webkit-filter: grayscale(100%) invert(100%);
+		filter: grayscale(100%) invert(100%);
+	}
+}

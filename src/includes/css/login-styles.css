@@ -5,8 +5,9 @@
 	max-width: 400px;
 	margin: 0 auto;
 	margin-top: 5%;
-	background-color: var(--theme-secondary);
+	background-color: var(--theme-white);
 	border-radius: 5px;
+	box-shadow: 0 0 5px 0 rgba(0,0,0,.5);
 	padding: 1em;
 }
 

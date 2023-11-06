@@ -16,7 +16,7 @@ a {
 }
 
 a:hover {
-	color: var(--do-site-yellow);
+	color: var(--theme-tertiary);
 }
 
 button,
@@ -71,7 +71,7 @@ input[type=submit] {
 }
 
 #headerNav a:hover {
-	background-color: var(--theme-secondary);
+	background-color: var(--theme-grey);
 }
 
 #pageContent {

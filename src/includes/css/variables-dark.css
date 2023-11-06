@@ -10,8 +10,9 @@
 	--even-color: #1C1C1C;
 	--odd-color: #4A4A4a;
 }
+
 @media (prefers-color-scheme: dark) {
-	
+
 	input,
 	select {
 		background-color: var(--theme-black);
@@ -31,9 +32,11 @@
 		-webkit-filter: grayscale(100%) invert(100%);
 		filter: grayscale(100%) invert(100%);
 	}
+
 	table.dataTable tbody tr {
 		background-color: var(--odd-color);
 	}
+
 	table a {
 		color: var(--theme-text-color);
 	}

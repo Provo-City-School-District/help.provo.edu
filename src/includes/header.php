@@ -31,9 +31,20 @@ $admin_page = '/admin.php';
     <title>Help For Provo City School District</title>
     <link rel="stylesheet" href="<?= $root_domain; ?>/includes/js/dataTables-1.13.6/jquery.dataTables.min.css">
     <link rel="stylesheet" href="<?= $root_domain; ?>/includes/css/main.css?v=1.0.10">
-	<link rel="icon" type="image/png" href="<?= $root_domain; ?>/includes/img/favicons/favicon-16x16.png" sizes="16x16">
-    <link rel="stylesheet" type="text/css" href="<?= $root_domain; ?>/includes/css/variables-<?= $_SESSION['color_scheme']?>.css">
+    <link rel="icon" type="image/png" href="<?= $root_domain; ?>/includes/img/favicons/favicon-16x16.png" sizes="16x16">
+
     <?php
+    //load color scheme if set. loads light scheme if not set
+    if (isset($_SESSION['color_scheme'])) {
+    ?>
+        <link rel="stylesheet" type="text/css" href="<?= $root_domain; ?>/includes/css/variables-<?= $_SESSION['color_scheme'] ?>.css">
+    <?php
+    } else {
+    ?>
+        <link rel="stylesheet" type="text/css" href="<?= $root_domain; ?>/includes/css/variables-light.css">
+    <?php
+    }
+    //load login page styles
     if ($_SERVER['REQUEST_URI'] === '/index.php' || $_SERVER['REQUEST_URI'] === '/') {
     ?>
         <link rel="stylesheet" type="text/css" href="<?= $root_domain; ?>/includes/css/login-styles.css">

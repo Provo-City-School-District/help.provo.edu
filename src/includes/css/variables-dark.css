@@ -1,38 +1,43 @@
 :root {
 	--header-grad-start: #181818;
 	--header-grad-end: #242424;
-	--theme-url-color: #8bedf7;
+	--theme-url-color: #181818;
 	--theme-text-color: #fff;
-	--theme-tertiary: #404040;
-	--theme-secondary: #303030;
-	--theme-primary: #181818;
+	--theme-tertiary: #919191;
+	--theme-secondary: #3b3b3b;
+	--theme-primary: #3b3b3b;
 	--page-background: #181818;
-	--even-color: #f1f5f9;
-	--odd-color: #dbe1e7;
+	--even-color: #1C1C1C;
+	--odd-color: #4A4A4a;
 }
 
 @media (prefers-color-scheme: dark) {
 
-	input[type="text"],
+	/* input[type="text"],
 	input[type="number"],
 	input[type="password"],
+	input[type="email"],
+	select {
+		background-color: var(--theme-black);
+		border: 1px solid var(--theme-grey);
+	} */
+	input,
 	select {
 		background-color: var(--theme-black);
 		border: 1px solid var(--theme-grey);
 	}
-
-	.ticketGrid input[type="date"] {
+	/* .ticketGrid input[type="date"] {
 		background-color: var(--theme-black);
-	}
+	} */
 
 	input[type="date"]::-webkit-calendar-picker-indicator {
 		-webkit-filter: invert(100%);
 		filter: invert(100%);
 	}
 
-	.ticketGrid select {
+	/* .ticketGrid select {
 		background-color: var(--theme-black);
-	}
+	} */
 
 	* {
 		color: var(--theme-text-color);
@@ -41,5 +46,11 @@
 	#pcsd-logo {
 		-webkit-filter: grayscale(100%) invert(100%);
 		filter: grayscale(100%) invert(100%);
+	}
+	table.dataTable tbody tr {
+		background-color: var(--odd-color);
+	}
+	table a {
+		color: var(--theme-text-color);
 	}
 }

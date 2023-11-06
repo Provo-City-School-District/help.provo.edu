@@ -71,7 +71,7 @@ input[type=submit] {
 }
 
 #headerNav a:hover {
-	background-color: var(--theme-grey);
+	background-color: var(--theme-url-highlight);
 }
 
 #pageContent {
@@ -132,7 +132,12 @@ td::before {
 	gap: 2em;
 	margin-bottom: 1em;
 	margin-top: -1em;
-	background-color: var(--theme-white);
+	background-color: var(--theme-primary);
+	border-radius: 12px;
+}
+
+#subMenu a {
+	color: var(--theme-white);
 }
 
 /* =============================== Tickets Styles =============================== */

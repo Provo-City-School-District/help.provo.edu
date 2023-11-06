@@ -1,14 +1,15 @@
 :root {
 	--header-grad-start: #181818;
 	--header-grad-end: #242424;
-	--theme-url-color: #181818;
-	--theme-text-color: #fff;
+	--theme-url-color: #34e0e3;
+	--theme-text-color: #ffffff;
 	--theme-tertiary: #919191;
 	--theme-secondary: #3b3b3b;
-	--theme-primary: #3b3b3b;
+	--theme-primary: #282828;
 	--page-background: #181818;
 	--even-color: #1C1C1C;
 	--odd-color: #4A4A4a;
+	--theme-url-highlight: var(--theme-secondary);
 }
 
 @media (prefers-color-scheme: dark) {

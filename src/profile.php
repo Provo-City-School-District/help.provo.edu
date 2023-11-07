@@ -83,7 +83,6 @@ if (isset($_SESSION['user_updated'])) {
     </tr>
 </table>
 <h2>My Settings</h2>
-<p>Changes require logging out and back in </p>
 <form action="controllers/users/update_user_settings.php" method="post">
     <input type="hidden" name="id" value="<?= $user_id ?>">
     <input type="hidden" name="referer" value="profile.php">

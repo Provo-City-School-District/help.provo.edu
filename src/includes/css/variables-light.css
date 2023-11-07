@@ -10,4 +10,5 @@
     --even-color: #f1f5f9;
     --odd-color: #dbe1e7;
     --theme-url-highlight: #eee;
+    --theme-table-border-color: var(--theme-primary);
 }

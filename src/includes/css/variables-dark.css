@@ -10,35 +10,33 @@
 	--even-color: #1C1C1C;
 	--odd-color: #4A4A4a;
 	--theme-url-highlight: var(--theme-secondary);
+	--theme-table-border-color: var(--theme-white);
 }
 
-@media (prefers-color-scheme: dark) {
+input,
+select {
+	background-color: var(--theme-black);
+	border: 1px solid var(--theme-grey);
+}
 
-	input,
-	select {
-		background-color: var(--theme-black);
-		border: 1px solid var(--theme-grey);
-	}
+input[type="date"]::-webkit-calendar-picker-indicator {
+	-webkit-filter: invert(100%);
+	filter: invert(100%);
+}
 
-	input[type="date"]::-webkit-calendar-picker-indicator {
-		-webkit-filter: invert(100%);
-		filter: invert(100%);
-	}
+* {
+	color: var(--theme-text-color);
+}
 
-	* {
-		color: var(--theme-text-color);
-	}
+#pcsd-logo {
+	-webkit-filter: grayscale(100%) invert(100%);
+	filter: grayscale(100%) invert(100%);
+}
 
-	#pcsd-logo {
-		-webkit-filter: grayscale(100%) invert(100%);
-		filter: grayscale(100%) invert(100%);
-	}
+table.dataTable tbody tr {
+	background-color: var(--odd-color);
+}
 
-	table.dataTable tbody tr {
-		background-color: var(--odd-color);
-	}
-
-	table a {
-		color: var(--theme-text-color);
-	}
+table a {
+	color: var(--theme-text-color);
 }

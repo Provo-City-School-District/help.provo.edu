@@ -1,7 +1,7 @@
 <?php
-include("includes/header.php");
-include("includes/helpdbconnect.php");
-require("includes/time_utils.php");
+include("header.php");
+include("helpdbconnect.php");
+require("time_utils.php");
 
 $user = $_SESSION["username"];
 $user_query = "SELECT * FROM users WHERE username = '" . $user . "'";
@@ -100,4 +100,4 @@ if (isset($_SESSION['user_updated'])) {
 </form>
 
 
-<?php include("includes/footer.php"); ?>
+<?php include("footer.php"); ?>

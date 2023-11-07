@@ -1,5 +1,5 @@
 <?php
-include("../../includes/header.php");
+include("header.php");
 
 if ($_SESSION['permissions']['is_admin'] != 1) {
     // User is not an admiin
@@ -13,7 +13,7 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
 if (!isset($_GET['id'])) {
     die("User ID not set");
 }
-require_once('../../includes/helpdbconnect.php');
+require_once('helpdbconnect.php');
 // Retrieve the user with the corresponding ID
 $user_id = $_GET['id'];
 $query = "SELECT * FROM users WHERE id = $user_id";
@@ -81,4 +81,4 @@ Username: <?= $username ?><br>
     <input type="submit" value="Update">
 </form>
 
-<?php include("../../includes/footer.php"); ?>
+<?php include("footer.php"); ?>

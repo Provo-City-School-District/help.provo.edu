@@ -1,6 +1,6 @@
 <?php
-require_once('../../includes/init.php');
-require_once('../../includes/helpdbconnect.php');
+require_once('init.php');
+require_once('helpdbconnect.php');
 
 // Get the exclude day ID from the query string
 $id = trim(htmlspecialchars($_GET['id']));
@@ -13,5 +13,5 @@ mysqli_stmt_execute($stmt);
 mysqli_stmt_close($stmt);
 
 // Redirect back to the exclude days page
-header('Location: ../../admin.php');
+header('Location: /admin.php');
 exit();

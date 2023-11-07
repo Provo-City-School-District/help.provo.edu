@@ -1,5 +1,5 @@
 <?php
-require_once("includes/status_popup.php");
+require_once("status_popup.php");
 
 // Define LDAP Server
 $ldap_host = getenv('LDAPHOST');
@@ -17,7 +17,7 @@ if (isset($_SESSION['username'])) {
 }
 
 //include local database connection in the variable $database
-require_once('includes/helpdbconnect.php');
+require_once('helpdbconnect.php');
 
 // Check if login form is submitted
 if (isset($_POST['username']) && isset($_POST['password'])) {
@@ -33,7 +33,7 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
             $_SESSION['username'] = $input_username;
 
             //establish connection with the vault
-            require_once('includes/vaultdbconnect.php');
+            require_once('vaultdbconnect.php');
 
             //Query User information from the vault DB
             $vault_query = "SELECT * FROM staff_temp WHERE Email='" . $input_username . "@provo.edu'";
@@ -124,7 +124,7 @@ function userExistsLocally($email, $database)
 }
 
 ?>
-<?php include("includes/header.php");
+<?php include("header.php");
 
 if (isset($_SESSION['current_status'])) {
     $status_title = "";
@@ -140,7 +140,7 @@ if (isset($_SESSION['current_status'])) {
         die("status_type is not recognized");
     }
 
-    $status_popup = new Template("includes/status_popup.phtml");
+    $status_popup = new Template(from_root("/includes/status_popup.phtml"));
     $status_popup->message_body = $_SESSION['current_status'];
     $status_popup->message_title = $status_title;
     $status_popup->alert_type = $status_type;
@@ -166,4 +166,4 @@ if (isset($_SESSION['current_status'])) {
     </form>
 </div>
 
-<?php include("includes/footer.php"); ?>
+<?php include("footer.php"); ?>

@@ -1,14 +1,14 @@
 <?php
-include("includes/header.php");
-require("includes/status_popup.php");
+include("header.php");
+require("status_popup.php");
 if ($_SESSION['permissions']['is_admin'] != 1) {
     // User is not an admin
     echo 'You do not have permission to view this page.';
     exit;
 }
 
-require_once('includes/helpdbconnect.php');
-require("controllers/tickets/ticket_utils.php");
+require_once('helpdbconnect.php');
+require(from_root("/controllers/tickets/ticket_utils.php"));
 
 // Execute the SELECT query to retrieve all users from the users table
 $users_query = "SELECT * FROM users ORDER BY username ASC";
@@ -247,4 +247,4 @@ if (isset($_SESSION['current_status'])) {
             ?>
         </tbody>
     </table>
-    <?php include("includes/footer.php"); ?>
+    <?php include("footer.php"); ?>

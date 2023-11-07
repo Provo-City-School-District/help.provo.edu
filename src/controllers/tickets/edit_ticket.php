@@ -3,7 +3,7 @@ ob_start();
 include("ticket_utils.php");
 $ticket_id = sanitize_numeric_input($_GET['id']);
 // Check if the user is logged in
-include("../../includes/header.php");
+include("header.php");
 if ($_SESSION['permissions']['is_admin'] != 1) {
     // User is not an admin
     if ($_SESSION['permissions']['can_view_tickets'] == 0) {
@@ -12,9 +12,8 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
         exit;
     }
 }
-include("../../vendor/autoload.php");
-require_once('../../includes/helpdbconnect.php');
-require_once("../../includes/status_popup.php");
+require_once('helpdbconnect.php');
+require_once("status_popup.php");
 
 // Check if an error message is set
 if (isset($_SESSION['current_status'])) {
@@ -31,7 +30,7 @@ if (isset($_SESSION['current_status'])) {
         die("status_type is not recognized");
     }
 
-    $status_popup = new Template("../../includes/status_popup.phtml");
+    $status_popup = new Template(from_root("/includes/status_popup.phtml"));
     $status_popup->message_body = $_SESSION['current_status'];
     $status_popup->message_title = $status_title;
     $status_popup->alert_type = $status_type;
@@ -560,4 +559,4 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
         }
         ?>
 </article>
-<?php include("../../includes/footer.php"); ?>
+<?php include("footer.php"); ?>

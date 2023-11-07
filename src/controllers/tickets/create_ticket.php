@@ -1,6 +1,6 @@
 <?php
-include("../../includes/header.php");
-require_once('../../includes/helpdbconnect.php');
+include("header.php");
+require_once('helpdbconnect.php');
 if ($_SESSION['permissions']['is_admin'] != 1) {
     // User is not an admin
     if ($_SESSION['permissions']['can_create_tickets'] == 0) {
@@ -9,7 +9,7 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
         exit;
     }
 }
-include("../../includes/status_popup.php");
+include("status_popup.php");
 
 // Check if an error message is set
 if (isset($_SESSION['current_status'])) {
@@ -26,7 +26,7 @@ if (isset($_SESSION['current_status'])) {
         die("status_type is not recognized");
     }
 
-    $status_popup = new Template("../../includes/status_popup.phtml");
+    $status_popup = new Template(from_root("/includes/status_popup.phtml"));
     $status_popup->message_body = $_SESSION['current_status'];
     $status_popup->message_title = $status_title;
     $status_popup->alert_type = $status_type;
@@ -108,4 +108,4 @@ if (isset($_SESSION['current_status'])) {
         attachmentFields.appendChild(newAttachmentField);
     });
 </script>
-<?php include("../../includes/footer.php"); ?>
+<?php include("footer.php"); ?>

@@ -1,6 +1,6 @@
 <?php
-require_once('../../includes/init.php');
-require_once('../../includes/helpdbconnect.php');
+require_once('init.php');
+require_once('helpdbconnect.php');
 
 include("ticket_utils.php");
 

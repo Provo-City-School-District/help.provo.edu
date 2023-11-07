@@ -1,4 +1,4 @@
-<?php include("includes/header.php"); ?>
+<?php include("header.php"); ?>
 
 <h1> You logged in YAY!</h1>
 
@@ -6,4 +6,4 @@ TODO:
 
 reports
 
-<?php include("includes/footer.php"); ?>
+<?php include("footer.php"); ?>

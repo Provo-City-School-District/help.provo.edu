@@ -1,5 +1,5 @@
 <?php
-include("includes/header.php");
+include("header.php");
 
 if ($_SESSION['permissions']['is_admin'] != 1) {
     // User is not an admin
@@ -9,17 +9,17 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
         exit;
     }
 }
-require_once('includes/helpdbconnect.php');
-include("controllers/tickets/ticket_utils.php");
+require_once('helpdbconnect.php');
+include(from_root("/controllers/tickets/ticket_utils.php"));
 ?>
 
 <?php
 if ($_SESSION['permissions']['is_tech'] == 1) {
-    include("controllers/tickets/assigned_tickets.php");
+    include(from_root("/controllers/tickets/assigned_tickets.php"));
 } else {
-    include("controllers/tickets/client_tickets.php");
+    include(from_root("/controllers/tickets/client_tickets.php"));
 }
 
 ?>
 
-<?php include("includes/footer.php"); ?>
+<?php include("footer.php"); ?>

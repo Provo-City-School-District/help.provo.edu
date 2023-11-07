@@ -1,6 +1,6 @@
 <?php
-require_once('../../includes/init.php');
-require_once('../../includes/helpdbconnect.php');
+require_once('init.php');
+require_once('helpdbconnect.php');
 
 // Get the note ID and ticket ID from the query string
 $note_id = trim(htmlspecialchars($_GET['note_id']));
@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit();
 }
 ?>
-<?php include("../../includes/header.php"); ?>
+<?php include("header.php"); ?>
 <h2>Edit Note</h2>
 <form method="post">
     <input type="hidden" name="note_id" value="<?= $note_id ?>">
@@ -110,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo "style=\"display:none;\""; ?> id="date_override_input" type="datetime-local" name="date_override" value="<?= $note['date_override']?>"><br>
     <input type="submit" value="Save Note">
 </form>
-<script src="../../includes/js/jquery-3.7.1.min.js"></script>
+<script src="/includes/js/jquery-3.7.1.min.js"></script>
 <script>
     $('input[name=date_override_enable]').on('change', function() {
         if (!this.checked) {
@@ -120,4 +120,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     });
 </script>
-<?php include("../../includes/footer.php"); ?>
+<?php include("footer.php"); ?>

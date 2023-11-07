@@ -1,6 +1,6 @@
 <?php
-require_once('../../includes/init.php');
-require_once('../../includes/helpdbconnect.php');
+require_once('init.php');
+require_once('helpdbconnect.php');
 
 /*
 The host ticket is the one that will stay and will 'duplicate' from the source ticket.
@@ -10,7 +10,7 @@ function return_to_admin_with_status(string $status, string $status_type)
 {
     $_SESSION['current_status'] = $status;
     $_SESSION['status_type'] = $status_type;
-    header("Location: ../../admin.php");
+    header("Location: /admin.php");
     exit();    
 }
 

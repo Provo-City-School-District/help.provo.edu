@@ -55,5 +55,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 COPY /src/composer.json /var/www/html/
 COPY /src/composer.lock /var/www/html/
 
+COPY /src/boot.php /var/www/html/boot.php
+
 # Install Composer packages
 RUN composer install --no-interaction --no-ansi --no-scripts --no-progress --prefer-dist

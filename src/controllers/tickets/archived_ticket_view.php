@@ -1,6 +1,7 @@
 <?php
-include("../../includes/header.php");
-require_once('../../includes/swdbconnect.php');
+include("header.php");
+require_once('swdbconnect.php');
+
 // Check if the user is logged in
 if ($_SESSION['permissions']['is_admin'] != 1) {
     // User is not an admin
@@ -198,5 +199,5 @@ usort($all_notes, function ($item1, $item2) {
     </table>
 </div>
 <?php
-include("../../includes/footer.php");
+include("footer.php");
 ?>

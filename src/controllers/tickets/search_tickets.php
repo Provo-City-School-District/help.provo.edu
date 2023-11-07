@@ -1,6 +1,6 @@
-<?php include("../../includes/header.php");
-require_once('../../includes/helpdbconnect.php');
-require_once('../../includes/swdbconnect.php');
+<?php include("header.php");
+require_once('helpdbconnect.php');
+require_once('swdbconnect.php');
 include("ticket_utils.php");
 
 // Query the sites table to get the site information
@@ -293,4 +293,4 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
         </tbody>
     </table>
 </article>
-<?php include("../../includes/footer.php"); ?>
+<?php include("footer.php"); ?>

@@ -1,6 +1,6 @@
 <?php
-require_once('../../includes/init.php');
-require_once('../../includes/helpdbconnect.php');
+require_once('init.php');
+require_once('helpdbconnect.php');
 // Check if the user ID is set
 if (!isset($_POST['id'])) {
     die("User ID not set");

@@ -1,6 +1,6 @@
 <?php
-require_once('../../includes/init.php');
-require_once('../../includes/helpdbconnect.php');
+require_once('init.php');
+require_once('helpdbconnect.php');
 
 // Get the ticket ID and note from the form data
 $ticket_id = trim(htmlspecialchars($_POST['ticket_id']));

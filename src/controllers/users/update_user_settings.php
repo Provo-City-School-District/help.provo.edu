@@ -1,6 +1,6 @@
 <?php
-require_once('../../includes/init.php');
-require_once('../../includes/helpdbconnect.php');
+require_once('init.php');
+require_once('helpdbconnect.php');
 // Check if the user ID is set
 if (!isset($_POST['id'])) {
     die("User ID not set");
@@ -20,6 +20,6 @@ if ($_POST['referer'] == 'profile.php') {
 
     $_SESSION['color_scheme'] = $color_scheme;
     $_SESSION['user_updated'] = 'User updated successfully';
-    header('Location: ../../profile.php');
+    header('Location: /profile.php');
     exit();
 }

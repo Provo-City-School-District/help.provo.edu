@@ -1,11 +1,11 @@
 <?php
 // Start the session
-require_once('../../includes/init.php');
-require_once('../../includes/helpdbconnect.php');
+require_once('init.php');
+require_once('helpdbconnect.php');
 // Check if the user is logged in
 if (!isset($_SESSION['username'])) {
     // User is not logged in, redirect to login page
-    header('Location: ../../index.php');
+    header('Location: /index.php');
     exit;
 }
 

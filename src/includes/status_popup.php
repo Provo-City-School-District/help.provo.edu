@@ -7,7 +7,7 @@ class Template
     protected $data;
 
     public function __construct($filename)
-        {
+    {
         if (is_file($filename))
             $this->filename = $filename;
         else
@@ -41,5 +41,12 @@ class Template
         include basename($this->filename);
         chdir($cwd);
         return ob_get_clean();
+    }
+}
+
+class StatusPopup extends Template {
+    public function __construct()
+    {
+        parent::__construct(from_root("/includes/status_popup.phtml"));
     }
 }

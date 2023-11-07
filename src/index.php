@@ -140,7 +140,7 @@ if (isset($_SESSION['current_status'])) {
         die("status_type is not recognized");
     }
 
-    $status_popup = new Template(from_root("/includes/status_popup.phtml"));
+    $status_popup = new StatusPopup();
     $status_popup->message_body = $_SESSION['current_status'];
     $status_popup->message_title = $status_title;
     $status_popup->alert_type = $status_type;

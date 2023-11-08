@@ -19,10 +19,6 @@ services:
       options:
         syslog-address: "udp://localhost:514"
         tag: "help-web"
-    # driver: gelf
-    #   options:
-    #     gelf-address: $UDPGRAYLOGHOST
-    #     tag: help_web_log
   help-db:
     container_name: help-db
     build:

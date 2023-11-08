@@ -98,5 +98,8 @@ if (isset($_SESSION['user_updated'])) {
     <input type="submit" value="Update">
 </form>
 
+<h2>Help / Documentation</h2>
+<a href="/note_shortcuts.php">Note Shorthand</a>
+
 
 <?php include("footer.php"); ?>

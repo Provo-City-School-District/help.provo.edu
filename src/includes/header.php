@@ -81,7 +81,7 @@ $admin_page = '/admin.php';
                     }
                     ?>
 
-                    <a href=">/controllers/logout.php">Logout</a>
+                    <a href="/controllers/logout.php">Logout</a>
                 </nav>
             <?php
             }

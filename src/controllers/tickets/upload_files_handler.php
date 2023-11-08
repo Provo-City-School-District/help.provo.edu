@@ -106,13 +106,14 @@ if (isset($_FILES['attachment'])) {
                 if (in_array($fileExtension, $allowed_extensions) &&
                     in_array($fileType, $allowed_mime_types)) {
                     // Generate a unique file name
-                    $newFilePath = "../../uploads/" . $ticket_id . "-" . $fileName;
+                    $newFilePath = "/uploads/" . $ticket_id . "-" . $fileName;
+                    $absolute_path = from_root($newFilePath);
 
                     if ($fileType == "image/png" || $fileType == "image/jpeg")
                         compress_and_resize_image($tmpFilePath, $fileType);
 
                     // Move the file to the uploads directory
-                    if (move_uploaded_file($tmpFilePath, $newFilePath)) {
+                    if (move_uploaded_file($tmpFilePath, $absolute_path)) {
                         // File was uploaded successfully, insert the file path into the database
 
                         $query = "UPDATE tickets SET attachment_path = CONCAT(attachment_path, ',', ?) WHERE id = ?";

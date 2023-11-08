@@ -122,8 +122,7 @@ if (isset($_SESSION['current_status'])) {
     </table>
 
     <h1>Add Exclude Day</h1>
-
-    <form method="POST" action="<?= $root_domain ?>/controllers/admin/exclude_days.php">
+    <form method="POST" action="/controllers/admin/exclude_days.php">
         <div>
             <label for="exclude_day">Exclude Day:</label>
             <input type="date" id="exclude_day" name="exclude_day">
@@ -147,13 +146,13 @@ if (isset($_SESSION['current_status'])) {
             <?php while ($exclude_row = mysqli_fetch_assoc($exclude_result)) : ?>
                 <tr>
                     <td data-cell="Excluded Day"><?= $exclude_row['exclude_day'] ?></td>
-                    <td data-cell="Remove Excluded Day"><a href="<?= $root_domain ?>/controllers/admin/delete_exclude_day.php?id=<?= $exclude_row['id'] ?>">Delete</a></td>
+                    <td data-cell="Remove Excluded Day"><a href="/controllers/admin/delete_exclude_day.php?id=<?= $exclude_row['id'] ?>">Delete</a></td>
                 </tr>
             <?php endwhile; ?>
         </tbody>
     </table><br>
     <h2>Merge Tickets</h2>
-    <form method="POST" action="<?= $root_domain ?>/controllers/tickets/merge_tickets_handler.php">
+    <form method="POST" action="/controllers/tickets/merge_tickets_handler.php">
         <input type="hidden" name="username" value="<?= $_SESSION['username'] ?>">
         Host Ticket ID: <input type="text" id="ticket_id_host" name="ticket_id_host" value=""><br>
         Source Ticket ID:<input type="text" id="ticket_id_source" name="ticket_id_source" value=""><br>

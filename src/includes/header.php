@@ -9,7 +9,7 @@ include_once('functions.php');
 if (isset($_SESSION['username'])) {
     $is_logged_in = true;
 } elseif (!endsWith($_SERVER['PHP_SELF'], 'index.php')) {
-    header("Location: $root_domain/index.php");
+    header("Location: /index.php");
     exit();
 }
 
@@ -29,25 +29,25 @@ $admin_page = '/admin.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Help For Provo City School District</title>
-    <link rel="stylesheet" href="<?= $root_domain; ?>/includes/js/dataTables-1.13.6/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="<?= $root_domain; ?>/includes/css/main.css?v=1.0.10">
-    <link rel="icon" type="image/png" href="<?= $root_domain; ?>/includes/img/favicons/favicon-16x16.png" sizes="16x16">
+    <link rel="stylesheet" href="/includes/js/dataTables-1.13.6/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="/includes/css/main.css?v=1.0.10">
+    <link rel="icon" type="image/png" href="/includes/img/favicons/favicon-16x16.png" sizes="16x16">
 
     <?php
     //load color scheme if set. loads light scheme if not set
     if (isset($_SESSION['color_scheme'])) {
     ?>
-        <link rel="stylesheet" type="text/css" href="<?= $root_domain; ?>/includes/css/variables-<?= $_SESSION['color_scheme'] ?>.css">
+        <link rel="stylesheet" type="text/css" href="/includes/css/variables-<?= $_SESSION['color_scheme'] ?>.css">
     <?php
     } else {
     ?>
-        <link rel="stylesheet" type="text/css" href="<?= $root_domain; ?>/includes/css/variables-light.css">
+        <link rel="stylesheet" type="text/css" href="/includes/css/variables-light.css">
     <?php
     }
     //load login page styles
     if ($_SERVER['REQUEST_URI'] === '/index.php' || $_SERVER['REQUEST_URI'] === '/') {
     ?>
-        <link rel="stylesheet" type="text/css" href="<?= $root_domain; ?>/includes/css/login-styles.css">
+        <link rel="stylesheet" type="text/css" href="/includes/css/login-styles.css">
     <?php
     }
     ?>
@@ -56,8 +56,8 @@ $admin_page = '/admin.php';
 <body>
     <div id="wrapper">
         <header id="mainHeader">
-            <a href="<?= $root_domain ?>/profile.php">
-                <img id="pcsd-logo" src="<?= $root_domain; ?>/includes/img/pcsd-logo-website-header-160w.png" alt="Provo City School District Logo" />
+            <a href="/profile.php">
+                <img id="pcsd-logo" src="/includes/img/pcsd-logo-website-header-160w.png" alt="Provo City School District Logo" />
             </a>
             <?php
             if ($is_logged_in) {
@@ -66,22 +66,22 @@ $admin_page = '/admin.php';
                     <?php
                     if ($_SESSION['permissions']['is_tech'] == 1) {
                     ?>
-                        <a href="<?= $root_domain; ?>/profile.php">Profile</a>
+                        <a href="/profile.php">Profile</a>
                     <?php
                     }
                     ?>
-                    <!-- <a href="<?= $root_domain; ?>/home.php">Home</a> -->
+                    <!-- <a href="/home.php">Home</a> -->
 
-                    <a href="<?= $root_domain; ?>/tickets.php">Tickets</a>
+                    <a href="/tickets.php">Tickets</a>
                     <?php
                     if ($_SESSION['permissions']['is_admin'] == 1) {
                     ?>
-                        <a href="<?= $root_domain; ?>/admin.php">Admin</a>
+                        <a href="/admin.php">Admin</a>
                     <?php
                     }
                     ?>
 
-                    <a href="<?= $root_domain; ?>/controllers/logout.php">Logout</a>
+                    <a href=">/controllers/logout.php">Logout</a>
                 </nav>
             <?php
             }
@@ -94,20 +94,20 @@ $admin_page = '/admin.php';
                 // Display the sub-menu here
             ?>
                 <ul id="subMenu">
-                    <li><a href="<?= $root_domain; ?>/controllers/tickets/create_ticket.php">Create Ticket</a></li>
+                    <li><a href="/controllers/tickets/create_ticket.php">Create Ticket</a></li>
 
                     <?php
                     if ($_SESSION['permissions']['is_tech'] == 1) {
                     ?>
-                        <li><a href="<?= $root_domain; ?>/tickets.php">Assigned Tickets</a></li>
-                        <li><a href="<?= $root_domain; ?>/controllers/tickets/recent_tickets.php">Recent Tickets</a></li>
-                        <li><a href="<?= $root_domain; ?>/controllers/tickets/search_tickets.php">Search Tickets</a></li>
+                        <li><a href="/tickets.php">Assigned Tickets</a></li>
+                        <li><a href="/controllers/tickets/recent_tickets.php">Recent Tickets</a></li>
+                        <li><a href="/controllers/tickets/search_tickets.php">Search Tickets</a></li>
                     <?php
                     } else {
                     ?>
-                        <li><a href="<?= $root_domain; ?>/tickets.php">My Tickets</a></li>
+                        <li><a href="/tickets.php">My Tickets</a></li>
                         <!-- This page needs to be built -->
-                        <li><a href="<?= $root_domain; ?>/controllers/tickets/ticket_history.php">Ticket History</a></li>
+                        <li><a href=">/controllers/tickets/ticket_history.php">Ticket History</a></li>
                     <?php
                     }
                     ?>

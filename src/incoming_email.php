@@ -28,7 +28,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
     //if ((strtolower($from_host) != "provo.edu"))
     //    continue;
 
-    echo preg_replace( "/\n\s+/", "\n", rtrim(html_entity_decode(strip_tags($content))));
+    echo htmlspecialchars($content);
     echo "<br><br>";
 
 }

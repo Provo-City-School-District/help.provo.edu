@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $updatedPriority = trim(htmlspecialchars($_POST['priority']));
     $updatedParentTicket = intval(trim(htmlspecialchars($_POST['parent_ticket'])));
 
-    $valid_cc_emails = array();
+    $valid_cc_emails = [];
     if (trim($updatedCCEmails) !== "") {
         $valid_cc_emails = split_email_string_to_arr($updatedCCEmails);
         if (!$valid_cc_emails) {
@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    $valid_bcc_emails = array();
+    $valid_bcc_emails = [];
     if (trim($updatedBCCEmails) !== "") {
         $valid_bcc_emails = split_email_string_to_arr($updatedBCCEmails);
         if (!$valid_bcc_emails) {

@@ -75,6 +75,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     mysqli_stmt_execute($log_stmt);
 
     // Redirect back to the edit ticket page
+    $_SESSION['current_status'] = "Note edited successfully";
+    $_SESSION['status_type'] = "success";
     header("Location: edit_ticket.php?id=$ticket_id");
     exit();
 }

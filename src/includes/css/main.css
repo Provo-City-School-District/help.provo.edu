@@ -35,17 +35,11 @@ input[type=submit] {
 	/* padding:1em; */
 }
 
-.warning {
-	color: red;
-	display: inline;
-}
-
 .grid2 {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	gap: 10px;
 }
-
 /* =============================== Header Styles =============================== */
 #mainHeader {
 	background: linear-gradient(to bottom, var(--header-grad-start), var(--header-grad-end) 50%, var(--header-grad-end) 55%, var(--header-grad-start));
@@ -105,7 +99,7 @@ th {
 tr {
 	background-color: var(--odd-color);
 }
-tr:nth-of-type(2n) td {
+tr:nth-of-type(2n) {
 	background-color: var(--even-color);
 }
 
@@ -212,6 +206,11 @@ select {
 .note td:nth-child(1),
 .note td:nth-child(2) {
 	font-size: 80%;
+}
+/* =============================== Utility Styles =============================== */
+.warning {
+	color: red;
+	display: inline;
 }
 .notClientVisible {
 	background-color: var(--theme-white)!important;

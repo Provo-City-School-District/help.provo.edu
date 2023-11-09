@@ -3,7 +3,7 @@ require_once('helpdbconnect.php');
 
 /*
 Inputs: string of username, array of day unix timestamps to add up note totals for
-Output: array of note totals for in the same indexing order as the input array
+Output: array of note totals for in the same indexing order as the input array (days)
 */
 function get_note_time_for_days(string $user, array $days)
 {
@@ -15,7 +15,22 @@ function get_note_time_for_days(string $user, array $days)
         $times[$i] = 0;
 
     $user_sanitized = trim(htmlspecialchars($user));
-    $query = "SELECT created, date_override, time from notes WHERE creator = '$user_sanitized'";
+
+    // TODO: test to make sure this works correctly
+    $query = 
+    <<<STR
+    SELECT 
+        created, date_override, time from notes
+    WHERE 
+        creator = '$user_sanitized' AND
+        (
+            CASE WHEN date_override IS NULL THEN
+                created > DATE_SUB(curdate(), INTERVAL 2 WEEK) ELSE
+                date_override > DATE_SUB(curdate(), INTERVAL 2 WEEK)
+            END
+        )   
+    STR;
+
     $query_result = mysqli_query($database, $query);
 
     while ($row = mysqli_fetch_assoc($query_result))  {

@@ -28,6 +28,6 @@ SWHELPDESKDATABASE=
 ```
 
 # Resources Used
-- Data Tables 1.13.7: https://datatables.net/
-- TinyMCE 6.0.0: https://www.tiny.cloud/docs/tinymce/6/
-- CSS Alerts https://alvarotrigo.com/blog/css-alerts/
+- Data Tables: https://datatables.net/
+- TinyMCE: https://www.tiny.cloud/docs/tinymce/6/
+- CSS Alerts: https://alvarotrigo.com/blog/css-alerts/

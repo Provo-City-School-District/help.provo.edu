@@ -19,16 +19,17 @@ if (isset($_SESSION['username'])) {
 //include local database connection in the variable $database
 require_once('helpdbconnect.php');
 
-// Check if login form is submitted
-if (isset($_POST['username']) && isset($_POST['password'])) {
-    //sanatize inputs
+if ($_SERVER['REQUEST_METHOD'] === 'POST')  {
     $input_username = htmlspecialchars(trim($_POST['username']));
     $input_password = htmlspecialchars(trim($_POST['password']));
     if ($ldap_conn) {
         // Bind to LDAP server
-        $ldap_bind = @ldap_bind($ldap_conn, 'psd\\' . $input_username, $input_password);
+        $ldap_bind = ldap_bind($ldap_conn, 'psd\\' . $input_username, $input_password);
 
-        if ($ldap_bind) {
+        // check that inputs are not empty, otherwise an anonymous LDAP bind can get through
+        $inputs_valid = !(empty($input_username) || empty($input_password));
+
+        if ($ldap_bind && $inputs_valid) {
             // assign username to session
             $_SESSION['username'] = $input_username;
 
@@ -154,7 +155,7 @@ if (isset($_SESSION['current_status'])) {
 
 <div id="loginWrapper">
     <h1>Login for Help</h1>
-    <form id="loginForm" method="POST" onsubmit="return validateForm();">
+    <form id="loginForm" method="POST">
 
         <label>Username:</label>
         <input type="text" name="username">

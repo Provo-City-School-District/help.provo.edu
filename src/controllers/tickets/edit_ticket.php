@@ -17,29 +17,13 @@ require_once("status_popup.php");
 
 // Check if an error message is set
 if (isset($_SESSION['current_status'])) {
-    $status_title = "";
-
-    $status_type = $_SESSION['status_type'];
-    if ($status_type == "success") {
-        $status_title = "Success";
-    } else if ($status_type == "error") {
-        $status_title = "Error";
-    } else if ($status_type == "info") {
-        $status_title = "Info";
-    } else {
-        die("status_type is not recognized");
-    }
-
-    $status_popup = new StatusPopup();
-    $status_popup->message_body = $_SESSION['current_status'];
-    $status_popup->message_title = $status_title;
-    $status_popup->alert_type = $status_type;
-
+    $status_popup = new StatusPopup($_SESSION["current_status"], StatusPopupType::fromString($_SESSION["status_type"]));
     echo $status_popup;
 
     unset($_SESSION['current_status']);
     unset($_SESSION['status_type']);
 }
+
 // Query the ticket by ID and all notes for that ID
 $query = "SELECT
 tickets.id,

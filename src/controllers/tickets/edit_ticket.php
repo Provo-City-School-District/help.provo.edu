@@ -118,9 +118,7 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
 ?>
 <article id="ticketWrapper">
     <h1>Ticket #<?= $ticket['id'] ?></h1><br>
-    Created: <?= $ticket['created'] ?><br>
-    Last Updated: <?= $ticket['last_updated'] ?><br>
-    Due Date: <?= $ticket['due_date'] ?><br><br>
+
     <!-- Form for updating ticket information -->
     <form method="POST" action="update_ticket.php">
         <!-- Add a submit button to update the information -->
@@ -129,6 +127,12 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
         <div class="ticketGrid">
             <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
             <input type="hidden" name="madeby" value="<?= $_SESSION['username'] ?>">
+            <div>
+                <span>Created:</span> <?= $ticket['created'] ?>
+            </div>
+            <div>
+                <span>Last Updated:</span> <?= $ticket['last_updated'] ?>
+            </div>
             <div>
                 <label for="client">Client:</label>
                 <!-- <input type="text" id="client" name="client" value="<?= $ticket['client'] ?>"> -->
@@ -240,13 +244,12 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
                     ?>
                 </select>
             </div>
-
-            <!-- 
-                   TODO: need to build out a way to over ride the due date. currently this field just and sets the value to the calculated due date.
-                -->
             <div>
-                <label for="due_date">Due Date:</label>
+                <label for="due_date">Modify Due Date:</label>
                 <input type="date" id="due_date" name="due_date" value="<?= $ticket['due_date'] ?>">
+            </div>
+            <div>
+                <span>Current Due Date:</span> <?= $ticket['due_date'] ?>
             </div>
             <div>
                 <label for="status">Current Status:</label>
@@ -392,7 +395,7 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
                         continue;
                     $total_time += $note['time']; // Add note time to total time (doesn't add for non-admins)
                 ?>
-           
+
                     <tr>
                         <td data-cell="Date"><a href="edit_note.php?note_id=<?= $note['note_id'] ?>&ticket_id=<?= $ticket_id ?>">
                                 <?php
@@ -439,11 +442,13 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
                                         $note_data = str_replace($match_str, $url, $note_data);
                                     }
                                 }
-                                ?>
-                                <span <?php if($note['visible_to_client'] == 0) {echo 'class="notClientVisible"';} ?>>
-                                <?php  echo $note_data; ?>
-                            </span>
-                              <?php 
+                            ?>
+                                <span <?php if ($note['visible_to_client'] == 0) {
+                                            echo 'class="notClientVisible"';
+                                        } ?>>
+                                    <?php echo $note_data; ?>
+                                </span>
+                            <?php
                             }
                             ?>
                             <span class="note_id">

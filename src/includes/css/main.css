@@ -149,14 +149,17 @@ td::before {
 .ticketGrid>* {
 	display: grid;
 	grid-template-columns: 1fr;
+	background-color: var(--theme-white);
 }
 
-.ticketGrid label {
+.ticketGrid label, .ticketGrid span {
 	background-color: var(--theme-primary);
 	padding: .5em;
 	color:var(--theme-white);
 }
-
+.ticketGrid span {
+	margin-bottom: 5px;
+}
 .ticketGrid input,
 select {
 	border: 1px solid var(--theme-grey);
@@ -272,8 +275,13 @@ select {
 @media (min-width:575px) {
 	.ticketGrid>* {
 		display: grid;
-		grid-template-columns: minmax(min-content, 150px) 1fr;
+		grid-template-columns: minmax(min-content, 160px) 1fr;
 		align-items: center;
+	}
+	.ticketGrid span {
+		margin-right: 5px;
+		width: 144px;
+		margin-bottom:unset;
 	}
 }
 

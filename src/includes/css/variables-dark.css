@@ -40,3 +40,6 @@ table.dataTable tbody tr {
 table a {
 	color: var(--theme-text-color);
 }
+.ticketGrid>* {
+	background-color: var(--theme-black);
+}

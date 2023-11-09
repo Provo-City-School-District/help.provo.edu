@@ -392,6 +392,7 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
                         continue;
                     $total_time += $note['time']; // Add note time to total time (doesn't add for non-admins)
                 ?>
+           
                     <tr>
                         <td data-cell="Date"><a href="edit_note.php?note_id=<?= $note['note_id'] ?>&ticket_id=<?= $ticket_id ?>">
                                 <?php
@@ -438,8 +439,11 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
                                         $note_data = str_replace($match_str, $url, $note_data);
                                     }
                                 }
-
-                                echo $note_data;
+                                ?>
+                                <span <?php if($note['visible_to_client'] == 0) {echo 'class="notClientVisible"';} ?>>
+                                <?php  echo $note_data; ?>
+                            </span>
+                              <?php 
                             }
                             ?>
                             <span class="note_id">

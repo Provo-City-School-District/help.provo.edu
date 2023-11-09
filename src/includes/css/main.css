@@ -213,6 +213,14 @@ select {
 .note td:nth-child(2) {
 	font-size: 80%;
 }
+.notClientVisible {
+	background-color: var(--theme-white)!important;
+	color: var(--theme-black);
+	display: block;
+	padding: 1em;
+	border-radius: 3px;
+	margin-bottom: 1em;
+}
 
 /* =============================== Responsive Styles =============================== */
 @media(min-width: 800px) {

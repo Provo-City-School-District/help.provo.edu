@@ -16,12 +16,16 @@
     </thead>
     <tbody>
         <?php
+
+        $username = $_SESSION['username'];
         // Execute the SQL query
-        $ticket_query = "SELECT *
+        $ticket_query = <<<STR
+        SELECT *
         FROM tickets
         WHERE status NOT IN ('Closed', 'Resolved')
-        AND employee = '" . $_SESSION['username'] . "'
-        ORDER BY id ASC";
+        AND employee = '$username'
+        ORDER BY id ASC
+        STR;
 
         $ticket_result = mysqli_query($database, $ticket_query);
         while ($ticket_row = mysqli_fetch_assoc($ticket_result)) {

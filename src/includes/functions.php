@@ -36,3 +36,31 @@ function limitChars($string, $limit)
     }
     return $string;
 }
+
+
+
+// process the data for our charts
+function processQueryResult($query_result, $label_field)
+{
+    $count = [];
+
+    while ($row = mysqli_fetch_assoc($query_result)) {
+        $label = $row[$label_field];
+        if ($label == null || $label == "")
+            $label = "unassigned";
+
+        if (!isset($count[$label]))
+            $count[$label] = 1;
+        else
+            $count[$label]++;
+    }
+
+    asort($count);
+
+    $processedData = [];
+    foreach ($count as $name => $count) {
+        $processedData[] = array("y" => $count, "label" => $name);
+    }
+
+    return $processedData;
+}

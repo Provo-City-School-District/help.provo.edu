@@ -32,6 +32,7 @@ $lastname = $row['lastname'];
 $email = $row['email'];
 $is_admin = $row['is_admin'];
 $is_tech = $row['is_tech'];
+$is_field_tech = $row['is_field_tech'];
 $ifasid = $row['ifasid'];
 $last_login = $row['last_login'];
 $can_view_tickets = $row['can_view_tickets'];
@@ -67,6 +68,8 @@ Username: <?= $username ?><br>
     <input type="checkbox" id="is_admin" name="is_admin" <?= $is_admin == 1 ? 'checked' : '' ?>><br>
     <label for="is_tech">Is Tech:</label>
     <input type="checkbox" id="is_tech" name="is_tech" <?= $is_tech == 1 ? 'checked' : '' ?>><br>
+    <label for="is_field_tech">Is Field Tech:</label>
+    <input type="checkbox" id="is_field_tech" name="is_field_tech" <?= $is_field_tech == 1 ? 'checked' : '' ?>><br>
     <label for="ifasid">Employee ID:</label>
     <input type="text" id="ifasid" name="ifasid" value="<?= $ifasid ?>"><br>
     <label for="can_view_tickets">Can View Tickets:</label>

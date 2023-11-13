@@ -1,4 +1,5 @@
 <?php
+require_once("block_file.php");
 include("header.php");
 
 if ($_SESSION['permissions']['is_admin'] != 1) {

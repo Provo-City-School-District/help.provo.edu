@@ -4,7 +4,7 @@ include_once('init.php');
 // includes functions file
 include_once('functions.php');
 
-
+$is_logged_in = false;
 //Checks logged in status and bounces you to the login page if not logged in
 if (isset($_SESSION['username'])) {
     $is_logged_in = true;

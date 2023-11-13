@@ -1,4 +1,5 @@
 <?php
+require_once("block_file.php");
 include("header.php");
 require_once('helpdbconnect.php');
 include("ticket_utils.php");

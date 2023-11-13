@@ -1,6 +1,5 @@
 <?php
 require_once("status_popup.php");
-
 // Define LDAP Server
 $ldap_host = getenv('LDAPHOST');
 $ldap_port = getenv('LDAPPORT');

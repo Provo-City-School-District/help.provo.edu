@@ -1,4 +1,6 @@
 <?php
+require_once("block_file.php");
+
 require_once('init.php');
 require_once('helpdbconnect.php');
 

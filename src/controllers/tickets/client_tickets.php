@@ -1,3 +1,5 @@
+<?php require_once("block_file.php"); ?>
+
 <h1>My Tickets</h1>
 <table class="ticketsTable data-table">
     <thead>

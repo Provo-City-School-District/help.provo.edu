@@ -8,7 +8,7 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
 }
 
 require_once('helpdbconnect.php');
-require(from_root("/controllers/tickets/ticket_utils.php"));
+require("ticket_utils.php");
 
 // Execute the SELECT query to retrieve all users from the users table
 $users_query = "SELECT * FROM users ORDER BY username ASC";

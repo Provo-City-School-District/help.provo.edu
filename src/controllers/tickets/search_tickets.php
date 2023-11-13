@@ -1,4 +1,6 @@
-<?php include("header.php");
+<?php
+require_once("block_file.php");
+include("header.php");
 require_once('helpdbconnect.php');
 require_once('swdbconnect.php');
 include("ticket_utils.php");

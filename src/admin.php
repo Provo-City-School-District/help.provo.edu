@@ -40,15 +40,19 @@ $tech_query_result = mysqli_query($database, $tech_query);
 $allTechs = processQueryResult($tech_query_result, "employee");
 
 // Query open tickets based on location:
-$location_query = "SELECT location FROM tickets WHERE status NOT IN ('closed', 'resolved')";
+$location_query = "SELECT locations.location_name, tickets.location
+FROM tickets 
+INNER JOIN locations ON tickets.location = locations.sitenumber 
+WHERE tickets.status NOT IN ('closed', 'resolved')";
 $location_query_result = mysqli_query($database, $location_query);
-$allLocations = processQueryResult($location_query_result, "location");
+$allLocations = processQueryResult($location_query_result, "location_name");
 
 // TODO: Need to query open tickets based on field tech and make a field tech flag in the users table
 $fieldTech = $allTechs;
 
 // process the data for our charts
-function processQueryResult($query_result, $label_field) {
+function processQueryResult($query_result, $label_field)
+{
     $count = [];
 
     while ($row = mysqli_fetch_assoc($query_result)) {
@@ -73,13 +77,19 @@ function processQueryResult($query_result, $label_field) {
 }
 
 ?>
-
+<pre>
+    <?php
+    // print_r($allTechs);
+    print_r($allLocations);
+    // print_r($fieldTech);
+    ?>
+</pre>
 <h1>Admin</h1>
 <h2>Reports</h2>
 <div class="grid3">
-<div id="techOpenTicket" style="height: 370px; width: 100%;"></div> 
-<div id="byLocation" style="height: 370px; width: 100%;"></div>
-<div id="fieldTechOpen" style="height: 370px; width: 100%;"></div>
+    <div id="techOpenTicket" style="height: 370px; width: 100%;"></div>
+    <div id="byLocation" style="height: 370px; width: 100%;"></div>
+    <div id="fieldTechOpen" style="height: 370px; width: 100%;"></div>
 </div>
 
 <h2>All Users</h2>

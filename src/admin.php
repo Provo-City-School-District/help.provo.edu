@@ -77,13 +77,6 @@ function processQueryResult($query_result, $label_field)
 }
 
 ?>
-<pre>
-    <?php
-    // print_r($allTechs);
-    print_r($allLocations);
-    // print_r($fieldTech);
-    ?>
-</pre>
 <h1>Admin</h1>
 <h2>Reports</h2>
 <div class="grid3">

@@ -27,13 +27,6 @@ if (isset($_SESSION['current_status'])) {
     unset($_SESSION['status_type']);
 }
 
-
-
-
-
-
-
-
 // Query open tickets based on tech
 $tech_query = "SELECT employee FROM tickets WHERE status NOT IN ('closed', 'resolved')";
 $tech_query_result = mysqli_query($database, $tech_query);

@@ -71,6 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')  {
                     'can_delete_tickets' => $local_query_data['can_delete_tickets'],
                     'is_admin' => $local_query_data['is_admin'],
                     'is_tech' => $local_query_data['is_tech'],
+                    'is_field_tech' => $local_query_data['is_field_tech'],
                     
                 );
                 // Set color scheme

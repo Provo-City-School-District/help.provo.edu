@@ -54,6 +54,8 @@ if (isset($_SESSION['user_updated'])) {
     unset($_SESSION['user_updated']);
 }
 ?>
+
+<h2>User Information</h2>
 Last Login: <?= $last_login ?><br>
 Username: <?= $username ?><br>
 <form action="update_user.php" method="post">
@@ -64,14 +66,18 @@ Username: <?= $username ?><br>
     <input type="text" id="lastname" name="lastname" value="<?= $lastname ?>"><br>
     <label for="email">Email:</label>
     <input type="email" id="email" name="email" value="<?= $email ?>"><br>
+    <label for="ifasid">Employee ID:</label>
+    <input type="text" id="ifasid" name="ifasid" value="<?= $ifasid ?>"><br>
+    
+    <h2>Roles</h2>
     <label for="is_admin">Is Admin:</label>
     <input type="checkbox" id="is_admin" name="is_admin" <?= $is_admin == 1 ? 'checked' : '' ?>><br>
     <label for="is_tech">Is Tech:</label>
     <input type="checkbox" id="is_tech" name="is_tech" <?= $is_tech == 1 ? 'checked' : '' ?>><br>
     <label for="is_field_tech">Is Field Tech:</label>
     <input type="checkbox" id="is_field_tech" name="is_field_tech" <?= $is_field_tech == 1 ? 'checked' : '' ?>><br>
-    <label for="ifasid">Employee ID:</label>
-    <input type="text" id="ifasid" name="ifasid" value="<?= $ifasid ?>"><br>
+    
+    <h2>Permissions</h2>
     <label for="can_view_tickets">Can View Tickets:</label>
     <input type="checkbox" id="can_view_tickets" name="can_view_tickets" <?= $can_view_tickets == 1 ? 'checked' : '' ?>><br>
     <label for="can_create_tickets">Can Create Tickets:</label>

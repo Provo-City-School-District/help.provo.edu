@@ -40,8 +40,13 @@ WHERE tickets.status NOT IN ('closed', 'resolved')";
 $location_query_result = mysqli_query($database, $location_query);
 $allLocations = processQueryResult($location_query_result, "location_name");
 
-// TODO: Need to query open tickets based on field tech and make a field tech flag in the users table
-$fieldTech = $allTechs;
+// Query open tickets based on field tech:
+$field_tech_query = "SELECT tickets.employee 
+FROM tickets 
+INNER JOIN users ON tickets.employee = users.username 
+WHERE tickets.status NOT IN ('closed', 'resolved') AND users.is_field_tech = 1";
+$field_tech_query_result = mysqli_query($database, $field_tech_query);
+$fieldTechs = processQueryResult($field_tech_query_result, "employee");
 
 ?>
 <h1>Admin</h1>
@@ -217,6 +222,6 @@ $exclude_result = mysqli_query($database, $exclude_query);
 <script>
     let allTechs = <?php echo json_encode($allTechs, JSON_NUMERIC_CHECK); ?>;
     let byLocation = <?php echo json_encode($allLocations, JSON_NUMERIC_CHECK); ?>;
-    let fieldTechOpen = <?php echo json_encode($fieldTech, JSON_NUMERIC_CHECK); ?>;
+    let fieldTechOpen = <?php echo json_encode($fieldTechs, JSON_NUMERIC_CHECK); ?>;
 </script>
 <?php include("footer.php"); ?>

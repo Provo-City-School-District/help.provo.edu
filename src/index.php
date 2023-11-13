@@ -1,5 +1,6 @@
 <?php
 require_once("status_popup.php");
+require("functions.php");
 // Define LDAP Server
 $ldap_host = getenv('LDAPHOST');
 $ldap_port = getenv('LDAPPORT');
@@ -45,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')  {
 
                 //check if user already exists in local database
                 //if not, insert their information into the local database
-                if (!userExistsLocally($user_data['Email'], $database)) {
+                if (!user_exists_locally($user_data['Email'])) {
 
                     // Insert user data into the local database
                     $insert_query = "INSERT INTO users (username, email, lastname, firstname, ifasid, worksite, pre_name) VALUES ('" . $input_username . "', '" . $user_data['Email'] . "', '" . $user_data['lastname'] . "', '" . $user_data['firstname'] . "', '" . $user_data['ifasid'] . "', '" . $user_data['worksite'] . "', '" . $user_data['pre_name'] . "')";

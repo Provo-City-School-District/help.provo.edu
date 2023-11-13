@@ -33,81 +33,54 @@ if (isset($_SESSION['current_status'])) {
 
 
 
-// not super clean
+
 // Query open tickets based on tech
-$query = "SELECT employee FROM tickets WHERE status NOT IN ('closed', 'resolved')";
-$query_result = mysqli_query($database, $query);
+$tech_query = "SELECT employee FROM tickets WHERE status NOT IN ('closed', 'resolved')";
+$tech_query_result = mysqli_query($database, $tech_query);
+$allTechs = processQueryResult($tech_query_result, "employee");
 
-$tech_count = [];
+// Query open tickets based on location:
+$location_query = "SELECT location FROM tickets WHERE status NOT IN ('closed', 'resolved')";
+$location_query_result = mysqli_query($database, $location_query);
+$allLocations = processQueryResult($location_query_result, "location");
 
-while ($row = mysqli_fetch_assoc($query_result)) {
-    $emp = $row["employee"];
-    if ($emp == null || $emp == "")
-        $emp = "unassigned";
+// TODO: Need to query open tickets based on field tech and make a field tech flag in the users table
+$fieldTech = $allTechs;
 
-    if (!isset($tech_count[$emp]))
-        $tech_count[$emp] = 1;
-    else
-        $tech_count[$emp]++;
+// process the data for our charts
+function processQueryResult($query_result, $label_field) {
+    $count = [];
+
+    while ($row = mysqli_fetch_assoc($query_result)) {
+        $label = $row[$label_field];
+        if ($label == null || $label == "")
+            $label = "unassigned";
+
+        if (!isset($count[$label]))
+            $count[$label] = 1;
+        else
+            $count[$label]++;
+    }
+
+    asort($count);
+
+    $processedData = [];
+    foreach ($count as $name => $count) {
+        $processedData[] = array("y" => $count, "label" => $name);
+    }
+
+    return $processedData;
 }
-asort($tech_count);
-foreach ($tech_count as $name => $count) {
-    $allTechs[] = array("y" => $count, "label" => $name);
-}
-
-
-
-
-
-
-
-
 
 ?>
+
 <h1>Admin</h1>
 <h2>Reports</h2>
 <div class="grid3">
 <div id="techOpenTicket" style="height: 370px; width: 100%;"></div> 
-<!-- <div id="techOpenTicket" style="height: 370px; width: 100%;"></div>
-<div id="techOpenTicket" style="height: 370px; width: 100%;"></div> -->
+<div id="byLocation" style="height: 370px; width: 100%;"></div>
+<div id="fieldTechOpen" style="height: 370px; width: 100%;"></div>
 </div>
-
-<!-- <h3>Open Tickets</h4>
-    <table>
-        <tr>
-            <th>Tech</th>
-            <th>Assigned Tickets</th>
-        </tr>
-
-        <?php
-        // not super clean
-        // Query open tickets based on tech
-        $query = "SELECT employee FROM tickets WHERE status NOT IN ('closed', 'resolved')";
-        $query_result = mysqli_query($database, $query);
-
-        $tech_count = [];
-
-        while ($row = mysqli_fetch_assoc($query_result)) {
-            $emp = $row["employee"];
-            if ($emp == null || $emp == "")
-                $emp = "unassigned";
-
-            if (!isset($tech_count[$emp]))
-                $tech_count[$emp] = 1;
-            else
-                $tech_count[$emp]++;
-        }
-        arsort($tech_count);
-        foreach ($tech_count as $name => $count) {
-        ?>
-            <tr>
-                <td data-cell="Employee"><?= $name ?></td>
-                <td data-cell="Ticket Count"><?= $count ?></td>
-            </tr>
-        <?php
-        }
-        ?>
-    </table><br> -->
 
 <h2>All Users</h2>
 <table class="allUsers data-table">
@@ -272,6 +245,8 @@ $exclude_result = mysqli_query($database, $exclude_query);
     </tbody>
 </table>
 <script>
-    var allTechs = <?php echo json_encode($allTechs, JSON_NUMERIC_CHECK); ?>
+    let allTechs = <?php echo json_encode($allTechs, JSON_NUMERIC_CHECK); ?>;
+    let byLocation = <?php echo json_encode($allLocations, JSON_NUMERIC_CHECK); ?>;
+    let fieldTechOpen = <?php echo json_encode($fieldTech, JSON_NUMERIC_CHECK); ?>;
 </script>
 <?php include("footer.php"); ?>

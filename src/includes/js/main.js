@@ -82,10 +82,10 @@ if (resetBtn) {
 }
 
 
-
+//================================= Charts =================================
     // Chart for all techs open tickets. 
     window.onload = function() {
-
+      // tech department
       var allTechsChart = new CanvasJS.Chart("techOpenTicket", {
           animationEnabled: true,
           title: {
@@ -106,5 +106,46 @@ if (resetBtn) {
           }]
       });
       allTechsChart.render();
-
+      // by location
+      var byLocationChart = new CanvasJS.Chart("byLocation", {
+        animationEnabled: true,
+        title: {
+            text: "All Open Tickets By Location"
+        },
+        axisY: {
+            title: "Ticket Count",
+            includeZero: true,
+        },
+        data: [{
+            type: "bar",
+            yValueFormatString: "#,##",
+            indexLabel: "{y}",
+            indexLabelPlacement: "inside",
+            indexLabelFontWeight: "bolder",
+            indexLabelFontColor: "white",
+            dataPoints: byLocation
+        }]
+    });
+    byLocationChart.render();
+    //field techs open tickets
+    var fieldTechOpenChart = new CanvasJS.Chart("fieldTechOpen", {
+      animationEnabled: true,
+      title: {
+          text: "Field Tech's Open Tickets"
+      },
+      axisY: {
+          title: "Ticket Count",
+          includeZero: true,
+      },
+      data: [{
+          type: "bar",
+          yValueFormatString: "#,##",
+          indexLabel: "{y}",
+          indexLabelPlacement: "inside",
+          indexLabelFontWeight: "bolder",
+          indexLabelFontColor: "white",
+          dataPoints: fieldTechOpen
+      }]
+  });
+  fieldTechOpenChart.render();
   }

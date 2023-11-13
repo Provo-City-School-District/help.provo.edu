@@ -63,21 +63,23 @@
                 <?php
                 // Get the priority value from the ticket row
                 $priority = $ticket_row['priority'];
-                // Calculate the due date by adding the priority days to the created date
-                $created_date = new DateTime($ticket_row['created']);
-                $due_date = clone $created_date;
-                $due_date->modify("+{$priority} weekdays");
+                $due_date = $ticket_row['due_date'];
 
-                // Check if the due date falls on a weekend or excluded date
-                while (isWeekend($due_date)) {
-                    $due_date->modify("+1 day");
-                }
-                $count = hasExcludedDate($created_date->format('Y-m-d'), $due_date->format('Y-m-d'));
-                if ($count > 0) {
-                    $due_date->modify("{$count} day");
-                }
-                // Format the due date as a string
-                $due_date = $due_date->format('Y-m-d');
+                // Calculate the due date by adding the priority days to the created date
+                // $created_date = new DateTime($ticket_row['created']);
+                // $due_date = clone $created_date;
+                // $due_date->modify("+{$priority} weekdays");
+
+                // // Check if the due date falls on a weekend or excluded date
+                // while (isWeekend($due_date)) {
+                //     $due_date->modify("+1 day");
+                // }
+                // $count = hasExcludedDate($created_date->format('Y-m-d'), $due_date->format('Y-m-d'));
+                // if ($count > 0) {
+                //     $due_date->modify("{$count} day");
+                // }
+                // // Format the due date as a string
+                // $due_date = $due_date->format('Y-m-d');
                 ?>
                 <td data-cell="Due"><?= $due_date ?></td>
             </tr>

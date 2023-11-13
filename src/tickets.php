@@ -10,7 +10,7 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
     }
 }
 require_once('helpdbconnect.php');
-include(from_root("/controllers/tickets/ticket_utils.php"));
+include(from_root("/includes/ticket_utils.php"));
 ?>
 
 <?php

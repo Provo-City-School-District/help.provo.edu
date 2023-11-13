@@ -31,3 +31,4 @@ SWHELPDESKDATABASE=
 - Data Tables: https://datatables.net/
 - TinyMCE: https://www.tiny.cloud/docs/tinymce/6/
 - CSS Alerts: https://alvarotrigo.com/blog/css-alerts/
+- CanvasJS: https://canvasjs.com/php-charts/

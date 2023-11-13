@@ -29,7 +29,9 @@ input[type=submit] {
 	cursor: pointer;
 
 }
-
+.canvasjs-chart-credit {
+	display: none;
+}
 #wrapper {
 	width: 100%;
 	/* padding:1em; */
@@ -268,7 +270,7 @@ select {
 	.note td:nth-child(2) 
 	{
 	width: 100px;
-}
+	}
 	.grid3 {
 		grid-template-columns: repeat(3, 1fr);
 	

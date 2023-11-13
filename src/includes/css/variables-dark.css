@@ -43,3 +43,6 @@ table a {
 .ticketGrid>* {
 	background-color: var(--theme-black);
 }
+.canvasjs-chart-canvas {
+	filter:invert(1)
+}

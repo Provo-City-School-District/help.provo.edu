@@ -80,3 +80,31 @@ if (resetBtn) {
     window.location.href = "search_tickets.php";
   });
 }
+
+
+
+    // Chart for all techs open tickets. 
+    window.onload = function() {
+
+      var allTechsChart = new CanvasJS.Chart("techOpenTicket", {
+          animationEnabled: true,
+          title: {
+              text: "All Tech's Open Tickets"
+          },
+          axisY: {
+              title: "Ticket Count",
+              includeZero: true,
+          },
+          data: [{
+              type: "bar",
+              yValueFormatString: "#,##",
+              indexLabel: "{y}",
+              indexLabelPlacement: "inside",
+              indexLabelFontWeight: "bolder",
+              indexLabelFontColor: "white",
+              dataPoints: allTechs
+          }]
+      });
+      allTechsChart.render();
+
+  }

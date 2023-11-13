@@ -89,7 +89,7 @@ if (resetBtn) {
       var allTechsChart = new CanvasJS.Chart("techOpenTicket", {
           animationEnabled: true,
           title: {
-              text: "All Tech's Open Tickets"
+              text: "All Technicians Open Tickets"
           },
           axisY: {
               title: "Ticket Count",

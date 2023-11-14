@@ -238,6 +238,16 @@ select {
 }
 #search-for-client {
 	display: none;
+	padding: 1em;
+	/* border: 2px solid var(--theme-grey); */
+	align-items: center;
+	justify-content: center;
+	background-color:var(--theme-white);
+	box-shadow: 0 0 2px var(--theme-table-border-color);
+	margin-bottom:1em;
+}
+#search-for-client h2 {
+	margin-top:unset;
 }
 /* =============================== Responsive Styles =============================== */
 @media(min-width: 800px) {

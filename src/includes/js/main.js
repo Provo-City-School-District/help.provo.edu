@@ -166,7 +166,7 @@ document
   .querySelector(".currentClient")
   .addEventListener("click", function (event) {
     event.preventDefault(); // Prevent the default action
-    document.querySelector("#search-for-client").style.display = "block"; // Show the div
+    document.querySelector("#search-for-client").style.display = "grid"; // Show the div
   });
 
 //sends info to client_search.php then returns results
@@ -223,6 +223,6 @@ document
       // console.log('Clicked username: ' + username); // Debug line
       document.getElementById("client").value = username;
       document.getElementById("client-display").textContent =
-        "Changing Client to: " + username;
+        "Changing Client to: " + username + " on next save";
     }
   });

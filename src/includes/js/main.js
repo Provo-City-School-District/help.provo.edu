@@ -81,119 +81,142 @@ if (resetBtn) {
   });
 }
 
-
 //================================= Charts =================================
-    // Chart for all techs open tickets. 
-    window.onload = function() {
-      // tech department
-      var allTechsChart = new CanvasJS.Chart("techOpenTicket", {
-          animationEnabled: true,
-          title: {
-              text: "All Technicians Open Tickets"
-          },
-          axisY: {
-              title: "Ticket Count",
-              includeZero: true,
-          },
-          data: [{
-              type: "bar",
-              yValueFormatString: "#,##",
-              indexLabel: "{y}",
-              indexLabelPlacement: "inside",
-              indexLabelFontWeight: "bolder",
-              indexLabelFontColor: "white",
-              dataPoints: allTechs
-          }]
-      });
-      allTechsChart.render();
-      // by location
-      var byLocationChart = new CanvasJS.Chart("byLocation", {
-        animationEnabled: true,
-        title: {
-            text: "All Open Tickets By Location"
-        },
-        axisY: {
-            title: "Ticket Count",
-            includeZero: true,
-        },
-        data: [{
-            type: "bar",
-            yValueFormatString: "#,##",
-            indexLabel: "{y}",
-            indexLabelPlacement: "inside",
-            indexLabelFontWeight: "bolder",
-            indexLabelFontColor: "white",
-            dataPoints: byLocation
-        }]
-    });
-    byLocationChart.render();
-    //field techs open tickets
-    var fieldTechOpenChart = new CanvasJS.Chart("fieldTechOpen", {
-      animationEnabled: true,
-      title: {
-          text: "Field Tech's Open Tickets"
+// Chart for all techs open tickets.
+window.onload = function () {
+  // tech department
+  var allTechsChart = new CanvasJS.Chart("techOpenTicket", {
+    animationEnabled: true,
+    title: {
+      text: "All Technicians Open Tickets",
+    },
+    axisY: {
+      title: "Ticket Count",
+      includeZero: true,
+    },
+    data: [
+      {
+        type: "bar",
+        yValueFormatString: "#,##",
+        indexLabel: "{y}",
+        indexLabelPlacement: "inside",
+        indexLabelFontWeight: "bolder",
+        indexLabelFontColor: "white",
+        dataPoints: allTechs,
       },
-      axisY: {
-          title: "Ticket Count",
-          includeZero: true,
+    ],
+  });
+  allTechsChart.render();
+  // by location
+  var byLocationChart = new CanvasJS.Chart("byLocation", {
+    animationEnabled: true,
+    title: {
+      text: "All Open Tickets By Location",
+    },
+    axisY: {
+      title: "Ticket Count",
+      includeZero: true,
+    },
+    data: [
+      {
+        type: "bar",
+        yValueFormatString: "#,##",
+        indexLabel: "{y}",
+        indexLabelPlacement: "inside",
+        indexLabelFontWeight: "bolder",
+        indexLabelFontColor: "white",
+        dataPoints: byLocation,
       },
-      data: [{
-          type: "bar",
-          yValueFormatString: "#,##",
-          indexLabel: "{y}",
-          indexLabelPlacement: "inside",
-          indexLabelFontWeight: "bolder",
-          indexLabelFontColor: "white",
-          dataPoints: fieldTechOpen
-      }]
+    ],
+  });
+  byLocationChart.render();
+  //field techs open tickets
+  var fieldTechOpenChart = new CanvasJS.Chart("fieldTechOpen", {
+    animationEnabled: true,
+    title: {
+      text: "Field Tech's Open Tickets",
+    },
+    axisY: {
+      title: "Ticket Count",
+      includeZero: true,
+    },
+    data: [
+      {
+        type: "bar",
+        yValueFormatString: "#,##",
+        indexLabel: "{y}",
+        indexLabelPlacement: "inside",
+        indexLabelFontWeight: "bolder",
+        indexLabelFontColor: "white",
+        dataPoints: fieldTechOpen,
+      },
+    ],
   });
   fieldTechOpenChart.render();
-  }
-
-
-
+};
 
 //================================= Ticket - Client Search =================================
-document.querySelector('.currentClient').addEventListener('click', function(event) {
-  event.preventDefault(); // Prevent the default action
-  document.querySelector('#search-for-client').style.display = 'block'; // Show the div
-});
+document
+  .querySelector(".currentClient")
+  .addEventListener("click", function (event) {
+    event.preventDefault(); // Prevent the default action
+    document.querySelector("#search-for-client").style.display = "block"; // Show the div
+  });
 
 //sends info to client_search.php then returns results
-document.getElementById('search-form').addEventListener('submit', function(event) {
-  event.preventDefault(); // Prevent the form from being submitted normally
+document
+  .getElementById("search-form")
+  .addEventListener("submit", function (event) {
+    event.preventDefault(); // Prevent the form from being submitted normally
 
-  var firstname = document.getElementById('firstname').value;
-  var lastname = document.getElementById('lastname').value;
+    var firstname = document.getElementById("firstname").value;
+    var lastname = document.getElementById("lastname").value;
 
-  var xhr = new XMLHttpRequest();
-  xhr.open('POST', '../../includes/client_search.php', true);
-  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-  xhr.onload = function() {
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "../../includes/client_search.php", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.onload = function () {
       if (this.status == 200) {
-      // The request was successful
-      var results = JSON.parse(this.responseText);
-      var resultsHTML = '';
-      for (var i = 0; i < results.length; i++) {
-          resultsHTML += '<p><a href="#" class="username-link" data-username="' + results[i].username + '">' + results[i].firstname + ' ' + results[i].lastname + ' (' + results[i].username + ')</a></p>';
+        // The request was successful
+        var results = JSON.parse(this.responseText);
+        var resultsHTML = "";
+        for (var i = 0; i < results.length; i++) {
+          resultsHTML +=
+            '<p><a href="#" class="username-link" data-username="' +
+            results[i].username +
+            '">' +
+            results[i].firstname +
+            " " +
+            results[i].lastname +
+            " (" +
+            results[i].username +
+            ")</a></p>";
+        }
+        document.getElementById("search-results").innerHTML = resultsHTML;
+      } else {
+        // There was an error
+        console.error("An error occurred: " + this.status);
       }
-      document.getElementById('search-results').innerHTML = resultsHTML;
-  } else {
-      // There was an error
-      console.error('An error occurred: ' + this.status);
-  }
-  };
-  xhr.send('firstname=' + encodeURIComponent(firstname) + '&lastname=' + encodeURIComponent(lastname));
-});
+    };
+    xhr.send(
+      "firstname=" +
+        encodeURIComponent(firstname) +
+        "&lastname=" +
+        encodeURIComponent(lastname)
+    );
+  });
 //update the value based on selection
-document.getElementById('search-results').addEventListener('click', function(event) {
-  // console.log('Clicked inside search results'); // Debug line
-  if (event.target.classList.contains('username-link')) {
+document
+  .getElementById("search-results")
+  .addEventListener("click", function (event) {
+    // console.log('Clicked inside search results'); // Debug line
+    if (event.target.classList.contains("username-link")) {
       event.preventDefault(); // Prevent the link from being followed
 
-      var username = event.target.getAttribute('data-username');
+      var username = event.target.getAttribute("data-username");
       // console.log('Clicked username: ' + username); // Debug line
-      document.getElementById('client').value = username;
-      document.getElementById('client-display').textContent = 'Changing Client to: ' + username;
-  }
-});
+      document.getElementById("client").value = username;
+      document.getElementById("client-display").textContent =
+        "Changing Client to: " + username;
+    }
+  });

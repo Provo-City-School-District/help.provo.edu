@@ -165,15 +165,17 @@ td::before {
 .ticketGrid {
 	display: grid;
 	margin-bottom: 1em;
+	margin-top: 1em;
 }
 
 .ticketGrid>* {
 	display: grid;
 	grid-template-columns: 1fr;
 	background-color: var(--theme-white);
+
 }
 
-.ticketGrid label, .ticketGrid span {
+.ticketGrid label, .ticketGrid span:first-of-type {
 	background-color: var(--theme-primary);
 	padding: .5em;
 	color:var(--theme-white);
@@ -231,7 +233,9 @@ select {
 .note td:nth-child(2) {
 	font-size: 80%;
 }
-
+#search-for-client {
+	display: none;
+}
 /* =============================== Responsive Styles =============================== */
 @media(min-width: 800px) {
 	#mainHeader {
@@ -290,10 +294,22 @@ select {
 		grid-template-columns: minmax(min-content, 160px) 1fr;
 		align-items: center;
 	}
-	.ticketGrid span {
+	.ticketGrid span:first-of-type {
 		margin-right: 5px;
 		width: 144px;
 		margin-bottom:unset;
+	}
+	.currentClient {
+		display: grid;
+		grid-template-columns: minmax(min-content, 160px) 1fr 1fr;
+	}
+	.currentClient {
+		grid-column: span 2;
+	}
+	.currentClient a {
+		place-self: end;
+		padding-right:1em;
+		align-self: center;
 	}
 }
 

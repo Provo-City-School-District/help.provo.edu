@@ -149,3 +149,51 @@ if (resetBtn) {
   });
   fieldTechOpenChart.render();
   }
+
+
+
+
+//================================= Ticket - Client Search =================================
+document.querySelector('.currentClient').addEventListener('click', function(event) {
+  event.preventDefault(); // Prevent the default action
+  document.querySelector('#search-for-client').style.display = 'block'; // Show the div
+});
+
+//sends info to client_search.php then returns results
+document.getElementById('search-form').addEventListener('submit', function(event) {
+  event.preventDefault(); // Prevent the form from being submitted normally
+
+  var firstname = document.getElementById('firstname').value;
+  var lastname = document.getElementById('lastname').value;
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', '../../includes/client_search.php', true);
+  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  xhr.onload = function() {
+      if (this.status == 200) {
+      // The request was successful
+      var results = JSON.parse(this.responseText);
+      var resultsHTML = '';
+      for (var i = 0; i < results.length; i++) {
+          resultsHTML += '<p><a href="#" class="username-link" data-username="' + results[i].username + '">' + results[i].firstname + ' ' + results[i].lastname + ' (' + results[i].username + ')</a></p>';
+      }
+      document.getElementById('search-results').innerHTML = resultsHTML;
+  } else {
+      // There was an error
+      console.error('An error occurred: ' + this.status);
+  }
+  };
+  xhr.send('firstname=' + encodeURIComponent(firstname) + '&lastname=' + encodeURIComponent(lastname));
+});
+//update the value based on selection
+document.getElementById('search-results').addEventListener('click', function(event) {
+  // console.log('Clicked inside search results'); // Debug line
+  if (event.target.classList.contains('username-link')) {
+      event.preventDefault(); // Prevent the link from being followed
+
+      var username = event.target.getAttribute('data-username');
+      // console.log('Clicked username: ' + username); // Debug line
+      document.getElementById('client').value = username;
+      document.getElementById('client-display').textContent = 'Changing Client to: ' + username;
+  }
+});

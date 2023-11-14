@@ -88,6 +88,10 @@ if ($ticket_merged_id != null && $should_redirect) {
 }
 ob_end_flush();
 
+
+// TODO: This area can be re-written to be more efficient since we aren't having to sort through the entire users table. 
+// We only need to grab is_tech users.
+
 // Fetch the list of usernames from the users table
 $usernamesQuery = "SELECT username,is_tech FROM users";
 $usernamesResult = mysqli_query($database, $usernamesQuery);
@@ -95,17 +99,17 @@ $usernamesResult = mysqli_query($database, $usernamesQuery);
 if (!$usernamesResult) {
     die('Error fetching usernames: ' . mysqli_error($database));
 }
-// print_r($usernamesResult);
-// print_r(mysqli_fetch_assoc($usernamesResult));
+
 // Store the usernames in an array
 $clientusernames = [];
 $techusernames = [];
 while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
     if ($usernameRow['is_tech'] == 1) {
         $techusernames[] = $usernameRow['username'];
-    } else {
-        $clientusernames[] = $usernameRow['username'];
     }
+    // else {
+    //     $clientusernames[] = $usernameRow['username'];
+    // }
 }
 
 //fetch child tickets
@@ -119,31 +123,45 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
 
 ?>
 <article id="ticketWrapper">
-    <h1>Ticket #<?= $ticket['id'] ?></h1><br>
-
+    <h1>Ticket #<?= $ticket['id'] ?></h1>
+    <div id="search-for-client">
+        <h2>Client Search:</h2>
+        <form id="search-form" method="post">
+            <label for="firstname">First Name:</label>
+            <input type="text" id="firstname" name="firstname">
+            <label for="lastname">Last Name:</label>
+            <input type="text" id="lastname" name="lastname">
+            <input type="submit" value="Search">
+        </form>
+        <div id="search-results"></div>
+    </div>
     <!-- Form for updating ticket information -->
     <form method="POST" action="update_ticket.php">
         <!-- Add a submit button to update the information -->
-        <input type="submit" value="Update Ticket"><br>
-        Send Emails on Update:<input type="checkbox" name="send_emails" value="send_emails"><br><br>
+        <input type="submit" value="Update Ticket">
+        Send Emails on Update:<input type="checkbox" name="send_emails" value="send_emails">
         <div class="ticketGrid">
             <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
             <input type="hidden" name="madeby" value="<?= $_SESSION['username'] ?>">
+            <input type="hidden" id="client" name="client" value="<?= $ticket['client'] ?>">
+            <div class="currentClient">
+                <!-- <label for="client">Client:</label> -->
+                <!-- <input type="text" id="client" name="client" value="<?= $ticket['client'] ?>" readonly> -->
+                <!-- <input type="text" id="client" name="client" value="<?= $ticket['client'] ?>"> -->
+                <!-- <select id="client" name="client">
+                    <?php foreach ($clientusernames as $username) : ?>
+                        <option value="<?= $username ?>" <?= $ticket['client'] === $username ? 'selected' : '' ?>><?= $username ?></option>
+                    <?php endforeach; ?>
+                </select> -->
+                <span>Client: </span> <span id="client-display"><?= $ticket['client'] ?></span> <a>Change Client</a>
+            </div>
             <div>
                 <span>Created:</span> <?= $ticket['created'] ?>
             </div>
             <div>
                 <span>Last Updated:</span> <?= $ticket['last_updated'] ?>
             </div>
-            <div>
-                <label for="client">Client:</label>
-                <!-- <input type="text" id="client" name="client" value="<?= $ticket['client'] ?>"> -->
-                <select id="client" name="client">
-                    <?php foreach ($clientusernames as $username) : ?>
-                        <option value="<?= $username ?>" <?= $ticket['client'] === $username ? 'selected' : '' ?>><?= $username ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
+
 
             <div> <label for="employee">Assigned Tech:</label>
                 <select id="employee" name="employee">
@@ -297,7 +315,7 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
             </div>
             <label for="description" class="heading2">Request Detail:</label>
             <div class="ticket-description">
-                <?= html_entity_decode($ticket['description']) ?><br>
+                <?= html_entity_decode($ticket['description']) ?>
                 <button id="edit-description-button" type="button">Edit Request Detail</button>
             </div>
 
@@ -475,26 +493,34 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
             </tr>
             </table>
         </div>
-        <button id="new-note-button">New Note</button><br><br>
+        <button id="new-note-button">New Note</button>
         <div id="new-note-form" style="display: none;">
             <h3>Add Note</h3>
             <form method="post" action="add_note_handler.php">
                 <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
                 <input type="hidden" name="username" value="<?= $_SESSION['username'] ?>">
-                <label for="note">Note:</label>
-                <textarea id="note" name="note" class="tinyMCEtextarea"></textarea>
+                <div>
+                    <label for="note">Note:</label>
+                    <textarea id="note" name="note" class="tinyMCEtextarea"></textarea>
+                </div>
                 <!-- TODO: Hide the visible to client option for non admins,
                         forms make this a pain because it needs to submit a value if false, system currently relies on not receiving
                         a value to assume no (thus hiding it from client) -->
-                <label for="visible_to_client">Visible to Client:</label>
-                <input type="checkbox" id="visible_to_client" name="visible_to_client" checked="checked"><br>
-                <label for="note_time">Time in Minutes:</label>
-                <input id="note_time" name="note_time" type="number"><br>
-                <label for="date_override_enable">Date Override:</label>
-                <input type="checkbox" id="date_override_enable" name="date_override_enable"><br>
-                <input style="display:none;" id="date_override_input" type="datetime-local" name="date_override"><br>
+                <div>
+                    <label for="visible_to_client">Visible to Client:</label>
+                    <input type="checkbox" id="visible_to_client" name="visible_to_client" checked="checked">
+                </div>
+                <div>
+                    <label for="note_time">Time in Minutes:</label>
+                    <input id="note_time" name="note_time" type="number">
+                </div>
+                <div>
+                    <label for="date_override_enable">Date Override:</label>
+                    <input type="checkbox" id="date_override_enable" name="date_override_enable">
+                    <input style="display:none;" id="date_override_input" type="datetime-local" name="date_override">
+                </div>
                 <input type="submit" value="Add Note">
-            </form><br>
+            </form>
             <script src="../../includes/js/jquery-3.7.1.min.js"></script>
             <script>
                 $('input[name=date_override_enable]').on('change', function() {
@@ -554,4 +580,5 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
         }
         ?>
 </article>
+
 <?php include("footer.php"); ?>

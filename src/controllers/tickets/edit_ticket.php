@@ -88,12 +88,8 @@ if ($ticket_merged_id != null && $should_redirect) {
 }
 ob_end_flush();
 
-
-// TODO: This area can be re-written to be more efficient since we aren't having to sort through the entire users table. 
-// We only need to grab is_tech users.
-
 // Fetch the list of usernames from the users table
-$usernamesQuery = "SELECT username,is_tech FROM users";
+$usernamesQuery = "SELECT username,is_tech FROM users WHERE is_tech = 1";
 $usernamesResult = mysqli_query($database, $usernamesQuery);
 
 if (!$usernamesResult) {
@@ -101,15 +97,11 @@ if (!$usernamesResult) {
 }
 
 // Store the usernames in an array
-$clientusernames = [];
 $techusernames = [];
 while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
     if ($usernameRow['is_tech'] == 1) {
         $techusernames[] = $usernameRow['username'];
     }
-    // else {
-    //     $clientusernames[] = $usernameRow['username'];
-    // }
 }
 
 //fetch child tickets
@@ -145,14 +137,6 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
             <input type="hidden" name="madeby" value="<?= $_SESSION['username'] ?>">
             <input type="hidden" id="client" name="client" value="<?= $ticket['client'] ?>">
             <div class="currentClient">
-                <!-- <label for="client">Client:</label> -->
-                <!-- <input type="text" id="client" name="client" value="<?= $ticket['client'] ?>" readonly> -->
-                <!-- <input type="text" id="client" name="client" value="<?= $ticket['client'] ?>"> -->
-                <!-- <select id="client" name="client">
-                    <?php foreach ($clientusernames as $username) : ?>
-                        <option value="<?= $username ?>" <?= $ticket['client'] === $username ? 'selected' : '' ?>><?= $username ?></option>
-                    <?php endforeach; ?>
-                </select> -->
                 <span>Client: </span> <span id="client-display"><?= $ticket['client'] ?></span> <a>Change Client</a>
             </div>
             <div>

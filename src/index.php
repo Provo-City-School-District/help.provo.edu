@@ -42,6 +42,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $search = '(&(objectCategory=person)(objectClass=user)(sAMAccountName=' . $input_username . '))'; // Your search filter
             $ldap_result = ldap_search($ldap_conn, $ldap_dn, $search);
             if (!$ldap_result) {
+                unset($_POST["password"]);
+                unset($_POST["username"]);
+                unset($_SESSION['username']);
+                // Authentication failed
+                $_SESSION['current_status'] = 'LDAP search failed.';
+                $_SESSION['status_type'] = 'error';
+                header('Location: index.php');
                 die('LDAP search failed.');
             }
             // Get entries from search result

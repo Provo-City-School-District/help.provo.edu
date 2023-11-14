@@ -1,19 +1,8 @@
 <?php
 require_once("status_popup.php");
 require_once("authentication_utils.php");
+require_once('helpdbconnect.php');
 
-// Define LDAP Server
-$ldap_host = getenv('LDAPHOST');
-$ldap_port = getenv('LDAPPORT');
-$ldap_conn = ldap_connect($ldap_host, $ldap_port);
-if (!$ldap_conn) {
-    // Failed to connect to LDAP server
-    $_SESSION['current_status'] = 'Failed to connect to LDAP server';
-    $_SESSION['status_type'] = 'error';
-    $failedLDAP = "failed to connect to LDAP server";
-    error_log($failedLDAP, 0);
-    die();
-}
 session_start();
 
 // Check if user is already logged in
@@ -22,10 +11,20 @@ if (isset($_SESSION['username'])) {
     exit();
 }
 
-//include local database connection in the variable $database
-require_once('helpdbconnect.php');
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Define LDAP Server
+    $ldap_host = getenv('LDAPHOST');
+    $ldap_port = getenv('LDAPPORT');
+    $ldap_conn = ldap_connect($ldap_host, $ldap_port);
+    if (!$ldap_conn) {
+        // Failed to connect to LDAP server
+        $_SESSION['current_status'] = 'Failed to connect to LDAP server';
+        $_SESSION['status_type'] = 'error';
+        $failedLDAP = "failed to connect to LDAP server";
+        error_log($failedLDAP, 0);
+        die();
+    }
+
     $input_username = htmlspecialchars(trim($_POST['username']));
     $input_password = htmlspecialchars(trim($_POST['password']));
     // Bind to LDAP server

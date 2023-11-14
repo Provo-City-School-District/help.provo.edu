@@ -1,12 +1,18 @@
 <?php
 require_once("status_popup.php");
-require("functions.php");
+require_once("authentication_utils.php");
+
 // Define LDAP Server
 $ldap_host = getenv('LDAPHOST');
 $ldap_port = getenv('LDAPPORT');
 $ldap_conn = ldap_connect($ldap_host, $ldap_port);
 if (!$ldap_conn) {
-    die('Could not connect to LDAP server');
+    // Failed to connect to LDAP server
+    $_SESSION['current_status'] = 'Failed to connect to LDAP server';
+    $_SESSION['status_type'] = 'error';
+    $failedLDAP = "failed to connect to LDAP server";
+    error_log($failedLDAP, 0);
+    die();
 }
 session_start();
 
@@ -22,130 +28,110 @@ require_once('helpdbconnect.php');
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $input_username = htmlspecialchars(trim($_POST['username']));
     $input_password = htmlspecialchars(trim($_POST['password']));
-    if ($ldap_conn) {
-        // Bind to LDAP server
-        $ldap_bind = ldap_bind($ldap_conn, 'psd\\' . $input_username, $input_password);
+    // Bind to LDAP server
+    $ldap_bind = ldap_bind($ldap_conn, 'psd\\' . $input_username, $input_password);
 
-        // check that inputs are not empty, otherwise an anonymous LDAP bind can get through
-        $inputs_valid = !(empty($input_username) || empty($input_password));
+    // check that inputs are not empty, otherwise an anonymous LDAP bind can get through
+    $inputs_valid = !(empty($input_username) || empty($input_password));
 
-        if ($ldap_bind && $inputs_valid) {
-            // assign username to session
-            $_SESSION['username'] = $input_username;
-            $ldap_dn = getenv('LDAP_DN');
-            $ldap_user = getenv('LDAP_USER');
-            $ldap_password = getenv('LDAP_PASS');
-            if (!$ldap_bind) {
-                die('Could not bind to LDAP server.');
-            }
-            // Search LDAP directory
-            $search = '(&(objectCategory=person)(objectClass=user)(sAMAccountName=' . $input_username . '))'; // Your search filter
-            $ldap_result = ldap_search($ldap_conn, $ldap_dn, $search);
-            if (!$ldap_result) {
-                unset($_POST["password"]);
-                unset($_POST["username"]);
-                unset($_SESSION['username']);
-                // Authentication failed
-                $_SESSION['current_status'] = 'LDAP search failed.';
-                $_SESSION['status_type'] = 'error';
-                header('Location: index.php');
-                die('LDAP search failed.');
-            }
-            // Get entries from search result
-            $ldap_result = ldap_get_entries($ldap_conn, $ldap_result);
-  
-            if ($ldap_result) {
+    if ($ldap_bind && $inputs_valid) {
+        // assign username to session
+        $_SESSION['username'] = $input_username;
+        $ldap_dn = getenv('LDAP_DN');
+        $ldap_user = getenv('LDAP_USER');
+        $ldap_password = getenv('LDAP_PASS');
 
-                // Loop through results
-                for ($i = 0; $i < $ldap_result['count']; $i++) {
-                    $username = $ldap_result[$i]['samaccountname'][0];
-                    $firstname = $ldap_result[$i]['givenname'][0];
-                    $lastname = $ldap_result[$i]['sn'][0];
-                    $email = $ldap_result[$i]['mail'][0];
-                    $employee_id = $ldap_result[$i]['employeeid'][0];
-                }
-                //check if user already exists in local database
-                //if not, insert their information into the local database
-                if (!user_exists_locally($email)) {
-
-                    // Insert user data into the local database
-                    $insert_query = "INSERT INTO users (username, email, lastname, firstname, ifasid) VALUES ('" . $input_username . "', '" . $email . "', '" . $lastname . "', '" . $firstname . "', '" . $employee_id . "')";
-
-                    //mysqli_query($database, $insert_query);
-                    $insert_result = mysqli_query($database, $insert_query);
-                    if (!$insert_result) {
-                        echo 'Insert query error: ' . mysqli_error($database);
-                    }
-                }
-
-                // Query Local user information
-                $local_user_query = "SELECT * FROM users WHERE username = '" . $_SESSION['username'] . "'";
-                $local_query_results = mysqli_query($database, $local_user_query);
-                $local_query_data = mysqli_fetch_assoc($local_query_results);
-
-                // Retrieve user's permissions from the users table
-                $permissions = array(
-                    'can_view_tickets' => $local_query_data['can_view_tickets'],
-                    'can_create_tickets' => $local_query_data['can_create_tickets'],
-                    'can_edit_tickets' => $local_query_data['can_edit_tickets'],
-                    'can_delete_tickets' => $local_query_data['can_delete_tickets'],
-                    'is_admin' => $local_query_data['is_admin'],
-                    'is_tech' => $local_query_data['is_tech'],
-                    'is_field_tech' => $local_query_data['is_field_tech'],
-
-                );
-                // Set color scheme
-                $_SESSION['color_scheme'] = $local_query_data['color_scheme'];
-
-                // Store user's permissions in the session
-                $_SESSION['permissions'] = $permissions;
-
-                // Update login timestamp
-                $update_query = "UPDATE users SET last_login = NOW() WHERE email = '" . $email . "'";
-                $update_result = mysqli_query($database, $update_query);
-
-                if (!$update_result) {
-                    echo 'Update query error: ' . mysqli_error($database);
-                }
-            }
-            // Log the successful login
-            $loginMessage = "Successful login for username: " .  $input_username . " IP: " . $_SERVER["REMOTE_ADDR"] . " at " . date("Y-m-d H:i:s") . "\n";
-            error_log($loginMessage, 0);
-            header('Location: tickets.php');
-        } else {
-            // Authentication failed
-            $_SESSION['current_status'] = 'Authentication failed';
-            $_SESSION['status_type'] = 'error';
-
-            // Log the failed login attempt
-            $logMessage = "Failed login attempt for username: " .  $input_username . " IP: " . $_SERVER["REMOTE_ADDR"] . " at " . date("Y-m-d H:i:s") . "\n";
-            error_log($logMessage, 0);
-
-            // Clear the username and password to prevent resubmission
+        // Search LDAP directory
+        $search = '(&(objectCategory=person)(objectClass=user)(sAMAccountName=' . $input_username . '))'; // Your search filter
+        $ldap_search_result = ldap_search($ldap_conn, $ldap_dn, $search);
+        if (!$ldap_search_result) {
             unset($_POST["password"]);
             unset($_POST["username"]);
+            unset($_SESSION['username']);
+            // Authentication failed
+            $_SESSION['current_status'] = 'LDAP search failed.';
+            $_SESSION['status_type'] = 'error';
+            header('Location: index.php');
+            die('LDAP search failed.');
         }
+        // Get entries from search result
+        $ldap_entries_result = ldap_get_entries($ldap_conn, $ldap_search_result);
 
-        // Close LDAP connection
-        ldap_close($ldap_conn);
+        if ($ldap_entries_result) {
+
+            // Loop through results
+            for ($i = 0; $i < $ldap_entries_result['count']; $i++) {
+                $username = $ldap_entries_result[$i]['samaccountname'][0];
+                $firstname = $ldap_entries_result[$i]['givenname'][0];
+                $lastname = $ldap_entries_result[$i]['sn'][0];
+                $email = $ldap_entries_result[$i]['mail'][0];
+                $employee_id = $ldap_entries_result[$i]['employeeid'][0];
+            }
+            //check if user already exists in local database
+            //if not, insert their information into the local database
+            if (!user_exists_locally($email)) {
+
+                // Insert user data into the local database
+                $insert_query = "INSERT INTO users (username, email, lastname, firstname, ifasid) VALUES ('" . $input_username . "', '" . $email . "', '" . $lastname . "', '" . $firstname . "', '" . $employee_id . "')";
+
+                //mysqli_query($database, $insert_query);
+                $insert_result = mysqli_query($database, $insert_query);
+                if (!$insert_result) {
+                    echo 'Insert query error: ' . mysqli_error($database);
+                }
+            }
+
+            // Query Local user information
+            $local_user_query = "SELECT * FROM users WHERE username = '" . $_SESSION['username'] . "'";
+            $local_query_results = mysqli_query($database, $local_user_query);
+            $local_query_data = mysqli_fetch_assoc($local_query_results);
+
+            // Retrieve user's permissions from the users table
+            $permissions = array(
+                'can_view_tickets' => $local_query_data['can_view_tickets'],
+                'can_create_tickets' => $local_query_data['can_create_tickets'],
+                'can_edit_tickets' => $local_query_data['can_edit_tickets'],
+                'can_delete_tickets' => $local_query_data['can_delete_tickets'],
+                'is_admin' => $local_query_data['is_admin'],
+                'is_tech' => $local_query_data['is_tech'],
+                'is_field_tech' => $local_query_data['is_field_tech'],
+
+            );
+            // Set color scheme
+            $_SESSION['color_scheme'] = $local_query_data['color_scheme'];
+
+            // Store user's permissions in the session
+            $_SESSION['permissions'] = $permissions;
+
+            // Update login timestamp
+            $update_query = "UPDATE users SET last_login = NOW() WHERE email = '" . $email . "'";
+            $update_result = mysqli_query($database, $update_query);
+
+            if (!$update_result) {
+                echo 'Update query error: ' . mysqli_error($database);
+            }
+        }
+        // Log the successful login
+        $loginMessage = "Successful login for username: " .  $input_username . " IP: " . $_SERVER["REMOTE_ADDR"] . " at " . date("Y-m-d H:i:s") . "\n";
+        error_log($loginMessage, 0);
+        header('Location: tickets.php');
     } else {
-        // Failed to connect to LDAP server
-        $_SESSION['current_status'] = 'Failed to connect to LDAP server';
+        // Authentication failed
+        $_SESSION['current_status'] = 'Authentication failed';
         $_SESSION['status_type'] = 'error';
-        $failedLDAP = "failed to connect to LDAP server";
-        error_log($failedLDAP, 0);
+
+        // Log the failed login attempt
+        $logMessage = "Failed login attempt for username: " .  $input_username . " IP: " . $_SERVER["REMOTE_ADDR"] . " at " . date("Y-m-d H:i:s") . "\n";
+        error_log($logMessage, 0);
+
+        // Clear the username and password to prevent resubmission
+        unset($_POST["password"]);
+        unset($_POST["username"]);
     }
+
+    // Close LDAP connection
+    ldap_close($ldap_conn);
 }
-
-function userExistsLocally($email, $database)
-{
-    $check_query = "SELECT * FROM users WHERE email = '$email'";
-    $result = mysqli_query($database, $check_query);
-
-    // If a row is returned, the user exists
-    return mysqli_num_rows($result) > 0;
-}
-
 ?>
 <?php include("header.php");
 

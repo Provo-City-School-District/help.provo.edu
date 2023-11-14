@@ -19,7 +19,7 @@ if (isset($_SESSION['username'])) {
 //include local database connection in the variable $database
 require_once('helpdbconnect.php');
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST')  {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $input_username = htmlspecialchars(trim($_POST['username']));
     $input_password = htmlspecialchars(trim($_POST['password']));
     if ($ldap_conn) {
@@ -32,33 +32,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')  {
         if ($ldap_bind && $inputs_valid) {
             // assign username to session
             $_SESSION['username'] = $input_username;
+            $ldap_dn = getenv('LDAP_DN');
+            $ldap_user = getenv('LDAP_USER');
+            $ldap_password = getenv('LDAP_PASS');
+            if (!$ldap_bind) {
+                die('Could not bind to LDAP server.');
+            }
+            // Search LDAP directory
+            $search = '(&(objectCategory=person)(objectClass=user)(sAMAccountName=' . $input_username . '))'; // Your search filter
+            $ldap_result = ldap_search($ldap_conn, $ldap_dn, $search);
+            if (!$ldap_result) {
+                die('LDAP search failed.');
+            }
+            // Get entries from search result
+            $ldap_result = ldap_get_entries($ldap_conn, $ldap_result);
+  
+            if ($ldap_result) {
 
-            //establish connection with the vault
-            require_once('vaultdbconnect.php');
-
-            //Query User information from the vault DB
-            $vault_query = "SELECT * FROM staff_temp WHERE Email='" . $input_username . "@provo.edu'";
-            $result = mysqli_query($vault_db, $vault_query);
-
-            if ($result) {
-                //Fetch User Data
-                $user_data = mysqli_fetch_assoc($result);
-
+                // Loop through results
+                for ($i = 0; $i < $ldap_result['count']; $i++) {
+                    $username = $ldap_result[$i]['samaccountname'][0];
+                    $firstname = $ldap_result[$i]['givenname'][0];
+                    $lastname = $ldap_result[$i]['sn'][0];
+                    $email = $ldap_result[$i]['mail'][0];
+                    $employee_id = $ldap_result[$i]['employeeid'][0];
+                }
                 //check if user already exists in local database
                 //if not, insert their information into the local database
-                if (!user_exists_locally($user_data['Email'])) {
+                if (!user_exists_locally($email)) {
 
                     // Insert user data into the local database
-                    $insert_query = "INSERT INTO users (username, email, lastname, firstname, ifasid, worksite, pre_name) VALUES ('" . $input_username . "', '" . $user_data['Email'] . "', '" . $user_data['lastname'] . "', '" . $user_data['firstname'] . "', '" . $user_data['ifasid'] . "', '" . $user_data['worksite'] . "', '" . $user_data['pre_name'] . "')";
+                    $insert_query = "INSERT INTO users (username, email, lastname, firstname, ifasid) VALUES ('" . $input_username . "', '" . $email . "', '" . $lastname . "', '" . $firstname . "', '" . $employee_id . "')";
 
-                    // mysqli_query($database, $insert_query);
+                    //mysqli_query($database, $insert_query);
                     $insert_result = mysqli_query($database, $insert_query);
                     if (!$insert_result) {
                         echo 'Insert query error: ' . mysqli_error($database);
                     }
                 }
 
-                // Update login timestamp
+                // Query Local user information
                 $local_user_query = "SELECT * FROM users WHERE username = '" . $_SESSION['username'] . "'";
                 $local_query_results = mysqli_query($database, $local_user_query);
                 $local_query_data = mysqli_fetch_assoc($local_query_results);
@@ -72,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')  {
                     'is_admin' => $local_query_data['is_admin'],
                     'is_tech' => $local_query_data['is_tech'],
                     'is_field_tech' => $local_query_data['is_field_tech'],
-                    
+
                 );
                 // Set color scheme
                 $_SESSION['color_scheme'] = $local_query_data['color_scheme'];
@@ -81,13 +94,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')  {
                 $_SESSION['permissions'] = $permissions;
 
                 // Update login timestamp
-                $update_query = "UPDATE users SET last_login = NOW() WHERE email = '" . $user_data['Email'] . "'";
+                $update_query = "UPDATE users SET last_login = NOW() WHERE email = '" . $email . "'";
                 $update_result = mysqli_query($database, $update_query);
 
                 if (!$update_result) {
                     echo 'Update query error: ' . mysqli_error($database);
                 }
             }
+            // Log the successful login
             $loginMessage = "Successful login for username: " .  $input_username . " IP: " . $_SERVER["REMOTE_ADDR"] . " at " . date("Y-m-d H:i:s") . "\n";
             error_log($loginMessage, 0);
             header('Location: tickets.php');
@@ -95,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')  {
             // Authentication failed
             $_SESSION['current_status'] = 'Authentication failed';
             $_SESSION['status_type'] = 'error';
-            
+
             // Log the failed login attempt
             $logMessage = "Failed login attempt for username: " .  $input_username . " IP: " . $_SERVER["REMOTE_ADDR"] . " at " . date("Y-m-d H:i:s") . "\n";
             error_log($logMessage, 0);

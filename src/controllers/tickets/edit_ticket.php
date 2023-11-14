@@ -125,6 +125,7 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
             <input type="text" id="lastname" name="lastname">
             <input type="submit" value="Search">
         </form>
+       
         <div id="search-results"></div>
     </div>
     <!-- Form for updating ticket information -->

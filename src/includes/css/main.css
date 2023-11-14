@@ -249,6 +249,12 @@ select {
 #search-for-client h2 {
 	margin-top:unset;
 }
+#search-for-client #search-results {
+	margin-top:1em;
+}
+#search-for-client input {
+	display:block;
+}
 /* =============================== Responsive Styles =============================== */
 @media(min-width: 800px) {
 	#mainHeader {
@@ -323,6 +329,9 @@ select {
 		place-self: end;
 		padding-right:1em;
 		align-self: center;
+	}
+	#search-for-client input {
+		display:unset;
 	}
 }
 

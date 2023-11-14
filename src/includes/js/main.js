@@ -185,10 +185,10 @@ document
       if (this.status == 200) {
         // The request was successful
         var results = JSON.parse(this.responseText);
-        var resultsHTML = "";
+        var resultsHTML = "<h3>Search Results</h3>";
         for (var i = 0; i < results.length; i++) {
-          resultsHTML +=
-            '<p><a href="#" class="username-link" data-username="' +
+          resultsHTML += 
+          '<p><a href="#" class="username-link" data-username="' +
             results[i].username +
             '">' +
             results[i].firstname +

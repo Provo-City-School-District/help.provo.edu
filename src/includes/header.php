@@ -1,6 +1,8 @@
 <?php
 // include init file
 include_once('init.php');
+// includes functions file
+include_once('functions.php');
 
 // Function to check if the current URL matches any of the specified URLs
 function isCurrentPage($urls)
@@ -13,6 +15,7 @@ function isCurrentPage($urls)
     }
     return false;
 }
+
 // List of Ticket pages for which you want to display a ticket sub-menu
 $ticketPages = array(
     '/tickets.php',
@@ -22,7 +25,7 @@ $ticketPages = array(
     '/search_tickets.php',
     '/ticket_history.php',
 );
-            
+
 $is_logged_in = false;
 //Checks logged in status and bounces you to the login page if not logged in
 if (isset($_SESSION['username'])) {

@@ -86,6 +86,7 @@ if (resetBtn) {
 window.onload = function () {
   // tech department
   var allTechsChart = new CanvasJS.Chart("techOpenTicket", {
+    height: 500,
     animationEnabled: true,
     title: {
       text: "All Technicians Open Tickets",
@@ -102,6 +103,7 @@ window.onload = function () {
         indexLabelPlacement: "inside",
         indexLabelFontWeight: "bolder",
         indexLabelFontColor: "white",
+        indexLabelFontSize: 8,
         dataPoints: allTechs,
       },
     ],
@@ -109,6 +111,7 @@ window.onload = function () {
   allTechsChart.render();
   // by location
   var byLocationChart = new CanvasJS.Chart("byLocation", {
+    height: 500,
     animationEnabled: true,
     title: {
       text: "All Open Tickets By Location",
@@ -125,6 +128,7 @@ window.onload = function () {
         indexLabelPlacement: "inside",
         indexLabelFontWeight: "bolder",
         indexLabelFontColor: "white",
+        indexLabelFontSize: 8,
         dataPoints: byLocation,
       },
     ],
@@ -132,6 +136,7 @@ window.onload = function () {
   byLocationChart.render();
   //field techs open tickets
   var fieldTechOpenChart = new CanvasJS.Chart("fieldTechOpen", {
+    height: 500,
     animationEnabled: true,
     title: {
       text: "Field Tech's Open Tickets",
@@ -148,6 +153,7 @@ window.onload = function () {
         indexLabelPlacement: "inside",
         indexLabelFontWeight: "bolder",
         indexLabelFontColor: "white",
+        indexLabelFontSize: 8,
         dataPoints: fieldTechOpen,
       },
     ],

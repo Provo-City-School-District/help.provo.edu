@@ -78,7 +78,7 @@ $fieldTechs = process_query_result($field_tech_query_result, "employee");
 ?>
 <h1>Admin</h1>
 <h2>Reports</h2>
-<div class="grid3">
+<div class="grid3 canvasjsreport">
     <div id="techOpenTicket" style="height: 370px; width: 100%;"></div>
     <div id="byLocation" style="height: 370px; width: 100%;"></div>
     <div id="fieldTechOpen" style="height: 370px; width: 100%;"></div>

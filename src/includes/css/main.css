@@ -49,6 +49,9 @@ input[type=submit] {
 	gap: 10px;
 
 }
+.grid3.canvasjsreport>*{
+	min-height: 500px;
+}
 .warning {
 	color: red;
 	display: inline;

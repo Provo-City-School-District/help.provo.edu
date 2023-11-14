@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             //check if user already exists in local database
             //if not, insert their information into the local database
-            if (!user_exists_locally($email)) {
+            if (!user_exists_locally($username)) {
 
                 // Insert user data into the local database
                 $insert_query = "INSERT INTO users (username, email, lastname, firstname, ifasid) VALUES ('" . $input_username . "', '" . $email . "', '" . $lastname . "', '" . $firstname . "', '" . $employee_id . "')";

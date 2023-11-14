@@ -10,6 +10,32 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
 require_once('helpdbconnect.php');
 require("ticket_utils.php");
 
+// process the data for admin report charts
+function process_query_result($query_result, $label_field)
+{
+    $count = [];
+
+    while ($row = mysqli_fetch_assoc($query_result)) {
+        $label = $row[$label_field];
+        if ($label == null || $label == "")
+            $label = "unassigned";
+
+        if (!isset($count[$label]))
+            $count[$label] = 1;
+        else
+            $count[$label]++;
+    }
+
+    asort($count);
+
+    $processedData = [];
+    foreach ($count as $name => $count) {
+        $processedData[] = array("y" => $count, "label" => $name);
+    }
+
+    return $processedData;
+}
+
 // Execute the SELECT query to retrieve all users from the users table
 $users_query = "SELECT * FROM users ORDER BY username ASC";
 $user_result = mysqli_query($database, $users_query);
@@ -27,10 +53,11 @@ if (isset($_SESSION['current_status'])) {
     unset($_SESSION['status_type']);
 }
 
+
 // Query open tickets based on tech
 $tech_query = "SELECT employee FROM tickets WHERE status NOT IN ('closed', 'resolved')";
 $tech_query_result = mysqli_query($database, $tech_query);
-$allTechs = processQueryResult($tech_query_result, "employee");
+$allTechs = process_query_result($tech_query_result, "employee");
 
 // Query open tickets based on location:
 $location_query = "SELECT locations.location_name, tickets.location
@@ -38,7 +65,7 @@ FROM tickets
 INNER JOIN locations ON tickets.location = locations.sitenumber 
 WHERE tickets.status NOT IN ('closed', 'resolved')";
 $location_query_result = mysqli_query($database, $location_query);
-$allLocations = processQueryResult($location_query_result, "location_name");
+$allLocations = process_query_result($location_query_result, "location_name");
 
 // Query open tickets based on field tech:
 $field_tech_query = "SELECT tickets.employee 
@@ -46,7 +73,7 @@ FROM tickets
 INNER JOIN users ON tickets.employee = users.username 
 WHERE tickets.status NOT IN ('closed', 'resolved') AND users.is_field_tech = 1";
 $field_tech_query_result = mysqli_query($database, $field_tech_query);
-$fieldTechs = processQueryResult($field_tech_query_result, "employee");
+$fieldTechs = process_query_result($field_tech_query_result, "employee");
 
 ?>
 <h1>Admin</h1>

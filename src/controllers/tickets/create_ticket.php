@@ -77,9 +77,6 @@ if (isset($_SESSION['current_status'])) {
             <label for="attachment">Attachment:</label>
             <input type="file" id="attachment" name="attachment[]" type="file" multiple>
         </div>
-        <!-- Commented out since the input we have allows multi file uploads -->
-        <!-- <button type="button" id="add-attachment-field">Add Attachment</button> -->
-
         <input type="submit" value="Create Ticket">
     </form>
 </article>

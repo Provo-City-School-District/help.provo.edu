@@ -52,7 +52,15 @@ function get_location_name_from_id(string $location_sw_id)
 }
 
 $ticket_id = $_GET['id'];
-$query_ticket_id = substr($ticket_id, 2);
+$ticket_id_split = explode('-', $ticket_id);
+$query_ticket_id = $ticket_id_split[1];
+
+if (($ticket_id_split[0] != 'A') || 
+    (intval($query_ticket_id) <= 0) ||
+    (count($ticket_id_split) != 2)) {
+    echo "Invalid ticket ID";
+    die;
+}
 
 $old_ticket_query = "SELECT JOB_TICKET_ID,PROBLEM_TYPE_ID,SUBJECT,QUESTION_TEXT,REPORT_DATE,LAST_UPDATED,JOB_TIME,ASSIGNED_TECH_ID,ROOM,LOCATION_ID,DEPARTMENT_ID,CLOSE_DATE,CLIENT_ID,CLIENT_CREATOR_ID FROM whd.job_ticket WHERE JOB_TICKET_ID = $query_ticket_id";
 $old_ticket_result = mysqli_query($swdb, $old_ticket_query);

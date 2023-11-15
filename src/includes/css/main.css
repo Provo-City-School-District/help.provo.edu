@@ -123,8 +123,11 @@ th {
 tr {
 	background-color: var(--odd-color);
 }
-tr:nth-of-type(2n) {
-	background-color: var(--even-color);
+tr:nth-of-type(odd) {
+	background-color: var(--odd-color)!important;
+}
+tr:nth-of-type(even) {
+	background-color: var(--even-color)!important;
 }
 
 th {

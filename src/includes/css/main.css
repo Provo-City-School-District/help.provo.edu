@@ -29,9 +29,11 @@ input[type=submit] {
 	cursor: pointer;
 
 }
+
 .canvasjs-chart-credit {
 	display: none;
 }
+
 #wrapper {
 	width: 100%;
 	/* padding:1em; */
@@ -43,27 +45,32 @@ input[type=submit] {
 	grid-template-columns: 1fr 1fr;
 	gap: 10px;
 }
+
 .grid3 {
 	display: grid;
 	grid-template-columns: 1fr;
 	gap: 10px;
 
 }
-.grid3.canvasjsreport>*{
+
+.grid3.canvasjsreport>* {
 	min-height: 500px;
 }
+
 .warning {
 	color: red;
 	display: inline;
 }
+
 .notClientVisible {
-	background-color: var(--theme-white)!important;
+	background-color: var(--theme-white) !important;
 	color: var(--theme-black);
 	display: block;
 	padding: 1em;
 	border-radius: 3px;
 	margin-bottom: 1em;
 }
+
 /* =============================== Header Styles =============================== */
 #mainHeader {
 	background: linear-gradient(to bottom, var(--header-grad-start), var(--header-grad-end) 50%, var(--header-grad-end) 55%, var(--header-grad-start));
@@ -97,14 +104,15 @@ input[type=submit] {
 	background-color: var(--page-background);
 }
 
-/*
-//* =============================== Table Styles =============================== */
-table,table.dataTable.no-footer {
-	width: 100%!important;
-	border: 2px solid var( --theme-table-border-color);
+/* =============================== Table Styles =============================== */
+
+table,
+table.dataTable.no-footer {
+	width: 100% !important;
+	border: 2px solid var(--theme-table-border-color);
 	/* border-collapse: collapse; */
 }
-*/
+
 table[style] {
 	width: 100% !important;
 }
@@ -117,18 +125,21 @@ td {
 
 th {
 	background-color: var(--theme-primary);
-	border-bottom: 2px solid var( --theme-table-border-color);
-	color:var(--theme-white);
+	border-bottom: 2px solid var(--theme-table-border-color);
+	color: var(--theme-white);
 	vertical-align: middle;
 }
+
 tr {
 	background-color: var(--odd-color);
 }
+
 tr:nth-of-type(odd) {
-	background-color: var(--odd-color)!important;
+	background-color: var(--odd-color) !important;
 }
+
 tr:nth-of-type(even) {
-	background-color: var(--even-color)!important;
+	background-color: var(--even-color) !important;
 }
 
 th {
@@ -182,14 +193,17 @@ td::before {
 
 }
 
-.ticketGrid label, .ticketGrid span:first-of-type {
+.ticketGrid label,
+.ticketGrid span:first-of-type {
 	background-color: var(--theme-primary);
 	padding: .5em;
-	color:var(--theme-white);
+	color: var(--theme-white);
 }
+
 .ticketGrid span {
 	margin-bottom: 5px;
 }
+
 .ticketGrid input,
 select {
 	border: 1px solid var(--theme-grey);
@@ -240,25 +254,30 @@ select {
 .note td:nth-child(2) {
 	font-size: 80%;
 }
+
 #search-for-client {
 	display: none;
 	padding: 1em;
 	/* border: 2px solid var(--theme-grey); */
 	align-items: center;
 	justify-content: center;
-	background-color:var(--theme-white);
+	background-color: var(--theme-white);
 	box-shadow: 0 0 2px var(--theme-table-border-color);
-	margin-bottom:1em;
+	margin-bottom: 1em;
 }
+
 #search-for-client h2 {
-	margin-top:unset;
+	margin-top: unset;
 }
+
 #search-for-client #search-results {
-	margin-top:1em;
+	margin-top: 1em;
 }
+
 #search-for-client input {
-	display:block;
+	display: block;
 }
+
 /* =============================== Responsive Styles =============================== */
 @media(min-width: 800px) {
 	#mainHeader {
@@ -294,13 +313,13 @@ select {
 	.ticket_log th:nth-child(1),
 	.ticket_log td:nth-child(2),
 	.note th:nth-child(1),
-	.note td:nth-child(2) 
-	{
-	width: 100px;
+	.note td:nth-child(2) {
+		width: 100px;
 	}
+
 	.grid3 {
 		grid-template-columns: repeat(3, 1fr);
-	
+
 	}
 }
 
@@ -317,25 +336,30 @@ select {
 		grid-template-columns: minmax(min-content, 160px) 1fr;
 		align-items: center;
 	}
+
 	.ticketGrid span:first-of-type {
 		margin-right: 5px;
 		width: 144px;
-		margin-bottom:unset;
+		margin-bottom: unset;
 	}
+
 	.currentClient {
 		display: grid;
 		grid-template-columns: minmax(min-content, 160px) 1fr 1fr;
 	}
+
 	.currentClient {
 		grid-column: span 2;
 	}
+
 	.currentClient a {
 		place-self: end;
-		padding-right:1em;
+		padding-right: 1em;
 		align-self: center;
 	}
+
 	#search-for-client input {
-		display:unset;
+		display: unset;
 	}
 }
 

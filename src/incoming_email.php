@@ -71,8 +71,6 @@ for ($i = 1; $i <= $msg_count; $i++) {
         echo "User does not exist locally.";
         //create_local_user($sender);
         continue;
-    } else {
-        echo "User exists";
     }
 
     // Parse ticket here

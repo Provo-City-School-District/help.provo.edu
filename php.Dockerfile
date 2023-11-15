@@ -13,15 +13,20 @@ RUN mkdir -p /var/www/html/src/uploads \
   && chown -R www-data:www-data /var/www/html/src/uploads \
   && chmod -R 755 /var/www/html/src/uploads
 
-
+# install dependencies
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends libc-client-dev libkrb5-dev libpq-dev libzip-dev zip unzip git wget libpng-dev libjpeg-dev zlib1g-dev \
+  && apt-get install -y --no-install-recommends libc-client-dev libkrb5-dev libpq-dev libzip-dev zip unzip git wget libpng-dev libjpeg-dev zlib1g-dev cron \
   && docker-php-ext-install mysqli pdo_pgsql pdo_mysql zip
 
 RUN docker-php-ext-configure gd --with-jpeg=/usr
 RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl
 RUN docker-php-ext-install gd imap
 
+# setup cron
+COPY crontab /etc/cron.d/cron-job
+RUN chmod 0644 /etc/cron.d/cron-job
+RUN /usr/bin/crontab /etc/cron.d/cron-job
+CMD cron && docker-php-entrypoint apache2-foreground
 
 # Enable Apache ldap auth module
 RUN apt-get update -y --fix-missing && apt-get upgrade -y

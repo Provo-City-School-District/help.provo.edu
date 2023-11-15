@@ -5,7 +5,7 @@ ob_start();
 include("ticket_utils.php");
 $ticket_id = sanitize_numeric_input($_GET['id']);
 // Check if the user is logged in
-include("header.php");
+require("header.php");
 if ($_SESSION['permissions']['is_admin'] != 1) {
     // User is not an admin
     if ($_SESSION['permissions']['can_view_tickets'] == 0) {

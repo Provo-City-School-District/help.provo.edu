@@ -121,9 +121,44 @@ $admin_page = '/admin.php';
 
                     <?php
                     if ($_SESSION['permissions']['is_tech'] == 1) {
+                        require_once("helpdbconnect.php");
+                        $username = $_SESSION['username'];
+                        $num_assigned_tickets = 0;
+                        $num_flagged_tickets = 0;
+
+                        /*
+                        TODO: Figure out a good design to use the same query from assigned_tickets.php and
+                        flagged_tickets.php so they aren't in two places. Maybe just a function.
+                        */
+                        $num_assigned_tickets_query = <<<STR
+                            SELECT 1
+                            FROM tickets
+                            WHERE status NOT IN ('Closed', 'Resolved')
+                            AND employee = '$username'
+                            ORDER BY id ASC
+                        STR;
+
+                        $num_flagged_tickets_query = <<<STR
+                        SELECT 1 FROM tickets 
+                        WHERE
+                            tickets.id in (
+                                SELECT flagged_tickets.ticket_id from flagged_tickets WHERE flagged_tickets.user_id in (
+                                    SELECT users.id FROM users WHERE users.username = '$username'
+                                )
+                            )
+                        STR;
+        
+                        $num_assigned_tickets_result = mysqli_query($database, $num_assigned_tickets_query);
+                        if ($num_assigned_tickets_result)
+                            $num_assigned_tickets = mysqli_num_rows($num_assigned_tickets_result);
+
+                        $num_flagged_tickets_result = mysqli_query($database, $num_flagged_tickets_query);
+                        if ($num_flagged_tickets_result)
+                            $num_flagged_tickets = mysqli_num_rows($num_flagged_tickets_result);
                     ?>
-                        <li><a href="/tickets.php">Assigned Tickets</a></li>
-                        <li><a href="/controllers/tickets/flagged_tickets.php">Flagged Tickets</a></li>
+                    
+                        <li><a href="/tickets.php">Assigned Tickets (<?= $num_assigned_tickets ?>)</a></li>
+                        <li><a href="/controllers/tickets/flagged_tickets.php">Flagged Tickets (<?= $num_flagged_tickets ?>)</a></li>
                         <li><a href="/controllers/tickets/recent_tickets.php">Recent Tickets</a></li>
                         <li><a href="/controllers/tickets/search_tickets.php">Search Tickets</a></li>
                     <?php

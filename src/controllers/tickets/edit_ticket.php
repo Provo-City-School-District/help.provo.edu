@@ -57,7 +57,12 @@ JSON_ARRAYAGG(
         'visible_to_client', notes.visible_to_client,
         'date_override', notes.date_override
     )
-    ORDER BY notes.created
+    ORDER BY (
+        CASE WHEN date_override IS NULL THEN
+            notes.created ELSE
+            notes.date_override
+        END
+    )
 ) AS notes
 FROM
 tickets

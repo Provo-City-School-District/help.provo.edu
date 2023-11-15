@@ -131,8 +131,9 @@ $fieldTechs = process_query_result($field_tech_query_result, "employee");
 </form>
 <h1>Exclude Days</h1>
 <?php
-// Fetch the exclude days from the database
-$exclude_query = "SELECT * FROM exclude_days ORDER BY exclude_day";
+// Fetch the exclude days from the database. only displaying current and future exclude days
+$exclude_query = "SELECT * FROM exclude_days WHERE exclude_day >= CURDATE() ORDER BY exclude_day";
+
 $exclude_result = mysqli_query($database, $exclude_query);
 ?>
 <table class="exclude_days data-table">

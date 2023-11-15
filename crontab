@@ -1,1 +1,2 @@
-* * * * * /bin/sh -c "date >> /var/log/cron.log 2>&1"
+# Example
+# * * * * * /bin/sh -c "date >> /var/log/cron.log 2>&1"

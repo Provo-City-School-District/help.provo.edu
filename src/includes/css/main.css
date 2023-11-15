@@ -119,6 +119,7 @@ th {
 	background-color: var(--theme-primary);
 	border-bottom: 2px solid var( --theme-table-border-color);
 	color:var(--theme-white);
+	vertical-align: middle;
 }
 tr {
 	background-color: var(--odd-color);

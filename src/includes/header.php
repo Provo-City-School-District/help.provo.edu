@@ -24,6 +24,7 @@ $ticketPages = array(
     '/recent_tickets.php',
     '/search_tickets.php',
     '/ticket_history.php',
+    '/flagged_tickets.php'
 );
 
 $is_logged_in = false;
@@ -122,6 +123,7 @@ $admin_page = '/admin.php';
                     if ($_SESSION['permissions']['is_tech'] == 1) {
                     ?>
                         <li><a href="/tickets.php">Assigned Tickets</a></li>
+                        <li><a href="/controllers/tickets/flagged_tickets.php">Flagged Tickets</a></li>
                         <li><a href="/controllers/tickets/recent_tickets.php">Recent Tickets</a></li>
                         <li><a href="/controllers/tickets/search_tickets.php">Search Tickets</a></li>
                     <?php

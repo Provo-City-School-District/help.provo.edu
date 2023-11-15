@@ -26,6 +26,56 @@ if (isset($_SESSION['current_status'])) {
     unset($_SESSION['status_type']);
 }
 
+$username = $_SESSION['username'];
+
+if ($_SERVER['REQUEST_METHOD'] == "POST") {
+    if (isset($_POST['flag_ticket'])) {
+        $query = <<<STR
+        INSERT INTO flagged_tickets
+        VALUES (
+            (
+                SELECT users.id FROM users WHERE users.username = '$username'
+            ),
+            $ticket_id
+        )
+        STR;
+
+        $insert_flagged_ticket_result = mysqli_query($database, $query);
+        if (!$insert_flagged_ticket_result) {
+            die('Error inserting ticket flag status: ' . mysqli_error($database));
+        }
+    } else if (isset($_POST['unflag_ticket'])) {
+        $query = <<<STR
+        DELETE FROM flagged_tickets
+        WHERE
+            flagged_tickets.user_id in (SELECT users.id FROM users WHERE users.username = '$username') AND
+            flagged_tickets.ticket_id = $ticket_id
+        STR;
+
+        $insert_flagged_ticket_result = mysqli_query($database, $query);
+        if (!$insert_flagged_ticket_result) {
+            die('Error inserting ticket flag status: ' . mysqli_error($database));
+        }
+    }
+}
+
+$ticket_flagged_query = <<<STR
+SELECT user_id, ticket_id FROM flagged_tickets
+    WHERE
+        ticket_id = $ticket_id AND
+        user_id in (SELECT users.id FROM users WHERE users.username = '$username')
+STR;
+
+$insert_flagged_ticket_result = mysqli_query($database, $ticket_flagged_query);
+if (!$insert_flagged_ticket_result) {
+    die('Error getting ticket flag status: ' . mysqli_error($database));
+}
+
+$is_ticket_flagged = false; 
+if (mysqli_num_rows($insert_flagged_ticket_result) > 0) {
+    $is_ticket_flagged = true;
+}
+
 // Query the ticket by ID and all notes for that ID
 $query = "SELECT
 tickets.id,
@@ -121,6 +171,19 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
 ?>
 <article id="ticketWrapper">
     <h1>Ticket #<?= $ticket['id'] ?></h1>
+    <?php
+        if ($is_ticket_flagged):
+    ?>
+        <form id="flag-form" method="post">
+            <input type="submit" name="unflag_ticket" value="Unflag ticket">
+        </form>
+    <?php else: ?>
+        <form id="flag-form" method="post">
+            <input type="submit" name="flag_ticket" value="Flag ticket">
+        </form>
+    <?php endif; ?>
+    <br>
+
     <div id="search-for-client">
         <h2>Client Search:</h2>
         <form id="search-form" method="post">

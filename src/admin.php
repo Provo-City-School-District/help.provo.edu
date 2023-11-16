@@ -55,23 +55,31 @@ if (isset($_SESSION['current_status'])) {
 
 
 // Query open tickets based on tech
-$tech_query = "SELECT employee FROM tickets WHERE status NOT IN ('closed', 'resolved')";
+$tech_query = <<<STR
+    SELECT employee FROM tickets WHERE status NOT IN ('closed', 'resolved')
+    STR;
 $tech_query_result = mysqli_query($database, $tech_query);
 $allTechs = process_query_result($tech_query_result, "employee");
 
 // Query open tickets based on location:
-$location_query = "SELECT locations.location_name, tickets.location
-FROM tickets 
-INNER JOIN locations ON tickets.location = locations.sitenumber 
-WHERE tickets.status NOT IN ('closed', 'resolved')";
+$location_query = <<<STR
+    SELECT locations.location_name, tickets.location
+    FROM tickets 
+    INNER JOIN locations ON tickets.location = locations.sitenumber 
+    WHERE tickets.status NOT IN ('closed', 'resolved')
+STR;
+
 $location_query_result = mysqli_query($database, $location_query);
 $allLocations = process_query_result($location_query_result, "location_name");
 
 // Query open tickets based on field tech:
-$field_tech_query = "SELECT tickets.employee 
-FROM tickets 
-INNER JOIN users ON tickets.employee = users.username 
-WHERE tickets.status NOT IN ('closed', 'resolved') AND users.is_field_tech = 1";
+$field_tech_query = <<<STR
+    SELECT tickets.employee 
+    FROM tickets 
+    INNER JOIN users ON tickets.employee = users.username 
+    WHERE tickets.status NOT IN ('closed', 'resolved') AND users.is_field_tech = 1
+STR;
+
 $field_tech_query_result = mysqli_query($database, $field_tech_query);
 $fieldTechs = process_query_result($field_tech_query_result, "employee");
 

@@ -22,27 +22,40 @@ if ($ticket_id_host == $ticket_id_source) {
     return_to_admin_with_status("tickets cannot be merged into themselves", "error");
 }
 
-$has_merged_query = "SELECT merged_into_id FROM tickets WHERE id = $ticket_id_source;";
-$has_merged_result = mysqli_query($database, $has_merged_query);
+$source_has_merged_query = "SELECT merged_into_id FROM tickets WHERE id = '$ticket_id_source'";
+$source_has_merged_result = mysqli_query($database, $source_has_merged_query);
 
-$merged = mysqli_fetch_assoc($has_merged_result);
+$source_merged = mysqli_fetch_assoc($source_has_merged_result);
 
-if ($merged["merged_into_id"] != null) {
-    $str = "Ticket ".$ticket_id_source." has already been merged into a ticket";
+if ($source_merged["merged_into_id"] != null) {
+    $str = "Ticket ".$ticket_id_source." has already been merged into ticket ".$source_merged["merged_into_id"]." and cannot be merged again";
+    return_to_admin_with_status($str, "error");
+}
+
+// disallow merging a ticket into the ticket that it merged into (loop)
+
+$host_has_merged_query = "SELECT merged_into_id FROM tickets WHERE id = '$ticket_id_host'";
+$host_has_merged_result = mysqli_query($database, $host_has_merged_query);
+
+$host_merged = mysqli_fetch_assoc($host_has_merged_result);
+
+if ($host_merged["merged_into_id"] == $ticket_id_source) {
+    $str = "Ticket ".$ticket_id_host." has already merged into ".$host_merged["merged_into_id"].". This would cause a loop!";
     return_to_admin_with_status($str, "error");
 }
 
 $username = trim(htmlspecialchars($_POST['username']));
 
 // Deep copy all source ticket's notes
-$query = "INSERT INTO notes (linked_id, created, creator, note, time, idx, visible_to_client, date_override)
-    SELECT $ticket_id_host, created, creator, note, time, idx, visible_to_client, date_override FROM notes WHERE linked_id = $ticket_id_source
-";
+$query = <<<STR
+    INSERT INTO notes (linked_id, created, creator, note, time, idx, visible_to_client, date_override)
+        SELECT '$ticket_id_host', created, creator, note, time, idx, visible_to_client, date_override FROM notes 
+            WHERE linked_id = '$ticket_id_source'
+STR;
 
 $result = mysqli_query($database, $query);
 if (!$result) {
     return_to_admin_with_status("failed to update notes", "error");
-
 }
 
 // Log the creation of merged ticket in the ticket_logs table for the host ticket

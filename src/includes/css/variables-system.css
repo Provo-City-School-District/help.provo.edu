@@ -1,4 +1,4 @@
+/* Conditionally import the variables based on the system color scheme */
+
 @import "variables-light.css" screen and (prefers-color-scheme: light);
-
-
 @import "variables-dark.css" screen and (prefers-color-scheme: dark);

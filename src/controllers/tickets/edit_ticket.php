@@ -62,6 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $merge_ticket_id = filter_input(INPUT_POST, 'merge_ticket_id', FILTER_SANITIZE_SPECIAL_CHARS);
         if ($merge_ticket_id != null) {
             // do merging with $ticket_id (source) and $merge_ticket_id (host)
+
         }
     }
 }
@@ -190,9 +191,10 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
         </form>
     <?php endif; ?>
     <br>
-    <form id="merge-form" method="post">
+    <form id="merge-form" method="post" action="merge_tickets_handler.php">
         <label for="merge_ticket_id">Merge this ticket into:</label>
-        <input type="text" name="merge_ticket_id" value=""><br>
+        <input type="hidden" name="ticket_id_source" value="<?= $ticket_id ?>">
+        <input type="text" name="ticket_id_host" value=""><br>
         <input type="submit" value="Merge">
     </form>
     <br>

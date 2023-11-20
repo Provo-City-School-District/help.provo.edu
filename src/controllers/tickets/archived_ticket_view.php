@@ -53,19 +53,24 @@ function get_location_name_from_id(string $location_sw_id)
 
 $ticket_id = $_GET['id'];
 $ticket_id_split = explode('-', $ticket_id);
-$query_ticket_id = $ticket_id_split[1];
+$query_ticket_id = intval($ticket_id_split[1]);
 
 if (($ticket_id_split[0] != 'A') || 
-    (intval($query_ticket_id) <= 0) ||
+    ($query_ticket_id <= 0) ||
     (count($ticket_id_split) != 2)) {
     echo "Invalid ticket ID";
     die;
 }
 
-$old_ticket_query = "SELECT JOB_TICKET_ID,PROBLEM_TYPE_ID,SUBJECT,QUESTION_TEXT,REPORT_DATE,LAST_UPDATED,JOB_TIME,ASSIGNED_TECH_ID,ROOM,LOCATION_ID,DEPARTMENT_ID,CLOSE_DATE,CLIENT_ID,CLIENT_CREATOR_ID FROM whd.job_ticket WHERE JOB_TICKET_ID = $query_ticket_id";
-$old_ticket_result = mysqli_query($swdb, $old_ticket_query);
-$arch_ticket_data = mysqli_fetch_assoc($old_ticket_result);
+$old_ticket_query = "SELECT JOB_TICKET_ID,PROBLEM_TYPE_ID,SUBJECT,QUESTION_TEXT,REPORT_DATE,LAST_UPDATED,JOB_TIME,ASSIGNED_TECH_ID,ROOM,LOCATION_ID,DEPARTMENT_ID,CLOSE_DATE,CLIENT_ID,CLIENT_CREATOR_ID FROM whd.job_ticket WHERE JOB_TICKET_ID = ?";
+$stmt = mysqli_prepare($swdb, $old_ticket_query);
+mysqli_stmt_bind_param($stmt, "i", $query_ticket_id);
+mysqli_stmt_execute($stmt);
 
+$stmt_res = $stmt->get_result();
+$arch_ticket_data = $stmt_res->fetch_array(MYSQLI_ASSOC);
+
+mysqli_stmt_close($stmt);
 
 
 $tech_sw_id = $arch_ticket_data['ASSIGNED_TECH_ID'];
@@ -85,10 +90,15 @@ $creator_name = trim($creator_name_data["FIRST_NAME"])." ".trim($creator_name_da
 */
 $all_notes = [];
 
-$tech_notes_query = "SELECT TECHNICIAN_ID, NOTE_TEXT, CREATION_DATE, HIDDEN, TECH_NOTE_DATE, BILLING_MINUTES FROM TECH_NOTE WHERE JOB_TICKET_ID = '$query_ticket_id'";
-$tech_notes_result = mysqli_query($swdb, $tech_notes_query);
+$tech_notes_query = "SELECT TECHNICIAN_ID, NOTE_TEXT, CREATION_DATE, HIDDEN, TECH_NOTE_DATE, BILLING_MINUTES FROM TECH_NOTE WHERE JOB_TICKET_ID = ?";
+$stmt = mysqli_prepare($swdb, $tech_notes_query);
+mysqli_stmt_bind_param($stmt, "i", $query_ticket_id);
+mysqli_stmt_execute($stmt);
 
-while ($tech_note_row = mysqli_fetch_assoc($tech_notes_result)) {
+$stmt_res = $stmt->get_result();
+
+
+while ($tech_note_row = $stmt_res->fetch_array(MYSQLI_ASSOC)) {
     $note_text = $tech_note_row["NOTE_TEXT"];
     $tech_id = $tech_note_row["TECHNICIAN_ID"];
     $created_date = $tech_note_row["CREATION_DATE"];
@@ -112,10 +122,17 @@ while ($tech_note_row = mysqli_fetch_assoc($tech_notes_result)) {
     ];
 }
 
-$client_notes_query = "SELECT CLIENT_ID, TICKET_DATE, NOTE_TEXT FROM CLIENT_NOTE WHERE JOB_TICKET_ID = '$query_ticket_id'";
-$client_notes_result = mysqli_query($swdb, $client_notes_query);
+mysqli_stmt_close($stmt);
 
-while ($client_note_row = mysqli_fetch_assoc($client_notes_result)) {
+$client_notes_query = "SELECT CLIENT_ID, TICKET_DATE, NOTE_TEXT FROM CLIENT_NOTE WHERE JOB_TICKET_ID = ?";
+$stmt = mysqli_prepare($swdb, $client_notes_query);
+mysqli_stmt_bind_param($stmt, "i", $query_ticket_id);
+mysqli_stmt_execute($stmt);
+
+$stmt_res = $stmt->get_result();
+
+
+while ($client_note_row = $stmt_res->fetch_array(MYSQLI_ASSOC)) {
     $client_id = $client_note_row["CLIENT_ID"];
     $note_text = $client_note_row["NOTE_TEXT"];
     $note_date = $client_note_row["TICKET_DATE"];

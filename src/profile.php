@@ -1,7 +1,8 @@
 <?php
 include("header.php");
-include("helpdbconnect.php");
-require("time_utils.php");
+require_once("helpdbconnect.php");
+require_once("time_utils.php");
+require_once("status_popup.php");
 
 $user = $_SESSION["username"];
 $user_query = "SELECT * FROM users WHERE username = '" . $user . "'";
@@ -44,12 +45,12 @@ $user_times[4] /= 60;
 // Add up all the hours for the total
 $user_times[5] = array_sum($user_times);
 
-// Check if a success message is set
-if (isset($_SESSION['user_updated'])) {
-    echo '<div class="success-message">' . $_SESSION['user_updated'] . '</div>';
+if (isset($_SESSION['current_status'])) {
+    $status_popup = new StatusPopup($_SESSION["current_status"], StatusPopupType::fromString($_SESSION["status_type"]));
+    echo $status_popup;
 
-    // Unset the success message to clear it
-    unset($_SESSION['user_updated']);
+    unset($_SESSION['current_status']);
+    unset($_SESSION['status_type']);
 }
 
 ?>

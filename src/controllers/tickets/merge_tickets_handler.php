@@ -47,8 +47,8 @@ $host_has_merged_query = "SELECT merged_into_id FROM tickets WHERE id = '$ticket
 $host_has_merged_result = mysqli_query($database, $host_has_merged_query);
 $host_merged = mysqli_fetch_assoc($host_has_merged_result);
 
-if ($host_merged["merged_into_id"] == $ticket_id_source) {
-    $str = "Ticket ".$ticket_id_host." has already merged into ".$host_merged["merged_into_id"].". This would cause a loop!";
+if ($host_merged["merged_into_id"] != null) {
+    $str = "Ticket ".$ticket_id_host." has already merged into ".$host_merged["merged_into_id"].".";
     return_to_ticket_with_status($str, "error", $ticket_id_source);
 }
 

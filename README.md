@@ -2,11 +2,14 @@
 
 # Installation
 
-Requires a .env file in the root directory with the following variables set
+Requires a .env file in the root directory with the following variables set. make sure to wrap passwords in quotes to prevent syntax errors when they are loaded into CLI variables.
 
 ```
 LDAPHOST=
 LDAPPORT=
+LDAP_DN=
+LDAP_USER=
+LDAP_PASS=
 SQL_ROOT=
 HELPMYSQL_USER=
 HELPMYSQL_PASSWORD=
@@ -25,6 +28,8 @@ SWHELPDESKHOST=
 SWHELPDESKUSER=
 SWHELPDESKPASSWORD=
 SWHELPDESKDATABASE=
+GMAIL_USER=
+GMAIL_PASSWORD=
 ```
 
 # Resources Used

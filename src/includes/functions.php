@@ -14,3 +14,10 @@ function limitChars($string, $limit)
     }
     return $string;
 }
+//simple validator that can be used for user input
+function test_input($data) {
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
+  }

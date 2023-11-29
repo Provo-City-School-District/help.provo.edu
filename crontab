@@ -1,2 +1,4 @@
 # Example
-# * * * * * /bin/sh -c "date >> /var/log/cron.log 2>&1"
+#* * * * * /bin/sh -c "date >> /var/log/cron.log 2>&1"
+#Run Ticket Alerts every hour
+0 * * * * /root/run_ticket_alerts.sh >> /var/log/cron.log 2>&1

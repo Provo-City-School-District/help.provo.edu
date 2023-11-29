@@ -47,7 +47,7 @@ $timestampTwoDaysAgo = date('Y-m-d H:i:s', strtotime('-48 hours'));
 $twoDaysAgo = new DateTime($timestampTwoDaysAgo);
 
 // Prepare a SQL statement to select tickets
-$selectTicketsQuery = "SELECT id, employee, priority, due_date,last_updated FROM tickets";
+$selectTicketsQuery = "SELECT id, employee, priority, due_date,last_updated FROM tickets WHERE status NOT IN ('closed', 'resolved')";
 $selectTicketsStmt = $database->prepare($selectTicketsQuery);
 $selectTicketsStmt->execute();
 

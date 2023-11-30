@@ -5,7 +5,6 @@ function display_tickets_table($tickets, $database)
         <thead>
             <tr>
                 <th class="tID">ID</th>
-                <th>Subject</th>
                 <th>Request Detail</th>
                 <th class="tLocation">Location</th>
                 <th>Request Category</th>
@@ -32,8 +31,7 @@ function display_tickets_table($tickets, $database)
 
         echo '<tr>
             <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id=' . $ticket["id"] . '">' . $ticket["id"] . '</a></td>
-            <td data-cell="Subject"><a href="/controllers/tickets/edit_ticket.php?id=' . $ticket["id"] . '">' . $ticket["name"] . '</a></td>
-            <td data-cell="Request Detail">' . limitChars(html_entity_decode($ticket["description"]), 100) . '</td>
+            <td data-cell="Request Detail"><a href="/controllers/tickets/edit_ticket.php?id=' . $ticket["id"] . '">' . $ticket["name"] . ':</a>' . limitChars(html_entity_decode($ticket["description"]), 100) . '</td>
             <td data-cell="Location">' . $location_name . '<br><br>RM ' . $ticket['room'] . '</td>
             <td data-cell="Request Category">' .  $request_type_name . '</td>
             <td data-cell="Current Status">' . $ticket["status"] . '</td>

@@ -177,7 +177,6 @@ $admin_page = '/admin.php';
                     } else {
                     ?>
                         <li><a href="/tickets.php">My Tickets</a></li>
-                        <!-- This page needs to be built -->
                         <li><a href="/controllers/tickets/ticket_history.php">Ticket History</a></li>
                     <?php
                     }

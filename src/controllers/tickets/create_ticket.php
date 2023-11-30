@@ -66,7 +66,7 @@ if (isset($_SESSION['current_status'])) {
         <div class="detailContainer">
             <div class="grid2 ticketSubject">
                 <label for="name">Ticket Title:</label>
-                <input type="text" id="name" name="name" value="<?= isset($_GET['name']) ? htmlspecialchars($_GET['name']) : '' ?>">
+                <input type="text" id="name" name="name" value="<?= isset($_GET['name']) ? htmlspecialchars($_GET['name']) : '' ?>" maxlength="100">
             </div>
 
             <label for="description" class="heading2">Ticket Description:</label>

@@ -1,4 +1,3 @@
-<link rel="stylesheet" href="includes/css/main.css">
 </main>
 <footer id="mainFooter">
     <p>&copy; 2023 Provo City School District</p>

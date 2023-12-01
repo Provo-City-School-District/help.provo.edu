@@ -3,10 +3,9 @@ if (!session_id()) {
     session_start();
 }
 
-// check if logged in. block access otherwise
+// check if logged in. redirects to login page if not
 if (!$_SESSION['username']) {
-    http_response_code(404);
-    include('404.php');
+    header('Location:' . getenv('ROOTDOMAIN'));
     exit;
 }
 

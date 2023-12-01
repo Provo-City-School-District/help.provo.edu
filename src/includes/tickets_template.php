@@ -5,10 +5,10 @@ function display_tickets_table($tickets, $database)
         <thead>
             <tr>
                 <th class="tID">ID</th>
-                <th>Request Detail</th>
+                <th class="reqDetail">Request Detail</th>
                 <th class="tLocation">Location</th>
-                <th>Request Category</th>
-                <th>Current Status</th>
+                <th class="category">Request Category</th>
+                <th class="status">Current Status</th>
                 <th class="tDate">Last Updated</th>
                 <th class="tDate">Due</th>
             </tr>

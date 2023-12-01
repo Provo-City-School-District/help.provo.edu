@@ -8,6 +8,7 @@ $(document).ready(function () {
     pageLength: 10, // Set the number of rows per page
     ordering: true, // Enable sorting
     order: [[0, "asc"]], // Set the default sort order
+    autoWidth: false, // Disable auto width calculation
   });
 
   // Change default sorting on /recent_tickets.php
@@ -183,8 +184,8 @@ document
         var results = JSON.parse(this.responseText);
         var resultsHTML = "<h3>Search Results</h3>";
         for (var i = 0; i < results.length; i++) {
-          resultsHTML += 
-          '<p><a href="#" class="username-link" data-username="' +
+          resultsHTML +=
+            '<p><a href="#" class="username-link" data-username="' +
             results[i].username +
             '">' +
             results[i].firstname +

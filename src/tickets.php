@@ -10,16 +10,44 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
     }
 }
 require_once('helpdbconnect.php');
-include(from_root("/includes/ticket_utils.php"));
-?>
+require_once(from_root("/includes/ticket_utils.php"));
+require_once(from_root("/includes/block_file.php"));
+require_once(from_root("/includes/tickets_template.php"));
 
-<?php
+$username = $_SESSION['username'];
+
 if ($_SESSION['permissions']['is_tech'] == 1) {
-    include(from_root("/controllers/tickets/assigned_tickets.php"));
+    // User is a tech
+    echo '<h1>My Assigned Tickets</h1>';
+
+    // SQL query
+    $ticket_query = <<<STR
+    SELECT *
+    FROM tickets
+    WHERE status NOT IN ('Closed', 'Resolved')
+    AND employee = '$username'
+    ORDER BY id ASC
+    STR;
+
+    $ticket_result = mysqli_query($database, $ticket_query);
+    $tech_tickets = mysqli_fetch_all($ticket_result, MYSQLI_ASSOC);
+    display_tickets_table($tech_tickets, $database);
 } else {
-    include(from_root("/controllers/tickets/client_tickets.php"));
+    // User is a client
+    echo '<h1>My Tickets</h1>';
+
+    // SQL query
+    $ticket_query = <<<STR
+    SELECT *
+    FROM tickets
+    WHERE status NOT IN ('Closed', 'Resolved')
+    AND client = '$username'
+    ORDER BY id ASC
+    STR;
+
+    $ticket_result = mysqli_query($database, $ticket_query);
+    $client_tickets = mysqli_fetch_all($ticket_result, MYSQLI_ASSOC);
+    display_tickets_table($client_tickets, $database);
 }
 
-?>
-
-<?php include("footer.php"); ?>
+include("footer.php");

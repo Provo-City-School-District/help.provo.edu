@@ -161,7 +161,12 @@ td::before {
 	font-weight: 700;
 	text-transform: capitalize;
 }
+/* =============================== Alerts Styles =============================== */
+.alerts_wrapper {
+	width: 40%;
+	margin: 0 auto;
 
+}
 /* =============================== Sub Menu Styles =============================== */
 #subMenu {
 	display: flex;

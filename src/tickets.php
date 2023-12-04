@@ -13,12 +13,20 @@ require_once('helpdbconnect.php');
 require_once(from_root("/includes/ticket_utils.php"));
 require_once(from_root("/includes/block_file.php"));
 require_once(from_root("/includes/tickets_template.php"));
+require_once(from_root("/includes/alerts_template.php"));
 
 $username = $_SESSION['username'];
 
 if ($_SESSION['permissions']['is_tech'] == 1) {
     // User is a tech
-    echo '<h1>My Assigned Tickets</h1>';
+    echo '<h2>My Assigned Tickets</h2>';
+
+    // Query the alerts for tech
+    $alert_query = "SELECT * FROM alerts WHERE employee = '$username'";
+    $alert_result = mysqli_query($database, $alert_query);
+    $alerts = mysqli_fetch_all($alert_result, MYSQLI_ASSOC);
+    // Display the alerts
+    display_ticket_alerts($alerts);
 
     // SQL query for tickets 
     $ticket_query = <<<STR

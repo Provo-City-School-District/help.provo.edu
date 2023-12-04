@@ -20,7 +20,7 @@ if ($_SESSION['permissions']['is_tech'] == 1) {
     // User is a tech
     echo '<h1>My Assigned Tickets</h1>';
 
-    // SQL query
+    // SQL query for tickets 
     $ticket_query = <<<STR
     SELECT *
     FROM tickets
@@ -36,7 +36,7 @@ if ($_SESSION['permissions']['is_tech'] == 1) {
     // User is a client
     echo '<h1>My Tickets</h1>';
 
-    // SQL query
+    // SQL query for Tickets
     $ticket_query = <<<STR
     SELECT *
     FROM tickets

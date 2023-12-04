@@ -70,7 +70,13 @@ input[type=submit] {
 	border-radius: 3px;
 	margin-bottom: 1em;
 }
-
+.hidden {
+	display: none;
+}
+.center {
+	text-align: center;
+	margin: 0 auto;
+}
 /* =============================== Header Styles =============================== */
 #mainHeader {
 	background: linear-gradient(to bottom, var(--header-grad-start), var(--header-grad-end) 50%, var(--header-grad-end) 55%, var(--header-grad-start));

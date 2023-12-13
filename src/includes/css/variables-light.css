@@ -11,4 +11,6 @@
     --odd-color: #dbe1e7;
     --theme-url-highlight: #eee;
     --theme-table-border-color: var(--theme-primary);
+    --warn-color:#FFA500;
+    --crit-color:#FF4500;
 }

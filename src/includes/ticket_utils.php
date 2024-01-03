@@ -76,3 +76,42 @@ function formatFieldName($str)
     $str = ucwords($str);
     return $str;
 }
+
+function add_note_with_filters(
+    string $ticket_id, 
+    string $username, 
+    string $note_content, 
+    string $note_time,
+    bool $visible_to_client,
+    string $date_override = null)
+{
+    global $database;
+
+    $ticket_id_clean = trim(htmlspecialchars($ticket_id));
+    $note_content_clean = trim(htmlspecialchars($note_content));
+    $username_clean = trim(htmlspecialchars($username));
+    $note_time_clean = trim(htmlspecialchars($note_time));
+    $timestamp = date('Y-m-d H:i:s');
+    if (intval($note_time_clean) <= 0) {
+        return false;
+    }
+
+    $visible_to_client_intval = intval($visible_to_client);
+
+    // Insert the new note into the database
+    $query = "INSERT INTO notes (linked_id, created, creator, note, time, visible_to_client, date_override) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $stmt = mysqli_prepare($database, $query);
+    mysqli_stmt_bind_param($stmt, "issssis", $ticket_id_clean, $timestamp, $username_clean, $note_content_clean, $note_time_clean, 
+        $visible_to_client_intval, $date_override);
+    mysqli_stmt_execute($stmt);
+
+    // Log the creation of the new note in the ticket_logs table
+    $log_query = "INSERT INTO ticket_logs (ticket_id, user_id, field_name, old_value, new_value, created_at) VALUES (?, ?, ?, NULL, ?, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'))";
+    $log_stmt = mysqli_prepare($database, $log_query);
+
+    $notecolumn = "note";
+    mysqli_stmt_bind_param($log_stmt, "isss", $ticket_id, $username, $notecolumn, $note_content_clean);
+    mysqli_stmt_execute($log_stmt);
+
+    return true;
+}

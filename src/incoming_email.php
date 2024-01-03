@@ -2,48 +2,62 @@
 include("header.php");
 require_once("helpdbconnect.php");
 require_once("functions.php");
+require_once("authentication_utils.php");
+require_once("ticket_utils.php");
 // TESTING CODE + FILE
 
-function create_local_user(string $email)
+
+function create_user_in_local_db($username)
 {
-    $ldap_host = getenv('LDAPHOST');
-    $ldap_port = getenv('LDAPPORT');
-    $ldap_conn = ldap_connect($ldap_host, $ldap_port);
-    if (!$ldap_conn) {
-        die('Could not connect to LDAP server');
-    }
-
-    // anonymous bind
-    $ldap_bind = ldap_bind($ldap_conn, 'psd\\', "");
-    if (!$ldap_bind) {
-        die("Could not bind to LDAP server");
-    }
-
     $ldap_dn = getenv('LDAP_DN');
     $ldap_user = getenv('LDAP_USER');
     $ldap_password = getenv('LDAP_PASS');
 
-    // Search LDAP directory
-    $search = '(&(objectCategory=person)(objectClass=user)(sAMAccountName=' . $input_username . '))'; // Your search filter
-    $ldap_result = ldap_search($ldap_conn, $ldap_dn, $search);
-    if (!$ldap_result) {
+    $ldap_host = getenv('LDAPHOST');
+    $ldap_port = getenv('LDAPPORT');
+    $ldap_conn = ldap_connect($ldap_host, $ldap_port);
+    if (!$ldap_conn) {
+        die("Failed to connect to LDAP server");
+    }
+
+    // anonymous bind
+    $ldap_bind = ldap_bind($ldap_conn, $ldap_user, $ldap_password);
+    if (!$ldap_bind) {
+        die("LDAP bind failed.");
+    }
+
+    $search = "(&(objectCategory=person)(objectClass=user)(sAMAccountName=$username))";
+    $ldap_search_result = ldap_search($ldap_conn, $ldap_dn, $search);
+    if (!$ldap_search_result) {
         die('LDAP search failed.');
     }
+    
+    $ldap_entries_result = ldap_get_entries($ldap_conn, $ldap_search_result);
+    if (!$ldap_entries_result) {
+        die("LDAP get entries failed.");
+    }
 
-    $ldap_result = ldap_get_entries($ldap_conn, $ldap_result);
-    if (!$ldap_result)
-        die("LDAP result failed");
+    if ($ldap_entries_result['count'] == 0) {
+        die("User '$username' was not found in LDAP");
+    }
 
-    // Loop through results
-    for ($i = 0; $i < $ldap_result['count']; $i++) {
-        $username = $ldap_result[$i]['samaccountname'][0];
-        $firstname = $ldap_result[$i]['givenname'][0];
-        $lastname = $ldap_result[$i]['sn'][0];
-        $email = $ldap_result[$i]['mail'][0];
-        $employee_id = $ldap_result[$i]['employeeid'][0];
-        echo $username.$firstname.$lastname.$email.$employee_id;
+    for ($i = 0; $i < $ldap_entries_result['count']; $i++) {
+        $username = $ldap_entries_result[$i]['samaccountname'][0];
+        $firstname = $ldap_entries_result[$i]['givenname'][0];
+        $lastname = $ldap_entries_result[$i]['sn'][0];
+        $email = $ldap_entries_result[$i]['mail'][0];
+        $employee_id = $ldap_entries_result[$i]['employeeid'][0];
+    }
+
+    $insert_query = "INSERT INTO users (username, email, lastname, firstname, ifasid) VALUES ('" . $input_username . "', '" . $email . "', '" . $lastname . "', '" . $firstname . "', '" . $employee_id . "')";
+
+    //mysqli_query($database, $insert_query);
+    $insert_result = mysqli_query($database, $insert_query);
+    if (!$insert_result) {
+        echo 'Insert query error: ' . mysqli_error($database);
     }
 }
+
 $move_emails_after_parsed = false;
 
 $imap_path = '{imap.gmail.com:993/imap/ssl}INBOX';
@@ -59,18 +73,21 @@ echo "Msg count: ".$msg_count."<br><br>";
 for ($i = 1; $i <= $msg_count; $i++) {
     $header = imap_headerinfo($mbox, $i);
     $from_host = strtolower($header->from[0]->host);
-    
-    $sender = strtolower($header->from[0]->mailbox.'@'.$from_host);
+    $sender_user = $header->from[0]->mailbox;
+    $sender = strtolower($sender_user.'@'.$from_host);
     $subject = $header->subject;
 
     // Ignore non district emails
     if (($from_host != "provo.edu"))
         continue;
 
-    if (!user_exists_locally($sender)) {
-        echo "User does not exist locally.";
-        //create_local_user($sender);
-        continue;
+    if (!user_exists_locally($sender_user)) {
+        create_user_in_local_db($sender_user);
+        if (!user_exists_locally($sender_user)) {
+            die("Failed to create local user");
+        }
+    } else {
+        echo "user exists";
     }
 
     // Parse ticket here
@@ -83,10 +100,12 @@ for ($i = 1; $i <= $msg_count; $i++) {
 
 
     $message = imap_fetchbody($mbox, $i, 1);
-    echo $subject_ticket_id.$message."<br><br>";
+    echo "ticket id: $subject_ticket_id<br>message:$message<br><br>";
 
-    // create note. maybe modify add_note_handler.php or copy most of its code.
-    // we will want to minimize code duplication though
+    // create note. using $_POST like this is hacky
+    add_note_with_filters($subject_ticket_id, $sender_user, $message, 1, true);
+
+    echo "added note";
 }
 
 

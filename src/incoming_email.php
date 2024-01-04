@@ -9,6 +9,8 @@ require_once("ticket_utils.php");
 
 function create_user_in_local_db($username)
 {
+    global $database;
+
     $ldap_dn = getenv('LDAP_DN');
     $ldap_user = getenv('LDAP_USER');
     $ldap_password = getenv('LDAP_PASS');
@@ -49,7 +51,7 @@ function create_user_in_local_db($username)
         $employee_id = $ldap_entries_result[$i]['employeeid'][0];
     }
 
-    $insert_query = "INSERT INTO users (username, email, lastname, firstname, ifasid) VALUES ('" . $input_username . "', '" . $email . "', '" . $lastname . "', '" . $firstname . "', '" . $employee_id . "')";
+    $insert_query = "INSERT INTO users (username, email, lastname, firstname, ifasid) VALUES ('" . $username . "', '" . $email . "', '" . $lastname . "', '" . $firstname . "', '" . $employee_id . "')";
 
     //mysqli_query($database, $insert_query);
     $insert_result = mysqli_query($database, $insert_query);

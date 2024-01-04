@@ -33,6 +33,7 @@ $email = $row['email'];
 $is_admin = $row['is_admin'];
 $is_tech = $row['is_tech'];
 $is_supervisor = $row['is_supervisor'];
+
 $is_field_tech = $row['is_field_tech'];
 $ifasid = $row['ifasid'];
 $last_login = $row['last_login'];
@@ -40,8 +41,20 @@ $can_view_tickets = $row['can_view_tickets'];
 $can_create_tickets = $row['can_create_tickets'];
 $can_edit_tickets = $row['can_edit_tickets'];
 $can_delete_tickets = $row['can_delete_tickets'];
+$supervisor_username = $row['supervisor_username'];
 
 // Close the database connection
+
+// Query to get all supervisors
+$supervisors_query = "SELECT firstname, lastname, username FROM users WHERE is_supervisor = 1";
+$supervisors_result = mysqli_query($database, $supervisors_query);
+
+// Check if the query was successful
+if (!$supervisors_result) {
+    die("Query failed: " . mysqli_error($database));
+}
+
+
 mysqli_close($database);
 
 ?>
@@ -69,8 +82,20 @@ Username: <?= $username ?><br>
     <input type="email" id="email" name="email" value="<?= $email ?>"><br>
     <label for="ifasid">Employee ID:</label>
     <input type="text" id="ifasid" name="ifasid" value="<?= $ifasid ?>"><br>
-    
-    <h2>Roles</h2>
+    <!-- Supervisor dropdown -->
+    <label for="supervisor">Supervisor:</label>
+    <select name="supervisor" id="supervisor">
+        <?php
+        // Loop through the supervisors and create an option for each one
+        while ($supervisor = mysqli_fetch_assoc($supervisors_result)) {
+            // Determine whether this option should be selected
+            $selected = $supervisor['username'] == $supervisor_username ? 'selected' : '';
+            echo '<option value="' . $supervisor['username'] . '" ' . $selected . '>' . $supervisor['firstname'] . ' ' . $supervisor['lastname'] . '</option>';
+        }
+        ?>
+    </select><br>
+
+    <h3>Roles</h3>
     <label for="is_admin">Is Admin:</label>
     <input type="checkbox" id="is_admin" name="is_admin" <?= $is_admin == 1 ? 'checked' : '' ?>><br>
 
@@ -79,12 +104,14 @@ Username: <?= $username ?><br>
 
     <label for="is_tech">Is Tech:</label>
     <input type="checkbox" id="is_tech" name="is_tech" <?= $is_tech == 1 ? 'checked' : '' ?>><br>
-    
+
     <label for="is_field_tech">Is Field Tech:</label>
     <input type="checkbox" id="is_field_tech" name="is_field_tech" <?= $is_field_tech == 1 ? 'checked' : '' ?>><br>
-    
 
-    <h2>Permissions</h2>
+   
+
+
+    <h3>Permissions</h3>
     <label for="can_view_tickets">Can View Tickets:</label>
     <input type="checkbox" id="can_view_tickets" name="can_view_tickets" <?= $can_view_tickets == 1 ? 'checked' : '' ?>><br>
     <label for="can_create_tickets">Can Create Tickets:</label>

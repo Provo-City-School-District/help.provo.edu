@@ -32,6 +32,7 @@ $lastname = $row['lastname'];
 $email = $row['email'];
 $is_admin = $row['is_admin'];
 $is_tech = $row['is_tech'];
+$is_supervisor = $row['is_supervisor'];
 $is_field_tech = $row['is_field_tech'];
 $ifasid = $row['ifasid'];
 $last_login = $row['last_login'];
@@ -72,11 +73,17 @@ Username: <?= $username ?><br>
     <h2>Roles</h2>
     <label for="is_admin">Is Admin:</label>
     <input type="checkbox" id="is_admin" name="is_admin" <?= $is_admin == 1 ? 'checked' : '' ?>><br>
+
+    <label for="is_supervisor">Is Supervisor:</label>
+    <input type="checkbox" id="is_supervisor" name="is_supervisor" <?= $is_supervisor == 1 ? 'checked' : '' ?>><br>
+
     <label for="is_tech">Is Tech:</label>
     <input type="checkbox" id="is_tech" name="is_tech" <?= $is_tech == 1 ? 'checked' : '' ?>><br>
+    
     <label for="is_field_tech">Is Field Tech:</label>
     <input type="checkbox" id="is_field_tech" name="is_field_tech" <?= $is_field_tech == 1 ? 'checked' : '' ?>><br>
     
+
     <h2>Permissions</h2>
     <label for="can_view_tickets">Can View Tickets:</label>
     <input type="checkbox" id="can_view_tickets" name="can_view_tickets" <?= $can_view_tickets == 1 ? 'checked' : '' ?>><br>

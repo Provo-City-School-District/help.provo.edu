@@ -103,7 +103,9 @@ $fieldTechs = process_query_result($field_tech_query_result, "employee");
             <th>Email</th>
             <th>Is Admin</th>
             <th>Is Tech</th>
-            <th>Employee ID</th>
+            <th>is Supervisor</th>
+            <!-- <th>Employee ID</th> -->
+            
             <th>Last Login</th>
         </tr>
     </thead>
@@ -118,8 +120,9 @@ $fieldTechs = process_query_result($field_tech_query_result, "employee");
                 <td data-cell="Last Name"><?= ucwords(strtolower($user_row['lastname'])) ?></td>
                 <td data-cell="Email"><?= $user_row['email'] ?></td>
                 <td data-cell="Is an Admin"><?= ($user_row['is_admin'] == 1 ? 'Yes' : 'No') ?></td>
-                <td data-cell="Is an Tech"><?= ($user_row['is_tech'] == 1 ? 'Yes' : 'No') ?></td>
-                <td data-cell="Employee ID"><?= $user_row['ifasid'] ?></td>
+                <td data-cell="Is a Tech"><?= ($user_row['is_tech'] == 1 ? 'Yes' : 'No') ?></td>
+                <td data-cell="Is a Supervisor"><?= ($user_row['is_supervisor'] == 1 ? 'Yes' : 'No') ?></td>
+                <!-- <td data-cell="Employee ID"><?= $user_row['ifasid'] ?></td> -->
                 <td data-cell="Last Login"><?= $user_row['last_login'] ?></td>
             </tr>
         <?php

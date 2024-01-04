@@ -15,6 +15,7 @@ $email = trim(htmlspecialchars($_POST['email']));
 $ifasid = trim(htmlspecialchars($_POST['ifasid']));
 $is_admin = isset($_POST['is_admin']) ? 1 : 0;
 $is_tech = isset($_POST['is_tech']) ? 1 : 0;
+$is_supervisor = isset($_POST['is_supervisor']) ? 1 : 0;
 $is_field_tech = isset($_POST['is_field_tech']) ? 1 : 0;
 $can_view_tickets = isset($_POST['can_view_tickets']) ? 1 : 0;
 $can_create_tickets = isset($_POST['can_create_tickets']) ? 1 : 0;
@@ -23,9 +24,9 @@ $can_delete_tickets = isset($_POST['can_delete_tickets']) ? 1 : 0;
 
 
 // Update the user data in the database
-$query = "UPDATE users SET firstname = ?, lastname = ?, email = ?, ifasid = ?, is_admin = ?, is_tech = ?,is_field_tech = ?, can_view_tickets = ?, can_create_tickets = ?, can_edit_tickets = ?,can_delete_tickets = ? WHERE id = ?";
+$query = "UPDATE users SET firstname = ?, lastname = ?, email = ?, ifasid = ?, is_admin = ?, is_tech = ?,is_supervisor = ?,is_field_tech = ?, can_view_tickets = ?, can_create_tickets = ?, can_edit_tickets = ?,can_delete_tickets = ? WHERE id = ?";
 $stmt = mysqli_prepare($database, $query);
-mysqli_stmt_bind_param($stmt, "ssssiiiiiiii", $firstname, $lastname, $email, $ifasid, $is_admin, $is_tech, $is_field_tech, $can_view_tickets, $can_create_tickets, $can_edit_tickets, $can_delete_tickets, $user_id);
+mysqli_stmt_bind_param($stmt, "ssssiiiiiiiii", $firstname, $lastname, $email, $ifasid, $is_admin, $is_tech, $is_supervisor,$is_field_tech, $can_view_tickets, $can_create_tickets, $can_edit_tickets, $can_delete_tickets, $user_id);
 mysqli_stmt_execute($stmt);
 
 // Check if the query was successful

@@ -181,7 +181,7 @@ color: var(--theme-url-color);
 }
 .alerts_wrapper .close-alert {
 	text-decoration: none; 
-	color: var(--theme-black); 
+	color: var(--theme-white); 
 	float: right;
 	font-weight: bold;
 }

@@ -33,7 +33,7 @@ $email = $row['email'];
 $is_admin = $row['is_admin'];
 $is_tech = $row['is_tech'];
 $is_supervisor = $row['is_supervisor'];
-
+$is_loc_man = $row['is_location_manager'];
 $is_field_tech = $row['is_field_tech'];
 $ifasid = $row['ifasid'];
 $last_login = $row['last_login'];
@@ -42,8 +42,8 @@ $can_create_tickets = $row['can_create_tickets'];
 $can_edit_tickets = $row['can_edit_tickets'];
 $can_delete_tickets = $row['can_delete_tickets'];
 $supervisor_username = $row['supervisor_username'];
+$man_location = $row['location_manager_sitenumber'];
 
-// Close the database connection
 
 // Query to get all supervisors
 $supervisors_query = "SELECT firstname, lastname, username FROM users WHERE is_supervisor = 1";
@@ -54,7 +54,11 @@ if (!$supervisors_result) {
     die("Query failed: " . mysqli_error($database));
 }
 
+// Query the locations table to get the location information
+$location_query = "SELECT sitenumber, location_name FROM locations";
+$location_result = mysqli_query($database, $location_query);
 
+// Close the database connection
 mysqli_close($database);
 
 ?>
@@ -108,7 +112,33 @@ Username: <?= $username ?><br>
     <label for="is_field_tech">Is Field Tech:</label>
     <input type="checkbox" id="is_field_tech" name="is_field_tech" <?= $is_field_tech == 1 ? 'checked' : '' ?>><br>
 
-   
+    <label for="is_loc_man">Is Location Manager:</label>
+    <input type="checkbox" id="is_loc_man" name="is_loc_man" <?= $is_loc_man == 1 ? 'checked' : '' ?>><br>
+    <?php
+    if ($is_loc_man == 1) {
+    ?>
+
+        <label for="man_location">Manage Location:</label>
+        <select id="man_location" name="man_location">
+            <option value="" selected></option>
+            <?php
+            // Loop through the results and create an option for each site
+            while ($locations = mysqli_fetch_assoc($location_result)) {
+                $selected = '';
+                if ($locations['sitenumber'] == $row['location']) {
+                    $selected = 'selected';
+                }
+            ?>
+                <option value="<?= $locations['sitenumber'] ?>" <?= $man_location === $locations['sitenumber'] ? 'selected' : '' ?>><?= $locations['location_name'] ?></option>
+            <?php
+            }
+            ?>
+        </select>
+
+
+    <?php
+    }
+    ?>
 
 
     <h3>Permissions</h3>

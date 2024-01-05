@@ -21,3 +21,11 @@ function test_input($data) {
     $data = htmlspecialchars($data);
     return $data;
   }
+
+
+function log_app(int $priority, string $message)
+{
+    openlog("appLog", LOG_PID | LOG_PERROR, LOG_LOCAL0);
+    syslog($priority, $message);
+    closelog();
+}

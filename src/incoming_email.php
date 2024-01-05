@@ -19,28 +19,28 @@ function create_user_in_local_db($username)
     $ldap_port = getenv('LDAPPORT');
     $ldap_conn = ldap_connect($ldap_host, $ldap_port);
     if (!$ldap_conn) {
-        die("Failed to connect to LDAP server");
+        log_app(LOG_ERR, "Failed to create LDAP connection");
     }
 
     // anonymous bind
     $ldap_bind = ldap_bind($ldap_conn, $ldap_user, $ldap_password);
     if (!$ldap_bind) {
-        die("LDAP bind failed.");
+        log_app(LOG_ERR, "LDAP bind failed.");
     }
 
     $search = "(&(objectCategory=person)(objectClass=user)(sAMAccountName=$username))";
     $ldap_search_result = ldap_search($ldap_conn, $ldap_dn, $search);
     if (!$ldap_search_result) {
-        die('LDAP search failed.');
+        log_app(LOG_ERR, 'LDAP search failed.');
     }
     
     $ldap_entries_result = ldap_get_entries($ldap_conn, $ldap_search_result);
     if (!$ldap_entries_result) {
-        die("LDAP get entries failed.");
+        log_app(LOG_ERR, "LDAP get entries failed.");
     }
 
     if ($ldap_entries_result['count'] == 0) {
-        die("User '$username' was not found in LDAP");
+        log_app(LOG_ERR, "User '$username' was not found in LDAP");
     }
 
     for ($i = 0; $i < $ldap_entries_result['count']; $i++) {
@@ -53,44 +53,44 @@ function create_user_in_local_db($username)
 
     $insert_query = "INSERT INTO users (username, email, lastname, firstname, ifasid) VALUES ('" . $username . "', '" . $email . "', '" . $lastname . "', '" . $firstname . "', '" . $employee_id . "')";
 
-    //mysqli_query($database, $insert_query);
     $insert_result = mysqli_query($database, $insert_query);
     if (!$insert_result) {
-        echo 'Insert query error: ' . mysqli_error($database);
+        $current_mysqli_error = mysqli_error($database);
+        log_app(LOG_ERR, "Insert query error: $current_mysqli_error");
     }
 }
 
-$move_emails_after_parsed = false;
+$move_emails_after_parsed = true;
 
 $imap_path = '{imap.gmail.com:993/imap/ssl}INBOX';
 $username = getenv("GMAIL_USER");
 $password = getenv("GMAIL_PASSWORD");
 
 $mbox = imap_open($imap_path, $username, $password) or die('Cannot connect to Gmail: ' . imap_last_error());
-
 $msg_count = imap_num_msg($mbox);
-echo "Msg count: ".$msg_count."<br><br>";
 
+$failed_email_ids = [];
 // iterate through the messages in inbox
 for ($i = 1; $i <= $msg_count; $i++) {
     $header = imap_headerinfo($mbox, $i);
     $from_host = strtolower($header->from[0]->host);
-    $sender_user = $header->from[0]->mailbox;
-    $sender = strtolower($sender_user.'@'.$from_host);
+    $sender_username = $header->from[0]->mailbox;
+    $sender_email = strtolower($sender_username.'@'.$from_host);
     $subject = $header->subject;
 
     // Ignore non district emails
     if (($from_host != "provo.edu"))
         continue;
 
-    if (!user_exists_locally($sender_user)) {
-        create_user_in_local_db($sender_user);
-        if (!user_exists_locally($sender_user)) {
-            die("Failed to create local user");
+    if (!user_exists_locally($sender_username)) {
+        create_user_in_local_db($sender_username);
+        if (!user_exists_locally($sender_username)) {
+            log_app(LOG_ERR, "Failed to create local user $sender_username");
+            $failed_email_ids[] = $i;
         }
-    } else {
-        echo "user exists";
     }
+
+    $message = imap_fetchbody($mbox, $i, 1);
 
     // Parse ticket here
     $subject_split = explode(' ', $subject);
@@ -98,24 +98,30 @@ for ($i = 1; $i <= $msg_count; $i++) {
     if (strtolower($subject_split[0]) != "ticket" || 
         $subject_ticket_id <= 0 ||
         count($subject_split) != 2)
-        continue;
-
-
-    $message = imap_fetchbody($mbox, $i, 1);
-    echo "ticket id: $subject_ticket_id<br>message:$message<br><br>";
-
-    // create note. using $_POST like this is hacky
-    add_note_with_filters($subject_ticket_id, $sender_user, $message, 1, true);
-
-    echo "added note";
+    {
+        // create a ticket with their subject
+        create_ticket();
+    } else {
+        // create note
+        add_note_with_filters($subject_ticket_id, $sender_username, $message, 1, true);
+    }
+    log_app(LOG_INFO, "Successfully parsed email from $sender_email");
 }
 
 
-// Move parsed emails to important folder/label
+// Move parsed emails to important folder/label if we didn't have a parsing error
 if ($move_emails_after_parsed && $msg_count > 0) {
-    $msg_move_result = imap_mail_move($mbox, "1:".strval($msg_count), "[Gmail]/Important");
-    if (!$msg_move_result) {
-        echo "Failed to move message: ".imap_last_error();
+    for ($i = 1; $i <= $msg_count; $i++) {
+
+        // Check if this email had a parsing error
+        if (in_array($i, $failed_email_ids))
+            continue;
+
+        // Move email to important box
+        $msg_move_result = imap_mail_move($mbox, strval($i), "[Gmail]/Important");
+        if (!$msg_move_result) {
+            log_app(LOG_WARN, "Failed to move message: ".imap_last_error());
+        }
     }
 }
 

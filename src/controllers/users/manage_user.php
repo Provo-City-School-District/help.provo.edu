@@ -125,10 +125,7 @@ Username: <?= $username ?><br>
             <?php
             // Loop through the results and create an option for each site
             while ($locations = mysqli_fetch_assoc($location_result)) {
-                $selected = '';
-                if ($locations['sitenumber'] == $row['location']) {
-                    $selected = 'selected';
-                }
+               
             ?>
                 <option value="<?= $locations['sitenumber'] ?>" <?= $man_location === $locations['sitenumber'] ? 'selected' : '' ?>><?= $locations['location_name'] ?></option>
             <?php

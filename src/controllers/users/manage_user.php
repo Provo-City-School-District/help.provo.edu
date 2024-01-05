@@ -78,6 +78,7 @@ Last Login: <?= $last_login ?><br>
 Username: <?= $username ?><br>
 <form action="update_user.php" method="post">
     <input type="hidden" name="id" value="<?= $user_id ?>">
+    <input type="hidden" name="username" value="<?= $username ?>">
     <label for="firstname">First Name:</label>
     <input type="text" id="firstname" name="firstname" value="<?= $firstname ?>"><br>
     <label for="lastname">Last Name:</label>

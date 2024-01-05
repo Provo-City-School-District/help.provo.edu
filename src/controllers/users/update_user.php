@@ -1,15 +1,17 @@
 <?php
 require_once('init.php');
 require_once('helpdbconnect.php');
+require_once('functions.php');
 // Check if the user ID is set
 if (!isset($_POST['id'])) {
     die("User ID not set");
 }
-
+$modified_by = $_SESSION['username'];
 
 // Retrieve the user ID and data from the form submission
 $user_id = $_POST['id'];
 $firstname = trim(htmlspecialchars($_POST['firstname']));
+$username = trim(htmlspecialchars($_POST['username']));
 $lastname = trim(htmlspecialchars($_POST['lastname']));
 $email = trim(htmlspecialchars($_POST['email']));
 $ifasid = trim(htmlspecialchars($_POST['ifasid']));
@@ -41,5 +43,6 @@ mysqli_close($database);
 
 // Redirect back to the manage user page
 $_SESSION['user_updated'] = 'User updated successfully';
+log_app(LOG_INFO, "User '$modified_by' updated user '$username' information");
 header("Location: manage_user.php?id=$user_id");
 exit();

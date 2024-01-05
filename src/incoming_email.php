@@ -100,11 +100,12 @@ for ($i = 1; $i <= $msg_count; $i++) {
         count($subject_split) != 2)
     {
         // create a ticket with their subject
-        create_ticket();
+        // TODO
     } else {
-        // create note
+        // ticket syntax is valid, add a note on that ticket
         add_note_with_filters($subject_ticket_id, $sender_username, $message, 1, true);
     }
+
     log_app(LOG_INFO, "Successfully parsed email from $sender_email");
 }
 
@@ -127,6 +128,3 @@ if ($move_emails_after_parsed && $msg_count > 0) {
 
 imap_close($mbox);
 ?>
-<br><br><br>
-----------------------<br>
-End of messages

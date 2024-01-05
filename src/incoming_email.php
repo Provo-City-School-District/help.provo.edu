@@ -1,11 +1,9 @@
 <?php
-include("header.php");
 require_once("helpdbconnect.php");
 require_once("functions.php");
 require_once("authentication_utils.php");
 require_once("ticket_utils.php");
 // TESTING CODE + FILE
-
 
 function create_user_in_local_db($username)
 {

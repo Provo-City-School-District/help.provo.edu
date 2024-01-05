@@ -64,8 +64,13 @@ COPY /src/boot.php /var/www/html/boot.php
 
 # since .env variables aren't available by default to CLI scripts, we need to copy the .env file to the root directory so it can be loaded for them
 COPY .env /root/.env
+
+# copy cronjobs
 COPY run_ticket_alerts.sh /root/run_ticket_alerts.sh
 RUN chmod +x /root/run_ticket_alerts.sh
+
+COPY run_email_check.sh /root/run_email_check.sh
+RUN chmod +x /root/run_email_check.sh
 
 # Install Composer packages
 RUN composer install --no-interaction --no-ansi --no-scripts --no-progress --prefer-dist

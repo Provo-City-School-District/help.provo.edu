@@ -5,7 +5,7 @@ require_once('helpdbconnect.php');
 require_once('swdbconnect.php');
 include("ticket_utils.php");
 
-// Query the sites table to get the site information
+// Query the locations table to get the location information
 $location_query = "SELECT sitenumber, location_name FROM locations";
 $location_result = mysqli_query($database, $location_query);
 

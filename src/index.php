@@ -96,6 +96,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'is_admin' => $local_query_data['is_admin'],
                 'is_tech' => $local_query_data['is_tech'],
                 'is_field_tech' => $local_query_data['is_field_tech'],
+                'is_supervisor' => $local_query_data['is_supervisor'],
+                'supervisor_username' => $local_query_data['supervisor_username'],
+                'is_location_manager' => $local_query_data['is_location_manager'],
+                'location_manager_sitenumber' => $local_query_data['location_manager_sitenumber'],
 
             );
             // Set color scheme

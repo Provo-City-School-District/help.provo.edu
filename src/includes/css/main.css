@@ -163,7 +163,7 @@ td::before {
 }
 /* =============================== Alerts Styles =============================== */
 .alerts_wrapper {
-	width: 40%;
+	/* width: 40%; */
 	margin: 0 auto;
 
 }
@@ -387,6 +387,10 @@ select {
 	.ticketGrid {
 		grid-template-columns: 1fr 1fr;
 		gap: 1em;
+	}
+	.alerts_wrapper {
+		width: 60%;
+		max-width: 650px;
 	}
 }
 

@@ -122,6 +122,16 @@ $admin_page = '/admin.php';
                     <li><a href="/controllers/tickets/create_ticket.php">Create Ticket</a></li>
 
                     <?php
+                    if ($_SESSION['permissions']['is_supervisor'] == 1) {
+                    ?>
+                        <li><a href="/controllers/tickets/subordinate_tickets.php">Subordinate Tickets</a></li>
+                    <?php
+                    }
+                    if ($_SESSION['permissions']['is_location_manager'] == 1) {
+                    ?>
+                        <li><a href="/controllers/tickets/location_tickets.php">Location Tickets</a></li>
+                    <?php
+                    }
                     if ($_SESSION['permissions']['is_tech'] == 1) {
                         require_once("helpdbconnect.php");
                         $username = $_SESSION['username'];
@@ -180,16 +190,6 @@ $admin_page = '/admin.php';
                     ?>
                         <li><a href="/tickets.php">My Tickets</a></li>
                         <li><a href="/controllers/tickets/ticket_history.php">Ticket History</a></li>
-                    <?php
-                    }
-                    if ($_SESSION['permissions']['is_supervisor'] == 1) {
-                    ?>
-                        <li><a href="/controllers/tickets/subordinate_tickets.php">Subordinate Tickets</a></li>
-                    <?php
-                    }
-                    if ($_SESSION['permissions']['is_location_manager'] == 1) {
-                    ?>
-                        <li><a href="/controllers/tickets/location_tickets.php">Location Tickets</a></li>
                     <?php
                     }
                     ?>

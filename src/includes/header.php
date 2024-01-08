@@ -180,6 +180,16 @@ $admin_page = '/admin.php';
                         <li><a href="/controllers/tickets/ticket_history.php">Ticket History</a></li>
                     <?php
                     }
+                    if($_SESSION['permissions']['is_supervisor'] == 1) {
+                        ?>
+                        <li><a href="/tickets.php">Supervised Tickets</a></li>
+                    <?php
+                    } 
+                    if($_SESSION['permissions']['is_location_manager'] == 1) {
+                        ?>
+                        <li><a href="/tickets.php">Location Tickets</a></li>
+                    <?php
+                    }  
                     ?>
 
 

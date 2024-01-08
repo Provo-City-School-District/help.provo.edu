@@ -11,6 +11,7 @@ function display_tickets_table($tickets, $database)
                 <th class="status">Current Status</th>
                 <th class="tDate">Last Updated</th>
                 <th class="tDate">Due</th>
+                <th class="">Assigned</th>
             </tr>
         </thead>
         <tbody>';
@@ -37,6 +38,7 @@ function display_tickets_table($tickets, $database)
             <td data-cell="Current Status">' . $ticket["status"] . '</td>
             <td data-cell="Last Updated">' . $ticket["last_updated"] . '</td>
             <td data-cell="Due">' . $ticket["due_date"] . '</td>
+            <td data-cell="Assigned">' . $ticket["employee"] . '</td>
         </tr>';
     }
 

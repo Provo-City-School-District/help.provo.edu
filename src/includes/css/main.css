@@ -70,13 +70,16 @@ input[type=submit] {
 	border-radius: 3px;
 	margin-bottom: 1em;
 }
+
 .hidden {
 	display: none;
 }
+
 .center {
 	text-align: center;
 	margin: 0 auto;
 }
+
 /* =============================== Header Styles =============================== */
 #mainHeader {
 	background: linear-gradient(to bottom, var(--header-grad-start), var(--header-grad-end) 50%, var(--header-grad-end) 55%, var(--header-grad-start));
@@ -116,7 +119,6 @@ table,
 table.dataTable.no-footer {
 	width: 100%;
 	border: 2px solid var(--theme-table-border-color);
-	/* border-collapse: collapse; */
 }
 
 table[style] {
@@ -161,36 +163,42 @@ td::before {
 	font-weight: 700;
 	text-transform: capitalize;
 }
+
 /* =============================== Alerts Styles =============================== */
 .alerts_wrapper {
-	/* width: 40%; */
 	margin: 0 auto;
-
 }
+
 .alerts_wrapper p {
 	padding: .5em 1em;
 	margin-bottom: 2px;
 
 }
+
 .alerts_wrapper p a:first-of-type {
 color: var(--theme-white);
 }
+
 .alerts_wrapper p a:hover {
 color: var(--theme-url-color);
 
 }
+
 .alerts_wrapper .close-alert {
 	text-decoration: none; 
 	color: var(--theme-white); 
 	float: right;
 	font-weight: bold;
 }
+
 .alerts_wrapper .crit {
 	background-color: var(--crit-color);
 }
+
 .alerts_wrapper .warn {
 	background-color: var(--warn-color);
 }
+
 /* =============================== Sub Menu Styles =============================== */
 #subMenu {
 	display: flex;
@@ -293,7 +301,6 @@ select {
 #search-for-client {
 	display: none;
 	padding: 1em;
-	/* border: 2px solid var(--theme-grey); */
 	align-items: center;
 	justify-content: center;
 	background-color: var(--theme-white);

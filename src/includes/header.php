@@ -24,7 +24,9 @@ $ticketPages = array(
     '/recent_tickets.php',
     '/search_tickets.php',
     '/ticket_history.php',
-    '/flagged_tickets.php'
+    '/flagged_tickets.php',
+    '/subordinate_tickets.php',
+    '/location_tickets.php'
 );
 
 $is_logged_in = false;
@@ -182,12 +184,12 @@ $admin_page = '/admin.php';
                     }
                     if ($_SESSION['permissions']['is_supervisor'] == 1) {
                     ?>
-                        <li><a href="/tickets.php">Supervised Tickets</a></li>
+                        <li><a href="/controllers/tickets/subordinate_tickets.php">Subordinate Tickets</a></li>
                     <?php
                     }
                     if ($_SESSION['permissions']['is_location_manager'] == 1) {
                     ?>
-                        <li><a href="/tickets.php">Location Tickets</a></li>
+                        <li><a href="/controllers/tickets/location_tickets.php">Location Tickets</a></li>
                     <?php
                     }
                     ?>

@@ -164,11 +164,11 @@ $admin_page = '/admin.php';
 
                         if ($flagged_stmt_succeeded)
                             $num_flagged_tickets = mysqli_num_rows($flagged_res);
-    
+
                         mysqli_stmt_close($assigned_stmt);
                         mysqli_stmt_close($flagged_stmt);
                     ?>
-                    
+
                         <li><a href="/tickets.php">Assigned Tickets (<?= $num_assigned_tickets ?>)</a></li>
                         <li><a href="/controllers/tickets/flagged_tickets.php">Flagged Tickets (<?= $num_flagged_tickets ?>)</a></li>
                         <li><a href="/controllers/tickets/recent_tickets.php">Recent Tickets</a></li>
@@ -180,16 +180,16 @@ $admin_page = '/admin.php';
                         <li><a href="/controllers/tickets/ticket_history.php">Ticket History</a></li>
                     <?php
                     }
-                    if($_SESSION['permissions']['is_supervisor'] == 1) {
-                        ?>
+                    if ($_SESSION['permissions']['is_supervisor'] == 1) {
+                    ?>
                         <li><a href="/tickets.php">Supervised Tickets</a></li>
                     <?php
-                    } 
-                    if($_SESSION['permissions']['is_location_manager'] == 1) {
-                        ?>
+                    }
+                    if ($_SESSION['permissions']['is_location_manager'] == 1) {
+                    ?>
                         <li><a href="/tickets.php">Location Tickets</a></li>
                     <?php
-                    }  
+                    }
                     ?>
 
 

@@ -5,7 +5,7 @@ function display_ticket_alerts($alerts)
     foreach ($alerts as $alert) {
 ?>
         <p class="<?= $alert["alert_level"] ?>">
-            <a href="/controllers/tickets/edit_ticket.php?id=<?= $alert["ticket_id"] ?>">Ticket: <?= $alert["ticket_id"] ?>
+            <a href="/controllers/tickets/edit_ticket.php?id=<?= $alert["ticket_id"] ?>">Ticket: <?= $alert["ticket_id"].' -' ?>
             <?= $alert["message"] ?>
             </a>
             <!-- <a href="/controllers/tickets/alert_delete.php?id=<?= $alert["id"] ?>"> Delete</a> -->

@@ -4,6 +4,7 @@ require_once("authentication_utils.php");
 require_once('helpdbconnect.php');
 session_set_cookie_params(7200); // 2 hours until auto logout
 session_start();
+session_regenerate_id(true);
 
 // Check if user is already logged in
 if (isset($_SESSION['username'])) {

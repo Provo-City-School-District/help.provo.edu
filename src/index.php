@@ -159,7 +159,9 @@ if (isset($_SESSION['current_status'])) {
         <label>Password:</label>
         <input type="password" name="password">
 
-        <input type="submit" value="Login">
+        <input type="submit" value="Login with AD">
+        <a href="google_login.php">Login with Google</a>
+        
     </form>
 </div>
 

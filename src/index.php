@@ -35,8 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $inputs_valid = !(empty($input_username) || empty($input_password));
 
     if ($ldap_bind && $inputs_valid) {
-        // Regenerate session ID on success login to prevent session fixation attacks
-        session_regenerate_id(true);
+
         // assign username to session
         $_SESSION['username'] = $input_username;
         $ldap_dn = getenv('LDAP_DN');
@@ -160,7 +159,9 @@ if (isset($_SESSION['current_status'])) {
         <label>Password:</label>
         <input type="password" name="password">
 
-        <input type="submit" value="Login">
+        <input type="submit" value="Login with AD">
+        <a href="google_login.php">Login with Google</a>
+        
     </form>
 </div>
 

@@ -6,8 +6,8 @@ session_start();
 session_regenerate_id(true);
 
 // init configuration 
-$clientID = '631821209628-dbvrup4b7q5mnr3djb1qug51ip337290.apps.googleusercontent.com';
-$clientSecret = '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';
+$clientID = getenv("GOOG_SSO_ID");
+$clientSecret = getenv("GOOG_SSO_SECRET");
 $redirectUri = 'http://localhost:8080/google_login.php';
 
 $client = new Google_Client();

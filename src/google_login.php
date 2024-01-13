@@ -92,13 +92,6 @@ if (isset($_GET['code'])) {
         exit;
     }
 }
-?>
-
-
-<div class="container my-5">
-    <div class="row">
-        <div class="col-auto mx-auto">
-            <a href="<?= $client->createAuthUrl() ?>" class="btn btn btn-primary btn-flat rounded-0">Login with Google</a>
-        </div>
-    </div>
-</div>
+$authUrl = $client->createAuthUrl();
+header('Location: ' . filter_var($authUrl, FILTER_SANITIZE_URL));
+exit;

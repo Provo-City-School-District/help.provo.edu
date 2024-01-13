@@ -38,7 +38,7 @@ function create_user_in_local_db($username)
     if (!$ldap_search_result) {
         log_app(LOG_ERR, 'LDAP search failed.');
     }
-    
+
     $ldap_entries_result = ldap_get_entries($ldap_conn, $ldap_search_result);
     if (!$ldap_entries_result) {
         log_app(LOG_ERR, "LDAP get entries failed.");

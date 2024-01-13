@@ -160,7 +160,7 @@ if (isset($_SESSION['current_status'])) {
         <input type="password" name="password">
 
         <input type="submit" value="Login with AD">
-        <a href="google_login.php">Login with Google</a>
+        <a href="google_login.php" class="button googSSO">Login with Google</a>
         
     </form>
 </div>

@@ -1,8 +1,13 @@
 # help.provo.edu
+## Default Ports
+these are the default ports that the containers will use. If you need to change them, you can do so in the docker-compose.yml file.
+- 8080 - HTTP
+- 8085 - PHPMyAdmin
+- 3310 - MySQL
 
-# Installation
-
-Requires a .env file in the root directory with the following variables set. make sure to wrap passwords in quotes to prevent syntax errors when they are loaded into CLI variables.
+## Requirements
+- Requires Docker Engine and Docker Compose to be installed on the host machine.
+- Requires a .env file in the root directory with the following variables set. make sure to wrap passwords in quotes to prevent syntax errors when they are loaded into CLI variables.
 
 ```
 LDAPHOST=
@@ -34,8 +39,39 @@ GOOG_SSO_ID=
 GOOG_SSO_SECRET=
 GOOG_SSO_REDIRECT=
 ```
+## Control Commands
+
+### Build
+```docker compose build```
+
+### Start
+```docker compose up -d```
+
+### Stop
+```docker compose down```
+
+### Restart
+```docker compose restart```
+
+
+## Restore / Development
+Clone the repository to your server with docker engine installed
+```
+git clone https://github.com/Provo-City-School-District/help.provo.edu.git
+```
+
+Change to the help.provo.edu directory.
+
+If you're restoring from backup, get a copy of the backup database dump from Barracuda and restore it into the database using PHPmyadmin.
+
+If you're setting up a fresh development instance get a copy of the database dump from one of the other developers and restore it into the database using PHPmyadmin.(planned to create the database on first run in the future)
 
 # Resources Used
+- Docker: https://www.docker.com/
+- Docker Compose: https://docs.docker.com/compose/
+- PHP: https://www.php.net/
+- PHPMyAdmin: https://www.phpmyadmin.net/
+- MariaDB: https://mariadb.org/
 - Data Tables: https://datatables.net/
 - TinyMCE: https://www.tiny.cloud/docs/tinymce/6/
 - CSS Alerts: https://alvarotrigo.com/blog/css-alerts/

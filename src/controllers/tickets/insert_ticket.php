@@ -122,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $cc_emails_clean = implode(',', $valid_cc_emails);
     $bcc_emails_clean = implode(',', $valid_bcc_emails);
 
-    $created_time = date("Y-m-d");
+    $created_time = date("Y-m-d H:i:s");
     // Calculate the due date by adding the priority days to the created date
     $created_date = new DateTime($created_time);
     $due_date = clone $created_date;

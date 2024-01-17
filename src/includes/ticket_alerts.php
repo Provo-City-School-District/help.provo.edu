@@ -1,5 +1,6 @@
 <?php
 require_once('helpdbconnect.php');
+require_once('ticket_utils.php');
 
 // insert an alert into the alerts table if it doesn't already exist
 function insertAlertIfNotExists($database, $ticket, $alertMessage, $alertLevel)
@@ -36,9 +37,6 @@ function getDaysUntilDueDate($dueDateStr)
     $daysUntilDueDate = (int)$interval->format('%R%a');
     return $daysUntilDueDate;
 }
-// Messages for alerts
-$alert48Message = "Ticket hasn't been updated in 48 hours";
-$pastDueMessage = "Past Due";
 
 // Get the current time minus 48 hours
 $timestampTwoDaysAgo = date('Y-m-d H:i:s', strtotime('-48 hours'));

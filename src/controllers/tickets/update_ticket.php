@@ -202,6 +202,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $parentTicketColumn, $old_ticket_data['parent_ticket'], $updatedParentTicket);
         mysqli_stmt_execute($log_stmt);
     }
+
+    // Check if the ticket has an alert about not being updated in last 48 hours and clear it since the ticket was just updated.
+    $two_day_message = "Ticket hasn't been updated in 48 hours";
+    removeAlert($database, $two_day_message, $ticket_id);
+
     $msg = "Ticket updated successfully.";
     // After successfully updating the ticket, set a success message;
     if ($sendEmails) {

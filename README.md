@@ -40,7 +40,7 @@ GOOG_SSO_SECRET=
 GOOG_SSO_REDIRECT=
 ```
 ## Control Commands
-
+following commands must be run from within the root directory of the project.
 ### Build
 ```docker compose build```
 

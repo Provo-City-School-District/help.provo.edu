@@ -178,6 +178,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($old_ticket_data['due_date'] != $updatedDueDate) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $dueDateColumn, $old_ticket_data['due_date'], $updatedDueDate);
         mysqli_stmt_execute($log_stmt);
+        $message = "Past Due";
+        removeAlert($database, $message, $ticket_id);
     }
     if ($old_ticket_data['status'] != $updatedStatus) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $statusColumn, $old_ticket_data['status'], $updatedStatus);
@@ -195,7 +197,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $bccEmailsColumn, $old_ticket_data['bcc_emails'], $updatedBCCEmails);
         mysqli_stmt_execute($log_stmt);
     }
-    if($old_ticket_data['parent_ticket'] != $updatedParentTicket) {
+    if ($old_ticket_data['parent_ticket'] != $updatedParentTicket) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $parentTicketColumn, $old_ticket_data['parent_ticket'], $updatedParentTicket);
         mysqli_stmt_execute($log_stmt);
     }

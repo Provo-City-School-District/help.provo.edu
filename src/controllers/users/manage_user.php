@@ -34,7 +34,6 @@ $is_admin = $row['is_admin'];
 $is_tech = $row['is_tech'];
 $is_supervisor = $row['is_supervisor'];
 $is_loc_man = $row['is_location_manager'];
-$is_field_tech = $row['is_field_tech'];
 $ifasid = $row['ifasid'];
 $last_login = $row['last_login'];
 $can_view_tickets = $row['can_view_tickets'];
@@ -111,8 +110,7 @@ Username: <?= $username ?><br>
     <label for="is_tech">Is Tech:</label>
     <input type="checkbox" id="is_tech" name="is_tech" <?= $is_tech == 1 ? 'checked' : '' ?>><br>
 
-    <label for="is_field_tech">Is Field Tech:</label>
-    <input type="checkbox" id="is_field_tech" name="is_field_tech" <?= $is_field_tech == 1 ? 'checked' : '' ?>><br>
+
 
     <label for="is_loc_man">Is Location Manager:</label>
     <input type="checkbox" id="is_loc_man" name="is_loc_man" <?= $is_loc_man == 1 ? 'checked' : '' ?>><br>

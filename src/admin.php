@@ -78,7 +78,7 @@ $field_tech_query = <<<STR
     SELECT tickets.employee 
     FROM tickets 
     INNER JOIN users ON tickets.employee = users.username 
-    WHERE tickets.status NOT IN ('closed', 'resolved') AND users.is_field_tech = 1
+    WHERE tickets.status NOT IN ('closed', 'resolved') AND users.is_tech = 1
 STR;
 
 $field_tech_query_result = mysqli_query($database, $field_tech_query);

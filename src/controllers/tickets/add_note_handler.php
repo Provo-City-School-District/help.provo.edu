@@ -32,17 +32,22 @@ if (isset($_POST["visible_to_client"])) {
 
 
 $add_note_result = add_note_with_filters(
-    $ticket_id, $_POST['username'], 
-    $_POST['note'], $_POST['note_time'],
-    $visible_to_client, $date_override);
+    $ticket_id,
+    $_POST['username'],
+    $_POST['note'],
+    $_POST['note_time'],
+    $visible_to_client,
+    $date_override
+);
 
 if ($add_note_result) {
     $_SESSION['current_status'] = "Note added";
     $_SESSION['status_type'] = "success";
 } else {
     $_SESSION['current_status'] = "Failed to add note";
-    $_SESSION['status_type'] = "error"; 
+    $_SESSION['status_type'] = "error";
 }
+
 // Prepare the SQL statement to check for alerts on this ticket
 $alert_stmt = mysqli_prepare($database, "SELECT * FROM alerts WHERE message = ? AND ticket_id = ?");
 

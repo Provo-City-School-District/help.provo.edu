@@ -179,8 +179,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($old_ticket_data['due_date'] != $updatedDueDate) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $dueDateColumn, $old_ticket_data['due_date'], $updatedDueDate);
         mysqli_stmt_execute($log_stmt);
-        $due_message = "Past Due";
-        removeAlert($database, $due_message, $ticket_id);
+        removeAlert($database, $pastDueMessage, $ticket_id);
     }
     if ($old_ticket_data['status'] != $updatedStatus) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $statusColumn, $old_ticket_data['status'], $updatedStatus);
@@ -204,8 +203,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Check if the ticket has an alert about not being updated in last 48 hours and clear it since the ticket was just updated.
-    $two_day_message = "Ticket hasn't been updated in 48 hours";
-    removeAlert($database, $two_day_message, $ticket_id);
+    removeAlert($database, $alert48Message, $ticket_id);
 
     $msg = "Ticket updated successfully.";
     // After successfully updating the ticket, set a success message;

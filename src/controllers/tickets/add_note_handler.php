@@ -48,6 +48,12 @@ if ($add_note_result) {
     $_SESSION['status_type'] = "error";
 }
 
+// Update the last_updated field on the tickets table
+$update_stmt = mysqli_prepare($database, "UPDATE tickets SET last_updated = NOW() WHERE id = ?");
+mysqli_stmt_bind_param($update_stmt, "i", $ticket_id);
+mysqli_stmt_execute($update_stmt);
+mysqli_stmt_close($update_stmt);
+
 // Check if the ticket has an alert about not being updated in last 48 hours and clear it since the ticket was just updated.
 $message = "Ticket hasn't been updated in 48 hours";
 removeAlert($database, $message, $ticket_id);

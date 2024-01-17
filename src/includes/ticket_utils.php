@@ -115,3 +115,32 @@ function add_note_with_filters(
 
     return true;
 }
+
+
+
+//remove alerts from the database function that can be used on ticket updates and such.
+function removeAlert($database, $message, $ticket_id) {
+    // Prepare the SQL statement to check for alerts on this ticket
+    $alert_stmt = mysqli_prepare($database, "SELECT * FROM alerts WHERE message = ? AND ticket_id = ?");
+
+    // Bind the parameters
+    mysqli_stmt_bind_param($alert_stmt, "si", $message, $ticket_id);
+
+    // Execute the statement
+    mysqli_stmt_execute($alert_stmt);
+
+    // Get the result
+    $result = mysqli_stmt_get_result($alert_stmt);
+
+    // Check if the alert exists
+    if (mysqli_num_rows($result) > 0) {
+        // The alert exists, delete it
+        $delete_stmt = mysqli_prepare($database, "DELETE FROM alerts WHERE message = ? AND ticket_id = ?");
+        mysqli_stmt_bind_param($delete_stmt, "si", $message, $ticket_id);
+        mysqli_stmt_execute($delete_stmt);
+        mysqli_stmt_close($delete_stmt);
+    }
+
+    // Don't forget to close the statement
+    mysqli_stmt_close($alert_stmt);
+}

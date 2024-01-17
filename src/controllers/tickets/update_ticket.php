@@ -115,7 +115,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         bcc_emails = '$bcc_emails_clean',
         priority = '$updatedPriority',
         request_type_id = '$updatedRequestType',
-        parent_ticket = '$updatedParentTicket'
+        parent_ticket = '$updatedParentTicket',
+        last_updated = NOW()
         WHERE id = '$ticket_id'";
 
     // Execute the update queries

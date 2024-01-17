@@ -117,6 +117,9 @@ function add_note_with_filters(
 }
 
 
+// Messages for alerts
+$alert48Message = "Ticket hasn't been updated in 48 hours";
+$pastDueMessage = "Past Due";
 
 //remove alerts from the database function that can be used on ticket updates and such.
 function removeAlert($database, $message, $ticket_id) {

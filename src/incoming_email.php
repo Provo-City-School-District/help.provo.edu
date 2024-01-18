@@ -41,13 +41,19 @@ for ($i = 1; $i <= $msg_count; $i++) {
 
     // Parse ticket here
     $subject_split = explode(' ', $subject);
-    $subject_ticket_id = intval($subject_split[1]);
+
+    $subject_ticket_id = count($subject_split) > 1 ? intval($subject_split[1]) : 0;
     if (strtolower($subject_split[0]) != "ticket" || 
         $subject_ticket_id <= 0 ||
         count($subject_split) != 2)
     {
-        // create a ticket with their subject
-        // TODO
+        // Check if the user is in the local database. If the value isn't in failed, they are
+        if (!in_array($i, $failed_email_ids)) {
+            $res = create_ticket($sender_username, $subject, $message);
+            if (!$res) {
+                $failed_email_ids[] = $i;
+            }
+        }
     } else {
         // ticket syntax is valid, add a note on that ticket
         add_note_with_filters($subject_ticket_id, $sender_username, $message, 1, true);

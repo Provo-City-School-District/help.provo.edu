@@ -1,4 +1,5 @@
 <?php
+require_once("ticket_utils.php");
 // DB connection can fail if not included first, TODO fix maybe
 
 function email_if_valid(string $email)
@@ -116,6 +117,66 @@ function add_note_with_filters(
     return true;
 }
 
+// Returns true on success, false on failure
+function create_ticket(string $client, string $subject, string $content)
+{
+    global $database;
+
+    $client_clean = trim(htmlspecialchars($client));
+    $subject_clean = trim(htmlspecialchars($subject));
+    $content_clean = trim(htmlspecialchars($content));
+
+        // Create an SQL INSERT query
+    $insertQuery = "INSERT INTO tickets (location, room, name, description, created, last_updated, due_date, status, client,attachment_path,phone,cc_emails,bcc_emails,request_type_id,priority)
+                VALUES (NULL, NULL, ?, ?, ?, ?, ?, 'open', ?, '', '', '', '', 0, 10)";
+
+    // Prepare the SQL statement
+    $stmt = mysqli_prepare($database, $insertQuery);
+
+    if ($stmt === false) {
+        log_app(LOG_ERR, 'Error preparing insert query: ' . mysqli_error($database));
+        return false;
+    }
+
+    $priority = 10;
+
+    $created_time = date("Y-m-d H:i:s");
+    // Calculate the due date by adding the priority days to the created date
+    $created_date = new DateTime($created_time);
+    $due_date = clone $created_date;
+    $due_date->modify("+{$priority} weekdays");
+
+    // Check if the due date falls on a weekend or excluded date
+    while (isWeekend($due_date)) {
+        $due_date->modify("+1 day");
+    }
+    $count = hasExcludedDate($created_date->format('Y-m-d'), $due_date->format('Y-m-d'));
+    if ($count > 0) {
+        $due_date->modify("{$count} day");
+    }
+    // Format the due date as a string
+    $due_date = $due_date->format('Y-m-d');
+
+    mysqli_stmt_bind_param(
+        $stmt,
+        'ssssss',
+        $subject_clean,
+        $content_clean,
+        $created_time,
+        $created_time,
+        $due_date,
+        $client_clean,
+    );
+
+    // Execute the prepared statement
+    if (mysqli_stmt_execute($stmt)) {
+        log_app(LOG_INFO, "create_ticket success");
+        return true;
+    } else {
+        log_app(LOG_ERR, "create_ticket failure");
+        return false;
+    }
+}
 
 // Messages for alerts
 $alert48Message = "Ticket hasn't been updated in 48 hours";

@@ -12,6 +12,19 @@ function user_exists_locally(string $username)
     return mysqli_num_rows($result) > 0;
 }
 
+enum CreateLocalUserStatus
+{
+    case LDAPConnectFailed;
+    case LDAPBindFailed;
+    case LDAPSearchFailed;
+    case LDAPGetEntriesFailed;
+    case UsernameNotFound;
+    case InsertQueryFailed;
+    case UserAlreadyExists;
+    case Success;
+}
+
+// Returns CreateLocalUserStatus depending on error (or success)
 function create_user_in_local_db($username)
 {
     global $database;
@@ -25,27 +38,32 @@ function create_user_in_local_db($username)
     $ldap_conn = ldap_connect($ldap_host, $ldap_port);
     if (!$ldap_conn) {
         log_app(LOG_ERR, "Failed to create LDAP connection");
+        return CreateLocalUserStatus::LDAPConnectFailed;
     }
 
-    // anonymous bind
+    // Use our credentials to add it
     $ldap_bind = ldap_bind($ldap_conn, $ldap_user, $ldap_password);
     if (!$ldap_bind) {
         log_app(LOG_ERR, "LDAP bind failed.");
+        return CreateLocalUserStatus::LDAPBindFailed;
     }
 
     $search = "(&(objectCategory=person)(objectClass=user)(sAMAccountName=$username))";
     $ldap_search_result = ldap_search($ldap_conn, $ldap_dn, $search);
     if (!$ldap_search_result) {
         log_app(LOG_ERR, 'LDAP search failed.');
+        return CreateLocalUserStatus::LDAPSearchFailed;
     }
 
     $ldap_entries_result = ldap_get_entries($ldap_conn, $ldap_search_result);
     if (!$ldap_entries_result) {
         log_app(LOG_ERR, "LDAP get entries failed.");
+        return CreateLocalUserStatus::LDAPGetEntriesFailed;
     }
 
     if ($ldap_entries_result['count'] == 0) {
         log_app(LOG_ERR, "User '$username' was not found in LDAP");
+        return CreateLocalUserStatus::UsernameNotFound;
     }
 
     for ($i = 0; $i < $ldap_entries_result['count']; $i++) {
@@ -56,11 +74,17 @@ function create_user_in_local_db($username)
         $employee_id = $ldap_entries_result[$i]['employeeid'][0];
     }
 
+    if (user_exists_locally($username))
+        return CreateLocalUserStatus::UserAlreadyExists;
+
     $insert_query = "INSERT INTO users (username, email, lastname, firstname, ifasid) VALUES ('" . $username . "', '" . $email . "', '" . $lastname . "', '" . $firstname . "', '" . $employee_id . "')";
 
     $insert_result = mysqli_query($database, $insert_query);
     if (!$insert_result) {
         $current_mysqli_error = mysqli_error($database);
         log_app(LOG_ERR, "Insert query error: $current_mysqli_error");
+        return CreateLocalUserStatus::InsertQueryFailed;
     }
+
+    return CreateLocalUserStatus::Success;
 }

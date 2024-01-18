@@ -105,6 +105,7 @@ function add_note_with_filters(
     mysqli_stmt_bind_param($stmt, "issssis", $ticket_id_clean, $timestamp, $username_clean, $note_content_clean, $note_time_clean, 
         $visible_to_client_intval, $date_override);
     mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
 
     // Log the creation of the new note in the ticket_logs table
     $log_query = "INSERT INTO ticket_logs (ticket_id, user_id, field_name, old_value, new_value, created_at) VALUES (?, ?, ?, NULL, ?, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'))";
@@ -113,7 +114,7 @@ function add_note_with_filters(
     $notecolumn = "note";
     mysqli_stmt_bind_param($log_stmt, "isss", $ticket_id, $username, $notecolumn, $note_content_clean);
     mysqli_stmt_execute($log_stmt);
-
+    mysqli_stmt_close($log_stmt);
     return true;
 }
 
@@ -176,6 +177,8 @@ function create_ticket(string $client, string $subject, string $content)
         log_app(LOG_ERR, "create_ticket failure");
         return false;
     }
+
+    mysqli_stmt_close($stmt);
 }
 
 // Messages for alerts

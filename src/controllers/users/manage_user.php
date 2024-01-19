@@ -103,7 +103,7 @@ Username: <?= $username ?><br>
     <!-- Supervisor dropdown -->
     <label for="supervisor">Supervisor:</label>
     <select name="supervisor" id="supervisor">
-    <option value="" selected></option>
+        <option value="" selected></option>
         <?php
         // Loop through the supervisors and create an option for each one
         while ($supervisor = mysqli_fetch_assoc($supervisors_result)) {

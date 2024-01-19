@@ -65,7 +65,7 @@ $ticket_query = <<<STR
 SELECT *
 FROM tickets
 WHERE status NOT IN ('Closed', 'Resolved')
-AND client = '$username'
+AND employee = '$username'
 ORDER BY id ASC
 STR;
 

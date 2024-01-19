@@ -14,6 +14,8 @@ if (!isset($_GET['id'])) {
     die("User ID not set");
 }
 require_once('helpdbconnect.php');
+require_once("tickets_template.php");
+
 // Retrieve the user with the corresponding ID
 $user_id = $_GET['id'];
 $query = "SELECT * FROM users WHERE id = $user_id";
@@ -57,8 +59,20 @@ if (!$supervisors_result) {
 $location_query = "SELECT sitenumber, location_name FROM locations";
 $location_result = mysqli_query($database, $location_query);
 
-// Close the database connection
-mysqli_close($database);
+
+// SQL query for users Tickets
+$ticket_query = <<<STR
+SELECT *
+FROM tickets
+WHERE status NOT IN ('Closed', 'Resolved')
+AND client = '$username'
+ORDER BY id ASC
+STR;
+
+$ticket_result = mysqli_query($database, $ticket_query);
+$client_tickets = mysqli_fetch_all($ticket_result, MYSQLI_ASSOC);
+
+
 
 ?>
 <h1>Manage User: <?= ucwords(strtolower($firstname)) . ' ' . ucwords(strtolower($lastname)) ?></h1>
@@ -148,7 +162,17 @@ Username: <?= $username ?><br>
     <label for="can_delete_tickets">Can Delete Tickets:</label>
     <input type="checkbox" id="can_delete_tickets" name="can_delete_tickets" <?= $can_delete_tickets == 1 ? 'checked' : '' ?>><br>
 
-    <input type="submit" value="Update">
+    <input type="submit" value="Update User">
 </form>
+
+<h2>Tickets Assigned to <?= $username; ?></h2>
+
+<?php
+// display tickets that are assigned to the user.
+display_tickets_table($client_tickets, $database);
+
+// Close the database connection
+mysqli_close($database);
+?>
 
 <?php include("footer.php"); ?>

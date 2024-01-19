@@ -182,7 +182,14 @@ $admin_page = '/admin.php';
                     ?>
 
                         <li><a href="/tickets.php">Assigned Tickets (<?= $num_assigned_tickets ?>)</a></li>
-                        <li><a href="/controllers/tickets/flagged_tickets.php">Flagged Tickets (<?= $num_flagged_tickets ?>)</a></li>
+
+                        <?php
+                        if ($num_flagged_tickets != 0) {
+                        ?>
+                            <li><a href="/controllers/tickets/flagged_tickets.php">Flagged Tickets (<?= $num_flagged_tickets ?>)</a></li>
+                        <?php
+                        }
+                        ?>
                         <li><a href="/controllers/tickets/recent_tickets.php">Recent Tickets</a></li>
                         <li><a href="/controllers/tickets/search_tickets.php">Search Tickets</a></li>
                     <?php

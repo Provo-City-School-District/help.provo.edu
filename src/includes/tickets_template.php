@@ -18,9 +18,20 @@ function display_tickets_table($tickets, $database)
 
     foreach ($tickets as $ticket) {
         // Query the sites table to get the location name
-        $location_query = "SELECT location_name FROM locations WHERE sitenumber = " . $ticket["location"];
-        $location_result = mysqli_query($database, $location_query);
-        $location_name = mysqli_fetch_assoc($location_result)['location_name'];
+        $location_query = "SELECT location_name FROM locations WHERE sitenumber = ?";
+        $loc_stmt = mysqli_prepare($database, $location_query);
+
+        if ($loc_stmt) {
+            mysqli_stmt_bind_param($loc_stmt, "s", $ticket["location"]);
+            mysqli_stmt_execute($loc_stmt);
+            mysqli_stmt_bind_result($loc_stmt, $location_name);
+
+            // Fetch the result
+            mysqli_stmt_fetch($loc_stmt);
+
+            // Use $location_name as needed
+            mysqli_stmt_close($loc_stmt);
+        }
 
         if ($ticket['request_type_id'] === '0') {
             $request_type_name = "Other";

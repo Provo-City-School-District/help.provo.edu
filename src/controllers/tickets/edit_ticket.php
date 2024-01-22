@@ -385,7 +385,14 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
             <label for="description" class="heading2">Request Detail:</label>
             <div class="ticket-description">
                 <?= html_entity_decode($ticket['description']) ?>
-                <button id="edit-description-button" type="button">Edit Request Detail</button>
+                <?php
+                    if ($_SESSION['permissions']['is_admin'] == 1) {
+                        ?>
+                            <button id="edit-description-button" type="button">Edit Request Detail</button>
+                        <?php
+                    }
+                ?>
+                
             </div>
 
             <div id="edit-description-form" style="display: none;">

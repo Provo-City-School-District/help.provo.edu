@@ -37,7 +37,7 @@ function send_email(
 
         $mailer->Host = 'smtp.provo.edu';
         $mailer->Port = 25;
-        $mailer->setFrom('donotreply@provo.edu', 'Do Not Reply');
+        $mailer->setFrom('donotreply@provo.edu', 'help.provo.edu');
         $mailer->addAddress($recipient);
         $mailer->isHTML(false); // Set to true for HTML emails
 

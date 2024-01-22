@@ -182,6 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $_SESSION['current_status'] = $msg;
     $_SESSION['status_type'] = "success";
+            $ticket_body = "Ticket " . $ticket_id . " has been updated \n\n" . $changesMessage;
 
     // Redirect to the same page after successful update
     header('Location: edit_ticket.php?id=' . $ticket_id);

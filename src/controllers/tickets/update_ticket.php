@@ -123,6 +123,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($old_ticket_data['client'] != $updatedClient) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $clientColumn, $old_ticket_data['client'], $updatedClient);
         mysqli_stmt_execute($log_stmt);
+        $changesMessage .= "<li>Changed Client from " . $old_ticket_data['client'] . " to " . $updatedClient . "</li>";
+        $old_client = email_address_from_username($old_ticket_data['client']);
+        array_push($valid_cc_emails, $old_client);
     }
     if ($old_ticket_data['employee'] != $updatedEmployee) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $employeeColumn, $old_ticket_data['employee'], $updatedEmployee);

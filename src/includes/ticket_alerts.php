@@ -38,11 +38,24 @@ function getDaysUntilDueDate($dueDateStr)
     return $daysUntilDueDate;
 }
 
-// Get the current time minus 48 hours
-$timestampTwoDaysAgo = date('Y-m-d H:i:s', strtotime('-48 hours'));
+// Calculate for 48 hours ago, not counting weekends hours
+$twoDaysAgo = new DateTime();
+// Set counter for hours back
+$hoursBack = 48;
+// Parse 48 hours back since last update
+while($hoursBack > 0){
+    $twoDaysAgo->modify('-1 hour');
+    $dayOfWeek = $twoDaysAgo->format('w');
+ 
+    // If the day of the week is not a weekend, subtract an hour
+    // 0 = Sunday, 6 = Saturday
+    if($dayOfWeek > 0 && $dayOfWeek < 6){
+        $hoursBack--;
+    }
+}
 
-// Convert the current time minus 48 hours to a DateTime object
-$twoDaysAgo = new DateTime($timestampTwoDaysAgo);
+
+
 
 // Prepare a SQL statement to select tickets
 $selectTicketsQuery = "SELECT id, employee, priority, due_date,last_updated FROM tickets WHERE status NOT IN ('closed', 'resolved')";

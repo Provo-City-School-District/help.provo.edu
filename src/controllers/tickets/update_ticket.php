@@ -197,7 +197,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($updatedStatus == "resolved") {
             $ticket_body = "Ticket " . $ticket_id . " has been resolved.";
         } else {
-            $ticket_body = "Ticket " . $ticket_id . " has been updated \n\n" . $changesMessage;
+            $ticket_body = "Ticket " . $ticket_id . " has been updated <br> Changes Made: <ul>" . $changesMessage . "</ul>";
         }
 
         $email_res = send_email($client_email, $ticket_subject, $ticket_body, $valid_cc_emails, $valid_bcc_emails);

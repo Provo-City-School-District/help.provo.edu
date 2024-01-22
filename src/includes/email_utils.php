@@ -39,7 +39,7 @@ function send_email(
         $mailer->Port = 25;
         $mailer->setFrom('donotreply@provo.edu', 'help.provo.edu');
         $mailer->addAddress($recipient);
-        $mailer->isHTML(false); // Set to true for HTML emails
+        $mailer->isHTML(true); // Set to true for HTML emails
 
         // Set the actual content of the email
         $mailer->Subject = $subject;

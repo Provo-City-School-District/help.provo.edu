@@ -125,6 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         mysqli_stmt_execute($log_stmt);
         $changesMessage .= "<li>Changed Client from " . $old_ticket_data['client'] . " to " . $updatedClient . "</li>";
         $old_client = email_address_from_username($old_ticket_data['client']);
+        //add old client to cc emails array so that they get an email about the ticket getting client changed
         array_push($valid_cc_emails, $old_client);
     }
     if ($old_ticket_data['employee'] != $updatedEmployee) {

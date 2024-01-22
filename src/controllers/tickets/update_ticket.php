@@ -25,6 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $updatedRequestType = trim(htmlspecialchars($_POST['request_type']));
     $updatedPriority = trim(htmlspecialchars($_POST['priority']));
     $updatedParentTicket = intval(trim(htmlspecialchars($_POST['parent_ticket'])));
+    $changesMessage = "";
 
     $valid_cc_emails = [];
     if (trim($updatedCCEmails) !== "") {
@@ -52,41 +53,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    $sendEmails = isset($_POST['send_emails']) && ($_POST['send_emails'] == "send_emails");
-    if ($sendEmails) {
-        $client_email = email_address_from_username($updatedClient);
-        $ticket_subject = "Ticket " . $ticket_id;
-
-        $ticket_body = "";
-        if ($updatedStatus == "resolved") {
-            $ticket_body = "Ticket " . $ticket_id . " has been resolved.";
-        } else {
-            $ticket_body = "Ticket " . $ticket_id . " has been updated.";
-        }
-
-        $email_res = send_email($client_email, $ticket_subject, $ticket_body, $valid_cc_emails, $valid_bcc_emails);
-        if (!$email_res) {
-            $error = 'Error sending email to client, CC and BCC';
-            $formData = http_build_query($_POST);
-            $_SESSION['current_status'] = $error;
-            $_SESSION['status_type'] = 'error';
-            header("Location: edit_ticket.php?$formData&id=$ticket_id");
-            exit;
-        }
-    } else if ($updatedStatus == "resolved") {
-        $client_email = email_address_from_username($updatedClient);
-        $ticket_subject = "Ticket " . $ticket_id;
-        $ticket_body = "Ticket " . $ticket_id . " has been resolved.";
-        $email_res = send_email($client_email, $ticket_subject, $ticket_body);
-        if (!$email_res) {
-            $error = 'Error sending email to client';
-            $formData = http_build_query($_POST);
-            $_SESSION['current_status'] = $error;
-            $_SESSION['status_type'] = 'error';
-            header("Location: edit_ticket.php?$formData&id=$ticket_id");
-            exit;
-        }
-    }
 
     // Get the old ticket data
     $old_ticket_query = "SELECT * FROM tickets WHERE id = ?";
@@ -146,15 +112,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($old_ticket_data['priority'] != $updatedPriority) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $priorityColumn, $old_ticket_data['priority'], $updatedPriority);
         mysqli_stmt_execute($log_stmt);
+        $changesMessage .= "<li>Changed Priority from " . $priorityTypes[$old_ticket_data['priority']] . " to " . $priorityTypes[$updatedPriority] . "</li>";
     }
 
     if ($old_ticket_data['request_type_id'] != $updatedRequestType) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $requestTypeColumn, $old_ticket_data['request_type_id'], $updatedRequestType);
         mysqli_stmt_execute($log_stmt);
+        $changesMessage .= "<li>Changed Request Type from " . $old_ticket_data['request_type_id'] . " to " . $updatedRequestType . "</li>";
     }
     if ($old_ticket_data['client'] != $updatedClient) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $clientColumn, $old_ticket_data['client'], $updatedClient);
         mysqli_stmt_execute($log_stmt);
+        $changesMessage .= "<li>Changed Client from " . $old_ticket_data['client'] . " to " . $updatedClient . "</li>";
+        $old_client = email_address_from_username($old_ticket_data['client']);
+        //add old client to cc emails array so that they get an email about the ticket getting client changed
+        array_push($valid_cc_emails, $old_client);
     }
     if ($old_ticket_data['employee'] != $updatedEmployee) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $employeeColumn, $old_ticket_data['employee'], $updatedEmployee);
@@ -215,6 +187,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $_SESSION['current_status'] = $msg;
     $_SESSION['status_type'] = "success";
+
+
+    // Send emails if the user checked the send_emails checkbox
+    $sendEmails = isset($_POST['send_emails']) && ($_POST['send_emails'] == "send_emails");
+    if ($sendEmails) {
+        $client_email = email_address_from_username($updatedClient);
+        $ticket_subject = "Ticket " . $ticket_id . " (Updated)";
+
+        $ticket_body = "";
+        if ($updatedStatus == "resolved") {
+            $ticket_body = "Ticket " . $ticket_id . " has been resolved.";
+        } else {
+            $ticket_body = "Ticket " . $ticket_id . " has been updated <br> Changes Made: <ul>" . $changesMessage . "</ul>";
+        }
+
+        $email_res = send_email($client_email, $ticket_subject, $ticket_body, $valid_cc_emails, $valid_bcc_emails);
+        if (!$email_res) {
+            $error = 'Error sending email to client, CC and BCC';
+            $formData = http_build_query($_POST);
+            $_SESSION['current_status'] = $error;
+            $_SESSION['status_type'] = 'error';
+            header("Location: edit_ticket.php?$formData&id=$ticket_id");
+            exit;
+        }
+    } else if ($updatedStatus == "resolved") {
+        $client_email = email_address_from_username($updatedClient);
+        $ticket_subject = "Ticket " . $ticket_id  . " (Resolved)";
+        $ticket_body = "Ticket " . $ticket_id . " has been resolved.";
+        $email_res = send_email($client_email, $ticket_subject, $ticket_body);
+        if (!$email_res) {
+            $error = 'Error sending email to client';
+            $formData = http_build_query($_POST);
+            $_SESSION['current_status'] = $error;
+            $_SESSION['status_type'] = 'error';
+            header("Location: edit_ticket.php?$formData&id=$ticket_id");
+            exit;
+        }
+    }
 
     // Redirect to the same page after successful update
     header('Location: edit_ticket.php?id=' . $ticket_id);

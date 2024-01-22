@@ -182,7 +182,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $_SESSION['current_status'] = $msg;
     $_SESSION['status_type'] = "success";
+
+
+
+
+    //======================================================================================================= Working On ========================================
+    // Send emails if the user checked the send_emails checkbox
+    $sendEmails = isset($_POST['send_emails']) && ($_POST['send_emails'] == "send_emails");
+    if ($sendEmails) {
+        $client_email = email_address_from_username($updatedClient);
+        $ticket_subject = "Ticket " . $ticket_id . " (Updated)";
+
+        $ticket_body = "";
+        if ($updatedStatus == "resolved") {
+            $ticket_body = "Ticket " . $ticket_id . " has been resolved.";
+        } else {
             $ticket_body = "Ticket " . $ticket_id . " has been updated \n\n" . $changesMessage;
+        }
+
+        $email_res = send_email($client_email, $ticket_subject, $ticket_body, $valid_cc_emails, $valid_bcc_emails);
+        if (!$email_res) {
+            $error = 'Error sending email to client, CC and BCC';
+            $formData = http_build_query($_POST);
+            $_SESSION['current_status'] = $error;
+            $_SESSION['status_type'] = 'error';
+            header("Location: edit_ticket.php?$formData&id=$ticket_id");
+            exit;
+        }
+    } else if ($updatedStatus == "resolved") {
+        $client_email = email_address_from_username($updatedClient);
+        $ticket_subject = "Ticket " . $ticket_id  . " (Resolved)";
+        $ticket_body = "Ticket " . $ticket_id . " has been resolved.";
+        $email_res = send_email($client_email, $ticket_subject, $ticket_body);
+        if (!$email_res) {
+            $error = 'Error sending email to client';
+            $formData = http_build_query($_POST);
+            $_SESSION['current_status'] = $error;
+            $_SESSION['status_type'] = 'error';
+            header("Location: edit_ticket.php?$formData&id=$ticket_id");
+            exit;
+        }
+    }
+
+
+
+
+
+    //======================================================================================================= Working On /End ========================================
+
+
 
     // Redirect to the same page after successful update
     header('Location: edit_ticket.php?id=' . $ticket_id);

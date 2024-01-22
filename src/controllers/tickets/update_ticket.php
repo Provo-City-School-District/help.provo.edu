@@ -188,9 +188,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $_SESSION['status_type'] = "success";
 
 
-
-
-    //======================================================================================================= Working On ========================================
     // Send emails if the user checked the send_emails checkbox
     $sendEmails = isset($_POST['send_emails']) && ($_POST['send_emails'] == "send_emails");
     if ($sendEmails) {
@@ -227,14 +224,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
     }
-
-
-
-
-
-    //======================================================================================================= Working On /End ========================================
-
-
 
     // Redirect to the same page after successful update
     header('Location: edit_ticket.php?id=' . $ticket_id);

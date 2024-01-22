@@ -25,6 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $updatedRequestType = trim(htmlspecialchars($_POST['request_type']));
     $updatedPriority = trim(htmlspecialchars($_POST['priority']));
     $updatedParentTicket = intval(trim(htmlspecialchars($_POST['parent_ticket'])));
+    $changesMessage = "";
 
     $valid_cc_emails = [];
     if (trim($updatedCCEmails) !== "") {
@@ -52,41 +53,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    $sendEmails = isset($_POST['send_emails']) && ($_POST['send_emails'] == "send_emails");
-    if ($sendEmails) {
-        $client_email = email_address_from_username($updatedClient);
-        $ticket_subject = "Ticket " . $ticket_id;
-
-        $ticket_body = "";
-        if ($updatedStatus == "resolved") {
-            $ticket_body = "Ticket " . $ticket_id . " has been resolved.";
-        } else {
-            $ticket_body = "Ticket " . $ticket_id . " has been updated.";
-        }
-
-        $email_res = send_email($client_email, $ticket_subject, $ticket_body, $valid_cc_emails, $valid_bcc_emails);
-        if (!$email_res) {
-            $error = 'Error sending email to client, CC and BCC';
-            $formData = http_build_query($_POST);
-            $_SESSION['current_status'] = $error;
-            $_SESSION['status_type'] = 'error';
-            header("Location: edit_ticket.php?$formData&id=$ticket_id");
-            exit;
-        }
-    } else if ($updatedStatus == "resolved") {
-        $client_email = email_address_from_username($updatedClient);
-        $ticket_subject = "Ticket " . $ticket_id;
-        $ticket_body = "Ticket " . $ticket_id . " has been resolved.";
-        $email_res = send_email($client_email, $ticket_subject, $ticket_body);
-        if (!$email_res) {
-            $error = 'Error sending email to client';
-            $formData = http_build_query($_POST);
-            $_SESSION['current_status'] = $error;
-            $_SESSION['status_type'] = 'error';
-            header("Location: edit_ticket.php?$formData&id=$ticket_id");
-            exit;
-        }
-    }
 
     // Get the old ticket data
     $old_ticket_query = "SELECT * FROM tickets WHERE id = ?";

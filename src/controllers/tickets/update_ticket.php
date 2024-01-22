@@ -112,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($old_ticket_data['priority'] != $updatedPriority) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $priorityColumn, $old_ticket_data['priority'], $updatedPriority);
         mysqli_stmt_execute($log_stmt);
-        $changesMessage .= ' changed Priority from ' . $priorityTypes[$old_ticket_data['priority']] . ' to ' . $priorityTypes[$updatedPriority] . "\n\n";
+        $changesMessage .= "<li>changed Priority from " . $priorityTypes[$old_ticket_data['priority']] . " to " . $priorityTypes[$updatedPriority] . "</li>";
     }
 
     if ($old_ticket_data['request_type_id'] != $updatedRequestType) {

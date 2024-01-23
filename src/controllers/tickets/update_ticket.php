@@ -134,8 +134,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $employeeColumn, $old_ticket_data['employee'], $updatedEmployee);
         mysqli_stmt_execute($log_stmt);
         $old_assigned = email_address_from_username($old_ticket_data['employee']);
+        $new_assigned = email_address_from_username($updatedEmployee);
         $changesMessage .= "<li>Changed Employee from " . $old_ticket_data['employee'] . " to " . $updatedEmployee . "</li>";
+        //force send email to both old and new assigned employee
         array_push($valid_cc_emails, $old_assigned);
+        array_push($valid_cc_emails, $new_assigned);
         $forceEmails = true;
     }
     if ($old_ticket_data['location'] != $updatedLocation) {

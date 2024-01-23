@@ -26,6 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $updatedPriority = trim(htmlspecialchars($_POST['priority']));
     $updatedParentTicket = intval(trim(htmlspecialchars($_POST['parent_ticket'])));
     $changesMessage = "";
+    $forceEmails = false;
 
     $valid_cc_emails = [];
     if (trim($updatedCCEmails) !== "") {
@@ -131,6 +132,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($old_ticket_data['employee'] != $updatedEmployee) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $employeeColumn, $old_ticket_data['employee'], $updatedEmployee);
         mysqli_stmt_execute($log_stmt);
+        $old_assigned = email_address_from_username($old_ticket_data['employee']);
+        $changesMessage .= "<li>Changed Employee from " . $old_ticket_data['employee'] . " to " . $updatedEmployee . "</li>";
+        array_push($valid_cc_emails, $old_assigned);
+        $forceEmails = true;
     }
     if ($old_ticket_data['location'] != $updatedLocation) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $locationColumn, $old_ticket_data['location'], $updatedLocation);
@@ -178,6 +183,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     removeAlert($database, $alert48Message, $ticket_id);
 
     $msg = "Ticket updated successfully.";
+
+
+    $_SESSION['current_status'] = $msg;
+    $_SESSION['status_type'] = "success";
+
+
+    // Send emails if the user checked the send_emails checkbox
+    $sendEmails = isset($_POST['send_emails']) && ($_POST['send_emails'] == "send_emails") || $forceEmails;
+
     // After successfully updating the ticket, set a success message;
     if ($sendEmails) {
         $msg = "Ticket updated successfully. An email was sent to the client, CC and BCC emails.";
@@ -185,12 +199,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $msg = "Ticket updated successfully. An email was sent to the client.";
     }
 
-    $_SESSION['current_status'] = $msg;
-    $_SESSION['status_type'] = "success";
-
-
-    // Send emails if the user checked the send_emails checkbox
-    $sendEmails = isset($_POST['send_emails']) && ($_POST['send_emails'] == "send_emails");
     if ($sendEmails) {
         $client_email = email_address_from_username($updatedClient);
         $ticket_subject = "Ticket " . $ticket_id . " (Updated)";

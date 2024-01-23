@@ -204,8 +204,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $msg = "Ticket updated successfully. An email was sent to the client.";
     }
 
-    if ($sendEmails) {
-        $client_email = email_address_from_username($updatedClient);
+        $client_email = email_address_from_username($updatedClient).",".email_address_from_username($updatedEmployee);
         $ticket_subject = "Ticket " . $ticket_id . " (Updated)";
 
         $ticket_body = "";

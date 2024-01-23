@@ -38,7 +38,13 @@ function send_email(
         $mailer->Host = 'smtp.provo.edu';
         $mailer->Port = 25;
         $mailer->setFrom('donotreply@provo.edu', 'help.provo.edu');
-        $mailer->addAddress($recipient);
+       
+       // handle multiple recipients
+        $rec_emails = explode(",", $recipient);
+        foreach ($rec_emails as $rec_email) {
+            $mailer->addAddress($rec_email);
+        }
+        
         $mailer->isHTML(true); // Set to true for HTML emails
 
         // Set the actual content of the email
@@ -69,4 +75,5 @@ function send_email(
 
     return true;
 }
+//map for email use
 $priorityTypes = [1 => "Critical",3 => "Urgent", 5 => "High",10 => "Standard",15 => "Client Response",30 => "Project",60 => "Meeting Support"];

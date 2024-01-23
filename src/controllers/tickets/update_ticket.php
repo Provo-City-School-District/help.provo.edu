@@ -187,23 +187,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Check if the ticket has an alert about not being updated in last 48 hours and clear it since the ticket was just updated.
     removeAlert($database, $alert48Message, $ticket_id);
 
-    $msg = "Ticket updated successfully.";
-
-
-    $_SESSION['current_status'] = $msg;
-    $_SESSION['status_type'] = "success";
-
-
     // Send emails if the user checked the send_emails checkbox
-    $sendEmails = isset($_POST['send_emails']) && ($_POST['send_emails'] == "send_emails") || $forceEmails;
+    $sendEmails = isset($_POST['send_emails']) && ($_POST['send_emails'] == "send_emails");
 
     // After successfully updating the ticket, set a success message;
+    $msg = "Ticket updated successfully.";
     if ($sendEmails) {
         $msg = "Ticket updated successfully. An email was sent to the client, CC and BCC emails.";
     } else if ($updatedStatus == "resolved") {
         $msg = "Ticket updated successfully. An email was sent to the client.";
     }
 
+    $_SESSION['current_status'] = $msg;
+    $_SESSION['status_type'] = "success";
+
+    if ($sendEmails || $forceEmails) {
         $client_email = email_address_from_username($updatedClient).",".email_address_from_username($updatedEmployee);
         $ticket_subject = "Ticket " . $ticket_id . " (Updated)";
 

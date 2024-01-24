@@ -180,6 +180,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($old_ticket_data['cc_emails'] != $updatedCCEmails) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $ccEmailsColumn, $old_ticket_data['cc_emails'], $updatedCCEmails);
         mysqli_stmt_execute($log_stmt);
+        if ($old_ticket_data['cc_emails'] == "") {
+            $changesMessage .= "<li>Added CC Emails " . $updatedCCEmails . "</li>";
+        } else {
+            $changesMessage .= "<li>Changed CC Emails from " . $old_ticket_data['cc_emails'] . " to " . $updatedCCEmails . "</li>";
+        }
     }
     if ($old_ticket_data['bcc_emails'] != $updatedBCCEmails) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $bccEmailsColumn, $old_ticket_data['bcc_emails'], $updatedBCCEmails);

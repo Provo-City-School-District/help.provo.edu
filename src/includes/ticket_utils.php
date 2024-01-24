@@ -211,6 +211,7 @@ function removeAlert($database, $message, $ticket_id) {
     // Don't forget to close the statement
     mysqli_stmt_close($alert_stmt);
 }
+
 function get_ticket_notes($ticket_id, $limit) {
     global $database;
 

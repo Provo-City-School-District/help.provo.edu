@@ -233,14 +233,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $msg = "Ticket updated successfully. An email was sent to the client.";
         $client_email = email_address_from_username($updatedClient) . "," . email_address_from_username($updatedEmployee);
         $ticket_subject = "Ticket " . $ticket_id  . " (Resolved)";
+
         // Get the last 3 notes for the ticket
         $notes = get_ticket_notes($ticket_id, 3);
         $notesMessage = "";
         foreach ($notes as $note) {
             $notesMessage .= "<li>" . $note['note'] . "</li>";
         }
+
+        $ticket_body = <<<STR
+        Ticket $ticket_id has been resolved. Changes Made: 
+        <ul>$changesMessage</ul>
         <p><strong>Recent Notes:</strong></p>
         <ul>$notesMessage</ul>
+        <p>Has your Issue been Resolved? Yes | No.</p>
+        <p>You have 10 days to re-open this ticket if your issue has not been resolved.</p>
+        STR;
+
         $email_res = send_email($client_email, $ticket_subject, $ticket_body);
 
         if (!$email_res) {
@@ -252,7 +261,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
     }
-
     $_SESSION['current_status'] = $msg;
     $_SESSION['status_type'] = "success";
 

@@ -216,15 +216,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $msg = "Ticket updated successfully. An email was sent to the client, CC and BCC emails.";
         $client_email = email_address_from_username($updatedClient) . "," . email_address_from_username($updatedEmployee);
         $ticket_subject = "Ticket " . $ticket_id . " (Updated)";
-
-        $ticket_body = "";
-        if ($updatedStatus == "resolved") {
-            $ticket_body = "Ticket " . $ticket_id . " has been resolved.";
-        } else {
             $ticket_body = "Ticket " . $ticket_id . " has been updated <br> Changes Made: <ul>" . $changesMessage . "</ul>";
-        }
-
         $email_res = send_email($client_email, $ticket_subject, $ticket_body, $valid_cc_emails, $valid_bcc_emails);
+
         if (!$email_res) {
             $error = 'Error sending email to client, CC and BCC';
             $formData = http_build_query($_POST);
@@ -234,13 +228,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
     } else if ($updatedStatus == "resolved") {
+
         //message for gui to display
         $msg = "Ticket updated successfully. An email was sent to the client.";
-
-        $client_email = email_address_from_username($updatedClient);
+        $client_email = email_address_from_username($updatedClient) . "," . email_address_from_username($updatedEmployee);
         $ticket_subject = "Ticket " . $ticket_id  . " (Resolved)";
         $ticket_body = "Ticket " . $ticket_id . " has been resolved.";
         $email_res = send_email($client_email, $ticket_subject, $ticket_body);
+
         if (!$email_res) {
             $error = 'Error sending email to client';
             $formData = http_build_query($_POST);

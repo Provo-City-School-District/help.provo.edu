@@ -215,14 +215,14 @@ function removeAlert($database, $message, $ticket_id) {
 function get_ticket_notes($ticket_id, $limit) {
     global $database;
 
-    $stmt = $database->prepare("SELECT * FROM notes WHERE linked_id = ? ORDER BY created DESC LIMIT ?");
-    $stmt->bind_param("ii", $ticket_id, $limit);
-    $stmt->execute();
+    $note_stmt = $database->prepare("SELECT * FROM notes WHERE linked_id = ? ORDER BY created DESC LIMIT ?");
+    $note_stmt->bind_param("ii", $ticket_id, $limit);
+    $note_stmt->execute();
 
-    $result = $stmt->get_result();
+    $result = $note_stmt->get_result();
     $notes = $result->fetch_all(MYSQLI_ASSOC);
 
-    $stmt->close();
+    $note_stmt->close();
     $database->close();
 
     return $notes;

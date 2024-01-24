@@ -207,8 +207,6 @@ function removeAlert($database, $message, $ticket_id) {
         mysqli_stmt_execute($delete_stmt);
         mysqli_stmt_close($delete_stmt);
     }
-
-    // Don't forget to close the statement
     mysqli_stmt_close($alert_stmt);
 }
 

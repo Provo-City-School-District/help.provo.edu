@@ -189,6 +189,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($old_ticket_data['bcc_emails'] != $updatedBCCEmails) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $bccEmailsColumn, $old_ticket_data['bcc_emails'], $updatedBCCEmails);
         mysqli_stmt_execute($log_stmt);
+        if($old_ticket_data['bcc_emails']) {
+            $changesMessage .= "<li>Added BCC Emails " . $updatedBCCEmails ."</li>";
+        } else {
+            $changesMessage .= "<li>Changed BCC Emails from " . $old_ticket_data['bcc_emails'] . " to " . $updatedBCCEmails . "</li>";
+        }
     }
     if ($old_ticket_data['parent_ticket'] != $updatedParentTicket) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $parentTicketColumn, $old_ticket_data['parent_ticket'], $updatedParentTicket);

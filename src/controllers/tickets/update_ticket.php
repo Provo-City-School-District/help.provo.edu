@@ -192,17 +192,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // After successfully updating the ticket, set a success message;
     $msg = "Ticket updated successfully.";
-    if ($sendEmails) {
-        $msg = "Ticket updated successfully. An email was sent to the client, CC and BCC emails.";
-    } else if ($updatedStatus == "resolved") {
-        $msg = "Ticket updated successfully. An email was sent to the client.";
-    }
 
-    $_SESSION['current_status'] = $msg;
-    $_SESSION['status_type'] = "success";
 
     if ($sendEmails || $forceEmails) {
-        $client_email = email_address_from_username($updatedClient).",".email_address_from_username($updatedEmployee);
+        // message for gui to display
+        $msg = "Ticket updated successfully. An email was sent to the client, CC and BCC emails.";
+        $client_email = email_address_from_username($updatedClient) . "," . email_address_from_username($updatedEmployee);
         $ticket_subject = "Ticket " . $ticket_id . " (Updated)";
 
         $ticket_body = "";
@@ -222,6 +217,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
     } else if ($updatedStatus == "resolved") {
+        //message for gui to display
+        $msg = "Ticket updated successfully. An email was sent to the client.";
+
         $client_email = email_address_from_username($updatedClient);
         $ticket_subject = "Ticket " . $ticket_id  . " (Resolved)";
         $ticket_body = "Ticket " . $ticket_id . " has been resolved.";
@@ -235,6 +233,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
     }
+
+    $_SESSION['current_status'] = $msg;
+    $_SESSION['status_type'] = "success";
 
     // Redirect to the same page after successful update
     header('Location: edit_ticket.php?id=' . $ticket_id);

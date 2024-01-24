@@ -149,6 +149,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($old_ticket_data['room'] != $updatedRoom) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $roomColumn, $old_ticket_data['room'], $updatedRoom);
         mysqli_stmt_execute($log_stmt);
+        $changesMessage .= "<li>Changed Room from " . $old_ticket_data['room'] . " to " . $updatedRoom . "</li>";
     }
     if ($old_ticket_data['name'] != $updatedName) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $nameColumn, $old_ticket_data['name'], $updatedName);

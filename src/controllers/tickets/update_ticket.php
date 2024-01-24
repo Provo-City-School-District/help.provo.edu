@@ -158,6 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($old_ticket_data['description'] != $updatedDescription) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $descriptionColumn, $old_ticket_data['description'], $updatedDescription);
         mysqli_stmt_execute($log_stmt);
+        $changesMessage .= "<li>Changed Description from " . $old_ticket_data['description'] . " to " . $updatedDescription . "</li>";
     }
     if ($old_ticket_data['due_date'] != $updatedDueDate) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $dueDateColumn, $old_ticket_data['due_date'], $updatedDueDate);

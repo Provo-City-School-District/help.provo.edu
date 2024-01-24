@@ -210,13 +210,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // After successfully updating the ticket, set a success message;
     $msg = "Ticket updated successfully.";
 
+    // Get the last 3 notes for the ticket
+    $notes = get_ticket_notes($ticket_id, 3);
+    $notesMessage = "";
+    foreach ($notes as $note) {
+        $notesMessage .= "<li>" . $note['note'] . "</li>";
+    }
 
     if ($sendEmails || $forceEmails) {
         // message for gui to display
         $msg = "Ticket updated successfully. An email was sent to the client, CC and BCC emails.";
         $client_email = email_address_from_username($updatedClient) . "," . email_address_from_username($updatedEmployee);
         $ticket_subject = "Ticket " . $ticket_id . " (Updated)";
-        $ticket_body = "Ticket " . $ticket_id . " has been updated <br> Changes Made: <ul>" . $changesMessage . "</ul>";
+
+        // $ticket_body = "Ticket " . $ticket_id . " has been updated <br> Changes Made: <ul>" . $changesMessage . "</ul>";
+        $ticket_body = <<<STR
+        Ticket " . $ticket_id . " has been updated
+        Changes Made: 
+        <ul>" . $changesMessage . "</ul>
+        <p><strong>Recent Notes:</strong></p>
+        <ul>$notesMessage</ul>
+        STR;
+
         $email_res = send_email($client_email, $ticket_subject, $ticket_body, $valid_cc_emails, $valid_bcc_emails);
 
         if (!$email_res) {
@@ -233,13 +248,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $msg = "Ticket updated successfully. An email was sent to the client.";
         $client_email = email_address_from_username($updatedClient) . "," . email_address_from_username($updatedEmployee);
         $ticket_subject = "Ticket " . $ticket_id  . " (Resolved)";
-
-        // Get the last 3 notes for the ticket
-        $notes = get_ticket_notes($ticket_id, 3);
-        $notesMessage = "";
-        foreach ($notes as $note) {
-            $notesMessage .= "<li>" . $note['note'] . "</li>";
-        }
 
         $ticket_body = <<<STR
         Ticket $ticket_id has been resolved. Changes Made: 

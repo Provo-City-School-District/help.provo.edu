@@ -165,6 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $dueDateColumn, $old_ticket_data['due_date'], $updatedDueDate);
         mysqli_stmt_execute($log_stmt);
         removeAlert($database, $pastDueMessage, $ticket_id);
+        $changesMessage .= "<li>Changed Due Date from " . $old_ticket_data['due_date'] . " to " . $updatedDueDate . "</li>";
     }
     if ($old_ticket_data['status'] != $updatedStatus) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $statusColumn, $old_ticket_data['status'], $updatedStatus);

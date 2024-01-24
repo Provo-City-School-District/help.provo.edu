@@ -188,6 +188,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($old_ticket_data['parent_ticket'] != $updatedParentTicket) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $parentTicketColumn, $old_ticket_data['parent_ticket'], $updatedParentTicket);
         mysqli_stmt_execute($log_stmt);
+        $changesMessage .= "<li>Changed Parent Ticket from " . $old_ticket_data['parent_ticket'] . " to " . $updatedParentTicket . "</li>";
     }
 
     // Check if the ticket has an alert about not being updated in last 48 hours and clear it since the ticket was just updated.

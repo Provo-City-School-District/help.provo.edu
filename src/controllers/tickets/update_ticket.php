@@ -233,7 +233,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $msg = "Ticket updated successfully. An email was sent to the client.";
         $client_email = email_address_from_username($updatedClient) . "," . email_address_from_username($updatedEmployee);
         $ticket_subject = "Ticket " . $ticket_id  . " (Resolved)";
-        $ticket_body = "Ticket " . $ticket_id . " has been resolved.";
+        // Get the last 3 notes for the ticket
+        $notes = get_ticket_notes($ticket_id, 3);
+        $notesMessage = "";
+        foreach ($notes as $note) {
+            $notesMessage .= "<li>" . $note['note'] . "</li>";
+        }
+        <p><strong>Recent Notes:</strong></p>
+        <ul>$notesMessage</ul>
         $email_res = send_email($client_email, $ticket_subject, $ticket_body);
 
         if (!$email_res) {

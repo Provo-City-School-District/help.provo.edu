@@ -233,6 +233,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <ul>" . $changesMessage . "</ul>
         <p><strong>Recent Notes:</strong></p>
         <ul>$notesMessage</ul>
+        <p><a href="http://localhost:8080/controllers/tickets/edit_ticket.php?id=$ticket_id">view ticket $ticket_id.</a></p>
         STR;
 
         $email_res = send_email($client_email, $ticket_subject, $ticket_body, $valid_cc_emails, $valid_bcc_emails);
@@ -261,6 +262,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <ul>$notesMessage</ul>
         <p>Has your Issue been Resolved? Yes | No.</p>
         <p>You have 10 days to re-open this ticket if your issue has not been resolved.</p>
+        <p><a href="http://localhost:8080/controllers/tickets/edit_ticket.php?id=$ticket_id">view ticket $ticket_id.</a></p>
         STR;
 
         $email_res = send_email($client_email, $ticket_subject, $ticket_body);

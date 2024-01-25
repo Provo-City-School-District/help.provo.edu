@@ -230,7 +230,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $ticket_body = <<<STR
         Ticket $ticket_id has been updated
         <p><strong>Changes Made: </strong></p>
-        <ul>" . $changesMessage . "</ul>
+        <ul>$changesMessage</ul>
         <p><strong>Recent Notes:</strong></p>
         <ul>$notesMessage</ul>
         <p><a href="http://localhost:8080/controllers/tickets/edit_ticket.php?id=$ticket_id">view ticket $ticket_id.</a></p>

@@ -7,7 +7,6 @@ require("ticket_utils.php");
 require("email_utils.php");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Handle the form submission to update the ticket information
     // Retrieve updated values from the form
     $ticket_id = trim(htmlspecialchars($_POST['ticket_id']));
     $updatedClient = trim(htmlspecialchars($_POST['client']));
@@ -28,6 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $changesMessage = "";
     $forceEmails = false;
 
+    // Validate the emails in CC and BCC fields
     $valid_cc_emails = [];
     if (trim($updatedCCEmails) !== "") {
         $valid_cc_emails = split_email_string_to_arr($updatedCCEmails);
@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $cc_emails_clean = implode(',', $valid_cc_emails);
     $bcc_emails_clean = implode(',', $valid_bcc_emails);
 
-    // Perform SQL UPDATE queries to update the ticket and notes
+    // Perform SQL UPDATE queries to update the ticket information
     $updateTicketQuery = "UPDATE tickets SET
         client = '$updatedClient',
         employee = '$updatedEmployee',
@@ -92,6 +92,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$updateTicketResult) {
         die('Error updating ticket: ' . mysqli_error($database));
     }
+
+    // Columns for the ticket_logs table
     $clientColumn  = "client";
     $employeeColumn  = "employee";
     $locationColumn  = "location";
@@ -107,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $bccEmailsColumn = "bcc_emails";
     $parentTicketColumn = "parent_ticket";
 
-    // Log the ticket changes
+    // Log the ticket changes and build message of changes for email
     $log_query = "INSERT INTO ticket_logs (ticket_id, user_id, field_name, old_value, new_value, created_at) VALUES (?, ?, ?, ?, ?, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'))";
     $log_stmt = mysqli_prepare($database, $log_query);
     if ($old_ticket_data['priority'] != $updatedPriority) {
@@ -218,13 +220,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $notesMessage .= "<li>" . $decodedNote . "</li>";
     }
 
+    // Send emails if the user checked the send_emails checkbox
     if ($sendEmails || $forceEmails) {
         // message for gui to display
         $msg = "Ticket updated successfully. An email was sent to the client, CC and BCC emails.";
         $client_email = email_address_from_username($updatedClient) . "," . email_address_from_username($updatedEmployee);
         $ticket_subject = "Ticket " . $ticket_id . " (Updated)";
 
-        // $ticket_body = "Ticket " . $ticket_id . " has been updated <br> Changes Made: <ul>" . $changesMessage . "</ul>";
         $ticket_body = <<<STR
         Ticket " . $ticket_id . " has been updated
         Changes Made: 

@@ -229,7 +229,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $ticket_body = <<<STR
         Ticket " . $ticket_id . " has been updated
-        Changes Made: 
+        <p><strong>Changes Made: </strong></p>
         <ul>" . $changesMessage . "</ul>
         <p><strong>Recent Notes:</strong></p>
         <ul>$notesMessage</ul>
@@ -254,7 +254,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $ticket_subject = "Ticket " . $ticket_id  . " (Resolved)";
 
         $ticket_body = <<<STR
-        Ticket $ticket_id has been resolved. Changes Made: 
+        Ticket $ticket_id has been marked as resolved.
+        <p><strong>Changes Made: </strong></p>
         <ul>$changesMessage</ul>
         <p><strong>Recent Notes:</strong></p>
         <ul>$notesMessage</ul>

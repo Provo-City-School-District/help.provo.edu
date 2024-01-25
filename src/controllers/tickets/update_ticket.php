@@ -228,7 +228,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $ticket_subject = "Ticket " . $ticket_id . " (Updated)";
 
         $ticket_body = <<<STR
-        Ticket " . $ticket_id . " has been updated
+        Ticket $ticket_id has been updated
         <p><strong>Changes Made: </strong></p>
         <ul>" . $changesMessage . "</ul>
         <p><strong>Recent Notes:</strong></p>

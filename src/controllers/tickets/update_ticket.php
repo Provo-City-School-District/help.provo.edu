@@ -242,6 +242,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $formData = http_build_query($_POST);
             $_SESSION['current_status'] = $error;
             $_SESSION['status_type'] = 'error';
+            log_app(LOG_ERR, "$error \n\n $formData");
             header("Location: edit_ticket.php?$formData&id=$ticket_id");
             exit;
         }
@@ -268,6 +269,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $formData = http_build_query($_POST);
             $_SESSION['current_status'] = $error;
             $_SESSION['status_type'] = 'error';
+            log_app(LOG_ERR, "$error \n\n $formData");
             header("Location: edit_ticket.php?$formData&id=$ticket_id");
             exit;
         }

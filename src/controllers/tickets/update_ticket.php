@@ -214,7 +214,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $notes = get_ticket_notes($ticket_id, 3);
     $notesMessage = "";
     foreach ($notes as $note) {
-        $notesMessage .= "<li>" . $note['note'] . "</li>";
+        $decodedNote = htmlspecialchars_decode($note['note']);
+        $notesMessage .= "<li>" . $decodedNote . "</li>";
     }
 
     if ($sendEmails || $forceEmails) {

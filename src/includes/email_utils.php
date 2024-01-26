@@ -68,6 +68,7 @@ function send_email(
 
         // Send the email
         $mailer->send();
+        file_put_contents('php://stdout', "Email sent to $recipient with $subject \n");
     } catch (Exception $e) {
         file_put_contents('php://stdout', $mailer->ErrorInfo);
         return false;

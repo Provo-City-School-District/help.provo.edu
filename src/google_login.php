@@ -87,7 +87,12 @@ if (isset($_GET['code'])) {
         $loginMessage = "Successful login using Google SSO for username: " .  $input_username . " IP: " . $_SERVER["REMOTE_ADDR"] . " at " . date("Y-m-d H:i:s") . "\n";
         error_log($loginMessage, 0);
 
-        header('Location: tickets.php');
+        if($_SESSION['requested_page']) {
+            header('Location: ' . $_SESSION['requested_page']);
+            unset($_SESSION['requested_page']);
+        } else {
+            header('Location: tickets.php');
+        }
         exit;
     }
 }

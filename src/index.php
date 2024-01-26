@@ -118,7 +118,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Log the successful login
         $loginMessage = "Successful login for username: " .  $input_username . " IP: " . $_SERVER["REMOTE_ADDR"] . " at " . date("Y-m-d H:i:s") . "\n";
         error_log($loginMessage, 0);
-        header('Location: tickets.php');
+        
+        if($_SESSION['requested_page']) {
+            header('Location: ' . $_SESSION['requested_page']);
+            unset($_SESSION['requested_page']);
+        } else {
+            header('Location: tickets.php');
+        }
+
     } else {
         // Authentication failed
         $_SESSION['current_status'] = 'Authentication failed';

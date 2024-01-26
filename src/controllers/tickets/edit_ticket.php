@@ -588,7 +588,7 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
                 </div>
                 <div>
                     <label for="note_time">Time in Minutes:</label>
-                    <input id="note_time" name="note_time" type="number">
+                    <input id="note_time" name="note_time" type="number" required>
                 </div>
                 <div>
                     <label for="date_override_enable">Date Override:</label>

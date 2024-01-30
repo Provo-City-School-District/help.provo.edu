@@ -1,6 +1,6 @@
 <?php
-require_once 'vendor/autoload.php';
-require_once("authentication_utils.php");
+require(from_root('/vendor/autoload.php'));
+require("authentication_utils.php");
 
 session_start();
 session_regenerate_id(true);

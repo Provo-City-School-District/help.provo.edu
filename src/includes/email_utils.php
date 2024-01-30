@@ -1,5 +1,6 @@
 <?php
 require(from_root("/vendor/autoload.php"));
+require_once("functions.php");
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -68,9 +69,9 @@ function send_email(
 
         // Send the email
         $mailer->send();
-        file_put_contents('php://stdout', "Email sent to $recipient with $subject \n");
+        log_app(LOG_INFO, "Successfully sent email to \"$recipient\"");
     } catch (Exception $e) {
-        file_put_contents('php://stdout', $mailer->ErrorInfo);
+        log_app(LOG_ERROR, "Caught exception when trying to send email: $e");
         return false;
     }
 

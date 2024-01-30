@@ -3,9 +3,6 @@ require_once("helpdbconnect.php");
 require_once("functions.php");
 require_once("authentication_utils.php");
 require_once("ticket_utils.php");
-// TESTING CODE + FILE
-
-
 
 $move_emails_after_parsed = true;
 
@@ -31,6 +28,8 @@ for ($i = 1; $i <= $msg_count; $i++) {
 
     if (!user_exists_locally($sender_username)) {
         create_user_in_local_db($sender_username);
+
+        // Check again that the user was successfully created
         if (!user_exists_locally($sender_username)) {
             log_app(LOG_ERR, "Failed to create local user $sender_username");
             $failed_email_ids[] = $i;
@@ -47,7 +46,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
         $subject_ticket_id <= 0 ||
         count($subject_split) != 2)
     {
-        // Check if the user is in the local database. If the value isn't in failed, they are
+        // Check if the user is in the local database. If the value isn't in failed_email_ids, they exist in local db
         if (!in_array($i, $failed_email_ids)) {
             $res = create_ticket($sender_username, $subject, $message);
             if (!$res) {

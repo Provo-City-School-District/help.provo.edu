@@ -60,7 +60,7 @@ Clone the repository to your server with docker engine installed
 git clone https://github.com/Provo-City-School-District/help.provo.edu.git
 ```
 
-Change to the help.provo.edu directory.
+Change to the help.provo.edu directory and build your containers with ```docker compose build``` then start the containers with ```docker compose up -d```
 
 If you're restoring from backup, get a copy of the backup database dump from Barracuda and restore it into the database using PHPmyadmin.
 

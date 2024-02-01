@@ -16,8 +16,18 @@ include("ticket_utils.php");
 
 $managed_location = $_SESSION['permissions']['location_manager_sitenumber'];
 
-//page query
-$location_tickets_query = "
+//Alerts query
+$alerts_query = <<<alerts_query
+SELECT alerts.* 
+FROM alerts 
+JOIN users ON alerts.employee = users.username
+JOIN tickets ON alerts.ticket_id = tickets.id
+WHERE tickets.location = $managed_location
+alerts_query;
+
+$alerts_result = mysqli_query($database, $alerts_query);
+
+
 SELECT * 
 FROM tickets 
 WHERE location = '" . $managed_location . "'
@@ -25,10 +35,8 @@ AND tickets.status NOT IN ('closed', 'resolved')";
 
 $ticket_result = mysqli_query($database, $location_tickets_query);
 
-?>
-
-<h1>Location Tickets</h1>
-
-<?php display_tickets_table($ticket_result, $database); ?>
+<?php
+//display alerts
+display_ticket_alerts($alerts_result); ?>
 
 <?php include("footer.php"); ?>

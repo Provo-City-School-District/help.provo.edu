@@ -86,6 +86,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
             <div>
                 <label for="assigned">Assigned to</label>
                 <select id="assigned" name="assigned">
+                    <option value="unassigned">Unassigned</option>
                     <?php
                     foreach ($techusernames as $techusername) {
                         echo "<option value=\"$techusername\">$techusername</option>";

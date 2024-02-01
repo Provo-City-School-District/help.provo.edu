@@ -28,10 +28,13 @@ alerts_query;
 $alerts_result = mysqli_query($database, $alerts_query);
 
 
+$location_tickets_query = <<<location_tickets
 SELECT * 
 FROM tickets 
-WHERE location = '" . $managed_location . "'
-AND tickets.status NOT IN ('closed', 'resolved')";
+WHERE location = $managed_location
+AND tickets.status NOT IN ('closed', 'resolved')
+AND (employee IS NOT NULL AND employee != 'unassigned')
+location_tickets;
 
 $ticket_result = mysqli_query($database, $location_tickets_query);
 

@@ -25,8 +25,10 @@ for ($i = 1; $i <= $msg_count; $i++) {
     $subject = $header->subject;
 
     // Ignore non district emails
-    if (($from_host != "provo.edu"))
+    if (($from_host != "provo.edu")) {
+        log_app(LOG_INFO, "Received email from $sender_email, ignoring...");
         continue;
+    }
 
     if (!user_exists_locally($sender_username)) {
         create_user_in_local_db($sender_username);

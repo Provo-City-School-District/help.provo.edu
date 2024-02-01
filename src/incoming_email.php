@@ -57,10 +57,9 @@ for ($i = 1; $i <= $msg_count; $i++) {
             }
 
             $receipt_subject = "Ticket $receipt_ticket_id";
-            $message = "Ticket $receipt_ticket_id has been created!";
-            $template = new Template(from_root("/includes/templates/ticket_creation_receipt.html"));
+            $template = new Template(from_root("/includes/templates/ticket_creation_receipt.phtml"));
             $template->$ticket_id = $receipt_ticket_id;
-            
+
             send_email($sender_email, $receipt_subject, $template);
         }
     } else {

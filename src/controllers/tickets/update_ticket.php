@@ -254,7 +254,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $client_email = email_address_from_username($updatedClient) . "," . email_address_from_username($updatedEmployee);
         $ticket_subject = "Ticket " . $ticket_id  . " (Resolved)";
 
-        $template = new Template(from_root("/includes/templates/ticket_creation_receipt.html"));
+        $template = new Template(from_root("/includes/templates/ticket_creation_receipt.phtml"));
         $template->$ticket_id = $ticket_id;
 
         $email_res = send_email($client_email, $ticket_subject, $template);

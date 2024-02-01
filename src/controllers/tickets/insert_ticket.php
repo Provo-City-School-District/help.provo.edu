@@ -167,7 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['status_type'] = "success";
         // After successfully inserting the ticket, fetch the ID of the new ticket
         $ticketId = mysqli_insert_id($database);
-        $template = new Template(from_root("/includes/templates/ticket_creation_receipt.html"));
+        $template = new Template(from_root("/includes/templates/ticket_creation_receipt.phtml"));
         $template->ticket_id = $ticketId;
         
         $receipt_subject = "Ticket $ticketId";

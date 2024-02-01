@@ -35,8 +35,24 @@ AND tickets.status NOT IN ('closed', 'resolved')";
 
 $ticket_result = mysqli_query($database, $location_tickets_query);
 
+//query for unassigned tickets for location
+$unassigned_ticket_query = <<<unassigned_tickets
+SELECT *
+FROM tickets
+WHERE status NOT IN ('closed', 'resolved') 
+AND (employee IS NULL OR employee = 'unassigned')
+AND location = $managed_location
+unassigned_tickets;
+
+$unassigned_ticket_result = mysqli_query($database, $unassigned_ticket_query);
+
 <?php
 //display alerts
 display_ticket_alerts($alerts_result); ?>
+<h2>Unassigned Tickets For Location <?= $managed_location ?> </h2>
+<?php
+//display unassigned tickets
+display_tickets_table($unassigned_ticket_result, $database);
+?>
 
 <?php include("footer.php"); ?>

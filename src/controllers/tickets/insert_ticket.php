@@ -15,6 +15,7 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
         exit;
     }
 }
+$username = $_SESSION["username"];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Sanitize and validate user inputs

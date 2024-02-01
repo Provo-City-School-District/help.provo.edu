@@ -42,7 +42,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Check if required fields are empty
-    if (empty($location) || empty($room) || empty($name) || empty($description) || empty($phone)) {
+    if (empty($location) || empty($name) || empty($description)) {
+        // Handle empty fields (e.g., show an error message)
+        $error = 'All fields are required';
+        $formData = http_build_query($_POST);
+        $_SESSION['current_status'] = $error;
+        $_SESSION['status_type'] = 'error';
+
+        header("Location: create_ticket.php?$formData");
+        exit;
+    }
+
+    if ((empty($room) || empty($phone)) && !$_SESSION["permissions"]["is_tech"])
+    {
         // Handle empty fields (e.g., show an error message)
         $error = 'All fields are required';
         $formData = http_build_query($_POST);
@@ -122,7 +134,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        if (!in_array($assigned_tech, $techusernames)) {
+        if ($assigned_tech != "unassigned" && !in_array($assigned_tech, $techusernames)) {
             log_app(LOG_ERR, "Assigned tech was not an actual tech. Aborting ticket creation...");
             die;
         }

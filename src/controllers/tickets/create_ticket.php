@@ -47,6 +47,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
             <div>
                 <label for="location">Location:</label>
                 <select id="location" name="location">
+                    <option value=""></option>
                     <?php
                     // Query the sites table to get the site information
                     $location_query = "SELECT sitenumber, location_name FROM locations ORDER BY location_name ASC";
@@ -60,7 +61,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                         echo '<option value="' . $locations['sitenumber'] . '" ' . $selected . '>' . $locations['location_name'] . '</option>';
                     }
                     ?>
-                </select>
+                </select required>
             </div>
             <div>
                 <label for="room">Room:</label>
@@ -68,7 +69,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
             </div>
             <div>
                 <label for="phone">Phone:</label>
-                <input type="tel" id="phone" name="phone" required>
+                <input type="tel" id="phone" name="phone">
             </div>
             <div>
                 <label for="cc_emails">Cc</label>

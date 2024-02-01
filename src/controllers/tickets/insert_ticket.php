@@ -27,6 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $phone = filter_input(INPUT_POST, 'phone', FILTER_SANITIZE_SPECIAL_CHARS);
     $cc_emails = filter_input(INPUT_POST, 'cc_emails', FILTER_SANITIZE_SPECIAL_CHARS);
     $bcc_emails = filter_input(INPUT_POST, 'bcc_emails', FILTER_SANITIZE_SPECIAL_CHARS);
+    $assigned_tech = filter_input(INPUT_POST, 'assigned', FILTER_SANITIZE_SPECIAL_CHARS);
 
     // standard by default
     $priority = 10; // filter_input(INPUT_POST, 'priority', FILTER_SANITIZE_SPECIAL_CHARS);
@@ -103,11 +104,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
+
+
+    if (isset($assigned_tech)) {
+        $usernamesQuery = "SELECT username,is_tech FROM users WHERE is_tech = 1";
+        $usernamesResult = mysqli_query($database, $usernamesQuery);
+
+        if (!$usernamesResult) {
+            die('Error fetching usernames: ' . mysqli_error($database));
+        }
+
+        // Store the usernames in an array
+        $techusernames = [];
+        while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
+            if ($usernameRow['is_tech'] == 1) {
+                $techusernames[] = $usernameRow['username'];
+            }
+        }
+
+        if (!in_array($assigned_tech, $techusernames)) {
+            log_app(LOG_ERR, "Assigned tech was not an actual tech. Aborting ticket creation...");
+            die;
+        }
+    }
     
 
     // Create an SQL INSERT query
-    $insertQuery = "INSERT INTO tickets (location, room, name, description, created, last_updated, due_date, status, client,attachment_path,phone,cc_emails,bcc_emails,request_type_id,priority)
-                VALUES (?, ?, ?, ?, ?, ?, ?,'open', ?, ?, ?, ?, ?,0,10)";
+    $insertQuery = "INSERT INTO tickets (location, room, name, description, created, last_updated, due_date, status, client,attachment_path,phone,cc_emails,bcc_emails,request_type_id,priority,employee)
+                VALUES (?, ?, ?, ?, ?, ?, ?,'open', ?, ?, ?, ?, ?,0,10,?)";
 
     // Prepare the SQL statement
     $stmt = mysqli_prepare($database, $insertQuery);
@@ -144,7 +168,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     mysqli_stmt_bind_param(
         $stmt,
-        'ssssssssssss',
+        'sssssssssssss',
         $location,
         $room,
         $name,
@@ -156,7 +180,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $attachmentPath,
         $phone,
         $cc_emails_clean,
-        $bcc_emails_clean
+        $bcc_emails_clean,
+        $assigned_tech
     );
 
 

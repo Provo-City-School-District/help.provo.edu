@@ -20,6 +20,22 @@ if (isset($_SESSION['current_status'])) {
     unset($_SESSION['current_status']);
     unset($_SESSION['status_type']);
 }
+
+$usernamesQuery = "SELECT username,is_tech FROM users WHERE is_tech = 1";
+$usernamesResult = mysqli_query($database, $usernamesQuery);
+
+if (!$usernamesResult) {
+    die('Error fetching usernames: ' . mysqli_error($database));
+}
+
+// Store the usernames in an array
+$techusernames = [];
+while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
+    if ($usernameRow['is_tech'] == 1) {
+        $techusernames[] = $usernameRow['username'];
+    }
+}
+
 ?>
 
 <article id="ticketWrapper">
@@ -38,7 +54,7 @@ if (isset($_SESSION['current_status'])) {
                     // Loop through the results and create an option for each site
                     while ($locations = mysqli_fetch_assoc($location_result)) {
                         $selected = '';
-                        if ($locations['sitenumber'] == $row['location']) {
+                        if ($locations['sitenumber'] == $locations['location_name']) {
                             $selected = 'selected';
                         }
                         echo '<option value="' . $locations['sitenumber'] . '" ' . $selected . '>' . $locations['location_name'] . '</option>';
@@ -62,6 +78,23 @@ if (isset($_SESSION['current_status'])) {
                 <label for="bcc_emails">Bcc</label>
                 <input type="text" id="bcc_emails" name="bcc_emails" value="<?= isset($_GET['bcc_emails']) ? htmlspecialchars($_GET['bcc_emails']) : '' ?>">
             </div>
+
+            <!-- Conditionally show assigned tech view -->
+            <?php
+            if ($_SESSION["permissions"]["is_tech"]):
+            ?>
+            <div>
+                <label for="assigned">Assigned to</label>
+                <select id="assigned" name="assigned">
+                    <?php
+                    foreach ($techusernames as $techusername) {
+                        echo "<option value=\"$techusername\">$techusername</option>";
+                    }
+                    ?>
+                </select>
+            </div>
+            <?php endif ?>
+
         </div>
         <div class="detailContainer">
             <div class="grid2 ticketSubject">

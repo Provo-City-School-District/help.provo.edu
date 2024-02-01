@@ -4,6 +4,7 @@ require_once("functions.php");
 require_once("authentication_utils.php");
 require_once("ticket_utils.php");
 require_once("email_utils.php");
+require_once("template.php");
 
 $move_emails_after_parsed = true;
 
@@ -57,7 +58,10 @@ for ($i = 1; $i <= $msg_count; $i++) {
 
             $receipt_subject = "Ticket $receipt_ticket_id";
             $message = "Ticket $receipt_ticket_id has been created!";
-            send_email($sender_email, $receipt_subject, $message);
+            $template = new Template(from_root("/includes/templates/ticket_creation_receipt.html"));
+            $template->$ticket_id = $receipt_ticket_id;
+            
+            send_email($sender_email, $receipt_subject, $template);
         }
     } else {
         // ticket syntax is valid, add a note on that ticket

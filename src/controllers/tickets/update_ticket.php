@@ -135,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($old_ticket_data['employee'] != $updatedEmployee) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $employeeColumn, $old_ticket_data['employee'], $updatedEmployee);
         mysqli_stmt_execute($log_stmt);
-        $old_assigned = email_address_from_username($old_ticket_data['employee']);
+        $old_assigned = email_address_from_username($old_ticket_data['employee']) ?: "";
         $new_assigned = email_address_from_username($updatedEmployee);
         $changesMessage .= "<li>Changed Employee from " . $old_ticket_data['employee'] . " to " . $updatedEmployee . "</li>";
         //force send email to both old and new assigned employee
@@ -254,18 +254,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $client_email = email_address_from_username($updatedClient) . "," . email_address_from_username($updatedEmployee);
         $ticket_subject = "Ticket " . $ticket_id  . " (Resolved)";
 
-        $ticket_body = <<<STR
-        Ticket $ticket_id has been marked as resolved.
-        <p><strong>Changes Made: </strong></p>
-        <ul>$changesMessage</ul>
-        <p><strong>Recent Notes:</strong></p>
-        <ul>$notesMessage</ul>
-        <p>Has your Issue been Resolved? Yes | No.</p>
-        <p>You have 10 days to re-open this ticket if your issue has not been resolved.</p>
-        <p><a href="http://localhost:8080/controllers/tickets/edit_ticket.php?id=$ticket_id">view ticket $ticket_id.</a></p>
-        STR;
+        $template = new Template(from_root("/includes/templates/ticket_creation_receipt.html"));
+        $template->$ticket_id = $ticket_id;
 
-        $email_res = send_email($client_email, $ticket_subject, $ticket_body);
+        $email_res = send_email($client_email, $ticket_subject, $template);
 
         if (!$email_res) {
             $error = 'Error sending email to client';

@@ -2,6 +2,8 @@
 require_once("block_file.php");
 require_once('init.php');
 require_once('helpdbconnect.php');
+require_once('email_utils.php');
+require_once('template.php');
 
 include("ticket_utils.php");
 
@@ -164,6 +166,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['status_type'] = "success";
         // After successfully inserting the ticket, fetch the ID of the new ticket
         $ticketId = mysqli_insert_id($database);
+        $template = new Template(from_root("/includes/templates/ticket_creation_receipt.html"));
+        $template->ticket_id = $ticketId;
+        
+        $receipt_subject = "Ticket $ticketId";
+        send_email(email_address_from_username($username), $subject, $template);
 
         // Redirect to the edit page for the new ticket
         header("Location: edit_ticket.php?id=$ticketId");

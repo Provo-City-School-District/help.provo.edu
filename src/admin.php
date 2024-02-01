@@ -177,7 +177,7 @@ $exclude_result = mysqli_query($database, $exclude_query);
 //query for unassigned tickets
 $ticket_query = "SELECT *
 FROM tickets
-WHERE employee IS NULL OR employee = 'unassigned'
+WHERE status NOT IN ('closed', 'resolved') AND (employee IS NULL OR employee = 'unassigned')
 ORDER BY id ASC";
 
 $ticket_result = mysqli_query($database, $ticket_query);

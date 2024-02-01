@@ -38,7 +38,7 @@ function send_email(
 
         $mailer->Host = 'smtp.provo.edu';
         $mailer->Port = 25;
-        $mailer->setFrom(getenv("GMAIL_USER"), 'help.provo.edu');
+        $mailer->setFrom(getenv("GMAIL_USER"), 'dev.provo.edu');
        
        // handle multiple recipients
         $rec_emails = explode(",", $recipient);
@@ -71,7 +71,7 @@ function send_email(
         $mailer->send();
         log_app(LOG_INFO, "Successfully sent email to \"$recipient\"");
     } catch (Exception $e) {
-        log_app(LOG_ERROR, "Caught exception when trying to send email: $e");
+        log_app(LOG_ERR, "Caught exception when trying to send email: $e");
         return false;
     }
 

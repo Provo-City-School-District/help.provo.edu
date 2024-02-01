@@ -119,7 +119,7 @@ function add_note_with_filters(
 }
 
 // Returns true on success, false on failure
-function create_ticket(string $client, string $subject, string $content)
+function create_ticket(string $client, string $subject, string $content, int &$created_ticket_id)
 {
     global $database;
 
@@ -172,6 +172,8 @@ function create_ticket(string $client, string $subject, string $content)
     // Execute the prepared statement
     if (mysqli_stmt_execute($stmt)) {
         log_app(LOG_INFO, "create_ticket success");
+
+        $created_ticket_id = mysqli_insert_id($database);
         return true;
     } else {
         log_app(LOG_ERR, "create_ticket failure");

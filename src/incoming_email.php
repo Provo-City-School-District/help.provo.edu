@@ -3,6 +3,7 @@ require_once("helpdbconnect.php");
 require_once("functions.php");
 require_once("authentication_utils.php");
 require_once("ticket_utils.php");
+require_once("email_utils.php");
 
 $move_emails_after_parsed = true;
 
@@ -46,12 +47,17 @@ for ($i = 1; $i <= $msg_count; $i++) {
         $subject_ticket_id <= 0 ||
         count($subject_split) != 2)
     {
+        $receipt_ticket_id = -1;
         // Check if the user is in the local database. If the value isn't in failed_email_ids, they exist in local db
         if (!in_array($i, $failed_email_ids)) {
-            $res = create_ticket($sender_username, $subject, $message);
-            if (!$res) {
+            $res = create_ticket($sender_username, $subject, $message, $receipt_ticket_id);
+            if (!$res || $receipt_ticket_id == -1) {
                 $failed_email_ids[] = $i;
             }
+
+            $receipt_subject = "Ticket $receipt_ticket_id";
+            $message = "Ticket $receipt_ticket_id has been created!";
+            send_email($sender_email, $receipt_subject, $message);
         }
     } else {
         // ticket syntax is valid, add a note on that ticket

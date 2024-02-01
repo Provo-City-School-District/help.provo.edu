@@ -178,7 +178,9 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
 
 ?>
 <article id="ticketWrapper">
-    <h1>Ticket #<?= $ticket['id'] ?></h1>
+    <div id="ticket-title-container">
+        <h1 id="ticket-title">Ticket #<?= $ticket['id'] ?></h1>
+    </div>
     <?php
         if ($is_ticket_flagged):
     ?>
@@ -215,7 +217,7 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
     <!-- Form for updating ticket information -->
     <form id="updateTicketForm" method="POST" action="update_ticket.php">
         <!-- Add a submit button to update the information -->
-        <input type="submit" value="Update Ticket">
+        <input id="green-button" type="submit" value="Update Ticket">
         Send Emails on Update:<input type="checkbox" name="send_emails" value="send_emails">
         <div class="ticketGrid">
             <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
@@ -656,5 +658,18 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
         }
         ?>
 </article>
+<script>
+const title = document.getElementById("ticket-title");
+title.onclick = function() {
+    document.execCommand("copy");
+}
+title.addEventListener("copy", function(event) {
+    event.preventDefault();
+    if (event.clipboardData) {
+        event.clipboardData.setData("text/plain", window.location.host + "/controllers/tickets/edit_ticket.php?id=" + <?= $ticket_id ?>);
+        console.log(event.clipboardData.getData("text"))
+    }
+});
+</script>
 
 <?php include("footer.php"); ?>

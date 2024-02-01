@@ -19,6 +19,10 @@ a:hover {
 	color: var(--theme-tertiary);
 }
 
+#green-button {
+	background-color: #33a206;
+}
+
 button,
 input[type=submit] {
 	background-color: var(--theme-primary);
@@ -477,4 +481,9 @@ select {
 	padding: 3px;
 	margin-top: 5px;
 	font-size: 80%;
+}
+
+#ticket-title-container {
+	display:inline-block; 
+	cursor: pointer;
 }

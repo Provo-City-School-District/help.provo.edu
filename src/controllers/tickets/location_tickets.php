@@ -17,6 +17,7 @@ include("ticket_utils.php");
 
 $managed_location = $_SESSION['permissions']['location_manager_sitenumber'];
 
+
 //Alerts query
 $alerts_query = <<<alerts_query
 SELECT alerts.* 
@@ -29,6 +30,7 @@ alerts_query;
 $alerts_result = mysqli_query($database, $alerts_query);
 
 
+//location tickets query
 $location_tickets_query = <<<location_tickets
 SELECT * 
 FROM tickets 
@@ -37,7 +39,7 @@ AND tickets.status NOT IN ('closed', 'resolved')
 AND (employee IS NOT NULL AND employee != 'unassigned')
 location_tickets;
 
-$ticket_result = mysqli_query($database, $location_tickets_query);
+$location_ticket_result = mysqli_query($database, $location_tickets_query);
 
 //query for unassigned tickets for location
 $unassigned_ticket_query = <<<unassigned_tickets
@@ -50,9 +52,20 @@ unassigned_tickets;
 
 $unassigned_ticket_result = mysqli_query($database, $unassigned_ticket_query);
 
+?>
+<!-- Display Front End -->
 <?php
 //display alerts
 display_ticket_alerts($alerts_result); ?>
+
+
+<h1>Tickets For Location <?= $managed_location ?></h1>
+<?php
+//display location tickets
+display_tickets_table($location_ticket_result, $database);
+?>
+
+
 <h2>Unassigned Tickets For Location <?= $managed_location ?> </h2>
 <?php
 //display unassigned tickets

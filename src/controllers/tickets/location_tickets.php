@@ -1,6 +1,7 @@
 <?php
 require_once("block_file.php");
 require_once(from_root("/includes/tickets_template.php"));
+require_once(from_root("/includes/alerts_template.php"));
 include("header.php");
 
 if ($_SESSION['permissions']['is_admin'] != 1) {

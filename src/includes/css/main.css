@@ -87,15 +87,6 @@ input[type=submit] {
 	border-radius: 4px;
 	cursor: pointer;
 	grid-column: span 2;
-
-}
-.button.googSSO {
-	background-image: url('../img/Flat-design-Google-logo-design-Vector-PNG.png');
-	background-repeat: no-repeat;
-	background-position: 10px center; 
-	background-size: 35px 35px;
-
-	padding: 1em 0 1em 1em;
 }
 
 /* =============================== Header Styles =============================== */

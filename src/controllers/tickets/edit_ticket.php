@@ -213,7 +213,7 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
         <div id="search-results"></div>
     </div>
     <!-- Form for updating ticket information -->
-    <form method="POST" action="update_ticket.php">
+    <form id="updateTicketForm" method="POST" action="update_ticket.php">
         <!-- Add a submit button to update the information -->
         <input type="submit" value="Update Ticket">
         Send Emails on Update:<input type="checkbox" name="send_emails" value="send_emails">

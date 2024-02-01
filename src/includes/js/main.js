@@ -223,3 +223,20 @@ document
         "Changing Client to: " + username + " on next save";
     }
   });
+
+document
+  .querySelector("#updateTicketForm")
+  .addEventListener("submit", function (e) {
+    var statusField = document.querySelector("#status");
+    var employeeField = document.querySelector("#employee");
+
+    if (
+      (statusField.value === "resolved" || statusField.value === "closed") &&
+      (employeeField.value === "" || employeeField.value === "unassigned")
+    ) {
+      e.preventDefault();
+      alert(
+        "You cannot resolve/close a ticket if ticket is not assigned to an employee. Please assign the ticket to an employee first."
+      );
+    }
+  });

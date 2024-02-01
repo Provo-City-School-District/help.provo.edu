@@ -171,7 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $template->ticket_id = $ticketId;
         
         $receipt_subject = "Ticket $ticketId";
-        send_email(email_address_from_username($username), $subject, $template);
+        send_email(email_address_from_username($username), $receipt_subject, $template);
 
         // Redirect to the edit page for the new ticket
         header("Location: edit_ticket.php?id=$ticketId");

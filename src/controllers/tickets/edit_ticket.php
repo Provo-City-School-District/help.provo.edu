@@ -181,24 +181,6 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
     <div id="ticket-title-container">
         <h1 id="ticket-title">Ticket #<?= $ticket['id'] ?></h1>
     </div>
-    <?php
-        if ($is_ticket_flagged):
-    ?>
-        <form id="flag-form" method="post">
-            <input type="submit" name="unflag_ticket" value="Unflag ticket">
-        </form>
-    <?php else: ?>
-        <form id="flag-form" method="post">
-            <input type="submit" name="flag_ticket" value="Flag ticket">
-        </form>
-    <?php endif; ?>
-    <br>
-    <form id="merge-form" method="post" action="merge_tickets_handler.php">
-        <label for="merge_ticket_id">Merge this ticket into:</label>
-        <input type="hidden" name="ticket_id_source" value="<?= $ticket_id ?>">
-        <input type="text" name="ticket_id_host" value=""><br>
-        <input type="submit" value="Merge">
-    </form>
     <br>
     <br>
 
@@ -657,7 +639,26 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
         <?php
         }
         ?>
-</article>
+    <br>
+    <?php
+        if ($is_ticket_flagged):
+    ?>
+        <form id="flag-form" method="post">
+            <input type="submit" name="unflag_ticket" value="Unflag ticket">
+        </form>
+    <?php else: ?>
+        <form id="flag-form" method="post">
+            <input type="submit" name="flag_ticket" value="Flag ticket">
+        </form>
+    <?php endif; ?>
+    <br>
+    <form id="merge-form" method="post" action="merge_tickets_handler.php">
+        <label for="merge_ticket_id">Merge this ticket into:</label>
+        <input type="hidden" name="ticket_id_source" value="<?= $ticket_id ?>">
+        <input type="text" name="ticket_id_host" value=""><br>
+        <input type="submit" value="Merge">
+    </form>
+    </article>
 <script>
 const title = document.getElementById("ticket-title");
 title.onclick = function() {

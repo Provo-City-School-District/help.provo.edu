@@ -5,6 +5,7 @@ require_once('helpdbconnect.php');
 
 require("ticket_utils.php");
 require("email_utils.php");
+require("template.php");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Retrieve updated values from the form
@@ -227,16 +228,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $client_email = email_address_from_username($updatedClient) . "," . email_address_from_username($updatedEmployee);
         $ticket_subject = "Ticket " . $ticket_id . " (Updated)";
 
-        $ticket_body = <<<STR
-        Ticket $ticket_id has been updated
-        <p><strong>Changes Made: </strong></p>
-        <ul>$changesMessage</ul>
-        <p><strong>Recent Notes:</strong></p>
-        <ul>$notesMessage</ul>
-        <p><a href="http://localhost:8080/controllers/tickets/edit_ticket.php?id=$ticket_id">view ticket $ticket_id.</a></p>
-        STR;
+        $template = new Template(from_root("/includes/templates/ticket_updated.phtml"));
+        $template->ticket_id = $ticket_id;
+        $template->changes_message = $changesMessage;
+        $template->notes_message = $notesMessage;
 
-        $email_res = send_email($client_email, $ticket_subject, $ticket_body, $valid_cc_emails, $valid_bcc_emails);
+        $email_res = send_email($client_email, $ticket_subject, $template, $valid_cc_emails, $valid_bcc_emails);
 
         if (!$email_res) {
             $error = 'Error sending email to client, CC and BCC';
@@ -254,10 +251,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $client_email = email_address_from_username($updatedClient) . "," . email_address_from_username($updatedEmployee);
         $ticket_subject = "Ticket " . $ticket_id  . " (Resolved)";
 
-        $template = new Template(from_root("/includes/templates/ticket_creation_receipt.phtml"));
-        $template->$ticket_id = $ticket_id;
+        $template = new Template(from_root("/includes/templates/ticket_resolved.phtml"));
+        $template->ticket_id = $ticket_id;
+        $template->changes_message = $changesMessage;
+        $template->notes_message = $notesMessage;
 
-        $email_res = send_email($client_email, $ticket_subject, $template);
+        $email_res = send_email($client_email, $ticket_subject, $template, $valid_cc_emails, $valid_bcc_emails);
 
         if (!$email_res) {
             $error = 'Error sending email to client';

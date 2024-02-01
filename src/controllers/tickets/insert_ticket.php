@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($error === UPLOAD_ERR_OK) {
                 // Create uploads directory if it doesn't exist
                 if (!file_exists("../../uploads/")) {
-                    mkdir("../../uploads/", 0777, true);
+                    mkdir("../../uploads/", 0766, true);
                 }
 
                 // Generate a unique filename using the current timestamp and the original filename

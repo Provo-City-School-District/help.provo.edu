@@ -20,7 +20,7 @@ function get_note_time_for_days(string $user, array $days)
     $query = 
     <<<STR
     SELECT 
-        created, date_override, time from notes
+        created, date_override, time FROM notes
     WHERE 
         creator = '$user_sanitized' AND
         (

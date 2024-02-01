@@ -23,7 +23,7 @@ enum StatusPopupType
 class StatusPopup extends Template {
     public function __construct(string $message, StatusPopupType $type)
     {
-        parent::__construct(from_root("/includes/status_popup.phtml"));
+        parent::__construct(from_root("/includes/templates/status_popup.phtml"));
         $title = match ($type) {
             StatusPopupType::Error => "Error",
             StatusPopupType::Info => "Info",

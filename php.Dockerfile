@@ -4,11 +4,6 @@ FROM php:8.3-apache
 COPY config/customphp.ini /usr/local/etc/php/conf.d/
 
 # Create the uploads directory and set permissions
-RUN mkdir -p /var/www/html/src/controllers/tickets/uploads \
-  && chown -R www-data:www-data /var/www/html/src/controllers/tickets/uploads \
-  && chmod -R 755 /var/www/html/src/controllers/tickets/uploads
-
-# Create the uploads directory and set permissions
 RUN mkdir -p /var/www/html/src/uploads \
   && chown -R www-data:www-data /var/www/html/src/uploads \
   && chmod -R 755 /var/www/html/src/uploads

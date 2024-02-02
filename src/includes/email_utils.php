@@ -93,7 +93,7 @@ function send_email_and_add_to_ticket(
     $messageID = null;
     send_email($recipient, $subject, $message, $cc_recipients, $bcc_recipients, $messageID);
     if (isset($messageID))
-        gitadd_ticket_msg_id_mapping($messageID, $ticket_id);
+        add_ticket_msg_id_mapping($messageID, $ticket_id);
 }
 
 //map for email use

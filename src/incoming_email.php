@@ -6,7 +6,7 @@ require_once("ticket_utils.php");
 require_once("email_utils.php");
 require_once("template.php");
 
-$move_emails_after_parsed = false;
+$move_emails_after_parsed = true;
 
 $imap_path = '{imap.gmail.com:993/imap/ssl}INBOX';
 $username = getenv("GMAIL_USER");
@@ -47,7 +47,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
 
     
     $message_raw = imap_fetchbody($mbox, $i, "1");
-    
+
     $order   = array("\r\n", "\n", "\r");
     $replace = '<br />';
     $message = str_replace($order, $replace, $message_raw);

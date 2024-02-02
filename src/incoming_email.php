@@ -60,9 +60,19 @@ for ($i = 1; $i <= $msg_count; $i++) {
         if (isset($ticket_exists_data["email_msg_id"])) {
             $existing_ticket_id = intval($ticket_exists_data["id"]);
             // add note on existing ticket
-            add_note_with_filters($existing_ticket_id, $sender_username, $message, 1, true);
+            add_note_with_filters($existing_ticket_id, $sender_username, $message, 1, true, null, $email_msg_id, $email_ancestor_id);
         } else {
-            $failed_email_ids[] = $i;
+            $ancestor_exists_query = "SELECT linked_id, email_msg_id FROM notes WHERE email_msg_id = '$email_ancestor_id'";
+            $ticket_exists_result = mysqli_query($database, $ancestor_exists_query);
+            $ticket_exists_data = mysqli_fetch_assoc($ticket_exists_result);
+
+            if (isset($ticket_exists_data["linked_id"])) {
+                $existing_ticket_id = intval($ticket_exists_data["linked_id"]);
+                add_note_with_filters($existing_ticket_id, $sender_username, $message, 1, true, null, $email_msg_id, $email_ancestor_id);
+            } else {
+                $failed_email_ids[] = $i;
+                log_app(LOG_ERR, "Failed to find ancestor id. This should never happen...");
+            }
         }
     } else {
         if (strtolower($subject_split[0]) != "ticket" ||  $subject_ticket_id <= 0 || count($subject_split) != 2)

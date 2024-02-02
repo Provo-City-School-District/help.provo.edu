@@ -79,5 +79,28 @@ function send_email(
 
     return true;
 }
+
+function send_email_and_add_to_ticket(
+    int $ticket_id,
+    string $recipient,
+    string $subject,
+    string $message,
+    array $cc_recipients = [],
+    array $bcc_recipients = [],
+)
+{
+    $messageID = null;
+    send_email($recipient, $subject, $message, $cc_recipients, $bcc_recipients, $messageID);
+
+    if (isset($messageID)) {
+        $insert_email_id_query = "INSERT (ticket_id, email_id) INTO ticket_email_ids WHERE (?, ?)";
+        $insert_email_id_stmt = mysqli_prepare($database, $insert_email_id_query);
+
+        mysqli_stmt_bind_param($insert_email_id_stmt, "ss", $ticket_id, $messageID);
+        mysqli_stmt_execute($insert_email_id_stmt);
+        mysqli_stmt_close($insert_email_id_stmt);
+    }
+}
+
 //map for email use
 $priorityTypes = [1 => "Critical",3 => "Urgent", 5 => "High",10 => "Standard",15 => "Client Response",30 => "Project",60 => "Meeting Support"];

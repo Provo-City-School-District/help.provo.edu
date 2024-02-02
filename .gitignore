@@ -1,7 +1,6 @@
 /db_data
 .env
 src/vendor
-src/composer.lock
 .DS_Store
 src/info.php
 src/uploads/

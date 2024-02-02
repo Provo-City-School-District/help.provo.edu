@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 }
 
 // Fetch the list of usernames from the users table
-$usernamesQuery = "SELECT username FROM users";
+$usernamesQuery = "SELECT username,is_tech FROM users";
 $usernamesResult = mysqli_query($database, $usernamesQuery);
 
 if (!$usernamesResult) {
@@ -97,8 +97,14 @@ if (!$usernamesResult) {
 
 // Store the usernames in an array
 $usernames = array();
+$techusernames = array();
 while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
-    $usernames[] = $usernameRow['username'];
+
+    if ($usernameRow['is_tech'] == 1) {
+        $techusernames[] = $usernameRow['username'];
+    } else {
+        $usernames[] = $usernameRow['username'];
+    }
 }
 ?>
 
@@ -137,8 +143,8 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
             <!-- <input type="text" class="form-control" id="search_employee" name="search_employee" value="<?php echo htmlspecialchars($search_employee); ?>"> -->
             <select id="search_employee" name="search_employee">
                 <option value="" selected></option>
-                <?php foreach ($usernames as $username) : ?>
-                    <option value="<?= $username ?>" <?= $search_employee === $username ? 'selected' : '' ?>><?= $username ?></option>
+                <?php foreach ($techusernames as $techuser) : ?>
+                    <option value="<?= $techuser ?>" <?= $search_employee === $techuser ? 'selected' : '' ?>><?= $techuser ?></option>
                 <?php endforeach; ?>
             </select>
         </div>

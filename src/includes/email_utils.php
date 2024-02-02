@@ -89,6 +89,7 @@ function send_email_and_add_to_ticket(
     array $bcc_recipients = [],
 )
 {
+    global $database;
     $messageID = null;
     send_email($recipient, $subject, $message, $cc_recipients, $bcc_recipients, $messageID);
 
@@ -99,6 +100,9 @@ function send_email_and_add_to_ticket(
         mysqli_stmt_bind_param($insert_email_id_stmt, "ss", $ticket_id, $messageID);
         mysqli_stmt_execute($insert_email_id_stmt);
         mysqli_stmt_close($insert_email_id_stmt);
+        log_app(LOG_INFO, "Added $messageID to list with ticket id $ticket_id");
+    } else {
+        log_app(LOG_ERR, "MessageID was null. Not adding $ticket_id to ticket_email_ids");
     }
 }
 

@@ -62,17 +62,17 @@ $admin_page = '/admin.php';
     //load color scheme if set. loads light scheme if not set
     if (isset($_SESSION['color_scheme'])) {
     ?>
-        <link rel="stylesheet" type="text/css" href="/includes/css/variables-<?= $_SESSION['color_scheme'] ?>.css">
+        <link rel="stylesheet" type="text/css" href="/includes/css/variables-<?= $_SESSION['color_scheme'] ?>.css?v=0.1.0">
     <?php
     } else {
     ?>
-        <link rel="stylesheet" type="text/css" href="/includes/css/variables-light.css">
+        <link rel="stylesheet" type="text/css" href="/includes/css/variables-light.css?v=0.1.0">
     <?php
     }
     //load login page styles
     if ($_SERVER['REQUEST_URI'] === '/index.php' || $_SERVER['REQUEST_URI'] === '/') {
     ?>
-        <link rel="stylesheet" type="text/css" href="/includes/css/login-styles.css">
+        <link rel="stylesheet" type="text/css" href="/includes/css/login-styles.css?v=0.1.0">
     <?php
     }
     ?>

@@ -6,7 +6,7 @@ require_once("ticket_utils.php");
 require_once("email_utils.php");
 require_once("template.php");
 
-$move_emails_after_parsed = true;
+$move_emails_after_parsed = false;
 
 $imap_path = '{imap.gmail.com:993/imap/ssl}INBOX';
 $username = getenv("GMAIL_USER");
@@ -45,9 +45,14 @@ for ($i = 1; $i <= $msg_count; $i++) {
         }
     }
 
-    $message = imap_fetchbody($mbox, $i, 1);
+    
+    $message_raw = imap_fetchbody($mbox, $i, "1");
+    
+    $order   = array("\r\n", "\n", "\r");
+    $replace = '<br />';
+    $message = str_replace($order, $replace, $message_raw);
 
-
+    log_app(LOG_INFO, $message);
     $msg_is_reply = isset($email_ancestor_id);
     // Parse ticket here
     $subject_split = explode(' ', $subject);
@@ -55,34 +60,29 @@ for ($i = 1; $i <= $msg_count; $i++) {
     $subject_ticket_id = count($subject_split) > 1 ? intval($subject_split[1]) : 0;
     if ($msg_is_reply) {
         $email_exists_query = <<<STR
-        select tickets.id
-            from tickets
-            join ticket_email_ids on ticket_email_ids.ticket_id = tickets.id
-            where ticket_email_ids.email_id = '$email_ancestor_id'
+        SELECT tickets.id
+            FROM tickets
+            JOIN ticket_email_ids ON ticket_email_ids.ticket_id = tickets.id
+            WHERE ticket_email_ids.email_id = '$email_ancestor_id'
         STR;
         $email_exists_result = mysqli_query($database, $email_exists_query);
         $email_exists_data = mysqli_fetch_assoc($email_exists_result);
-        echo var_dump($email_exists_data);
-/*
-        $ancestor_exists_query = "SELECT id, email_msg_id FROM tickets WHERE email_msg_id = '$email_ancestor_id'";
-        $ticket_exists_result = mysqli_query($database, $ancestor_exists_query);
-        $ticket_exists_data = mysqli_fetch_assoc($ticket_exists_result);
-*/
+
         if (isset($email_exists_data["id"])) {
             $existing_ticket_id = intval($email_exists_data["id"]);
             // add note on existing ticket
-            add_note_with_filters($existing_ticket_id, $sender_username, $message, 1, true, null, $email_msg_id, $email_ancestor_id);
+            add_note_with_filters($existing_ticket_id, $sender_username, $message, 1, true, null, $email_msg_id);
         } else {
-            $ancestor_exists_query = "SELECT linked_id, email_msg_id FROM notes WHERE email_msg_id = '$email_ancestor_id'";
+            $ancestor_exists_query = "SELECT linked_id FROM notes WHERE email_msg_id = '$email_ancestor_id'";
             $ticket_exists_result = mysqli_query($database, $ancestor_exists_query);
             $ticket_exists_data = mysqli_fetch_assoc($ticket_exists_result);
 
             if (isset($ticket_exists_data["linked_id"])) {
                 $existing_ticket_id = intval($ticket_exists_data["linked_id"]);
-                add_note_with_filters($existing_ticket_id, $sender_username, $message, 1, true, null, $email_msg_id, $email_ancestor_id);
+                add_note_with_filters($existing_ticket_id, $sender_username, $message, 1, true, null, $email_msg_id);
             } else {
                 $failed_email_ids[] = $i;
-                log_app(LOG_ERR, "Failed to find ancestor id. This should never happen...");
+                log_app(LOG_ERR, "Failed to find ancestor id in database for message \"$email_msg_id\".This should never happen");
             }
         }
     } else {
@@ -93,6 +93,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
             if (!in_array($i, $failed_email_ids)) {
                 $res = create_ticket($sender_username, $subject, $message, $email_msg_id, $receipt_ticket_id);
                 if (!$res || $receipt_ticket_id == -1) {
+                    log_app(LOG_ERR, "Failed to create ticket from $sender_username");
                     $failed_email_ids[] = $i;
                 }
 
@@ -104,16 +105,16 @@ for ($i = 1; $i <= $msg_count; $i++) {
             }
         } else {
             // ticket syntax is valid, add a note on that ticket
-            add_note_with_filters($subject_ticket_id, $sender_username, $message, 1, true);
+            add_note_with_filters($subject_ticket_id, $sender_username, $message, 1, true, null);
         }
     }
 
     log_app(LOG_INFO, "Successfully parsed email from $sender_email");
 }
 
-
+$parsed_emails = 0;
 // Move parsed emails to important folder/label if we didn't have a parsing error
-if ($move_emails_after_parsed && $msg_count > 0) {
+if ($msg_count > 0) {
     for ($i = 1; $i <= $msg_count; $i++) {
 
         // Check if this email had a parsing error
@@ -122,13 +123,16 @@ if ($move_emails_after_parsed && $msg_count > 0) {
         }
 
         // Move email to important box
-        $msg_move_result = imap_mail_move($mbox, strval($i), "[Gmail]/Important");
-        if (!$msg_move_result) {
-            log_app(LOG_WARN, "Failed to move message: ".imap_last_error());
+        if ($move_emails_after_parsed) {
+            $msg_move_result = imap_mail_move($mbox, strval($i), "[Gmail]/Important");
+            if (!$msg_move_result) {
+                log_app(LOG_WARN, "Failed to move message: ".imap_last_error());
+            }
         }
+        $parsed_emails++;
     }
 }
 
 imap_close($mbox);
 ?>
-Parsed emails.
+Successfully parsed <?= $parsed_emails ?> emails

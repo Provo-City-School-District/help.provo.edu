@@ -102,10 +102,10 @@ function add_note_with_filters(
     $visible_to_client_intval = intval($visible_to_client);
 
     // Insert the new note into the database
-    $query = "INSERT INTO notes (linked_id, created, creator, note, time, visible_to_client, date_override) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $query = "INSERT INTO notes (linked_id, created, creator, note, time, visible_to_client, date_override, email_msg_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = mysqli_prepare($database, $query);
-    mysqli_stmt_bind_param($stmt, "issssis", $ticket_id_clean, $timestamp, $username_clean, $note_content_clean, $note_time_clean, 
-        $visible_to_client_intval, $date_override);
+    mysqli_stmt_bind_param($stmt, "issssiss", $ticket_id_clean, $timestamp, $username_clean, $note_content_clean, $note_time_clean, 
+        $visible_to_client_intval, $date_override, $email_msg_id);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
 

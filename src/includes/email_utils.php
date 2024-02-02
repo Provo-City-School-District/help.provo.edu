@@ -92,18 +92,8 @@ function send_email_and_add_to_ticket(
     global $database;
     $messageID = null;
     send_email($recipient, $subject, $message, $cc_recipients, $bcc_recipients, $messageID);
-
-    if (isset($messageID)) {
-        $insert_email_id_query = "INSERT (ticket_id, email_id) INTO ticket_email_ids WHERE (?, ?)";
-        $insert_email_id_stmt = mysqli_prepare($database, $insert_email_id_query);
-
-        mysqli_stmt_bind_param($insert_email_id_stmt, "ss", $ticket_id, $messageID);
-        mysqli_stmt_execute($insert_email_id_stmt);
-        mysqli_stmt_close($insert_email_id_stmt);
-        log_app(LOG_INFO, "Added $messageID to list with ticket id $ticket_id");
-    } else {
-        log_app(LOG_ERR, "MessageID was null. Not adding $ticket_id to ticket_email_ids");
-    }
+    if (isset($messageID))
+        gitadd_ticket_msg_id_mapping($messageID, $ticket_id);
 }
 
 //map for email use

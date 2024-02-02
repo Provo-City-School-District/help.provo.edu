@@ -102,10 +102,10 @@ function add_note_with_filters(
     $visible_to_client_intval = intval($visible_to_client);
 
     // Insert the new note into the database
-    $query = "INSERT INTO notes (linked_id, created, creator, note, time, visible_to_client, date_override, email_msg_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    $query = "INSERT INTO notes (linked_id, created, creator, note, time, visible_to_client, date_override) VALUES (?, ?, ?, ?, ?, ?, ?)";
     $stmt = mysqli_prepare($database, $query);
-    mysqli_stmt_bind_param($stmt, "issssiss", $ticket_id_clean, $timestamp, $username_clean, $note_content_clean, $note_time_clean, 
-        $visible_to_client_intval, $date_override, $email_msg_id);
+    mysqli_stmt_bind_param($stmt, "issssis", $ticket_id_clean, $timestamp, $username_clean, $note_content_clean, $note_time_clean, 
+        $visible_to_client_intval, $date_override);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
 
@@ -130,8 +130,8 @@ function create_ticket(string $client, string $subject, string $content, string 
     $content_clean = trim(htmlspecialchars($content));
 
         // Create an SQL INSERT query
-    $insertQuery = "INSERT INTO tickets (location, room, name, description, created, last_updated, due_date, status, client,attachment_path,phone,cc_emails,bcc_emails,request_type_id,priority, email_msg_id)
-                VALUES (NULL, NULL, ?, ?, ?, ?, ?, 'open', ?, '', '', '', '', 0, 10, ?)";
+    $insertQuery = "INSERT INTO tickets (location, room, name, description, created, last_updated, due_date, status, client,attachment_path,phone,cc_emails,bcc_emails,request_type_id,priority)
+                VALUES (NULL, NULL, ?, ?, ?, ?, ?, 'open', ?, '', '', '', '', 0, 10)";
 
     // Prepare the SQL statement
     $stmt = mysqli_prepare($database, $insertQuery);
@@ -162,21 +162,22 @@ function create_ticket(string $client, string $subject, string $content, string 
 
     mysqli_stmt_bind_param(
         $stmt,
-        'sssssss',
+        'ssssss',
         $subject_clean,
         $content_clean,
         $created_time,
         $created_time,
         $due_date,
         $client_clean,
-        $email_msg_id
     );
+
 
     // Execute the prepared statement
     if (mysqli_stmt_execute($stmt)) {
         log_app(LOG_INFO, "create_ticket success");
 
         $created_ticket_id = mysqli_insert_id($database);
+        add_ticket_msg_id_mapping($email_msg_id, $created_ticket_id);
         return true;
     } else {
         log_app(LOG_ERR, "create_ticket failure");

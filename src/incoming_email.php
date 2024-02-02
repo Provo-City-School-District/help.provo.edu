@@ -55,27 +55,21 @@ for ($i = 1; $i <= $msg_count; $i++) {
     $subject_ticket_id = count($subject_split) > 1 ? intval($subject_split[1]) : 0;
     if ($msg_is_reply) {
         $email_exists_query = <<<STR
-            SELECT id, email_msg_id FROM tickets 
-            WHERE
-                tickets.id in (
-                    SELECT ticket_email_ids.ticket_id FROM ticket_email_ids WHERE ticket_email_ids.email_id = '$email_ancestor_id'
-                )
+        select tickets.id
+            from tickets
+            join ticket_email_ids on ticket_email_ids.ticket_id = tickets.id
+            where ticket_email_ids.email_id = '$email_ancestor_id'
         STR;
         $email_exists_result = mysqli_query($database, $email_exists_query);
         $email_exists_data = mysqli_fetch_assoc($email_exists_result);
-
+        echo var_dump($email_exists_data);
+/*
         $ancestor_exists_query = "SELECT id, email_msg_id FROM tickets WHERE email_msg_id = '$email_ancestor_id'";
         $ticket_exists_result = mysqli_query($database, $ancestor_exists_query);
         $ticket_exists_data = mysqli_fetch_assoc($ticket_exists_result);
-
-        if (isset($ticket_exists_data["email_msg_id"]) || isset($email_exists_data["id"])) {
-            $existing_ticket_id = intval($ticket_exists_data["id"]);
-            // add note on existing ticket
-            add_note_with_filters($existing_ticket_id, $sender_username, $message, 1, true, null, $email_msg_id, $email_ancestor_id);
-        }
-
-        if (isset($ticket_exists_data["email_msg_id"])) {
-            $existing_ticket_id = intval($ticket_exists_data["id"]);
+*/
+        if (isset($email_exists_data["id"])) {
+            $existing_ticket_id = intval($email_exists_data["id"]);
             // add note on existing ticket
             add_note_with_filters($existing_ticket_id, $sender_username, $message, 1, true, null, $email_msg_id, $email_ancestor_id);
         } else {

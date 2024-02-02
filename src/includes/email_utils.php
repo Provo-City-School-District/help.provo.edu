@@ -19,7 +19,8 @@ function send_email(
     string $subject,
     string $message,
     array $cc_recipients = [],
-    array $bcc_recipients = []
+    array $bcc_recipients = [],
+    string &$messageID = null
     )
 {
 
@@ -69,7 +70,8 @@ function send_email(
 
         // Send the email
         $mailer->send();
-        log_app(LOG_INFO, "Successfully sent email to \"$recipient\"");
+        $messageID = $mailer->getLastMessageID();
+        log_app(LOG_INFO, "Successfully sent email to \"$recipient\" with messageID $messageID");
     } catch (Exception $e) {
         log_app(LOG_ERR, "Caught exception when trying to send email: $e");
         return false;

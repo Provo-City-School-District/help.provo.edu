@@ -47,6 +47,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
 
     $message = imap_fetchbody($mbox, $i, 1);
 
+
     $msg_is_reply = isset($email_ancestor_id);
     // Parse ticket here
     $subject_split = explode(' ', $subject);

@@ -119,7 +119,7 @@ function add_note_with_filters(
 }
 
 // Returns true on success, false on failure
-function create_ticket(string $client, string $subject, string $content, int &$created_ticket_id)
+function create_ticket(string $client, string $subject, string $content, string $email_msg_id, int &$created_ticket_id)
 {
     global $database;
 
@@ -128,8 +128,8 @@ function create_ticket(string $client, string $subject, string $content, int &$c
     $content_clean = trim(htmlspecialchars($content));
 
         // Create an SQL INSERT query
-    $insertQuery = "INSERT INTO tickets (location, room, name, description, created, last_updated, due_date, status, client,attachment_path,phone,cc_emails,bcc_emails,request_type_id,priority)
-                VALUES (NULL, NULL, ?, ?, ?, ?, ?, 'open', ?, '', '', '', '', 0, 10)";
+    $insertQuery = "INSERT INTO tickets (location, room, name, description, created, last_updated, due_date, status, client,attachment_path,phone,cc_emails,bcc_emails,request_type_id,priority, email_msg_id)
+                VALUES (NULL, NULL, ?, ?, ?, ?, ?, 'open', ?, '', '', '', '', 0, 10, ?)";
 
     // Prepare the SQL statement
     $stmt = mysqli_prepare($database, $insertQuery);
@@ -160,13 +160,14 @@ function create_ticket(string $client, string $subject, string $content, int &$c
 
     mysqli_stmt_bind_param(
         $stmt,
-        'ssssss',
+        'sssssss',
         $subject_clean,
         $content_clean,
         $created_time,
         $created_time,
         $due_date,
         $client_clean,
+        $email_msg_id
     );
 
     // Execute the prepared statement

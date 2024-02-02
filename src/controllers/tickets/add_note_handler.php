@@ -36,6 +36,7 @@ $add_note_result = add_note_with_filters(
     $_POST['username'],
     $_POST['note'],
     $_POST['note_time'],
+    null,
     $visible_to_client,
     $date_override
 );

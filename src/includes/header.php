@@ -55,7 +55,7 @@ $admin_page = '/admin.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Help For Provo City School District</title>
     <link rel="stylesheet" href="/includes/js/dataTables-1.13.7/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="/includes/css/main.css">
+    <link rel="stylesheet" href="/includes/css/main.css?v=0.1.0">
     <link rel="icon" type="image/png" href="/includes/img/favicons/favicon-16x16.png" sizes="16x16">
 
     <?php

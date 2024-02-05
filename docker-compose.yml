@@ -35,6 +35,7 @@ services:
       - "3310:3306"
     volumes:
       - ./db_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - help-network
     logging:
@@ -44,7 +45,7 @@ services:
         tag: "help-db"
   help_myadmin:
     container_name: help-myadmin
-    image: phpmyadmin:5.2.0
+    image: phpmyadmin:latest
     restart: "no"
     ports:
       - 8085:80

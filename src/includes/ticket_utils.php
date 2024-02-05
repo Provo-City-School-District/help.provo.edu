@@ -227,7 +227,10 @@ function get_ticket_notes($ticket_id, $limit) {
     $notes = $result->fetch_all(MYSQLI_ASSOC);
 
     $note_stmt->close();
-    $database->close();
+    
+    // Josh commented out to fix erroring and dying when trying to email from ticket. on 2-5-24
+    // Work being done on this issue when things started happening https://github.com/Provo-City-School-District/help.provo.edu/issues/78
+    // $database->close();
 
     return $notes;
 }

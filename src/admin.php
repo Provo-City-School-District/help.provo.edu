@@ -86,6 +86,20 @@ if (isset($_SESSION['current_status'])) {
 
 ?>
 <h1>Admin</h1>
+<h2>All Unassigned Tickets</h2>
+
+<?php
+//query for unassigned tickets
+$ticket_query = "SELECT *
+FROM tickets
+WHERE status NOT IN ('closed', 'resolved') AND (employee IS NULL OR employee = 'unassigned')
+ORDER BY id ASC";
+
+$ticket_result = mysqli_query($database, $ticket_query);
+display_tickets_table($ticket_result, $database);
+?>
+
+
 <!-- <h2>Reports</h2>
 <div class="grid3 canvasjsreport">
     <div id="techOpenTicket" style="height: 370px; width: 100%;"></div>
@@ -171,18 +185,7 @@ $exclude_result = mysqli_query($database, $exclude_query);
     Source Ticket ID:<input type="text" id="ticket_id_source" name="ticket_id_source" value=""><br>
     <button type="submit">Merge</button><br>
 </form>
-<h2>All Unassigned Tickets</h2>
 
-<?php
-//query for unassigned tickets
-$ticket_query = "SELECT *
-FROM tickets
-WHERE status NOT IN ('closed', 'resolved') AND (employee IS NULL OR employee = 'unassigned')
-ORDER BY id ASC";
-
-$ticket_result = mysqli_query($database, $ticket_query);
-display_tickets_table($ticket_result, $database);
-?>
 
 <!-- <script>
     let allTechs = <?php echo json_encode($allTechs, JSON_NUMERIC_CHECK); ?>;

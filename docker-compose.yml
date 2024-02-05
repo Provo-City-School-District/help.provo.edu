@@ -45,7 +45,7 @@ services:
         tag: "help-db"
   help_myadmin:
     container_name: help-myadmin
-    image: phpmyadmin:5.2.0
+    image: phpmyadmin:latest
     restart: "no"
     ports:
       - 8085:80

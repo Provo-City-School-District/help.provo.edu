@@ -28,6 +28,10 @@ $ticketPages = array(
     '/subordinate_tickets.php',
     '/location_tickets.php'
 );
+// List of Supervisor pages for which you want to display a supervisor sub-menu
+$supervisorPages = array();
+
+
 
 $is_logged_in = false;
 //Checks logged in status and bounces you to the login page if not logged in
@@ -95,9 +99,15 @@ $current_page = $_SERVER['REQUEST_URI'];
                     <?php
                     }
                     ?>
-                    <!-- <a href="/home.php">Home</a> -->
-
                     <a href="/tickets.php">Tickets</a>
+                    <?php
+                    if ($_SESSION['permissions']['is_supervisor'] == 1) {
+                    ?>
+                        <a href="/supervisor.php">Supervisor</a>
+                    <?php
+                    }
+                    ?>
+
                     <?php
                     if ($_SESSION['permissions']['is_admin'] == 1) {
                     ?>

@@ -79,5 +79,22 @@ function send_email(
 
     return true;
 }
+
+function send_email_and_add_to_ticket(
+    int $ticket_id,
+    string $recipient,
+    string $subject,
+    string $message,
+    array $cc_recipients = [],
+    array $bcc_recipients = [],
+)
+{
+    global $database;
+    $messageID = null;
+    send_email($recipient, $subject, $message, $cc_recipients, $bcc_recipients, $messageID);
+    if (isset($messageID))
+        add_ticket_msg_id_mapping($messageID, $ticket_id);
+}
+
 //map for email use
 $priorityTypes = [1 => "Critical",3 => "Urgent", 5 => "High",10 => "Standard",15 => "Client Response",30 => "Project",60 => "Meeting Support"];

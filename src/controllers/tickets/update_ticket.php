@@ -239,7 +239,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $template->changes_message = $changesMessage;
         $template->notes_message = $notesMessage;
 
-        $email_res = send_email($client_email, $ticket_subject, $template, $valid_cc_emails, $valid_bcc_emails);
+        $email_res = send_email_and_add_to_ticket($ticket_id, $client_email, $ticket_subject, $template, $valid_cc_emails, $valid_bcc_emails);
 
         if (!$email_res) {
             $error = 'Error sending email to client, CC and BCC';
@@ -262,7 +262,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $template->changes_message = $changesMessage;
         $template->notes_message = $notesMessage;
 
-        $email_res = send_email($client_email, $ticket_subject, $template, $valid_cc_emails, $valid_bcc_emails);
+        $email_res = send_email_and_add_to_ticket($ticket_id, $client_email, $ticket_subject, $template, $valid_cc_emails, $valid_bcc_emails);
 
         if (!$email_res) {
             $error = 'Error sending email to client';

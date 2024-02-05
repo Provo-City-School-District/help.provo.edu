@@ -79,15 +79,14 @@ function formatFieldName($str)
 }
 
 function add_note_with_filters(
-    string $ticket_id, 
-    string $username, 
-    string $note_content, 
+    string $ticket_id,
+    string $username,
+    string $note_content,
     string $note_time,
     bool $visible_to_client,
     string $date_override = null,
     string $email_msg_id = null,
-)
-{
+) {
     global $database;
 
     $ticket_id_clean = trim(htmlspecialchars($ticket_id));
@@ -103,11 +102,21 @@ function add_note_with_filters(
 
     // Insert the new note into the database
     $query = "INSERT INTO notes (linked_id, created, creator, note, time, visible_to_client, date_override, email_msg_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    $stmt = mysqli_prepare($database, $query);
-    mysqli_stmt_bind_param($stmt, "issssiss", $ticket_id_clean, $timestamp, $username_clean, $note_content_clean, $note_time_clean, 
-        $visible_to_client_intval, $date_override, $email_msg_id);
-    mysqli_stmt_execute($stmt);
-    mysqli_stmt_close($stmt);
+    $insert_stmt = mysqli_prepare($database, $query);
+    mysqli_stmt_bind_param(
+        $insert_stmt,
+        "issssiss",
+        $ticket_id_clean,
+        $timestamp,
+        $username_clean,
+        $note_content_clean,
+        $note_time_clean,
+        $visible_to_client_intval,
+        $date_override,
+        $email_msg_id
+    );
+    mysqli_stmt_execute($insert_stmt);
+    mysqli_stmt_close($insert_stmt);
 
     // Log the creation of the new note in the ticket_logs table
     $log_query = "INSERT INTO ticket_logs (ticket_id, user_id, field_name, old_value, new_value, created_at) VALUES (?, ?, ?, NULL, ?, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'))";
@@ -129,14 +138,14 @@ function create_ticket(string $client, string $subject, string $content, string 
     $subject_clean = trim(htmlspecialchars($subject));
     $content_clean = trim(htmlspecialchars($content));
 
-        // Create an SQL INSERT query
+    // Create an SQL INSERT query
     $insertQuery = "INSERT INTO tickets (location, room, name, description, created, last_updated, due_date, status, client,attachment_path,phone,cc_emails,bcc_emails,request_type_id,priority)
                 VALUES (NULL, NULL, ?, ?, ?, ?, ?, 'open', ?, '', '', '', '', 0, 10)";
 
     // Prepare the SQL statement
-    $stmt = mysqli_prepare($database, $insertQuery);
+    $create_stmt = mysqli_prepare($database, $insertQuery);
 
-    if ($stmt === false) {
+    if ($create_stmt === false) {
         log_app(LOG_ERR, 'Error preparing insert query: ' . mysqli_error($database));
         return false;
     }
@@ -161,7 +170,7 @@ function create_ticket(string $client, string $subject, string $content, string 
     $due_date = $due_date->format('Y-m-d');
 
     mysqli_stmt_bind_param(
-        $stmt,
+        $create_stmt,
         'ssssss',
         $subject_clean,
         $content_clean,
@@ -173,7 +182,7 @@ function create_ticket(string $client, string $subject, string $content, string 
 
 
     // Execute the prepared statement
-    if (mysqli_stmt_execute($stmt)) {
+    if (mysqli_stmt_execute($create_stmt)) {
         log_app(LOG_INFO, "create_ticket success");
 
         $created_ticket_id = mysqli_insert_id($database);
@@ -184,7 +193,7 @@ function create_ticket(string $client, string $subject, string $content, string 
         return false;
     }
 
-    mysqli_stmt_close($stmt);
+    mysqli_stmt_close($create_stmt);
 }
 
 // Messages for alerts
@@ -192,7 +201,8 @@ $alert48Message = "Ticket hasn't been updated in 48 hours";
 $pastDueMessage = "Past Due";
 
 //remove alerts from the database function that can be used on ticket updates and such.
-function removeAlert($database, $message, $ticket_id) {
+function removeAlert($database, $message, $ticket_id)
+{
     // Prepare the SQL statement to check for alerts on this ticket
     $alert_stmt = mysqli_prepare($database, "SELECT * FROM alerts WHERE message = ? AND ticket_id = ?");
 
@@ -216,7 +226,8 @@ function removeAlert($database, $message, $ticket_id) {
     mysqli_stmt_close($alert_stmt);
 }
 
-function get_ticket_notes($ticket_id, $limit) {
+function get_ticket_notes($ticket_id, $limit)
+{
     global $database;
 
     $note_stmt = $database->prepare("SELECT * FROM notes WHERE linked_id = ? ORDER BY created DESC LIMIT ?");
@@ -227,7 +238,6 @@ function get_ticket_notes($ticket_id, $limit) {
     $notes = $result->fetch_all(MYSQLI_ASSOC);
 
     $note_stmt->close();
-    
     // Josh commented out to fix erroring and dying when trying to email from ticket. on 2-5-24
     // Work being done on this issue when things started happening https://github.com/Provo-City-School-District/help.provo.edu/issues/78
     // $database->close();

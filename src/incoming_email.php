@@ -100,6 +100,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
                 $receipt_subject = "Ticket $receipt_ticket_id";
                 $template = new Template(from_root("/includes/templates/ticket_creation_receipt.phtml"));
                 $template->ticket_id = $receipt_ticket_id;
+                $template->site_url = getenv('ROOTDOMAIN');
 
                 send_email_and_add_to_ticket($receipt_ticket_id, $sender_email, $receipt_subject, $template);
             }

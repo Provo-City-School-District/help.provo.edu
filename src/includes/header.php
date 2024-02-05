@@ -42,10 +42,10 @@ if (isset($_SESSION['username'])) {
 $current_page = $_SERVER['REQUEST_URI'];
 
 // Define the URLs of the pages you want to highlight
-$home_page_url = '/profile.php';
-$ticket_page_url = '/tickets.php';
+// $home_page_url = '/profile.php';
+// $ticket_page_url = '/tickets.php';
 //$user_profile = '/profile.php';
-$admin_page = '/admin.php';
+// $admin_page = '/admin.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">

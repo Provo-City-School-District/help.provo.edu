@@ -1,4 +1,15 @@
 <?php
+// handle 500 error
+register_shutdown_function("handleFatalError");
+
+function handleFatalError() {
+    $error = error_get_last();
+    if ($error && $error['type'] === E_ERROR) {
+        // Redirect to your custom 500 error page
+        header('Location: /errors/500.html');
+        exit;
+    }
+}
 
 //Checks current page in $_SERVER variable.
 function endsWith($haystack, $needle)

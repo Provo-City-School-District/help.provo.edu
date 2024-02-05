@@ -3,4 +3,4 @@ Ticket <?= $this->ticket_id ?> has been updated
 <ul><?= $this->changes_message ?></ul>
 <p><strong>Recent Notes:</strong></p>
 <ul><?= $this->notes_message?> </ul>
-<p><a href="http://localhost:8080/controllers/tickets/edit_ticket.php?id=<?= $this->ticket_id ?>">View ticket <?= $this->ticket_id ?></a></p>
+<p><a href="<?= $this->site_url ?>/controllers/tickets/edit_ticket.php?id=<?= $this->ticket_id ?>">View ticket <?= $this->ticket_id ?></a></p>

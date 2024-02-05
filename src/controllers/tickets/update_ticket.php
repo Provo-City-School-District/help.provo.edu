@@ -238,6 +238,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $template->ticket_id = $ticket_id;
         $template->changes_message = $changesMessage;
         $template->notes_message = $notesMessage;
+        $template->site_url = getenv('ROOTDOMAIN');
 
         $email_res = send_email_and_add_to_ticket($ticket_id, $client_email, $ticket_subject, $template, $valid_cc_emails, $valid_bcc_emails);
 
@@ -261,6 +262,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $template->ticket_id = $ticket_id;
         $template->changes_message = $changesMessage;
         $template->notes_message = $notesMessage;
+        $template->site_url = getenv('ROOTDOMAIN');
 
         $email_res = send_email_and_add_to_ticket($ticket_id, $client_email, $ticket_subject, $template, $valid_cc_emails, $valid_bcc_emails);
 

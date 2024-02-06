@@ -254,6 +254,7 @@ function find_and_upload_attachments(int $ticket_id, IMAP\Connection $mbox, int 
             }
 
             $uploadPath = "/uploads/{$filename}";
+            log_app(LOG_INFO, from_root($uploadPath));
             $fp = fopen(from_root($uploadPath), "w+");
             fwrite($fp, $attachment['attachment']);
             fclose($fp);

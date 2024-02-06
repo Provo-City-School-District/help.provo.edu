@@ -4,9 +4,9 @@ FROM php:8.3-apache
 COPY config/customphp.ini /usr/local/etc/php/conf.d/
 
 # Create the uploads directory and set permissions
-RUN mkdir -p /var/www/html/src/uploads \
-  && chown -R www-data:www-data /var/www/html/src/uploads \
-  && chmod -R 755 /var/www/html/src/uploads
+RUN mkdir -p /var/www/html/uploads \
+  && chown -R www-data:www-data /var/www/html/uploads \
+  && chmod -R 766 /var/www/html/uploads
 
 # install dependencies
 RUN apt-get update \

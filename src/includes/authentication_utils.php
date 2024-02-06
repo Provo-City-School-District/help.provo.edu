@@ -1,6 +1,6 @@
 <?php
 require_once("helpdbconnect.php");
-
+require_once("functions.php");
 function user_exists_locally(string $username)
 {
     global $database;

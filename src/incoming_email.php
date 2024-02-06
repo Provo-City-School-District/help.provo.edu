@@ -51,8 +51,8 @@ for ($i = 1; $i <= $msg_count; $i++) {
 
         // Check again that the user was successfully created
         if (!user_exists_locally($sender_username)) {
-            log_app(LOG_ERR, "Failed to create local user $sender_username");
-            $failed_email_ids[] = $i;
+            log_app(LOG_ERR, "Failed to create local user $sender_username. Ignoring...");
+            //$failed_email_ids[] = $i;
         }
     }
 

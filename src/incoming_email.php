@@ -218,7 +218,7 @@ function find_and_upload_attachments(int $ticket_id, IMAP\Connection $mbox, int 
         }
     }
 
-
+/*
     $insertQuery = "SELECT attachment_path from help.tickets WHERE id = ?";
     $stmt = mysqli_prepare($database, $insertQuery);
     mysqli_stmt_bind_param($stmt, "i", $ticket_id);
@@ -234,6 +234,10 @@ function find_and_upload_attachments(int $ticket_id, IMAP\Connection $mbox, int 
     $uploadPaths = [];
     foreach ($old_uploadPaths as $oldpath)
         $uploadPaths[] = $oldpath;
+    */
+
+    // Include empty string for a leading , when using implode
+    $uploadPaths = [''];
     /* iterate through each attachment and save it */
     foreach ($attachments as $attachment) {
         if ($attachment['is_attachment'] == 1) {
@@ -258,7 +262,7 @@ function find_and_upload_attachments(int $ticket_id, IMAP\Connection $mbox, int 
     }
     $attachmentPath = implode(',', $uploadPaths);
 
-    $insertQuery = "UPDATE help.tickets SET attachment_path = ? WHERE id = ?";
+    $insertQuery = "UPDATE help.tickets SET attachment_path = CONCAT(IFNULL(attachment_path, ''), ?) WHERE id = ?";
     $stmt = mysqli_prepare($database, $insertQuery);
     mysqli_stmt_bind_param($stmt, "si", $attachmentPath, $ticket_id);
     mysqli_stmt_execute($stmt);

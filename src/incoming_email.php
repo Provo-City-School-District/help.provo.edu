@@ -14,6 +14,9 @@ $password = getenv("GMAIL_PASSWORD");
 
 $mbox = imap_open($imap_path, $username, $password) or die('Cannot connect to Gmail: ' . imap_last_error());
 $msg_count = imap_num_msg($mbox);
+if ($msg_count == false) {
+    log_app(LOG_ERR, "IMAP message count failed to query: ".imap_last_error());
+}
 
 $failed_email_ids = [];
 // iterate through the messages in inbox
@@ -131,7 +134,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
     if ($move_emails_after_parsed) {
         $msg_move_result = imap_mail_move($mbox, strval($i), "[Gmail]/Important");
         if (!$msg_move_result) {
-            log_app(LOG_WARN, "Failed to move message: ".imap_last_error());
+            log_app(LOG_ERR, "Failed to move message: ".imap_last_error());
         } else {
             $moved_emails++;
         }
@@ -141,4 +144,5 @@ for ($i = 1; $i <= $msg_count; $i++) {
 
 imap_close($mbox);
 ?>
-Successfully parsed <?= $parsed_emails ?> emails, and moved <?= $moved_emails ?> emails. (These should be the same)
+Successfully parsed <?= $parsed_emails ?> emails, and moved <?= $moved_emails ?> emails. (These should be the same)<br>
+<?= count($failed_email_ids) ?> emails failed to parse.

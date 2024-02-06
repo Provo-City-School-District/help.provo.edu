@@ -2,5 +2,5 @@
 
 function from_root(string $path)
 {
-    return $_SERVER["DOCUMENT_ROOT"] . "/$path";
+    return __DIR__ . "/$path";
 }

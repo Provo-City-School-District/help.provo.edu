@@ -17,6 +17,9 @@ $msg_count = imap_num_msg($mbox);
 if ($msg_count == false) {
     log_app(LOG_ERR, "IMAP message count failed to query: ".imap_last_error());
 }
+// Sort by msg date
+imap_sort($mbox, SORTDATE, false);
+
 
 $failed_email_ids = [];
 $succeeded_uids = [];
@@ -63,8 +66,8 @@ for ($i = 1; $i <= $msg_count; $i++) {
     $msg_is_reply = isset($email_ancestor_id);
     // Parse ticket here
     $subject_split = explode(' ', $subject);
+    $operating_ticket = -1;
 
-    $subject_ticket_id = count($subject_split) > 1 ? intval($subject_split[1]) : 0;
     if ($msg_is_reply) {
         log_app(LOG_INFO, "Email is a reply");
         $email_exists_query = <<<STR
@@ -78,6 +81,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
 
         if (isset($email_exists_data["id"])) {
             $existing_ticket_id = intval($email_exists_data["id"]);
+            $operating_ticket = $existing_ticket_id;
             // add note on existing ticket
             add_note_with_filters($existing_ticket_id, $sender_username, $message, 1, true, null, $email_msg_id);
         } else {
@@ -87,13 +91,15 @@ for ($i = 1; $i <= $msg_count; $i++) {
 
             if (isset($ticket_exists_data["linked_id"])) {
                 $existing_ticket_id = intval($ticket_exists_data["linked_id"]);
+                $operating_ticket = $existing_ticket_id;
                 add_note_with_filters($existing_ticket_id, $sender_username, $message, 1, true, null, $email_msg_id);
             } else {
                 $failed_email_ids[] = $i;
-                log_app(LOG_ERR, "Failed to find ancestor id in database for message \"$email_msg_id\".This should never happen");
+                log_app(LOG_ERR, "Failed to find ancestor id in database for message \"$email_msg_id\". This shouldn't happen on a receipt email we sent out");
             }
         }
     } else {
+        $subject_ticket_id = count($subject_split) > 1 ? intval($subject_split[1]) : 0;
         log_app(LOG_INFO, "Email is NOT a reply");
         if (strtolower($subject_split[0]) != "ticket" ||  $subject_ticket_id <= 0 || count($subject_split) != 2)
         {
@@ -111,12 +117,22 @@ for ($i = 1; $i <= $msg_count; $i++) {
                 $template->ticket_id = $receipt_ticket_id;
                 $template->site_url = getenv('ROOTDOMAIN');
 
-                send_email_and_add_to_ticket($receipt_ticket_id, $sender_email, $receipt_subject, $template);
+                $res = send_email_and_add_to_ticket($receipt_ticket_id, $sender_email, $receipt_subject, $template);
+                if (!$res) {
+                    log_app(LOG_ERR, "Failed to send email to $sender_email");
+                }
+                $operating_ticket = $receipt_ticket_id;
             }
         } else {
+            $operating_ticket = $subject_ticket_id;
             // ticket syntax is valid, add a note on that ticket
             add_note_with_filters($subject_ticket_id, $sender_username, $message, 1, true, null);
         }
+    }
+
+    // Add any attachments on operating_ticket
+    if ($operating_ticket != -1) {
+        find_and_upload_attachments($operating_ticket, $mbox, $i);
     }
     if (in_array($i, $failed_email_ids))
         log_app(LOG_INFO, "Failed to parse email from $sender_email");
@@ -145,6 +161,109 @@ foreach ($succeeded_uids as $uid) {
 
 imap_expunge($mbox);
 imap_close($mbox);
+
+function find_and_upload_attachments(int $ticket_id, IMAP\Connection $mbox, int $msg_num)
+{
+    global $database;
+
+    /* get mail structure */
+    $structure = imap_fetchstructure($mbox, $msg_num);
+
+    $attachments = [];
+
+    /* if any attachments found... */
+    if (isset($structure->parts) && count($structure->parts)) {
+        for($i = 0; $i < count($structure->parts); $i++) {
+            $attachments[$i] = array(
+                'is_attachment' => false,
+                'filename' => '',
+                'name' => '',
+                'attachment' => ''
+            );
+
+            if ($structure->parts[$i]->ifdparameters) {
+                foreach ($structure->parts[$i]->dparameters as $object) 
+                {
+                    if(strtolower($object->attribute) == 'filename') 
+                    {
+                        $attachments[$i]['is_attachment'] = true;
+                        $attachments[$i]['filename'] = $object->value;
+                    }
+                }
+            }
+
+            if ($structure->parts[$i]->ifparameters) {
+                foreach ($structure->parts[$i]->parameters as $object) {
+                    if (strtolower($object->attribute) == 'name') {
+                        $attachments[$i]['is_attachment'] = true;
+                        $attachments[$i]['name'] = $object->value;
+                    }
+                }
+            }
+
+            if ($attachments[$i]['is_attachment']) {
+                $attachments[$i]['attachment'] = imap_fetchbody($mbox, $msg_num, $i+1);
+
+                /* 3 = BASE64 encoding */
+                if($structure->parts[$i]->encoding == 3) 
+                { 
+                    $attachments[$i]['attachment'] = base64_decode($attachments[$i]['attachment']);
+                }
+                /* 4 = QUOTED-PRINTABLE encoding */
+                elseif($structure->parts[$i]->encoding == 4) 
+                { 
+                    $attachments[$i]['attachment'] = quoted_printable_decode($attachments[$i]['attachment']);
+                }
+            }
+        }
+    }
+
+
+    $insertQuery = "SELECT attachment_path from help.tickets WHERE id = ?";
+    $stmt = mysqli_prepare($database, $insertQuery);
+    mysqli_stmt_bind_param($stmt, "i", $ticket_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
+    //log_app(LOG_INFO, var_dump($result));
+    if (!$result) {
+        log_app(LOG_ERR, "Failed to get old attachment_path");
+    }
+    mysqli_stmt_close($stmt);
+    
+    $old_uploadPaths = explode(',', $result["attachment_path"]);
+    $uploadPaths = [];
+    foreach ($old_uploadPaths as $oldpath)
+        $uploadPaths[] = $oldpath;
+    /* iterate through each attachment and save it */
+    foreach ($attachments as $attachment) {
+        if ($attachment['is_attachment'] == 1) {
+            $filename = null;
+            if (!isset($attachment['name']))
+                $filename = date('Ymd_Hi').$attachment['filename'];
+            else
+                $filename = date('Ymd_Hi').$attachment['name'];
+
+
+            $folder = from_root("/uploads");
+            if (!file_exists(from_root("/uploads"))) {
+                mkdir(from_root("/uploads"), 0766, true);
+            }
+
+            $uploadPath = "/uploads/{$filename}";
+            $fp = fopen(from_root($uploadPath), "w+");
+            fwrite($fp, $attachment['attachment']);
+            fclose($fp);
+            $uploadPaths[] = $uploadPath;
+        }
+    }
+    $attachmentPath = implode(',', $uploadPaths);
+
+    $insertQuery = "UPDATE help.tickets SET attachment_path = ? WHERE id = ?";
+    $stmt = mysqli_prepare($database, $insertQuery);
+    mysqli_stmt_bind_param($stmt, "si", $attachmentPath, $ticket_id);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
+}
 ?>
 Successfully parsed <?= $parsed_emails ?> emails, and moved <?= $moved_emails ?> emails. (These should be the same)<br>
 <?= count($failed_email_ids) ?> emails failed to parse.

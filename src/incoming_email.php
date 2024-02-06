@@ -17,6 +17,7 @@ $msg_count = imap_num_msg($mbox);
 
 $failed_email_ids = [];
 // iterate through the messages in inbox
+
 for ($i = 1; $i <= $msg_count; $i++) {
     $header = imap_headerinfo($mbox, $i);
     if (!$header) {
@@ -59,6 +60,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
 
     $subject_ticket_id = count($subject_split) > 1 ? intval($subject_split[1]) : 0;
     if ($msg_is_reply) {
+        log_app(LOG_INFO, "Email is a reply");
         $email_exists_query = <<<STR
         SELECT tickets.id
             FROM tickets
@@ -86,6 +88,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
             }
         }
     } else {
+        log_app(LOG_INFO, "Email is NOT a reply");
         if (strtolower($subject_split[0]) != "ticket" ||  $subject_ticket_id <= 0 || count($subject_split) != 2)
         {
             $receipt_ticket_id = -1;
@@ -114,26 +117,28 @@ for ($i = 1; $i <= $msg_count; $i++) {
 }
 
 $parsed_emails = 0;
+$moved_emails = 0;
+
 // Move parsed emails to important folder/label if we didn't have a parsing error
-if ($msg_count > 0) {
-    for ($i = 1; $i <= $msg_count; $i++) {
+for ($i = 1; $i <= $msg_count; $i++) {
 
-        // Check if this email had a parsing error
-        if (in_array($i, $failed_email_ids)) {
-            continue;
-        }
-
-        // Move email to important box
-        if ($move_emails_after_parsed) {
-            $msg_move_result = imap_mail_move($mbox, strval($i), "[Gmail]/Important");
-            if (!$msg_move_result) {
-                log_app(LOG_WARN, "Failed to move message: ".imap_last_error());
-            }
-        }
-        $parsed_emails++;
+    // Check if this email had a parsing error
+    if (in_array($i, $failed_email_ids)) {
+        continue;
     }
+
+    // Move email to important box
+    if ($move_emails_after_parsed) {
+        $msg_move_result = imap_mail_move($mbox, strval($i), "[Gmail]/Important");
+        if (!$msg_move_result) {
+            log_app(LOG_WARN, "Failed to move message: ".imap_last_error());
+        } else {
+            $moved_emails++;
+        }
+    }
+    $parsed_emails++;
 }
 
 imap_close($mbox);
 ?>
-Successfully parsed <?= $parsed_emails ?> emails
+Successfully parsed <?= $parsed_emails ?> emails, and moved <?= $moved_emails ?> emails. (These should be the same)

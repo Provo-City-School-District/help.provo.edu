@@ -53,7 +53,9 @@ function add_ticket_msg_id_mapping(string $message_id, int $ticket_id)
         mysqli_stmt_execute($insert_email_id_stmt);
         mysqli_stmt_close($insert_email_id_stmt);
         log_app(LOG_INFO, "Added $message_id to list with ticket id $ticket_id");
+        return true;
     } else {
         log_app(LOG_ERR, "message_id was null. Not adding $ticket_id to ticket_email_ids");
+        return false;
     }
 }

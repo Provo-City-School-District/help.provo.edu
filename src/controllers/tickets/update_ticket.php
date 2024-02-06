@@ -231,7 +231,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($sendEmails || $forceEmails) {
         // message for gui to display
         $msg = "Ticket updated successfully. An email was sent to the client, CC and BCC emails.";
-        $client_email = email_address_from_username($updatedClient) . "," . email_address_from_username($updatedEmployee);
+        $client_email = email_address_from_username($updatedClient);
         $ticket_subject = "Ticket " . $ticket_id . " (Updated)";
 
         $template = new Template(from_root("/includes/templates/ticket_updated.phtml"));
@@ -240,9 +240,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $template->notes_message = $notesMessage;
         $template->site_url = getenv('ROOTDOMAIN');
 
-        $email_res = send_email_and_add_to_ticket($ticket_id, $client_email, $ticket_subject, $template, $valid_cc_emails, $valid_bcc_emails);
-
-        if (!$email_res) {
+        $email_res1 = true;
+        $email_res2 = false;
+        
+        if (strtolower($updatedEmployee) != "unassigned") {
+            $email_res1 = false;
+            log_app(LOG_INFO, email_address_from_username($updatedEmployee));
+            $email_res1 = send_email_and_add_to_ticket($ticket_id, email_address_from_username($updatedEmployee), $ticket_subject, $template, $valid_cc_emails, $valid_bcc_emails);
+        }
+        
+        $email_res2 = send_email_and_add_to_ticket($ticket_id, $client_email, $ticket_subject, $template, $valid_cc_emails, $valid_bcc_emails);
+        log_app(LOG_INFO, $email_res1 ? "yes" : "no");
+        log_app(LOG_INFO, $email_res2 ? "yes" : "no");
+        if (!($email_res1 && $email_res2)) {
             $error = 'Error sending email to client, CC and BCC';
             $formData = http_build_query($_POST);
             $_SESSION['current_status'] = $error;

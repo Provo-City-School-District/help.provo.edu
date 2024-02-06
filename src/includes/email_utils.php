@@ -90,10 +90,15 @@ function send_email_and_add_to_ticket(
 )
 {
     global $database;
+    $res1 = false;
+    $res2 = false;
+    
     $messageID = null;
-    send_email($recipient, $subject, $message, $cc_recipients, $bcc_recipients, $messageID);
+    $res1 = send_email($recipient, $subject, $message, $cc_recipients, $bcc_recipients, $messageID);
     if (isset($messageID))
-        add_ticket_msg_id_mapping($messageID, $ticket_id);
+        $res2 = add_ticket_msg_id_mapping($messageID, $ticket_id);
+
+    return $res1 && $res2;
 }
 
 //map for email use

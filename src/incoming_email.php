@@ -19,6 +19,7 @@ if ($msg_count == false) {
 }
 
 $failed_email_ids = [];
+$succeeded_uids = [];
 // iterate through the messages in inbox
 
 for ($i = 1; $i <= $msg_count; $i++) {
@@ -56,7 +57,6 @@ for ($i = 1; $i <= $msg_count; $i++) {
     $replace = '<br />';
     $message = str_replace($order, $replace, $message_raw);
 
-    log_app(LOG_INFO, $message);
     $msg_is_reply = isset($email_ancestor_id);
     // Parse ticket here
     $subject_split = explode(' ', $subject);
@@ -115,24 +115,22 @@ for ($i = 1; $i <= $msg_count; $i++) {
             add_note_with_filters($subject_ticket_id, $sender_username, $message, 1, true, null);
         }
     }
-
-    log_app(LOG_INFO, "Successfully parsed email from $sender_email");
+    if (in_array($i, $failed_email_ids))
+        log_app(LOG_INFO, "Failed to parse email from $sender_email");
+    else {
+        log_app(LOG_INFO, "Successfully parsed email from $sender_email");
+        $succeeded_uids[] = imap_uid($mbox, $i);
+    }
 }
 
 $parsed_emails = 0;
 $moved_emails = 0;
 
 // Move parsed emails to important folder/label if we didn't have a parsing error
-for ($i = 1; $i <= $msg_count; $i++) {
-
-    // Check if this email had a parsing error
-    if (in_array($i, $failed_email_ids)) {
-        continue;
-    }
-
+foreach ($succeeded_uids as $uid) {
     // Move email to important box
     if ($move_emails_after_parsed) {
-        $msg_move_result = imap_mail_move($mbox, strval($i), "[Gmail]/Important");
+        $msg_move_result = imap_mail_move($mbox, $uid, "[Gmail]/Important", CP_UID);
         if (!$msg_move_result) {
             log_app(LOG_ERR, "Failed to move message: ".imap_last_error());
         } else {

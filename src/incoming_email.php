@@ -37,6 +37,9 @@ for ($i = 1; $i <= $msg_count; $i++) {
     // Ignore non district emails
     if (($from_host != "provo.edu")) {
         log_app(LOG_INFO, "Received email from $sender_email, ignoring...");
+
+        // These can be safely moved as we don't care about them
+        $succeeded_uids[] = imap_uid($mbox, $i); 
         continue;
     }
 
@@ -140,6 +143,7 @@ foreach ($succeeded_uids as $uid) {
     $parsed_emails++;
 }
 
+imap_expunge($mbox);
 imap_close($mbox);
 ?>
 Successfully parsed <?= $parsed_emails ?> emails, and moved <?= $moved_emails ?> emails. (These should be the same)<br>

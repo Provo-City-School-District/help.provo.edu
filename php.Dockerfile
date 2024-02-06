@@ -3,9 +3,6 @@ FROM php:8.3-apache
 # php adjustments.
 COPY config/customphp.ini /usr/local/etc/php/conf.d/
 
-# Create the uploads directory and set permissions
-RUN mkdir -p /var/www/html/uploads && chown -R www-data:www-data /var/www/html/uploads && chmod -R 775 /var/www/html/uploads
-
 # install dependencies
 RUN apt-get update \
   && apt-get install -y --no-install-recommends libc-client-dev libkrb5-dev libpq-dev libzip-dev zip unzip git wget libpng-dev libjpeg-dev zlib1g-dev cron \
@@ -71,3 +68,7 @@ RUN chmod +x /root/run_email_check.sh
 
 # Install Composer packages
 RUN composer install --no-interaction --no-ansi --no-scripts --no-progress --prefer-dist
+
+# Create the uploads directory and set permissions
+RUN mkdir -p /var/www/html/uploads && chown -R www-data:www-data /var/www/html/uploads && chmod -R 775 /var/www/html/uploads
+CMD chown -R www-data:www-data /var/www/html/uploads && apache2-foreground

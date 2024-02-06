@@ -3,4 +3,7 @@
 src/vendor
 .DS_Store
 src/info.php
-src/uploads/
+src/uploads/*.jpg
+src/uploads/*.jpeg
+src/uploads/*.png
+src/uploads/*.gif

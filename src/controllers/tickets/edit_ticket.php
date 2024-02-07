@@ -425,7 +425,7 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
     if (count($child_tickets) > 0) {
     ?>
         <div class="childTickets">
-            <h2>Child Tickets</h2>
+            <h2>Sub Tasks / Child Tickets</h2>
             <table>
                 <tr>
                     <th>Ticket ID</th>

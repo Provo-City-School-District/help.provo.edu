@@ -3,7 +3,6 @@
 src/vendor
 .DS_Store
 src/info.php
-src/uploads/*.jpg
-src/uploads/*.jpeg
-src/uploads/*.png
-src/uploads/*.gif
+src/uploads/*
+!.gitkeep
+

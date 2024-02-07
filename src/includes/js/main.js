@@ -37,10 +37,10 @@ if (userPref === 'dark') {
 tinymce.init({
   selector: ".tinyMCEtextarea",
   toolbar:
-    "undo redo | bold italic strikethrough | blockquote | paste pastetext removeformat | numlist bullist | code",
+    "undo redo | bold italic strikethrough | blockquote | paste pastetext removeformat | numlist bullist | code | link unlink | autolink",
   menubar: false,
   paste_as_text: true,
-  plugins: ["lists", "code"],
+  plugins: ["lists", "code","link","autolink"],
   skin: skin,
   content_css: content_css,
 });

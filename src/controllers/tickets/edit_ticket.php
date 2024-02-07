@@ -486,7 +486,7 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
                                     echo $note['created'];
                                 ?></a></td>
                         <td data-cell="Created By"><?= $note['creator'] ?></td>
-                        <td data-cell="Note Message">
+                        <td class="ticket_note" data-cell="Note Message">
                             <?php
                             /*
                                     May want to reference archived tickets in the future,
@@ -617,7 +617,7 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
                         <tr>
                             <td data-cell="Date"><?= $log_row['created_at'] ?></td>
                             <td data-cell="Created by"><?= $log_row['user_id'] ?></td>
-                            <td data-cell="Change Made">
+                            <td class="ticket_note"  data-cell="Change Made">
                                 <?php
                                 if ($log_row['field_name'] != 'note') {
                                     echo formatFieldName($log_row['field_name']) . ' From: ' . html_entity_decode($log_row['old_value']) . ' To: ' . html_entity_decode($log_row['new_value']);

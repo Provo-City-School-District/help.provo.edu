@@ -79,7 +79,7 @@ if (!$insert_flagged_ticket_result) {
     die('Error getting ticket flag status: ' . mysqli_error($database));
 }
 
-$is_ticket_flagged = false; 
+$is_ticket_flagged = false;
 if (mysqli_num_rows($insert_flagged_ticket_result) > 0) {
     $is_ticket_flagged = true;
 }
@@ -111,7 +111,11 @@ JSON_ARRAYAGG(
         'note', notes.note,
         'created', notes.created,
         'creator', notes.creator,
-        'time', notes.time,
+        'work_hours', notes.work_hours,
+        'work_minutes', notes.work_minutes,
+        'travel_hours', notes.travel_hours,
+        'travel_minutes', notes.travel_minutes,
+        -- 'time', notes.time,
         'visible_to_client', notes.visible_to_client,
         'date_override', notes.date_override
     )
@@ -193,7 +197,7 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
             <input type="text" id="lastname" name="lastname">
             <input type="submit" value="Search">
         </form>
-       
+
         <div id="search-results"></div>
     </div>
     <!-- Form for updating ticket information -->
@@ -370,13 +374,13 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
             <div class="ticket-description">
                 <?= html_entity_decode($ticket['description']) ?>
                 <?php
-                    if ($_SESSION['permissions']['is_admin'] == 1) {
-                        ?>
-                            <button id="edit-description-button" type="button">Edit Request Detail</button>
-                        <?php
-                    }
+                if ($_SESSION['permissions']['is_admin'] == 1) {
                 ?>
-                
+                    <button id="edit-description-button" type="button">Edit Request Detail</button>
+                <?php
+                }
+                ?>
+
             </div>
 
             <div id="edit-description-form" style="display: none;">
@@ -461,10 +465,10 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
                     <th>Date</th>
                     <th>Created By</th>
                     <th>Note</th>
-                    <th>Time</th>
+                    <th class="timeColumn">Time</th>
                 </tr>
                 <?php
-                $total_time = 0; // Initialize total time to 0
+                $total_minutes = 0; // Initialize total time to 0
 
                 foreach (json_decode($ticket['notes'], true) as $note) :
                     // Hidden notes should only be viewable by admins
@@ -473,7 +477,15 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
                         $_SESSION['permissions']['is_admin'] != 1
                     )
                         continue;
-                    $total_time += $note['time']; // Add note time to total time (doesn't add for non-admins)
+                    // Calculate the total time for this note in minutes
+                    $note_total_minutes = $note['work_hours'] * 60 + $note['work_minutes'] + $note['travel_hours'] * 60 + $note['travel_minutes'];
+
+                    // Add the total time for this note to the total time for all notes
+                    $total_minutes += $note_total_minutes;
+
+                    // Convert the total time for this note to hours and minutes
+                    $note_total_hours = floor($note_total_minutes / 60);
+                    $note_remaining_minutes = $note_total_minutes % 60;
                 ?>
 
                     <tr>
@@ -543,12 +555,30 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
                                 ?>
                             </span>
                         </td>
-                        <td data-cell="Time Taken"><?= $note['time'] ?></td>
+
+                        <td data-cell="Time Taken"><?= $note['work_hours'] ?> hours <?= $note['work_minutes'] ?> minutes (Work Time)<br>
+                            <?= $note['travel_hours'] ?> hours <?= $note['travel_minutes'] ?> minutes (Travel Time)<br>
+                            <?php
+                            $totalHours = $note['work_hours'] + $note['travel_hours'];
+                            $totalMinutes = $note['work_minutes'] + $note['travel_minutes'];
+
+                            // If total minutes is 60 or more, convert it to hours
+                            if ($totalMinutes >= 60) {
+                                $totalHours += floor($totalMinutes / 60);
+                                $totalMinutes = $totalMinutes % 60;
+                            }
+                            ?>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             <?php endif; ?>
             <tr class="totalTime">
-                <td data-cell="Total Time" colspan=4><span>Total Time: </span> <?= $total_time ?></td>
+                <?php
+                // Convert the total time for all notes to hours and minutes
+                $total_hours = floor($total_minutes / 60);
+                $remaining_minutes = $total_minutes % 60;
+                ?>
+                <td data-cell="Total Time" colspan=4><span>Total Time: </span> <?php echo "$total_hours hours $remaining_minutes minutes";  ?></td>
 
             </tr>
             </table>
@@ -570,9 +600,26 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
                     <label for="visible_to_client">Visible to Client:</label>
                     <input type="checkbox" id="visible_to_client" name="visible_to_client" checked="checked">
                 </div>
+                <h4>Work Time</h4>
                 <div>
-                    <label for="note_time">Time in Minutes:</label>
-                    <input id="note_time" name="note_time" type="number" required>
+                    <label for="work_hours">Hours:</label>
+                    <input id="work_hours" name="work_hours" type="number" required>
+
+                    <label for="work_minutes">Minutes:</label>
+                    <input id="work_minutes" name="work_minutes" type="number" required>
+                </div>
+                <h4>Travel Time</h4>
+                <div>
+                    <label for="travel_hours">Hours:</label>
+                    <input id="travel_hours" name="travel_hours" type="number" required>
+
+                    <label for="travel_minutes">Minutes:</label>
+                    <input id="travel_minutes" name="travel_minutes" type="number" required>
+                </div>
+
+                <div>
+                    <label for="total_time">Total Time in Minutes:</label>
+                    <input id="total_time" name="total_time" type="number" readonly>
                 </div>
                 <div>
                     <label for="date_override_enable">Date Override:</label>
@@ -617,7 +664,7 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
                         <tr>
                             <td data-cell="Date"><?= $log_row['created_at'] ?></td>
                             <td data-cell="Created by"><?= $log_row['user_id'] ?></td>
-                            <td class="ticket_note"  data-cell="Change Made">
+                            <td class="ticket_note" data-cell="Change Made">
                                 <?php
                                 if ($log_row['field_name'] != 'note') {
                                     echo formatFieldName($log_row['field_name']) . ' From: ' . html_entity_decode($log_row['old_value']) . ' To: ' . html_entity_decode($log_row['new_value']);
@@ -639,38 +686,51 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
         <?php
         }
         ?>
-    <br>
-    <?php
-        if ($is_ticket_flagged):
-    ?>
-        <form id="flag-form" method="post">
-            <input type="submit" name="unflag_ticket" value="Unflag ticket">
+        <br>
+        <?php
+        if ($is_ticket_flagged) :
+        ?>
+            <form id="flag-form" method="post">
+                <input type="submit" name="unflag_ticket" value="Unflag ticket">
+            </form>
+        <?php else : ?>
+            <form id="flag-form" method="post">
+                <input type="submit" name="flag_ticket" value="Flag ticket">
+            </form>
+        <?php endif; ?>
+        <br>
+        <form id="merge-form" method="post" action="merge_tickets_handler.php">
+            <label for="merge_ticket_id">Merge this ticket into:</label>
+            <input type="hidden" name="ticket_id_source" value="<?= $ticket_id ?>">
+            <input type="text" name="ticket_id_host" value=""><br>
+            <input type="submit" value="Merge">
         </form>
-    <?php else: ?>
-        <form id="flag-form" method="post">
-            <input type="submit" name="flag_ticket" value="Flag ticket">
-        </form>
-    <?php endif; ?>
-    <br>
-    <form id="merge-form" method="post" action="merge_tickets_handler.php">
-        <label for="merge_ticket_id">Merge this ticket into:</label>
-        <input type="hidden" name="ticket_id_source" value="<?= $ticket_id ?>">
-        <input type="text" name="ticket_id_host" value=""><br>
-        <input type="submit" value="Merge">
-    </form>
-    </article>
+</article>
 <script>
-const title = document.getElementById("ticket-title");
-title.onclick = function() {
-    document.execCommand("copy");
-}
-title.addEventListener("copy", function(event) {
-    event.preventDefault();
-    if (event.clipboardData) {
-        event.clipboardData.setData("text/plain", window.location.host + "/controllers/tickets/edit_ticket.php?id=" + <?= $ticket_id ?>);
-        console.log(event.clipboardData.getData("text"))
+    const title = document.getElementById("ticket-title");
+    title.onclick = function() {
+        document.execCommand("copy");
     }
-});
+    title.addEventListener("copy", function(event) {
+        event.preventDefault();
+        if (event.clipboardData) {
+            event.clipboardData.setData("text/plain", window.location.host + "/controllers/tickets/edit_ticket.php?id=" + <?= $ticket_id ?>);
+            console.log(event.clipboardData.getData("text"))
+        }
+    });
+
+    document.querySelectorAll('#work_hours, #work_minutes, #travel_hours, #travel_minutes').forEach(function(el) {
+        el.addEventListener('input', function() {
+            var workHours = parseInt(document.getElementById('work_hours').value) || 0;
+            var workMinutes = parseInt(document.getElementById('work_minutes').value) || 0;
+            var travelHours = parseInt(document.getElementById('travel_hours').value) || 0;
+            var travelMinutes = parseInt(document.getElementById('travel_minutes').value) || 0;
+
+            var totalTime = (workHours + travelHours) * 60 + workMinutes + travelMinutes;
+
+            document.getElementById('total_time').value = totalTime;
+        });
+    });
 </script>
 
 <?php include("footer.php"); ?>

@@ -37,12 +37,15 @@ if (userPref === 'dark') {
 tinymce.init({
   selector: ".tinyMCEtextarea",
   toolbar:
-    "undo redo | bold italic strikethrough | blockquote | paste pastetext removeformat | numlist bullist | code | link unlink | autolink",
+    "undo redo | bold italic strikethrough | blockquote | paste pastetext removeformat | numlist bullist | code | link unlink",
   menubar: false,
   paste_as_text: true,
-  plugins: ["lists", "code","link","autolink"],
+  plugins: ["lists", "code","link", "autolink", "wordcount"],
   skin: skin,
   content_css: content_css,
+});
+
+
 // display/hide new note form
 var newNoteButton = document.getElementById("new-note-button");
 var newNoteForm = document.getElementById("new-note-form");

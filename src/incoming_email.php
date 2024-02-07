@@ -58,6 +58,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
 
     
     $message_raw = imap_fetchbody($mbox, $i, "1");
+    $message_raw = base64_decode($message_raw);
 
     $order   = array("\r\n", "\n", "\r");
     $replace = '<br />';

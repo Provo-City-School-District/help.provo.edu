@@ -22,26 +22,28 @@ $(document).ready(function () {
 });
 
 //initialize tinyMCE for for textarea with class tinyMCEtextarea
+// var userPref = ''; // Replace this with your actual code to get the user preference
+
+var skin, content_css;
+
+if (userPref === 'dark') {
+  skin = 'oxide-dark';
+  content_css = 'dark';
+} else {
+  skin = 'oxide';
+  content_css = 'default';
+}
+
 tinymce.init({
   selector: ".tinyMCEtextarea",
-  toolbar: "undo redo | bold italic strikethrough | blockquote | paste pastetext removeformat | numlist bullist | code",
+  toolbar:
+    "undo redo | bold italic strikethrough | blockquote | paste pastetext removeformat | numlist bullist | code",
   menubar: false,
   paste_as_text: true,
-  plugins: ["lists","code"],
+  plugins: ["lists", "code"],
+  skin: skin,
+  content_css: content_css,
 });
-
-// display/hide new note form
-var newNoteButton = document.getElementById("new-note-button");
-var newNoteForm = document.getElementById("new-note-form");
-if (newNoteButton && newNoteForm) {
-  newNoteButton.addEventListener("click", function () {
-    if (newNoteForm.style.display === "none") {
-      newNoteForm.style.display = "block";
-    } else {
-      newNoteForm.style.display = "none";
-    }
-  });
-}
 
 // Check if the toggle-file-upload-form and file-upload-form elements exist before adding the event listener
 var toggleFileUploadForm = document.getElementById("toggle-file-upload-form");

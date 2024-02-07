@@ -152,7 +152,7 @@ if ($ticket_merged_id != null && $should_redirect) {
 ob_end_flush();
 
 // Fetch the list of usernames from the users table
-$usernamesQuery = "SELECT username,is_tech FROM users WHERE is_tech = 1";
+$usernamesQuery = "SELECT username,is_tech FROM users WHERE is_tech = 1 ORDER BY username ASC";
 $usernamesResult = mysqli_query($database, $usernamesQuery);
 
 if (!$usernamesResult) {

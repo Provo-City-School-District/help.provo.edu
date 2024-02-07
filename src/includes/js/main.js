@@ -22,10 +22,29 @@ $(document).ready(function () {
 });
 
 //initialize tinyMCE for for textarea with class tinyMCEtextarea
+// var userPref = ''; // Replace this with your actual code to get the user preference
+
+var skin, content_css;
+
+if (userPref === 'dark') {
+  skin = 'oxide-dark';
+  content_css = 'dark';
+} else {
+  skin = 'oxide';
+  content_css = 'default';
+}
+
 tinymce.init({
   selector: ".tinyMCEtextarea",
+  toolbar:
+    "undo redo | bold italic strikethrough | blockquote | paste pastetext removeformat | numlist bullist | code | link unlink",
   menubar: false,
+  paste_as_text: true,
+  plugins: ["lists", "code","link", "autolink", "wordcount"],
+  skin: skin,
+  content_css: content_css,
 });
+
 
 // display/hide new note form
 var newNoteButton = document.getElementById("new-note-button");

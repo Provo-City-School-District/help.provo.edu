@@ -23,6 +23,14 @@ a:hover {
 	background-color: #33a206;
 }
 
+blockquote {
+	display: block;
+	margin: 1em 0;
+	margin-left: 1em;
+	border-left: 2px solid var(--theme-primary);
+	padding-left: 1em;
+}
+
 button,
 input[type=submit] {
 	background-color: var(--theme-primary);
@@ -83,6 +91,7 @@ input[type=submit] {
 	text-align: center;
 	margin: 0 auto;
 }
+
 .button {
 	background-color: var(--theme-primary);
 	color: var(--theme-white);
@@ -333,6 +342,13 @@ select {
 	display: block;
 }
 
+.ticket_note p {
+	margin: 1em 0;
+	display: block;
+}
+.timeColumn {
+	width: 200px;
+}
 /* =============================== Responsive Styles =============================== */
 @media(min-width: 800px) {
 	#mainHeader {
@@ -484,6 +500,6 @@ select {
 }
 
 #ticket-title-container {
-	display:inline-block; 
+	display: inline-block;
 	cursor: pointer;
 }

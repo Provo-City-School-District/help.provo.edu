@@ -92,7 +92,7 @@ $fieldTechs = process_query_result($field_tech_query_result, "employee");
 
 
 
-<h2>Unassigned Tickets For Location <?= $managed_location ?> </h2>
+<h2>Unassigned Tickets</h2>
 
 <?php
 
@@ -102,7 +102,6 @@ SELECT *
 FROM tickets
 WHERE status NOT IN ('closed', 'resolved') 
 AND (employee IS NULL OR employee = 'unassigned')
-AND location = $managed_location
 unassigned_tickets;
 
 

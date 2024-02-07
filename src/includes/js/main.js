@@ -24,10 +24,10 @@ $(document).ready(function () {
 //initialize tinyMCE for for textarea with class tinyMCEtextarea
 tinymce.init({
   selector: ".tinyMCEtextarea",
-  toolbar: "undo redo | bold italic strikethrough | blockquote | paste pastetext removeformat | numlist bullist",
+  toolbar: "undo redo | bold italic strikethrough | blockquote | paste pastetext removeformat | numlist bullist | code",
   menubar: false,
   paste_as_text: true,
-  plugins: ["lists",],
+  plugins: ["lists","code"],
 });
 
 // display/hide new note form

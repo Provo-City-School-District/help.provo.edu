@@ -1,6 +1,6 @@
 </main>
 <footer id="mainFooter">
-    <p>&copy; 2023-<?php echo date("Y"); ?> Provo City School District</p>
+    <p>&copy; 2023-<?php echo date("Y"); ?> Provo City School District | <a href="https://provo.edu/helpdesk-feedback-form/">Help us Improve our Helpdesk</a></p>
 </footer>
 </div>
 <script src="/includes/js/jquery-3.7.1.min.js" type="text/javascript"></script>

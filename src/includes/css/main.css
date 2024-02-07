@@ -338,6 +338,10 @@ select {
 #search-for-client input {
 	display: block;
 }
+.ticket_note p {
+	margin: 1em 0;
+	display: block;
+}
 
 /* =============================== Responsive Styles =============================== */
 @media(min-width: 800px) {

@@ -64,7 +64,7 @@ Change to the help.provo.edu directory and build your containers with ```docker 
 
 If you're restoring from backup, get a copy of the backup database dump from Barracuda and restore it into the database using PHPmyadmin.
 
-If you're setting up a fresh development instance get a copy of the database dump from one of the other developers and restore it into the database using PHPmyadmin.(planned to create the database on first run in the future)
+If you're setting up a fresh development instance the database should initialize for you, but you may want to get a database dump from backup or a fellow developer to get data to work with.
 
 # Resources Used
 - Docker: https://www.docker.com/

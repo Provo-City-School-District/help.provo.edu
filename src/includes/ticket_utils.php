@@ -82,7 +82,10 @@ function add_note_with_filters(
     string $ticket_id,
     string $username,
     string $note_content,
-    string $note_time,
+    int $work_hours,
+    int $work_minutes,
+    int $travel_hours,
+    int $travel_minutes,
     bool $visible_to_client,
     string $date_override = null,
     string $email_msg_id = null,
@@ -92,25 +95,32 @@ function add_note_with_filters(
     $ticket_id_clean = trim(htmlspecialchars($ticket_id));
     $note_content_clean = trim(htmlspecialchars($note_content));
     $username_clean = trim(htmlspecialchars($username));
-    $note_time_clean = trim(htmlspecialchars($note_time));
+    $work_hours_clean = trim(htmlspecialchars($work_hours));
+    $work_minutes_clean = trim(htmlspecialchars($work_minutes));
+    $travel_hours_clean = trim(htmlspecialchars($travel_hours));
+    $travel_minutes_clean = trim(htmlspecialchars($travel_minutes));
     $timestamp = date('Y-m-d H:i:s');
-    if (intval($note_time_clean) <= 0) {
+
+    if (!isset($work_hours) || $work_hours === null || !isset($work_minutes) || $work_minutes === null || !isset($travel_hours) || $travel_hours === null || !isset($travel_minutes) || $travel_minutes === null) {
         return false;
     }
 
     $visible_to_client_intval = intval($visible_to_client);
 
     // Insert the new note into the database
-    $query = "INSERT INTO notes (linked_id, created, creator, note, time, visible_to_client, date_override, email_msg_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    $query = "INSERT INTO notes (linked_id, created, creator, note, work_hours, work_minutes, travel_hours, travel_minutes, visible_to_client, date_override, email_msg_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?)";
     $insert_stmt = mysqli_prepare($database, $query);
     mysqli_stmt_bind_param(
         $insert_stmt,
-        "issssiss",
+        "isssiiiiiss",
         $ticket_id_clean,
         $timestamp,
         $username_clean,
         $note_content_clean,
-        $note_time_clean,
+        $work_hours_clean,
+        $work_minutes_clean,
+        $travel_hours_clean,
+        $travel_minutes_clean,
         $visible_to_client_intval,
         $date_override,
         $email_msg_id

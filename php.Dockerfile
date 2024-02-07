@@ -16,7 +16,7 @@ RUN docker-php-ext-install gd imap
 COPY crontab /etc/cron.d/cron-job
 RUN chmod 0644 /etc/cron.d/cron-job
 RUN /usr/bin/crontab /etc/cron.d/cron-job
-CMD cron && docker-php-entrypoint apache2-foreground
+
 
 # Enable Apache ldap auth module
 RUN apt-get update -y --fix-missing && apt-get upgrade -y
@@ -71,4 +71,6 @@ RUN composer install --no-interaction --no-ansi --no-scripts --no-progress --pre
 
 # Create the uploads directory and set permissions
 RUN mkdir -p /var/www/html/uploads && chown -R www-data:www-data /var/www/html/uploads && chmod -R 775 /var/www/html/uploads
-CMD chown -R www-data:www-data /var/www/html/uploads && apache2-foreground
+
+# CMD cron && docker-php-entrypoint apache2-foreground
+CMD service cron start && chown -R www-data:www-data /var/www/html/uploads && docker-php-entrypoint apache2-foreground

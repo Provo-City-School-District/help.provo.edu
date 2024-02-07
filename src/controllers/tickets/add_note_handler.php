@@ -5,7 +5,6 @@ require_once('helpdbconnect.php');
 require_once('ticket_utils.php');
 // Return true on success, false otherwise
 
-
 $ticket_id = $_POST['ticket_id'];
 
 $date_override = null;
@@ -35,7 +34,10 @@ $add_note_result = add_note_with_filters(
     $ticket_id,
     $_POST['username'],
     $_POST['note'],
-    $_POST['note_time'],
+    $_POST['work_hours'],
+    $_POST['work_minutes'],
+    $_POST['travel_hours'],
+    $_POST['travel_minutes'],
     $visible_to_client,
     $date_override
 );

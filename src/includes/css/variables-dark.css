@@ -48,3 +48,6 @@ table a {
 .canvasjs-chart-canvas {
 	filter:invert(1)
 }
+#search-for-client {
+	background-color: unset;
+}

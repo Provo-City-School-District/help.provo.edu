@@ -59,14 +59,14 @@ $current_page = $_SERVER['REQUEST_URI'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Help For Provo City School District</title>
     <link rel="stylesheet" href="/includes/js/dataTables-1.13.7/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="/includes/css/main.css?v=0.1.0">
+    <link rel="stylesheet" href="/includes/css/main.css?v=00.01.01">
     <link rel="icon" type="image/png" href="/includes/img/favicons/favicon-16x16.png" sizes="16x16">
 
     <?php
     //load color scheme if set. loads light scheme if not set
     if (isset($_SESSION['color_scheme'])) {
     ?>
-        <link rel="stylesheet" type="text/css" href="/includes/css/variables-<?= $_SESSION['color_scheme'] ?>.css?v=0.1.0">
+        <link rel="stylesheet" type="text/css" href="/includes/css/variables-<?= $_SESSION['color_scheme'] ?>.css?v=0.1.01">
     <?php
     } else {
     ?>

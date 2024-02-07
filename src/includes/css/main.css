@@ -346,7 +346,9 @@ select {
 	margin: 1em 0;
 	display: block;
 }
-
+.timeColumn {
+	width: 200px;
+}
 /* =============================== Responsive Styles =============================== */
 @media(min-width: 800px) {
 	#mainHeader {

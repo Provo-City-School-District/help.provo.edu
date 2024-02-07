@@ -101,7 +101,7 @@ function add_note_with_filters(
     $travel_minutes_clean = trim(htmlspecialchars($travel_minutes));
     $timestamp = date('Y-m-d H:i:s');
 
-    if (empty($work_hours) || empty($work_minutes) || empty($travel_hours) || empty($travel_minutes)) {
+    if (!isset($work_hours) || $work_hours === null || !isset($work_minutes) || $work_minutes === null || !isset($travel_hours) || $travel_hours === null || !isset($travel_minutes) || $travel_minutes === null) {
         return false;
     }
 

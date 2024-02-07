@@ -43,7 +43,18 @@ tinymce.init({
   plugins: ["lists", "code","link","autolink"],
   skin: skin,
   content_css: content_css,
-});
+// display/hide new note form
+var newNoteButton = document.getElementById("new-note-button");
+var newNoteForm = document.getElementById("new-note-form");
+if (newNoteButton && newNoteForm) {
+  newNoteButton.addEventListener("click", function () {
+    if (newNoteForm.style.display === "none") {
+      newNoteForm.style.display = "block";
+    } else {
+      newNoteForm.style.display = "none";
+    }
+  });
+}
 
 // Check if the toggle-file-upload-form and file-upload-form elements exist before adding the event listener
 var toggleFileUploadForm = document.getElementById("toggle-file-upload-form");

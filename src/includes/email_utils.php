@@ -39,7 +39,7 @@ function send_email(
 
         $mailer->Host = 'smtp.provo.edu';
         $mailer->Port = 25;
-        $mailer->setFrom(getenv("GMAIL_USER"), 'dev.provo.edu');
+        $mailer->setFrom(getenv("GMAIL_USER"), 'help.provo.edu');
        
        // handle multiple recipients
         $rec_emails = explode(",", $recipient);

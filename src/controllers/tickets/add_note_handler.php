@@ -28,8 +28,8 @@ $work_hours = filter_var($_POST['work_hours'], FILTER_SANITIZE_NUMBER_INT);
 $work_minutes = filter_var($_POST['work_minutes'], FILTER_SANITIZE_NUMBER_INT);
 $travel_hours = filter_var($_POST['travel_hours'], FILTER_SANITIZE_NUMBER_INT);
 $travel_minutes = filter_var($_POST['travel_minutes'], FILTER_SANITIZE_NUMBER_INT);
-$note_content = htmlspecialchars($_POST['note']);
-$username = htmlspecialchars($_POST['username']);
+$note_content = $_POST['note'];
+$username = $_POST['username'];
 
 
 // Get visible to client state

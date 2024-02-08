@@ -337,7 +337,9 @@ select {
 .ticket-description p:not(:first-child) {
 	margin: 1em 0;
 }
-
+.ticket_log {
+	font-size: 70%;
+}
 .ticket_log td:nth-child(1),
 .ticket_log td:nth-child(2),
 .note td:nth-child(1),

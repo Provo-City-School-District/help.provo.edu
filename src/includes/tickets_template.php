@@ -6,6 +6,7 @@ function display_tickets_table($tickets, $database)
             <tr>
                 <th class="tID">ID</th>
                 <th class="reqDetail">Request Detail</th>
+                <th class="tLatestNote">Latest Note</th>
                 <th class="tLocation">Location</th>
                 <th class="category">Request Category</th>
                 <th class="status">Current Status</th>
@@ -40,10 +41,33 @@ function display_tickets_table($tickets, $database)
             $request_type_query_result = mysqli_query($database, $request_type_query);
             $request_type_name = mysqli_fetch_assoc($request_type_query_result)['request_name'];
         }
+
+        $notes_query = "SELECT creator, note FROM help.notes WHERE linked_id = ? ORDER BY
+            (CASE WHEN date_override IS NULL THEN created ELSE date_override END) DESC
+        ";
+        $notes_stmt = mysqli_prepare($database, $notes_query);
+        $creator = null;
+        $note_data = null;
+        if ($notes_stmt) {
+            mysqli_stmt_bind_param($notes_stmt, "i", $ticket["id"]);
+            mysqli_stmt_execute($notes_stmt);
+            
+            mysqli_stmt_bind_result($notes_stmt, $creator, $note_data);
+            // Fetch the result
+            mysqli_stmt_fetch($notes_stmt);
+
+            // Use $location_name as needed
+            mysqli_stmt_close($notes_stmt);
+        }
+        $latest_note_str = "";
+        if ($creator != null && $note_data != null)
+            $latest_note_str = $creator.": ".strip_tags(html_entity_decode($note_data));
+
         $descriptionWithoutLinks = strip_tags(html_entity_decode($ticket["description"]));
         echo '<tr>
             <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id=' . $ticket["id"] . '">' . $ticket["id"] . '</a></td>
             <td data-cell="Request Detail"><a href="/controllers/tickets/edit_ticket.php?id=' . $ticket["id"] . '">' . $ticket["name"] . ':</a>' . limitChars($descriptionWithoutLinks, 100) . '</td>
+            <td data-cell="Latest Note:">'.limitChars($latest_note_str, 100).'</td>
             <td data-cell="Location">' . $location_name . '<br><br>RM ' . $ticket['room'] . '</td>
             <td data-cell="Request Category">' .  $request_type_name . '</td>
             <td data-cell="Current Status">' . $ticket["status"] . '</td>

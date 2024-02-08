@@ -53,7 +53,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     }
 
     // Construct the SQL query for the old ticket database
-    $old_ticket_query = "SELECT CONCAT('A-', JOB_TICKET_ID) AS a_id,PROBLEM_TYPE_ID,SUBJECT,QUESTION_TEXT,REPORT_DATE,LAST_UPDATED,JOB_TIME,ASSIGNED_TECH_ID,ROOM,LOCATION_ID FROM whd.job_ticket WHERE 1=0";
+    $old_ticket_query = "SELECT CONCAT('A-', JOB_TICKET_ID) AS a_id,PROBLEM_TYPE_ID,SUBJECT,QUESTION_TEXT,REPORT_DATE,LAST_UPDATED,JOB_TIME,ASSIGNED_TECH_ID,ROOM,LOCATION_ID,STATUS_TYPE_ID FROM whd.job_ticket WHERE 1=0";
+
+    // map old system status ids to our current system
+    switch ($search_status) {
+        case 'open':
+            $search_status = 1;
+            break;
+        case 'closed':
+            $search_status = 3;
+            break;
+        case 'resolved':
+            $search_status = 5;
+            break;
+        case 'pending':
+            $search_status = 7;
+            break;
+        case 'maintenance':
+            $search_status = 11;
+            break;
+        case 'vendor':
+            $search_status = 12;
+            break;
+        default:
+            $search_status = null;
+    }
     if (!empty($search_id)) {
         $search_id = intval($search_id);
         $old_ticket_query .= " OR JOB_TICKET_ID LIKE '$search_id'";
@@ -69,6 +93,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     }
     if (!empty($search_client)) {
         $old_ticket_query .= " OR CLIENT_ID LIKE '%$search_client%'";
+    }
+    if (!empty($search_status)) {
+        $old_ticket_query .= " OR STATUS_TYPE_ID  LIKE '%$search_status%'";
     }
 
 

@@ -92,7 +92,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
         }
     }
 
-    $message = $text;
+    $message = preg_replace('#(^\w.+:\n)?(^>.*(\n|$))+#mi', "", $text);
 
     $msg_is_reply = isset($email_ancestor_id);
     // Parse ticket here

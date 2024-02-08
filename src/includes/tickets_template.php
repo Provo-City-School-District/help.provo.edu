@@ -43,7 +43,7 @@ function display_tickets_table($tickets, $database)
         $descriptionWithoutLinks = strip_tags(html_entity_decode($ticket["description"]));
         echo '<tr>
             <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id=' . $ticket["id"] . '">' . $ticket["id"] . '</a></td>
-            <td data-cell="Request Detail"><a href="/controllers/tickets/edit_ticket.php?id=' . $ticket["id"] . '">' . $ticket["name"] . ':</a>' . limitChars($descriptionWithoutLinks, 100) . '</td>
+            <td class="details" data-cell="Request Detail"><a href="/controllers/tickets/edit_ticket.php?id=' . $ticket["id"] . '">' . $ticket["name"] . ':</a>' . limitChars($descriptionWithoutLinks, 100) . '</td>
             <td data-cell="Location">' . $location_name . '<br><br>RM ' . $ticket['room'] . '</td>
             <td data-cell="Request Category">' .  $request_type_name . '</td>
             <td data-cell="Current Status">' . $ticket["status"] . '</td>

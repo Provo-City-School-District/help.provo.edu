@@ -208,7 +208,9 @@ td::before {
 	font-weight: 700;
 	text-transform: capitalize;
 }
-
+table.dataTable .details a {
+	display: block;
+}
 /* =============================== Alerts Styles =============================== */
 .alerts_wrapper {
 	margin: 0 auto;

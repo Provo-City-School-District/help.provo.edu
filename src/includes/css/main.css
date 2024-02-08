@@ -252,7 +252,9 @@ td::before {
 	background-color: var(--theme-primary);
 	border-radius: 12px;
 }
-
+ul#subMenu, ol#subMenu {
+	list-style: none;
+}
 #subMenu li {
 	margin: 1em 0;
 }

@@ -23,6 +23,14 @@ imap_sort($mbox, SORTDATE, false);
 
 $failed_email_ids = [];
 $succeeded_uids = [];
+
+function format_html($str) {
+    // Convertit tous les caractères éligibles en entités HTML en convertissant les codes ASCII 10 en $lf
+    $str = htmlentities($str, ENT_COMPAT, "UTF-8");
+    $str = str_replace(chr(10), "<br>", $str);
+    return $str;
+}
+
 // iterate through the messages in inbox
 
 for ($i = 1; $i <= $msg_count; $i++) {
@@ -56,13 +64,35 @@ for ($i = 1; $i <= $msg_count; $i++) {
         }
     }
 
-    
-    $message_raw = imap_fetchbody($mbox, $i, "1");
-    $message_raw = base64_decode($message_raw);
+    // Thanks https://stackoverflow.com/a/43181298
+    $obj_structure = imap_fetchstructure($mbox, $i);
 
-    $order   = array("\r\n", "\n", "\r");
-    $replace = '<br />';
-    $message = str_replace($order, $replace, $message_raw);
+    $obj_section = $obj_structure;
+    $section = "1";
+    for ($i = 0 ; $i < 10 ; $i++) {
+        if ($obj_section->type == 0) {
+            break;
+        } else {
+            $obj_section = $obj_section->parts[0];
+            $section.= ($i > 0 ? ".1" : "");
+        }
+    }
+    $text = imap_fetchbody($mbox, $i, $section);
+
+    if ($obj_section->encoding == 3) {
+        $text = imap_base64($text);
+    } else if ($obj_section->encoding == 4) {
+        $text = imap_qprint($text);
+    }
+
+    foreach ($obj_section->parameters as $obj_param) {
+        if (($obj_param->attribute == "charset") && (mb_strtoupper($obj_param->value) != "UTF-8")) {
+            $text = utf8_encode($text);
+            break;
+        }
+    }
+
+    $message = $text;
 
     $msg_is_reply = isset($email_ancestor_id);
     // Parse ticket here
@@ -84,7 +114,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
             $existing_ticket_id = intval($email_exists_data["id"]);
             $operating_ticket = $existing_ticket_id;
             // add note on existing ticket
-            add_note_with_filters($existing_ticket_id, $sender_username, $message, 1, true, null, $email_msg_id);
+            add_note_with_filters($existing_ticket_id, $sender_username, $message, 0, 0, 0, 0, true, null, $email_msg_id);
         } else {
             $ancestor_exists_query = "SELECT linked_id FROM notes WHERE email_msg_id = '$email_ancestor_id'";
             $ticket_exists_result = mysqli_query($database, $ancestor_exists_query);
@@ -93,7 +123,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
             if (isset($ticket_exists_data["linked_id"])) {
                 $existing_ticket_id = intval($ticket_exists_data["linked_id"]);
                 $operating_ticket = $existing_ticket_id;
-                add_note_with_filters($existing_ticket_id, $sender_username, $message, 1, true, null, $email_msg_id);
+                add_note_with_filters($existing_ticket_id, $sender_username, $message, 0, 0, 0, 0, true, null, $email_msg_id);
             } else {
                 $failed_email_ids[] = $i;
                 log_app(LOG_ERR, "Failed to find ancestor id in database for message \"$email_msg_id\". This shouldn't happen on a receipt email we sent out");
@@ -127,7 +157,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
         } else {
             $operating_ticket = $subject_ticket_id;
             // ticket syntax is valid, add a note on that ticket
-            add_note_with_filters($subject_ticket_id, $sender_username, $message, 1, true, null);
+            add_note_with_filters($subject_ticket_id, $sender_username, $message, 0, 0, 0, 0, true, null);
         }
     }
 

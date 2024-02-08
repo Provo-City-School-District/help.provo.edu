@@ -115,6 +115,7 @@ JSON_ARRAYAGG(
         'work_minutes', notes.work_minutes,
         'travel_hours', notes.travel_hours,
         'travel_minutes', notes.travel_minutes,
+
         'visible_to_client', notes.visible_to_client,
         'date_override', notes.date_override
     )

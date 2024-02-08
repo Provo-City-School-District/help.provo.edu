@@ -133,6 +133,9 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
         $usernames[] = $usernameRow['username'];
     }
 }
+
+
+
 ?>
 
 <article id="ticketWrapper">
@@ -210,6 +213,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                 <th class="tID">ID</th>
                 <th>Subject</th>
                 <th>Request Detail</th>
+                <th>Latest Note</th>
                 <th class="tLocation">Location</th>
                 <th>Request Category</th>
                 <th class="tUser">Assigned Tech</th>
@@ -227,12 +231,37 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
             ?>
                 <tr>
                     <?php
+                    $notes_query = "SELECT creator, note FROM help.notes WHERE linked_id = ? ORDER BY
+                        (CASE WHEN date_override IS NULL THEN created ELSE date_override END) DESC
+                    ";
+                    $notes_stmt = mysqli_prepare($database, $notes_query);
+                    $creator = null;
+                    $note_data = null;
+                    if ($notes_stmt) {
+                        mysqli_stmt_bind_param($notes_stmt, "i", $row["id"]);
+                        mysqli_stmt_execute($notes_stmt);
+                    
+                        mysqli_stmt_bind_result($notes_stmt, $creator, $note_data);
+                        // Fetch the result
+                        mysqli_stmt_fetch($notes_stmt);
+                    
+                        // Use $location_name as needed
+                        mysqli_stmt_close($notes_stmt);
+                    }
+                    
+                    $latest_note_str = "";
+                    if ($creator != null && $note_data != null) {
+                        $latest_note_str = $creator.': '.strip_tags(html_entity_decode(html_entity_decode($note_data)));
+                        log_app(LOG_INFO, $latest_note_str);
+                    }
+                    
                     if (isset($row['id'])) {
                         $descriptionWithouthtml = strip_tags(html_entity_decode($row["description"]));
                     ?>
                         <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["id"]; ?>&nr=1"><?= $row["id"] ?></a></td>
                         <td data-cell="Subject"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["id"]; ?>&nr=1"><?= $row["name"] ?></a></td>
                         <td data-cell="Request Detail"><?= limitChars($descriptionWithouthtml, 100) ?></td>
+                        <td data-cell="Latest Note"><?= limitChars($latest_note_str, 100) ?></td>
                         <td data-cell="Location">
                             <?php
                             // Query the sites table to get the location name
@@ -286,6 +315,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                         <td data-cell="ID"><a href="/controllers/tickets/archived_ticket_view.php?id=<?= $row["a_id"]; ?>"><?= $row["a_id"] ?></a></td>
                         <td data-cell="Subject"><a href="/controllers/tickets/archived_ticket_view.php?id=<?= $row["a_id"]; ?>"><?= $row["SUBJECT"] ?></a></td>
                         <td data-cell="Request Detail"><?= limitChars(html_entity_decode($row["QUESTION_TEXT"]), 100) ?></td>
+                        <td data-cell="Latest Note"></td>
                         <td data-cell="Location">
                             <?php
                             // Query the sites table to get the location name

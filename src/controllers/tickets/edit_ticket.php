@@ -180,6 +180,10 @@ $child_ticket_stmt->execute();
 $child_ticket_result = $child_ticket_stmt->get_result();
 $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
 
+$result = get_client_name($ticket["client"]);
+$clientFirstName = $result['firstname'];
+$clientLastName = $result['lastname'];
+
 ?>
 <article id="ticketWrapper">
     <div id="ticket-title-container">
@@ -210,7 +214,7 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
             <input type="hidden" name="madeby" value="<?= $_SESSION['username'] ?>">
             <input type="hidden" id="client" name="client" value="<?= $ticket['client'] ?>">
             <div class="currentClient">
-                <span>Client: </span> <span id="client-display"><?= $ticket['client'] ?></span> <a>Change Client</a>
+                <span>Client: </span> <span id="client-display"><?= $clientFirstName." ".$clientLastName." (".$ticket['client'].")"?></span> <a>Change Client</a>
             </div>
             <div>
                 <span>Created:</span> <?= $ticket['created'] ?>

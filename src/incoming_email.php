@@ -129,6 +129,12 @@ for ($i = 1; $i <= $msg_count; $i++) {
                 log_app(LOG_ERR, "Failed to find ancestor id in database for message \"$email_msg_id\". This shouldn't happen on a receipt email we sent out");
             }
         }
+
+        $update_query = "UPDATE tickets SET tickets.status = 'open' WHERE tickets.id = '$operating_ticket'";
+        $result = mysqli_query($database, $update_query);
+        if (!$result) {
+            log_app(LOG_ERR, "Failed to update ticket status for id=$operating_ticket");
+        }
     } else {
         $subject_ticket_id = count($subject_split) > 1 ? intval($subject_split[1]) : 0;
         log_app(LOG_INFO, "Email is NOT a reply");

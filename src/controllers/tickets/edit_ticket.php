@@ -180,10 +180,13 @@ $child_ticket_stmt->execute();
 $child_ticket_result = $child_ticket_stmt->get_result();
 $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
 
-$result = get_client_name($ticket["client"]);
-$clientFirstName = $result['firstname'];
-$clientLastName = $result['lastname'];
-
+$clientFirstName = "";
+$clientLastName = "";
+if (isset($ticket["client"])) {
+    $result = get_client_name($ticket["client"]);
+    $clientFirstName = $result['firstname'];
+    $clientLastName = $result['lastname'];
+}
 ?>
 <article id="ticketWrapper">
     <div id="ticket-title-container">

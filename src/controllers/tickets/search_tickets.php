@@ -232,7 +232,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                     ?>
                         <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["id"]; ?>&nr=1"><?= $row["id"] ?></a></td>
                         <td data-cell="Subject"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["id"]; ?>&nr=1"><?= $row["name"] ?></a></td>
-                        <td data-cell="Request Detail"><?= limitChars($descriptionWithouthtml , 100) ?></td>
+                        <td data-cell="Request Detail"><?= limitChars($descriptionWithouthtml, 100) ?></td>
                         <td data-cell="Location">
                             <?php
                             // Query the sites table to get the location name

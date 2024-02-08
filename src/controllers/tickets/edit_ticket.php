@@ -603,18 +603,18 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
                 <h4>Work Time</h4>
                 <div>
                     <label for="work_hours">Hours:</label>
-                    <input id="work_hours" name="work_hours" type="number" required>
+                    <input id="work_hours" name="work_hours" type="number" value="0" required>
 
                     <label for="work_minutes">Minutes:</label>
-                    <input id="work_minutes" name="work_minutes" type="number" required>
+                    <input id="work_minutes" name="work_minutes" type="number" value="0" required>
                 </div>
                 <h4>Travel Time</h4>
                 <div>
                     <label for="travel_hours">Hours:</label>
-                    <input id="travel_hours" name="travel_hours" type="number" required>
+                    <input id="travel_hours" name="travel_hours" type="number" value="0" required>
 
                     <label for="travel_minutes">Minutes:</label>
-                    <input id="travel_minutes" name="travel_minutes" type="number" required>
+                    <input id="travel_minutes" name="travel_minutes" type="number" value="0" required>
                 </div>
 
                 <div>

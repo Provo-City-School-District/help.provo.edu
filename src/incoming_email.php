@@ -69,12 +69,12 @@ for ($i = 1; $i <= $msg_count; $i++) {
 
     $obj_section = $obj_structure;
     $section = "1";
-    for ($i = 0 ; $i < 10 ; $i++) {
+    for ($j = 0 ; $j < 10 ; $j++) {
         if ($obj_section->type == 0) {
             break;
         } else {
             $obj_section = $obj_section->parts[0];
-            $section.= ($i > 0 ? ".1" : "");
+            $section.= ($j > 0 ? ".1" : "");
         }
     }
     $text = imap_fetchbody($mbox, $i, $section);
@@ -165,9 +165,9 @@ for ($i = 1; $i <= $msg_count; $i++) {
     if ($operating_ticket != -1) {
         find_and_upload_attachments($operating_ticket, $mbox, $i);
     }
-    if (in_array($i, $failed_email_ids))
+    if (in_array($i, $failed_email_ids)) {
         log_app(LOG_INFO, "Failed to parse email from $sender_email");
-    else {
+    } else {
         log_app(LOG_INFO, "Successfully parsed email from $sender_email");
         $succeeded_uids[] = imap_uid($mbox, $i);
     }
@@ -249,7 +249,7 @@ function find_and_upload_attachments(int $ticket_id, IMAP\Connection $mbox, int 
         }
     }
 
-/*
+
     $insertQuery = "SELECT attachment_path from help.tickets WHERE id = ?";
     $stmt = mysqli_prepare($database, $insertQuery);
     mysqli_stmt_bind_param($stmt, "i", $ticket_id);
@@ -260,15 +260,16 @@ function find_and_upload_attachments(int $ticket_id, IMAP\Connection $mbox, int 
         log_app(LOG_ERR, "Failed to get old attachment_path");
     }
     mysqli_stmt_close($stmt);
-    
-    $old_uploadPaths = explode(',', $result["attachment_path"]);
-    $uploadPaths = [];
-    foreach ($old_uploadPaths as $oldpath)
-        $uploadPaths[] = $oldpath;
-    */
 
-    // Include empty string for a leading , when using implode
-    $uploadPaths = [''];
+    $uploadPaths = null;
+    $old_uploadPaths = explode(',', $result["attachment_path"]);
+
+    if ($old_uploadPaths != null && count($old_uploadPaths) > 0) {
+        $uploadPaths = $old_uploadPaths;
+    } else {
+        $uploadPaths = [];
+    }
+    
     /* iterate through each attachment and save it */
     foreach ($attachments as $attachment) {
         if ($attachment['is_attachment'] == 1) {

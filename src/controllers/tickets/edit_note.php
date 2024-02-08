@@ -16,6 +16,14 @@ mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
 $note = mysqli_fetch_assoc($result);
 
+//set fields to zero if time was initially set prior to time tracking change
+if ($note['work_hours'] === null && $note['work_minutes'] === null && $note['travel_hours'] === null && $note['travel_minutes'] === null) {
+    $note['work_hours'] = 0;
+    $note['work_minutes'] = 0;
+    $note['travel_hours'] = 0;
+    $note['travel_minutes'] = 0;
+}  
+
 // Check if the note belongs to the current user
 if ($note['creator'] !== $_SESSION['username']) {
     // Redirect to the edit ticket page if the note does not belong to the current user
@@ -24,7 +32,6 @@ if ($note['creator'] !== $_SESSION['username']) {
     header("Location: edit_ticket.php?id=$ticket_id");
     exit();
 }
-
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Get the updated note and time from the form data
@@ -33,6 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $work_minutes = trim(htmlspecialchars($_POST['work_minutes']));
     $travel_hours = trim(htmlspecialchars($_POST['travel_hours']));
     $travel_minutes = trim(htmlspecialchars($_POST['travel_minutes']));
+    
+
 
 
     $updated_date_override = null;

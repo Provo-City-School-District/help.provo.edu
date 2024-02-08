@@ -115,19 +115,27 @@ Username: <?= $username ?><br>
     </select><br>
 
     <h3>Roles</h3>
-    <label for="is_admin">Is Admin:</label>
-    <input type="checkbox" id="is_admin" name="is_admin" <?= $is_admin == 1 ? 'checked' : '' ?>><br>
+    <div class="userPermissions">
+        <div>
+            <label for="is_admin">Is Admin - Can Manage Users, Exclude Days</label>
+            <input type="checkbox" id="is_admin" name="is_admin" <?= $is_admin == 1 ? 'checked' : '' ?>>
+        </div>
 
-    <label for="is_supervisor">Is Supervisor:</label>
-    <input type="checkbox" id="is_supervisor" name="is_supervisor" <?= $is_supervisor == 1 ? 'checked' : '' ?>><br>
+        <div>
+            <label for="is_supervisor">Is Supervisor- Has Dashboard Screen, Can Be Assigned Subordinates</label>
+            <input type="checkbox" id="is_supervisor" name="is_supervisor" <?= $is_supervisor == 1 ? 'checked' : '' ?>>
+        </div>
 
-    <label for="is_tech">Is Tech:</label>
-    <input type="checkbox" id="is_tech" name="is_tech" <?= $is_tech == 1 ? 'checked' : '' ?>><br>
+        <div>
+            <label for="is_tech">Is Tech - Can Be Assigned Tickets</label>
+            <input type="checkbox" id="is_tech" name="is_tech" <?= $is_tech == 1 ? 'checked' : '' ?>>
+        </div>
 
-
-
-    <label for="is_loc_man">Is Location Manager:</label>
-    <input type="checkbox" id="is_loc_man" name="is_loc_man" <?= $is_loc_man == 1 ? 'checked' : '' ?>><br>
+        <div>
+            <label for="is_loc_man">Is Location Manager - Has menu to see tickets at location</label>
+            <input type="checkbox" id="is_loc_man" name="is_loc_man" <?= $is_loc_man == 1 ? 'checked' : '' ?>>
+        </div>
+    </div>
     <?php
     if ($is_loc_man == 1) {
     ?>
@@ -153,14 +161,24 @@ Username: <?= $username ?><br>
 
 
     <h3>Permissions</h3>
-    <label for="can_view_tickets">Can View Tickets:</label>
-    <input type="checkbox" id="can_view_tickets" name="can_view_tickets" <?= $can_view_tickets == 1 ? 'checked' : '' ?>><br>
-    <label for="can_create_tickets">Can Create Tickets:</label>
-    <input type="checkbox" id="can_create_tickets" name="can_create_tickets" <?= $can_create_tickets == 1 ? 'checked' : '' ?>><br>
-    <label for="can_edit_tickets">Can Edit Tickets:</label>
-    <input type="checkbox" id="can_edit_tickets" name="can_edit_tickets" <?= $can_edit_tickets == 1 ? 'checked' : '' ?>><br>
-    <label for="can_delete_tickets">Can Delete Tickets:</label>
-    <input type="checkbox" id="can_delete_tickets" name="can_delete_tickets" <?= $can_delete_tickets == 1 ? 'checked' : '' ?>><br>
+    <div class="userPermissions">
+        <div>
+            <label for="can_view_tickets">Can View Tickets:</label>
+            <input type="checkbox" id="can_view_tickets" name="can_view_tickets" <?= $can_view_tickets == 1 ? 'checked' : '' ?>>
+        </div>
+        <div>
+            <label for="can_create_tickets">Can Create Tickets:</label>
+            <input type="checkbox" id="can_create_tickets" name="can_create_tickets" <?= $can_create_tickets == 1 ? 'checked' : '' ?>>
+        </div>
+        <div>
+            <label for="can_edit_tickets">Can Edit Tickets:</label>
+            <input type="checkbox" id="can_edit_tickets" name="can_edit_tickets" <?= $can_edit_tickets == 1 ? 'checked' : '' ?>>
+        </div>
+        <div>
+            <label for="can_delete_tickets">Can Delete Tickets:</label>
+            <input type="checkbox" id="can_delete_tickets" name="can_delete_tickets" <?= $can_delete_tickets == 1 ? 'checked' : '' ?>>
+        </div>
+    </div>
 
     <input type="submit" value="Update User">
 </form>

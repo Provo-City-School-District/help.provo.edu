@@ -115,7 +115,6 @@ JSON_ARRAYAGG(
         'work_minutes', notes.work_minutes,
         'travel_hours', notes.travel_hours,
         'travel_minutes', notes.travel_minutes,
-        -- 'time', notes.time,
         'visible_to_client', notes.visible_to_client,
         'date_override', notes.date_override
     )
@@ -393,7 +392,7 @@ $clientLastName = $result['lastname'];
         </div>
 
     </form>
-    <!-- Loop through the notes and display them -->
+
     <?php
     if (isset($ticket['attachment_path']) && strlen($ticket['attachment_path']) > 8) {
         $attachmentPaths = explode(',', $ticket['attachment_path']);
@@ -461,6 +460,7 @@ $clientLastName = $result['lastname'];
     <?php
     }
     ?>
+        <!-- Loop through the notes and display them -->
     <?php if ($ticket['notes'] !== null) : ?>
         <h2>Notes</h2>
         <div class="note">

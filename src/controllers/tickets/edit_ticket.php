@@ -586,7 +586,7 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
         <button id="new-note-button">New Note</button>
         <div id="new-note-form" style="display: none;">
             <h3>Add Note</h3>
-            <form method="post" action="add_note_handler.php">
+            <form id="note-submit" method="post" action="add_note_handler.php">
                 <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
                 <input type="hidden" name="username" value="<?= $_SESSION['username'] ?>">
                 <div>
@@ -718,18 +718,17 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
             console.log(event.clipboardData.getData("text"))
         }
     });
-
-    document.querySelectorAll('#work_hours, #work_minutes, #travel_hours, #travel_minutes').forEach(function(el) {
-        el.addEventListener('input', function() {
-            var workHours = parseInt(document.getElementById('work_hours').value) || 0;
-            var workMinutes = parseInt(document.getElementById('work_minutes').value) || 0;
-            var travelHours = parseInt(document.getElementById('travel_hours').value) || 0;
-            var travelMinutes = parseInt(document.getElementById('travel_minutes').value) || 0;
-
-            var totalTime = (workHours + travelHours) * 60 + workMinutes + travelMinutes;
-
-            document.getElementById('total_time').value = totalTime;
+    // add alert if no time is entered
+    document.getElementById('note-submit').addEventListener('submit', function(e) {
+        var fields = ['work_hours', 'work_minutes', 'travel_hours', 'travel_minutes'];
+        var allZero = fields.every(function(field) {
+            return parseInt(document.getElementById(field).value, 10) === 0;
         });
+
+        if (allZero) {
+            alert('Please enter a value greater than 0 for at least one of the time fields.');
+            e.preventDefault(); // Prevent the form submission
+        }
     });
 </script>
 

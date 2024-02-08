@@ -40,10 +40,11 @@ function display_tickets_table($tickets, $database)
             $request_type_query_result = mysqli_query($database, $request_type_query);
             $request_type_name = mysqli_fetch_assoc($request_type_query_result)['request_name'];
         }
+        $descriptionWithoutLinks = strip_tags(html_entity_decode($ticket["description"]));
 
         echo '<tr>
             <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id=' . $ticket["id"] . '">' . $ticket["id"] . '</a></td>
-            <td data-cell="Request Detail"><a href="/controllers/tickets/edit_ticket.php?id=' . $ticket["id"] . '">' . $ticket["name"] . ':</a>' . limitChars(html_entity_decode($ticket["description"]), 100) . '</td>
+            <td data-cell="Request Detail"><a href="/controllers/tickets/edit_ticket.php?id=' . $ticket["id"] . '">' . $ticket["name"] . ':</a>' . limitChars($descriptionWithoutLinks, 100) . '</td>
             <td data-cell="Location">' . $location_name . '<br><br>RM ' . $ticket['room'] . '</td>
             <td data-cell="Request Category">' .  $request_type_name . '</td>
             <td data-cell="Current Status">' . $ticket["status"] . '</td>

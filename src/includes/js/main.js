@@ -40,6 +40,8 @@ tinymce.init({
     "undo redo | bold italic strikethrough | blockquote | paste pastetext removeformat | numlist bullist | code | link unlink",
   menubar: false,
   paste_as_text: true,
+  browser_spellcheck: true,
+  contextmenu: false,
   plugins: ["lists", "code","link", "autolink", "wordcount"],
   skin: skin,
   content_css: content_css,

@@ -216,7 +216,7 @@ td::before {
 
 .alerts_wrapper p {
 	padding: .5em 1em;
-	margin-bottom: 2px;
+	margin:0 0 2px 0;
 
 }
 

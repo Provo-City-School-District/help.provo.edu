@@ -85,7 +85,7 @@ $current_page = $_SERVER['REQUEST_URI'];
 <body>
     <div id="wrapper">
         <header id="mainHeader">
-            <a href="/profile.php">
+            <a href="/tickets.php">
                 <img id="pcsd-logo" src="/includes/img/pcsd-logo-website-header-160w.png" alt="Provo City School District Logo" />
             </a>
             <?php

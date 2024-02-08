@@ -37,7 +37,12 @@ $visible_to_client = false;
 if (isset($_POST["visible_to_client"])) {
     $visible_to_client = true;
 }
-
+// verify that the work and travel times are not all 0
+if ($work_hours == 0 && $work_minutes == 0 && $travel_hours == 0 && $travel_minutes == 0) {
+    // Redirect back to the referring page
+    header('Location: ' . $_SERVER['HTTP_REFERER']);
+    exit;
+}
 
 $add_note_result = add_note_with_filters(
     $ticket_id,

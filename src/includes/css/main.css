@@ -30,20 +30,26 @@ strong {
 em {
 	font-style: italic;
 }
+
 p {
 	margin: 1em 0;
 }
-ul li, ol li {
+
+ul li,
+ol li {
 	margin: .5em 0;
 	padding-left: 1em;
 	list-style-position: inside;
 }
+
 ul {
 	list-style-type: disc;
 }
+
 ol {
 	list-style-type: decimal;
 }
+
 blockquote {
 	display: block;
 	margin: 1em 0;
@@ -208,9 +214,11 @@ td::before {
 	font-weight: 700;
 	text-transform: capitalize;
 }
+
 table.dataTable .details a {
 	display: block;
 }
+
 /* =============================== Alerts Styles =============================== */
 .alerts_wrapper {
 	margin: 0 auto;
@@ -218,7 +226,7 @@ table.dataTable .details a {
 
 .alerts_wrapper p {
 	padding: .5em 1em;
-	margin:0 0 2px 0;
+	margin: 0 0 2px 0;
 
 }
 
@@ -254,9 +262,12 @@ table.dataTable .details a {
 	background-color: var(--theme-primary);
 	border-radius: 12px;
 }
-ul#subMenu, ol#subMenu {
+
+ul#subMenu,
+ol#subMenu {
 	list-style: none;
 }
+
 #subMenu li {
 	margin: 1em 0;
 }
@@ -339,9 +350,11 @@ select {
 .ticket-description p:not(:first-child) {
 	margin: 1em 0;
 }
+
 .ticket_log {
 	font-size: 70%;
 }
+
 .ticket_log td:nth-child(1),
 .ticket_log td:nth-child(2),
 .note td:nth-child(1),
@@ -379,6 +392,25 @@ select {
 .timeColumn {
 	width: 200px;
 }
+
+/* =============================== User Management Screen =============================== */
+.userPermissions div {
+	display: grid;
+	grid-template-areas: "input label";
+	grid-template-columns: 15px auto;
+	gap: 10px;
+	justify-items: start;
+}
+.userPermissions label {
+	grid-area: label;
+}
+.userPermissions input {
+	grid-area: input;
+}
+
+
+
+
 
 /* =============================== Responsive Styles =============================== */
 @media(min-width: 800px) {

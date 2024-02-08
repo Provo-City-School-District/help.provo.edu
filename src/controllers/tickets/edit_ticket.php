@@ -538,7 +538,7 @@ $child_tickets = $child_ticket_result->fetch_all(MYSQLI_ASSOC);
                                 <span <?php if ($note['visible_to_client'] == 0) {
                                             echo 'class="notClientVisible"';
                                         } ?>>
-                                    <?php echo $note_data; ?>
+                                    <?php echo html_entity_decode($note_data); ?>
                                 </span>
                             <?php
                             }

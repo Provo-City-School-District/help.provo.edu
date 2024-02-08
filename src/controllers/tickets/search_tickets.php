@@ -19,7 +19,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $search_client = isset($_GET['search_client']) ? mysqli_real_escape_string($database, $_GET['search_client']) : '';
     $search_status = isset($_GET['search_status']) ? mysqli_real_escape_string($database, $_GET['search_status']) : '';
 
+    $client_results = find_clients($search_name);
 
+    $search_name_first = $client_results[0]["firstname"];
+    $search_name_last = $client_results[0]["lastname"];
+
+    log_app(LOG_INFO, $search_name_first);
     // Construct the SQL query based on the selected search options
     $ticket_query = "SELECT * FROM tickets WHERE 1";
     if (!empty($search_id)) {
@@ -27,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $ticket_query .= " AND id LIKE '$search_id'";
     }
     if (!empty($search_name)) {
-        $ticket_query .= " AND (name LIKE '%$search_name%' OR description LIKE '%$search_name%')";
+        $ticket_query .= " AND (name LIKE '%$search_name_first%' OR name LIKE '%$search_name_last%' OR description LIKE '%$search_name%')";
     }
     if (!empty($search_location)) {
         $ticket_query .= " AND location LIKE '%$search_location%'";

@@ -57,12 +57,29 @@ for ($i = 1; $i <= $msg_count; $i++) {
     }
 
     
+    /*
     $message_raw = imap_fetchbody($mbox, $i, "1");
     $message_raw = base64_decode($message_raw);
 
     $order   = array("\r\n", "\n", "\r");
     $replace = '<br />';
     $message = str_replace($order, $replace, $message_raw);
+    */
+/*
+function add_note_with_filters(
+    string $ticket_id,
+    string $username,
+    string $note_content,
+    int $work_hours,
+    int $work_minutes,
+    int $travel_hours,
+    int $travel_minutes,
+    bool $visible_to_client,
+    string $date_override = null,
+    string $email_msg_id = null,
+)
+*/
+    $message = quoted_printable_decode(imap_fetchbody($mbox, $i, "2"));
 
     $msg_is_reply = isset($email_ancestor_id);
     // Parse ticket here
@@ -84,7 +101,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
             $existing_ticket_id = intval($email_exists_data["id"]);
             $operating_ticket = $existing_ticket_id;
             // add note on existing ticket
-            add_note_with_filters($existing_ticket_id, $sender_username, $message, 1, true, null, $email_msg_id);
+            add_note_with_filters($existing_ticket_id, $sender_username, $message, 0, 0, 0, 0, true, null, $email_msg_id);
         } else {
             $ancestor_exists_query = "SELECT linked_id FROM notes WHERE email_msg_id = '$email_ancestor_id'";
             $ticket_exists_result = mysqli_query($database, $ancestor_exists_query);
@@ -93,7 +110,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
             if (isset($ticket_exists_data["linked_id"])) {
                 $existing_ticket_id = intval($ticket_exists_data["linked_id"]);
                 $operating_ticket = $existing_ticket_id;
-                add_note_with_filters($existing_ticket_id, $sender_username, $message, 1, true, null, $email_msg_id);
+                add_note_with_filters($existing_ticket_id, $sender_username, $message, 0, 0, 0, 0, true, null, $email_msg_id);
             } else {
                 $failed_email_ids[] = $i;
                 log_app(LOG_ERR, "Failed to find ancestor id in database for message \"$email_msg_id\". This shouldn't happen on a receipt email we sent out");
@@ -127,7 +144,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
         } else {
             $operating_ticket = $subject_ticket_id;
             // ticket syntax is valid, add a note on that ticket
-            add_note_with_filters($subject_ticket_id, $sender_username, $message, 1, true, null);
+            add_note_with_filters($subject_ticket_id, $sender_username, $message, 0, 0, 0, 0, true, null);
         }
     }
 

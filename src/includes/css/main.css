@@ -28,7 +28,9 @@ blockquote {
 	margin: 1em 0;
 	margin-left: 1em;
 	border-left: 2px solid var(--theme-primary);
-	padding-left: 1em;
+	padding: 1em;
+	font-style: italic;
+	background-color: var(--theme-white);
 }
 
 button,

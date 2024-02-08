@@ -514,6 +514,7 @@ if (isset($ticket["client"])) {
                                 */
                             $ticket_pattern = "/WO#\\d{1,6}/";
                             $asset_tag_pattern = "/BC#\\d{6}/";
+                           // $asset_tag_pattern_alt = "/0\\d{5}/";
                             $note_data = $note['note'];
                             if ($note_data !== null) {
                                 $note_data = html_entity_decode($note_data);
@@ -524,24 +525,36 @@ if (isset($ticket["client"])) {
                                 if ($ticket_match_result) {
                                     foreach ($ticket_matches[0] as $match_str) {
                                         $url_ticket_id = substr($match_str, 3);
-                                        $url = "<a href=\"edit_ticket.php?id=$url_ticket_id\">$match_str</a>";
+                                        $url = "<a target=\"_blank\" href=\"edit_ticket.php?id=$url_ticket_id\">$match_str</a>";
                                         $note_data = str_replace($match_str, $url, $note_data);
                                     }
                                 }
-
 
                                 $asset_tag_matches = [];
                                 $asset_tag_match_result = preg_match_all($asset_tag_pattern, $note_data, $asset_tag_matches);
 
                                 if ($asset_tag_match_result) {
                                     foreach ($asset_tag_matches[0] as $match_str) {
-                                        $barcode = substr($match_str, 3);
+                                        if ($match_str[0] == 'B')
+                                            $barcode = substr($match_str, 3);
+                                        else
+                                            $barcode = $match_str;
                                         // when doing https:// the : kept disappearing, not sure why
                                         // will just let it choose https automatically
-                                        $url = "<a href=\"//vault.provo.edu/nac_edit.php?barcode=$barcode\">$match_str</a>";
+                                        $url = "<a target=\"_blank\" href=\"//vault.provo.edu/nac_edit.php?barcode=$barcode\">$match_str</a>";
                                         $note_data = str_replace($match_str, $url, $note_data);
                                     }
                                 }
+                                /*
+                                $asset_tag_alt_matches = [];
+                                $asset_tag_alt_match_result = preg_match_all($asset_tag_pattern_alt, $note_data, $asset_tag_alt_matches);
+
+                                if ($asset_tag_alt_match_result) {
+                                    foreach ($asset_tag_alt_matches[0] as $match_str) {
+                                        $url = "<a target=\"_blank\" href=\"//vault.provo.edu/nac_edit.php?barcode=$match_str\">$match_str</a>";
+                                        $note_data = str_replace($match_str, $url, $note_data);
+                                    }
+                                }*/
                             ?>
                                 <span <?php if ($note['visible_to_client'] == 0) {
                                             echo 'class="notClientVisible"';

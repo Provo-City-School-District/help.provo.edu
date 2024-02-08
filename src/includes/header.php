@@ -3,7 +3,7 @@
 include_once('init.php');
 // includes functions file
 include_once('functions.php');
-
+include_once('helpdbconnect.php');
 // Function to check if the current URL matches any of the specified URLs
 function isCurrentPage($urls)
 {
@@ -15,6 +15,17 @@ function isCurrentPage($urls)
     }
     return false;
 }
+
+$userId = $_SESSION['username'];
+
+$subord_query = "SELECT count(supervisor_username) as supervisor_username FROM users WHERE supervisor_username = ?";
+$subord_stmt = $database->prepare($subord_query);
+$subord_stmt->bind_param("s", $userId);
+$subord_stmt->execute();
+$subord_result = $subord_stmt->get_result();
+$subord_row = $subord_result->fetch_assoc();
+$subord_count = $subord_row['supervisor_username'];
+$subord_stmt->close();
 
 // List of Ticket pages for which you want to display a ticket sub-menu
 $ticketPages = array(
@@ -132,7 +143,7 @@ $current_page = $_SERVER['REQUEST_URI'];
                     <li><a href="/controllers/tickets/create_ticket.php">Create Ticket</a></li>
 
                     <?php
-                    if ($_SESSION['permissions']['is_supervisor'] == 1) {
+                    if ($_SESSION['permissions']['is_supervisor'] == 1 && $subord_count > 0) {
                     ?>
                         <li><a href="/controllers/tickets/subordinate_tickets.php">Subordinate Tickets</a></li>
                     <?php

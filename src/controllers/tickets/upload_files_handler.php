@@ -93,6 +93,13 @@ if (isset($_FILES['attachment'])) {
         // Get the file name and temporary file path
         $fileName = $_FILES['attachment']['name'][$i];
         $tmpFilePath = $_FILES['attachment']['tmp_name'][$i];
+        if ($tmpFilePath == null || $fileName == null) {
+            $failed_files[] = [
+                "filename" => null, 
+                "fail_reason" => "File is null"
+            ];
+            continue;
+        }   
         
         $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
         $fileType = mime_content_type($tmpFilePath);

@@ -136,6 +136,14 @@ function add_note_with_filters(
     mysqli_stmt_bind_param($log_stmt, "isss", $ticket_id, $username, $notecolumn, $note_content_clean);
     mysqli_stmt_execute($log_stmt);
     mysqli_stmt_close($log_stmt);
+
+    if (!$_SESSION["permissions"]["is_tech"]) {
+        $update_query = "UPDATE tickets SET tickets.status = 'open' WHERE tickets.id = '$ticket_id'";
+        $result = mysqli_query($database, $update_query);
+        if (!$result) {
+            log_app(LOG_ERR, "Failed to update ticket status for id=$operating_ticket");
+        }
+    }
     return true;
 }
 

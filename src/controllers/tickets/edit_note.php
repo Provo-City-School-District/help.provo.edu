@@ -17,7 +17,7 @@ $result = mysqli_stmt_get_result($stmt);
 $note = mysqli_fetch_assoc($result);
 
 //set fields to zero if time was initially set prior to time tracking change
-if ($note['work_hours'] === null || $note['work_minutes'] === null || $note['travel_hours'] === null || $note['travel_minutes'] === null) {
+if ($note['work_hours'] === null && $note['work_minutes'] === null && $note['travel_hours'] === null && $note['travel_minutes'] === null) {
     $note['work_hours'] = 0;
     $note['work_minutes'] = 0;
     $note['travel_hours'] = 0;

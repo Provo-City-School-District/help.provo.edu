@@ -22,6 +22,15 @@ if (isset($_POST["date_override_enable"])) {
     }
 }
 
+// sanitize the input
+$ticket_id = filter_var($ticket_id, FILTER_SANITIZE_NUMBER_INT);
+$work_hours = filter_var($_POST['work_hours'], FILTER_SANITIZE_NUMBER_INT);
+$work_minutes = filter_var($_POST['work_minutes'], FILTER_SANITIZE_NUMBER_INT);
+$travel_hours = filter_var($_POST['travel_hours'], FILTER_SANITIZE_NUMBER_INT);
+$travel_minutes = filter_var($_POST['travel_minutes'], FILTER_SANITIZE_NUMBER_INT);
+$note_content = htmlspecialchars($_POST['note']);
+$username = htmlspecialchars($_POST['username']);
+
 
 // Get visible to client state
 $visible_to_client = false;
@@ -32,12 +41,12 @@ if (isset($_POST["visible_to_client"])) {
 
 $add_note_result = add_note_with_filters(
     $ticket_id,
-    $_POST['username'],
-    $_POST['note'],
-    $_POST['work_hours'],
-    $_POST['work_minutes'],
-    $_POST['travel_hours'],
-    $_POST['travel_minutes'],
+    $username,
+    $note_content,
+    $work_hours,
+    $work_minutes,
+    $travel_hours,
+    $travel_minutes,
     $visible_to_client,
     $date_override
 );

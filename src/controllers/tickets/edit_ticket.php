@@ -334,10 +334,15 @@ if (isset($ticket["client"])) {
                     <label for="due_date">Modify Due Date:</label>
                     <input type="date" id="due_date" name="due_date" value="<?= $ticket['due_date'] ?>">
                 </div>
-            <?php endif; ?>
+                <div>
+                    <span>Current Due Date:</span> <?= $ticket['due_date'] ?>
+                </div>
+            <?php else: ?>
             <div>
+                <input type="hidden" id="due_date" name="due_date" value="<?= $ticket['due_date'] ?>">
                 <span>Current Due Date:</span> <?= $ticket['due_date'] ?>
             </div>
+            <?php endif; ?>
             <div>
                 <label for="status">Current Status:</label>
                 <select id="status" name="status">

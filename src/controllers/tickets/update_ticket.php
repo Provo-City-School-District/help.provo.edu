@@ -64,10 +64,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $old_ticket_result = mysqli_stmt_get_result($old_ticket_stmt);
     $old_ticket_data = mysqli_fetch_assoc($old_ticket_result);
 
-    // Repack emails
-    $cc_emails_clean = implode(',', $valid_cc_emails);
-    $bcc_emails_clean = implode(',', $valid_bcc_emails);
-
     // Perform SQL UPDATE queries to update the ticket information
     $updateTicketQuery = "UPDATE tickets SET
         client = '$updatedClient',
@@ -226,8 +222,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $notesMessage .= "<li>" . $decodedNote . "</li>";
     }
 
+    // Repack emails
+    $cc_emails_clean = implode(',', $valid_cc_emails);
+    $bcc_emails_clean = implode(',', $valid_bcc_emails);
+
     // Send emails if the user checked the send_emails checkbox
     if ($sendEmails || $forceEmails) {
+        //log_app(LOG_INFO, var_dump($valid_cc_emails));
         // message for gui to display
         $msg = "Ticket updated successfully. An email was sent to the client, CC and BCC emails.";
         $client_email = email_address_from_username($updatedClient);

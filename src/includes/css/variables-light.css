@@ -32,3 +32,12 @@
 	border-radius: 3px;
 	margin-bottom: 1em;
 }
+
+.nonTech {
+    background-color: rgb(253, 255, 154);
+	color: var(--theme-black);
+	display: block;
+	padding: 1em;
+	border-radius: 3px;
+	margin-bottom: 1em;
+}

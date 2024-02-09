@@ -144,7 +144,7 @@ function get_client_name_from_id(string $client_sw_id)
     $client_name_query = "SELECT FIRST_NAME, LAST_NAME FROM client WHERE CLIENT_ID = '$client_sw_id'";
     $client_name_result = mysqli_query($swdb, $client_name_query);
     $client_name_data = mysqli_fetch_assoc($client_name_result);
-    $client_name = trim($client_name_data["FIRST_NAME"])." ".trim($client_name_data["LAST_NAME"]);
+    $client_name = trim($client_name_data["FIRST_NAME"]) . " " . trim($client_name_data["LAST_NAME"]);
 
     return $client_name;
 }
@@ -157,7 +157,7 @@ function get_tech_name_from_id(string $tech_sw_id)
     $tech_name_query = "SELECT FIRST_NAME, LAST_NAME FROM tech WHERE CLIENT_ID = '$tech_sw_id'";
     $tech_name_result = mysqli_query($swdb, $tech_name_query);
     $tech_name_data = mysqli_fetch_assoc($tech_name_result);
-    $tech_name = trim($tech_name_data["FIRST_NAME"])." ".trim($tech_name_data["LAST_NAME"]);
+    $tech_name = trim($tech_name_data["FIRST_NAME"]) . " " . trim($tech_name_data["LAST_NAME"]);
 
     return $tech_name;
 }
@@ -174,7 +174,8 @@ function get_location_name_from_id(string $location_sw_id)
     return $location_name;
 }
 
-function sortByDate($x, $y) {
+function sortByDate($x, $y)
+{
     return $x['date'] < $y['date'];
 }
 
@@ -293,7 +294,7 @@ function sortByDate($x, $y) {
                     
                     $latest_note_str = "";
                     if ($creator != null && $note_data != null) {
-                        $latest_note_str = $creator.': '.strip_tags(html_entity_decode(html_entity_decode($note_data)));
+                        $latest_note_str = $creator . ': ' . strip_tags(html_entity_decode(html_entity_decode($note_data)));
                         log_app(LOG_INFO, $latest_note_str);
                     }
                     
@@ -383,7 +384,7 @@ function sortByDate($x, $y) {
                             
                                 $note_date = $effective_date;
                                 if ($created_date != $effective_date) {
-                                    $note_date = $effective_date."*";
+                                    $note_date = $effective_date . "*";
                                 }
                                 $all_notes[] = [
                                     "creator" => get_tech_name_from_id($tech_id), 
@@ -421,7 +422,7 @@ function sortByDate($x, $y) {
                             usort($all_notes, 'sortByDate');
 
                             if ($all_notes[0] != null && $all_notes[0]["text"] != null && $all_notes[0]["creator"] != null)
-                                echo $all_notes[0]["creator"].": ".$all_notes[0]["text"];
+                                echo $all_notes[0]["creator"] . ": " . $all_notes[0]["text"];
 
                             ?>
                         </td>

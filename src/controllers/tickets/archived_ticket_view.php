@@ -74,13 +74,19 @@ mysqli_stmt_close($stmt);
 
 
 $tech_sw_id = $arch_ticket_data['ASSIGNED_TECH_ID'];
-$tech_name = get_tech_name_from_id($tech_sw_id);
+$tech_name = "unassigned";
+if ($tech_sw_id != null)
+    $tech_name = get_tech_name_from_id($tech_sw_id);
 
 $client_sw_id = $arch_ticket_data['CLIENT_ID'];
-$client_name = get_client_name_from_id($client_sw_id);
+$client_name = "unknown";
+if ($client_sw_id != null)
+    $client_name = get_client_name_from_id($client_sw_id);
 
 $location_sw_id = $arch_ticket_data['LOCATION_ID'];
-$location_name = get_location_name_from_id($location_sw_id);
+$location_name = "unknown";
+if ($location_sw_id != null)
+    $location_name = get_location_name_from_id($location_sw_id);
 /*
 $creator_id = $arch_ticket_data["CLIENT_CREATOR_ID"];
 $creator_name_query = "SELECT FIRST_NAME, LAST_NAME FROM client WHERE CLIENT_ID = '$creator_id'";

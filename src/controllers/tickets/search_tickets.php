@@ -136,7 +136,17 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
 
 asort($techusernames);
 
+function get_tech_name_from_id(string $tech_sw_id)
+{
+    global $swdb;
 
+    $tech_name_query = "SELECT FIRST_NAME, LAST_NAME FROM tech WHERE CLIENT_ID = '$tech_sw_id'";
+    $tech_name_result = mysqli_query($swdb, $tech_name_query);
+    $tech_name_data = mysqli_fetch_assoc($tech_name_result);
+    $tech_name = trim($tech_name_data["FIRST_NAME"])." ".trim($tech_name_data["LAST_NAME"]);
+
+    return $tech_name;
+}
 ?>
 
 <article id="ticketWrapper">
@@ -341,7 +351,12 @@ asort($techusernames);
                             echo $request_type_name;
                             ?>
                         </td>
-                        <td data-cell="Assigned Employee"><?= $row['ASSIGNED_TECH_ID'] ?></td>
+                        <td data-cell="Assigned Employee">
+                            <?php if ($row['ASSIGNED_TECH_ID'] != null) 
+                                    echo get_tech_name_from_id($row['ASSIGNED_TECH_ID']); 
+                                else
+                                    echo "unassigned";    
+                                ?></td>
                         <td data-cell="Current Status"></td>
                         <td data-cell="Created"><?= $row['REPORT_DATE'] ?></td>
                         <td data-cell="Last Updated"><?= $row['LAST_UPDATED'] ?></td>

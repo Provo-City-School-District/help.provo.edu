@@ -2,6 +2,9 @@
 require_once('helpdbconnect.php');
 require_once('ticket_utils.php');
 
+// Todays date
+$today = new DateTime();
+
 // insert an alert into the alerts table if it doesn't already exist
 function insertAlertIfNotExists($database, $ticket, $alertMessage, $alertLevel)
 {
@@ -39,7 +42,7 @@ function getDaysUntilDueDate($dueDateStr)
 }
 
 // Calculate for 48 hours ago, not counting weekends hours
-$twoDaysAgo = new DateTime();
+$twoDaysAgo = clone $today;
 // Set counter for hours back
 $hoursBack = 48;
 // Parse 48 hours back since last update

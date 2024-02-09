@@ -49,7 +49,7 @@ $hoursBack = 48;
 while ($hoursBack > 0) {
     $twoDaysAgo->modify('-1 hour');
     $dayOfWeek = $twoDaysAgo->format('w');
- 
+
     // If the day of the week is not a weekend, subtract an hour
     // 0 = Sunday, 6 = Saturday
     if ($dayOfWeek > 0 && $dayOfWeek < 6) {
@@ -86,16 +86,28 @@ $selectTicketsStmt->close();
 foreach ($oldTickets as $oldTicket) {
     // Convert the last_updated time to a DateTime object
     $lastUpdated = new DateTime($oldTicket['last_updated']);
-
+    $dueDate = $oldTicket['due_date'];
     // If the last_updated time is longer than two days ago, insert an alert for 48 hours since last update
     if ($lastUpdated < $twoDaysAgo) {
         insertAlertIfNotExists($database, $oldTicket, $alert48Message, 'warn');
     }
 
     // Alert for past due
-    $daysUntilDueDate = getDaysUntilDueDate($oldTicket['due_date']);
+    $daysUntilDueDate = getDaysUntilDueDate($dueDate);
+    $todaystr = $today->format('Y-m-d');
+    $withexcludeDays = hasExcludedDate($dueDate, $todaystr);
+    $modifiedDueDate = new DateTime($dueDate);
+
+    // check that date is not a weekend
+    while (isWeekend($modifiedDueDate)) {
+        $modifiedDueDate->modify('+1 day');
+    }
+
+    $daysTillDue = $today->diff($modifiedDueDate);
+
     // If the ticket's priority is greater than the number of days until its due date, insert a new alert
-    if ($oldTicket['priority'] > $daysUntilDueDate) {
+    if ($daysTillDue->format('%R%a') < 0) {
+
         insertAlertIfNotExists($database, $oldTicket, $pastDueMessage, 'crit');
     }
 }

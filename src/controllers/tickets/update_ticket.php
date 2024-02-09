@@ -138,15 +138,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         mysqli_stmt_execute($log_stmt);
 
         if ($old_ticket_data['employee'] !== null && $old_ticket_data['employee'] !== 'unassigned') {
-            $old_assigned = email_address_from_username($old_ticket_data['employee']) ?: "";
-            //force send email to both old and new assigned employee
-            array_push($valid_cc_emails, $old_assigned);
-            array_push($valid_cc_emails, $new_assigned);
+            $old_assigned = email_address_from_username($old_ticket_data['employee']);
+            $valid_cc_emails[] = $old_assigned;
         } else {
             $old_ticket_data['employee'] = "unassigned";
         }
         // $old_assigned = email_address_from_username($old_ticket_data['employee']) ?: "";
         $new_assigned = email_address_from_username($updatedEmployee);
+        $valid_cc_emails[] = $new_assigned;
         $changesMessage .= "<li>Changed Employee from " . $old_ticket_data['employee'] . " to " . $updatedEmployee . "</li>";
         $forceEmails = true;
     }

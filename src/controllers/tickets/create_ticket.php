@@ -21,7 +21,7 @@ if (isset($_SESSION['current_status'])) {
     unset($_SESSION['status_type']);
 }
 
-$usernamesQuery = "SELECT username,is_tech FROM users WHERE is_tech = 1";
+$usernamesQuery = "SELECT username,is_tech FROM users WHERE is_tech = 1 ORDER BY username ASC";
 $usernamesResult = mysqli_query($database, $usernamesQuery);
 
 if (!$usernamesResult) {
@@ -82,19 +82,19 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
 
             <!-- Conditionally show assigned tech view -->
             <?php
-            if ($_SESSION["permissions"]["is_tech"]):
+            if ($_SESSION["permissions"]["is_tech"]) :
             ?>
-            <div>
-                <label for="assigned">Assigned to</label>
-                <select id="assigned" name="assigned">
-                    <option value="unassigned">Unassigned</option>
-                    <?php
-                    foreach ($techusernames as $techusername) {
-                        echo "<option value=\"$techusername\">$techusername</option>";
-                    }
-                    ?>
-                </select>
-            </div>
+                <div>
+                    <label for="assigned">Assigned to</label>
+                    <select id="assigned" name="assigned">
+                        <option value="unassigned">Unassigned</option>
+                        <?php
+                        foreach ($techusernames as $techusername) {
+                            echo "<option value=\"$techusername\">$techusername</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
             <?php endif ?>
 
         </div>

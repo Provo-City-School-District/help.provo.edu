@@ -173,6 +173,11 @@ function get_location_name_from_id(string $location_sw_id)
 
     return $location_name;
 }
+
+function sortByDate($x, $y) {
+    return $x['date'] < $y['date'];
+}
+
 ?>
 
 <article id="ticketWrapper">
@@ -412,14 +417,11 @@ function get_location_name_from_id(string $location_sw_id)
                                 ];
                             }
 
-                            function sortByDate($x, $y) {
-                                return $x['date'] < $y['date'];
-                            }
-                            
+
                             usort($all_notes, 'sortByDate');
 
-                            if ($all_notes[0] != null && $all_notes[0]["text"] != null)
-                                echo $all_notes[0]["text"];
+                            if ($all_notes[0] != null && $all_notes[0]["text"] != null && $all_notes[0]["creator"] != null)
+                                echo $all_notes[0]["creator"].": ".$all_notes[0]["text"];
 
                             ?>
                         </td>

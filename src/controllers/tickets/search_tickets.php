@@ -134,6 +134,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
     }
 }
 
+asort($techusernames);
 
 
 ?>
@@ -169,7 +170,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
             </select>
         </div>
         <div class="form-group">
-            <label for="search_employee">Employee:</label>
+            <label for="search_employee">Tech:</label>
             <!-- <input type="text" class="form-control" id="search_employee" name="search_employee" value="<?php echo htmlspecialchars($search_employee); ?>"> -->
             <select id="search_employee" name="search_employee">
                 <option value="" selected></option>

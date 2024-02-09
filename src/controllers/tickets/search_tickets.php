@@ -134,8 +134,45 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
     }
 }
 
+asort($techusernames);
 
+// TODO could cache these
+function get_client_name_from_id(string $client_sw_id)
+{
+    global $swdb;
 
+    $client_name_query = "SELECT FIRST_NAME, LAST_NAME FROM client WHERE CLIENT_ID = '$client_sw_id'";
+    $client_name_result = mysqli_query($swdb, $client_name_query);
+    $client_name_data = mysqli_fetch_assoc($client_name_result);
+    $client_name = trim($client_name_data["FIRST_NAME"])." ".trim($client_name_data["LAST_NAME"]);
+
+    return $client_name;
+}
+
+// TODO could cache these
+function get_tech_name_from_id(string $tech_sw_id)
+{
+    global $swdb;
+
+    $tech_name_query = "SELECT FIRST_NAME, LAST_NAME FROM tech WHERE CLIENT_ID = '$tech_sw_id'";
+    $tech_name_result = mysqli_query($swdb, $tech_name_query);
+    $tech_name_data = mysqli_fetch_assoc($tech_name_result);
+    $tech_name = trim($tech_name_data["FIRST_NAME"])." ".trim($tech_name_data["LAST_NAME"]);
+
+    return $tech_name;
+}
+
+// TODO could cache these
+function get_location_name_from_id(string $location_sw_id)
+{
+    global $swdb;
+    $location_name_query = "SELECT LOCATION_NAME FROM location WHERE LOCATION_ID = '$location_sw_id'";
+    $location_name_result = mysqli_query($swdb, $location_name_query);
+    $location_name_data = mysqli_fetch_assoc($location_name_result);
+    $location_name = trim($location_name_data["LOCATION_NAME"]);
+
+    return $location_name;
+}
 ?>
 
 <article id="ticketWrapper">
@@ -169,7 +206,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
             </select>
         </div>
         <div class="form-group">
-            <label for="search_employee">Employee:</label>
+            <label for="search_employee">Tech:</label>
             <!-- <input type="text" class="form-control" id="search_employee" name="search_employee" value="<?php echo htmlspecialchars($search_employee); ?>"> -->
             <select id="search_employee" name="search_employee">
                 <option value="" selected></option>
@@ -315,7 +352,77 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                         <td data-cell="ID"><a href="/controllers/tickets/archived_ticket_view.php?id=<?= $row["a_id"]; ?>"><?= $row["a_id"] ?></a></td>
                         <td data-cell="Subject"><a href="/controllers/tickets/archived_ticket_view.php?id=<?= $row["a_id"]; ?>"><?= $row["SUBJECT"] ?></a></td>
                         <td data-cell="Request Detail"><?= limitChars(html_entity_decode($row["QUESTION_TEXT"]), 100) ?></td>
-                        <td data-cell="Latest Note"></td>
+                        <td data-cell="Latest Note">
+                            <?php
+                            $archived_ticket_id = substr($row["a_id"], 2);
+                            $all_notes = [];
+
+                            $tech_notes_query = "SELECT TECHNICIAN_ID, NOTE_TEXT, CREATION_DATE, HIDDEN, TECH_NOTE_DATE, BILLING_MINUTES FROM TECH_NOTE WHERE JOB_TICKET_ID = ?";
+                            $stmt = mysqli_prepare($swdb, $tech_notes_query);
+                            mysqli_stmt_bind_param($stmt, "i", $archived_ticket_id);
+                            mysqli_stmt_execute($stmt);
+                            
+                            $stmt_res = $stmt->get_result();
+                            
+                            
+                            while ($tech_note_row = $stmt_res->fetch_array(MYSQLI_ASSOC)) {
+                                $note_text = $tech_note_row["NOTE_TEXT"];
+                                $tech_id = $tech_note_row["TECHNICIAN_ID"];
+                                $created_date = $tech_note_row["CREATION_DATE"];
+                                $hidden = $tech_note_row["HIDDEN"];
+                                $effective_date = $tech_note_row["TECH_NOTE_DATE"];
+                                $note_time = $tech_note_row["BILLING_MINUTES"];
+                                
+                                if ($note_time == null)
+                                    $note_time = 0;
+                            
+                                $note_date = $effective_date;
+                                if ($created_date != $effective_date) {
+                                    $note_date = $effective_date."*";
+                                }
+                                $all_notes[] = [
+                                    "creator" => get_tech_name_from_id($tech_id), 
+                                    "text" => $note_text,
+                                    "date" => $note_date,
+                                    "time" => $note_time,
+                                    "hidden" => $hidden
+                                ];
+                            }
+                            
+                            mysqli_stmt_close($stmt);
+                            
+                            $client_notes_query = "SELECT CLIENT_ID, TICKET_DATE, NOTE_TEXT FROM CLIENT_NOTE WHERE JOB_TICKET_ID = ?";
+                            $stmt = mysqli_prepare($swdb, $client_notes_query);
+                            mysqli_stmt_bind_param($stmt, "i", $archived_ticket_id);
+                            mysqli_stmt_execute($stmt);
+                            
+                            $stmt_res = $stmt->get_result();
+                        
+                            while ($client_note_row = $stmt_res->fetch_array(MYSQLI_ASSOC)) {
+                                $client_id = $client_note_row["CLIENT_ID"];
+                                $note_text = $client_note_row["NOTE_TEXT"];
+                                $note_date = $client_note_row["TICKET_DATE"];
+                            
+                                $all_notes[] = [
+                                    "creator" => get_client_name_from_id($client_id), 
+                                    "text" => $note_text,
+                                    "date" => $note_date,
+                                    "time" => "—",
+                                    "hidden" => false
+                                ];
+                            }
+
+                            function sortByDate($x, $y) {
+                                return $x['date'] < $y['date'];
+                            }
+                            
+                            usort($all_notes, 'sortByDate');
+
+                            if ($all_notes[0] != null && $all_notes[0]["text"] != null)
+                                echo $all_notes[0]["text"];
+
+                            ?>
+                        </td>
                         <td data-cell="Location">
                             <?php
                             // Query the sites table to get the location name
@@ -337,10 +444,16 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                             // $request_type_query = "SELECT request_name FROM request_type WHERE archived_request_ID = " . $row['PROBLEM_TYPE_ID'];
                             // $request_type_query_result = mysqli_query($database, $request_type_query);
                             // $request_type_name = mysqli_fetch_assoc($request_type_query_result)['request_name'];
-                            echo $request_type_name;
+                            //if ($request_type_name != null)
+                            //    echo $request_type_name;
                             ?>
                         </td>
-                        <td data-cell="Assigned Employee"><?= $row['ASSIGNED_TECH_ID'] ?></td>
+                        <td data-cell="Assigned Employee">
+                            <?php if ($row['ASSIGNED_TECH_ID'] != null) 
+                                    echo get_tech_name_from_id($row['ASSIGNED_TECH_ID']); 
+                                else
+                                    echo "unassigned";    
+                                ?></td>
                         <td data-cell="Current Status"></td>
                         <td data-cell="Created"><?= $row['REPORT_DATE'] ?></td>
                         <td data-cell="Last Updated"><?= $row['LAST_UPDATED'] ?></td>

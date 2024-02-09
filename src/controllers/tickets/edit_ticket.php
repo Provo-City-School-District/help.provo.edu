@@ -521,6 +521,7 @@ if (isset($ticket["client"])) {
                                     ignoring for now though.
                                 */
                             $ticket_pattern = "/WO#\\d{1,6}/";
+                            $archived_ticket_pattern = "/WO#A-\\d{1,6}/";
                             //$asset_tag_pattern = "/BC#\\d{6}|(?<!BC#)\\d{6}/";
                             $asset_tag_pattern = "/BC#\\d{6}/";
                             $note_data = $note['note'];
@@ -531,12 +532,26 @@ if (isset($ticket["client"])) {
                                 $ticket_match_result = preg_match_all($ticket_pattern, $note_data, $ticket_matches, PREG_OFFSET_CAPTURE);
 
                                 if ($ticket_match_result) {
-                                    foreach ($ticket_matches[0] as $match_str) {
+                                    foreach ($ticket_matches[0] as $match) {
+                                        $match_str = $match[0];
                                         $url_ticket_id = substr($match_str, 3);
                                         $url = "<a target=\"_blank\" href=\"edit_ticket.php?id=$url_ticket_id\">$match_str</a>";
                                         $note_data = str_replace($match_str, $url, $note_data);
                                     }
                                 }
+
+                                $archived_ticket_matches = [];
+                                $archived_ticket_match_result = preg_match_all($archived_ticket_pattern, $note_data, $archived_ticket_matches, PREG_OFFSET_CAPTURE);
+
+                                if ($archived_ticket_match_result) {
+                                    foreach ($archived_ticket_matches[0] as $match) {
+                                        $match_str = $match[0];
+                                        $url_ticket_id = substr($match_str, 3);
+                                        $url = "<a target=\"_blank\" href=\"archived_ticket_view.php?id=$url_ticket_id\">$match_str</a>";
+                                        $note_data = str_replace($match_str, $url, $note_data);
+                                    }
+                                }
+
 
                                 $asset_tag_matches = [];
                                 $asset_tag_match_result = preg_match_all($asset_tag_pattern, $note_data, $asset_tag_matches, PREG_OFFSET_CAPTURE);

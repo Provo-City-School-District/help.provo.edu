@@ -211,13 +211,13 @@ if (isset($ticket["client"])) {
     <form id="updateTicketForm" method="POST" action="update_ticket.php">
         <!-- Add a submit button to update the information -->
         <input id="green-button" type="submit" value="Update Ticket">
-        Send Emails on Update:<input type="checkbox" name="send_emails" value="send_emails">
+        Send Emails on Update:<input type="checkbox" name="send_emails" value="send_emails" checked>
         <div class="ticketGrid">
             <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
             <input type="hidden" name="madeby" value="<?= $_SESSION['username'] ?>">
             <input type="hidden" id="client" name="client" value="<?= $ticket['client'] ?>">
             <div class="currentClient">
-                <span>Client: </span> <span id="client-display"><?= $clientFirstName." ".$clientLastName." (".$ticket['client'].")"?></span> <a>Change Client</a>
+                <span>Client: </span> <span id="client-display"><?= $clientFirstName . " " . $clientLastName . " (" . $ticket['client'] . ")" ?></span> <a>Change Client</a>
             </div>
             <div>
                 <span>Created:</span> <?= $ticket['created'] ?>
@@ -328,13 +328,21 @@ if (isset($ticket["client"])) {
                     ?>
                 </select>
             </div>
+
+            <?php if ($_SESSION['permissions']['is_supervisor'] != 0 || $_SESSION['permissions']['is_admin'] != 0) : ?>
+                <div>
+                    <label for="due_date">Modify Due Date:</label>
+                    <input type="date" id="due_date" name="due_date" value="<?= $ticket['due_date'] ?>">
+                </div>
+                <div>
+                    <span>Current Due Date:</span> <?= $ticket['due_date'] ?>
+                </div>
+            <?php else: ?>
             <div>
-                <label for="due_date">Modify Due Date:</label>
-                <input type="date" id="due_date" name="due_date" value="<?= $ticket['due_date'] ?>">
-            </div>
-            <div>
+                <input type="hidden" id="due_date" name="due_date" value="<?= $ticket['due_date'] ?>">
                 <span>Current Due Date:</span> <?= $ticket['due_date'] ?>
             </div>
+            <?php endif; ?>
             <div>
                 <label for="status">Current Status:</label>
                 <select id="status" name="status">
@@ -464,7 +472,7 @@ if (isset($ticket["client"])) {
     <?php
     }
     ?>
-        <!-- Loop through the notes and display them -->
+    <!-- Loop through the notes and display them -->
     <?php if ($ticket['notes'] !== null) : ?>
         <h2>Notes</h2>
         <div class="note">
@@ -482,7 +490,7 @@ if (isset($ticket["client"])) {
                     // Hidden notes should only be viewable by admins
                     if (
                         $note['visible_to_client'] == 0 &&
-                        $_SESSION['permissions']['is_admin'] != 1
+                        !$_SESSION['permissions']['is_tech']
                     )
                         continue;
                     // Calculate the total time for this note in minutes
@@ -513,39 +521,57 @@ if (isset($ticket["client"])) {
                                     ignoring for now though.
                                 */
                             $ticket_pattern = "/WO#\\d{1,6}/";
+                            //$asset_tag_pattern = "/BC#\\d{6}|(?<!BC#)\\d{6}/";
                             $asset_tag_pattern = "/BC#\\d{6}/";
                             $note_data = $note['note'];
                             if ($note_data !== null) {
                                 $note_data = html_entity_decode($note_data);
 
                                 $ticket_matches = [];
-                                $ticket_match_result = preg_match_all($ticket_pattern, $note_data, $ticket_matches);
+                                $ticket_match_result = preg_match_all($ticket_pattern, $note_data, $ticket_matches, PREG_OFFSET_CAPTURE);
 
                                 if ($ticket_match_result) {
                                     foreach ($ticket_matches[0] as $match_str) {
                                         $url_ticket_id = substr($match_str, 3);
-                                        $url = "<a href=\"edit_ticket.php?id=$url_ticket_id\">$match_str</a>";
+                                        $url = "<a target=\"_blank\" href=\"edit_ticket.php?id=$url_ticket_id\">$match_str</a>";
                                         $note_data = str_replace($match_str, $url, $note_data);
                                     }
                                 }
-
 
                                 $asset_tag_matches = [];
-                                $asset_tag_match_result = preg_match_all($asset_tag_pattern, $note_data, $asset_tag_matches);
+                                $asset_tag_match_result = preg_match_all($asset_tag_pattern, $note_data, $asset_tag_matches, PREG_OFFSET_CAPTURE);
 
                                 if ($asset_tag_match_result) {
-                                    foreach ($asset_tag_matches[0] as $match_str) {
-                                        $barcode = substr($match_str, 3);
+                                    foreach ($asset_tag_matches[0] as $match) {
+                                        $match_str = $match[0];
+                                        if ($match_str[0] == 'B')
+                                            $barcode = substr($match_str, 3);
+                                        else
+                                            $barcode = $match_str;
+
                                         // when doing https:// the : kept disappearing, not sure why
                                         // will just let it choose https automatically
-                                        $url = "<a href=\"//vault.provo.edu/nac_edit.php?barcode=$barcode\">$match_str</a>";
+                                        $url = "<a target=\"_blank\" href=\"//vault.provo.edu/nac_edit.php?barcode=$barcode\">$match_str</a>";
+                                
                                         $note_data = str_replace($match_str, $url, $note_data);
                                     }
                                 }
+                                /*
+                                $asset_tag_alt_matches = [];
+                                $asset_tag_alt_match_result = preg_match_all($asset_tag_pattern_alt, $note_data, $asset_tag_alt_matches);
+
+                                if ($asset_tag_alt_match_result) {
+                                    foreach ($asset_tag_alt_matches[0] as $match_str) {
+                                        $url = "<a target=\"_blank\" href=\"//vault.provo.edu/nac_edit.php?barcode=$match_str\">$match_str</a>";
+                                        $note_data = str_replace($match_str, $url, $note_data);
+                                    }
+                                }*/
                             ?>
                                 <span <?php if ($note['visible_to_client'] == 0) {
                                             echo 'class="notClientVisible"';
-                                        } ?>>
+                                        } else {
+                                            echo 'class="clientVisible"';
+                                        }?>>
                                     <?php echo html_entity_decode($note_data); ?>
                                 </span>
                             <?php

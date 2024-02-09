@@ -64,10 +64,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $old_ticket_result = mysqli_stmt_get_result($old_ticket_stmt);
     $old_ticket_data = mysqli_fetch_assoc($old_ticket_result);
 
-    // Repack emails
-    $cc_emails_clean = implode(',', $valid_cc_emails);
-    $bcc_emails_clean = implode(',', $valid_bcc_emails);
-
     // Perform SQL UPDATE queries to update the ticket information
     $updateTicketQuery = "UPDATE tickets SET
         client = '$updatedClient',
@@ -138,15 +134,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         mysqli_stmt_execute($log_stmt);
 
         if ($old_ticket_data['employee'] !== null && $old_ticket_data['employee'] !== 'unassigned') {
-            $old_assigned = email_address_from_username($old_ticket_data['employee']) ?: "";
-            //force send email to both old and new assigned employee
-            array_push($valid_cc_emails, $old_assigned);
-            array_push($valid_cc_emails, $new_assigned);
+            $old_assigned = email_address_from_username($old_ticket_data['employee']);
+            $valid_cc_emails[] = $old_assigned;
         } else {
             $old_ticket_data['employee'] = "unassigned";
         }
         // $old_assigned = email_address_from_username($old_ticket_data['employee']) ?: "";
         $new_assigned = email_address_from_username($updatedEmployee);
+        $valid_cc_emails[] = $new_assigned;
         $changesMessage .= "<li>Changed Employee from " . $old_ticket_data['employee'] . " to " . $updatedEmployee . "</li>";
         $forceEmails = true;
     }
@@ -227,8 +222,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $notesMessage .= "<li>" . $decodedNote . "</li>";
     }
 
+    // Repack emails
+    $cc_emails_clean = implode(',', $valid_cc_emails);
+    $bcc_emails_clean = implode(',', $valid_bcc_emails);
+
     // Send emails if the user checked the send_emails checkbox
     if ($sendEmails || $forceEmails) {
+        //log_app(LOG_INFO, var_dump($valid_cc_emails));
         // message for gui to display
         $msg = "Ticket updated successfully. An email was sent to the client, CC and BCC emails.";
         $client_email = email_address_from_username($updatedClient);
@@ -261,7 +261,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header("Location: edit_ticket.php?$formData&id=$ticket_id");
             exit;
         }
-    } else if ($updatedStatus == "resolved") {
+    } else if ($updatedStatus == "resolved" || $updatedStatus == "pending") {
 
         //message for gui to display
         $msg = "Ticket updated successfully. An email was sent to the client.";

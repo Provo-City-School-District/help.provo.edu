@@ -103,14 +103,6 @@ input[type=submit] {
 	display: inline;
 }
 
-.notClientVisible {
-	background-color: var(--theme-white) !important;
-	color: var(--theme-black);
-	display: block;
-	padding: 1em;
-	border-radius: 3px;
-	margin-bottom: 1em;
-}
 
 .hidden {
 	display: none;

@@ -93,7 +93,7 @@ if (!$result) {
 }
 
 // Point old ticket towards new one
-$complete_merge_query = "UPDATE tickets SET merged_into_id = ? WHERE id = ?";
+$complete_merge_query = "UPDATE tickets SET merged_into_id = ?, status = 'closed' WHERE id = ?";
 $complete_merge_stmt = mysqli_prepare($database, $complete_merge_query);
 mysqli_stmt_bind_param($complete_merge_stmt, "ii", $ticket_id_host, $ticket_id_source);
 $result = mysqli_stmt_execute($complete_merge_stmt);

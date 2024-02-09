@@ -521,14 +521,14 @@ if (isset($ticket["client"])) {
                                     ignoring for now though.
                                 */
                             $ticket_pattern = "/WO#\\d{1,6}/";
+                            //$asset_tag_pattern = "/BC#\\d{6}|(?<!BC#)\\d{6}/";
                             $asset_tag_pattern = "/BC#\\d{6}/";
-                            // $asset_tag_pattern_alt = "/0\\d{5}/";
                             $note_data = $note['note'];
                             if ($note_data !== null) {
                                 $note_data = html_entity_decode($note_data);
 
                                 $ticket_matches = [];
-                                $ticket_match_result = preg_match_all($ticket_pattern, $note_data, $ticket_matches);
+                                $ticket_match_result = preg_match_all($ticket_pattern, $note_data, $ticket_matches, PREG_OFFSET_CAPTURE);
 
                                 if ($ticket_match_result) {
                                     foreach ($ticket_matches[0] as $match_str) {
@@ -539,17 +539,20 @@ if (isset($ticket["client"])) {
                                 }
 
                                 $asset_tag_matches = [];
-                                $asset_tag_match_result = preg_match_all($asset_tag_pattern, $note_data, $asset_tag_matches);
+                                $asset_tag_match_result = preg_match_all($asset_tag_pattern, $note_data, $asset_tag_matches, PREG_OFFSET_CAPTURE);
 
                                 if ($asset_tag_match_result) {
-                                    foreach ($asset_tag_matches[0] as $match_str) {
+                                    foreach ($asset_tag_matches[0] as $match) {
+                                        $match_str = $match[0];
                                         if ($match_str[0] == 'B')
                                             $barcode = substr($match_str, 3);
                                         else
                                             $barcode = $match_str;
+
                                         // when doing https:// the : kept disappearing, not sure why
                                         // will just let it choose https automatically
                                         $url = "<a target=\"_blank\" href=\"//vault.provo.edu/nac_edit.php?barcode=$barcode\">$match_str</a>";
+                                
                                         $note_data = str_replace($match_str, $url, $note_data);
                                     }
                                 }

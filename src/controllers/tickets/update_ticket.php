@@ -261,7 +261,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header("Location: edit_ticket.php?$formData&id=$ticket_id");
             exit;
         }
-    } else if ($updatedStatus == "resolved") {
+    } else if ($updatedStatus == "resolved" || $updatedStatus == "pending") {
 
         //message for gui to display
         $msg = "Ticket updated successfully. An email was sent to the client.";

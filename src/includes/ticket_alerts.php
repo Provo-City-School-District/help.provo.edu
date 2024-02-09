@@ -46,13 +46,13 @@ $twoDaysAgo = clone $today;
 // Set counter for hours back
 $hoursBack = 48;
 // Parse 48 hours back since last update
-while($hoursBack > 0){
+while ($hoursBack > 0) {
     $twoDaysAgo->modify('-1 hour');
     $dayOfWeek = $twoDaysAgo->format('w');
  
     // If the day of the week is not a weekend, subtract an hour
     // 0 = Sunday, 6 = Saturday
-    if($dayOfWeek > 0 && $dayOfWeek < 6){
+    if ($dayOfWeek > 0 && $dayOfWeek < 6) {
         $hoursBack--;
     }
 }

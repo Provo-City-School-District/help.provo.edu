@@ -217,7 +217,7 @@ if (isset($ticket["client"])) {
             <input type="hidden" name="madeby" value="<?= $_SESSION['username'] ?>">
             <input type="hidden" id="client" name="client" value="<?= $ticket['client'] ?>">
             <div class="currentClient">
-                <span>Client: </span> <span id="client-display"><?= $clientFirstName." ".$clientLastName." (".$ticket['client'].")"?></span> <a>Change Client</a>
+                <span>Client: </span> <span id="client-display"><?= $clientFirstName . " " . $clientLastName . " (" . $ticket['client'] . ")" ?></span> <a>Change Client</a>
             </div>
             <div>
                 <span>Created:</span> <?= $ticket['created'] ?>
@@ -328,10 +328,13 @@ if (isset($ticket["client"])) {
                     ?>
                 </select>
             </div>
-            <div>
-                <label for="due_date">Modify Due Date:</label>
-                <input type="date" id="due_date" name="due_date" value="<?= $ticket['due_date'] ?>">
-            </div>
+
+            <?php if ($_SESSION['permissions']['is_supervisor'] != 1 || $_SESSION['permissions']['is_admin'] != 1) : ?>
+                <div>
+                    <label for="due_date">Modify Due Date:</label>
+                    <input type="date" id="due_date" name="due_date" value="<?= $ticket['due_date'] ?>">
+                </div>
+            <?php endif; ?>
             <div>
                 <span>Current Due Date:</span> <?= $ticket['due_date'] ?>
             </div>
@@ -464,7 +467,7 @@ if (isset($ticket["client"])) {
     <?php
     }
     ?>
-        <!-- Loop through the notes and display them -->
+    <!-- Loop through the notes and display them -->
     <?php if ($ticket['notes'] !== null) : ?>
         <h2>Notes</h2>
         <div class="note">
@@ -514,7 +517,7 @@ if (isset($ticket["client"])) {
                                 */
                             $ticket_pattern = "/WO#\\d{1,6}/";
                             $asset_tag_pattern = "/BC#\\d{6}/";
-                           // $asset_tag_pattern_alt = "/0\\d{5}/";
+                            // $asset_tag_pattern_alt = "/0\\d{5}/";
                             $note_data = $note['note'];
                             if ($note_data !== null) {
                                 $note_data = html_entity_decode($note_data);

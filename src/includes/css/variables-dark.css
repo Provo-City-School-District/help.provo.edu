@@ -13,6 +13,7 @@
 	--theme-table-border-color: var(--theme-white);
 	--warn-color:#FF8C00;
     --crit-color:#8B0000;
+	--theme-note-invisible:#4b4b4b;
 }
 
 input,
@@ -50,4 +51,22 @@ table a {
 }
 #search-for-client {
 	background-color: unset;
+}
+
+.notClientVisible {
+	background-color: var(--theme-note-invisible) !important;
+	color: var(--theme-white);
+	display: block;
+	padding: 1em;
+	border-radius: 3px;
+	margin-bottom: 1em;
+}
+
+.clientVisible {
+	background-color: rgb(49, 134, 163);
+	color: var(--theme-white);
+	display: block;
+	padding: 1em;
+	border-radius: 3px;
+	margin-bottom: 1em;
 }

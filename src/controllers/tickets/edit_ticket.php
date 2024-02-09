@@ -566,7 +566,9 @@ if (isset($ticket["client"])) {
                             ?>
                                 <span <?php if ($note['visible_to_client'] == 0) {
                                             echo 'class="notClientVisible"';
-                                        } ?>>
+                                        } else {
+                                            echo 'class="clientVisible"';
+                                        }?>>
                                     <?php echo html_entity_decode($note_data); ?>
                                 </span>
                             <?php

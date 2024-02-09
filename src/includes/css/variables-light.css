@@ -14,3 +14,21 @@
     --warn-color:#ff9800;
     --crit-color:#f44336;
 }
+
+.notClientVisible {
+	background-color: var(--theme-white) !important;
+	color: var(--theme-black);
+	display: block;
+	padding: 1em;
+	border-radius: 3px;
+	margin-bottom: 1em;
+}
+
+.clientVisible {
+	background-color: rgb(206, 238, 249);
+	color: var(--theme-black);
+	display: block;
+	padding: 1em;
+	border-radius: 3px;
+	margin-bottom: 1em;
+}

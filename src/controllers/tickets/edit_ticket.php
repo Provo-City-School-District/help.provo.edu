@@ -329,7 +329,7 @@ if (isset($ticket["client"])) {
                 </select>
             </div>
 
-            <?php if ($_SESSION['permissions']['is_supervisor'] != 1 || $_SESSION['permissions']['is_admin'] != 1) : ?>
+            <?php if ($_SESSION['permissions']['is_supervisor'] != 0 || $_SESSION['permissions']['is_admin'] != 0) : ?>
                 <div>
                     <label for="due_date">Modify Due Date:</label>
                     <input type="date" id="due_date" name="due_date" value="<?= $ticket['due_date'] ?>">

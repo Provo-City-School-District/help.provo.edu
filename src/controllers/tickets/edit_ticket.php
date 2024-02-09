@@ -485,7 +485,7 @@ if (isset($ticket["client"])) {
                     // Hidden notes should only be viewable by admins
                     if (
                         $note['visible_to_client'] == 0 &&
-                        $_SESSION['permissions']['is_tech'] != 1
+                        !$_SESSION['permissions']['is_tech']
                     )
                         continue;
                     // Calculate the total time for this note in minutes

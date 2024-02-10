@@ -144,7 +144,7 @@ function get_client_name_from_id(string $client_sw_id)
     $client_name_query = "SELECT FIRST_NAME, LAST_NAME FROM client WHERE CLIENT_ID = '$client_sw_id'";
     $client_name_result = mysqli_query($swdb, $client_name_query);
     $client_name_data = mysqli_fetch_assoc($client_name_result);
-    $client_name = trim($client_name_data["FIRST_NAME"])." ".trim($client_name_data["LAST_NAME"]);
+    $client_name = trim($client_name_data["FIRST_NAME"]) . " " . trim($client_name_data["LAST_NAME"]);
 
     return $client_name;
 }
@@ -157,7 +157,7 @@ function get_tech_name_from_id(string $tech_sw_id)
     $tech_name_query = "SELECT FIRST_NAME, LAST_NAME FROM tech WHERE CLIENT_ID = '$tech_sw_id'";
     $tech_name_result = mysqli_query($swdb, $tech_name_query);
     $tech_name_data = mysqli_fetch_assoc($tech_name_result);
-    $tech_name = trim($tech_name_data["FIRST_NAME"])." ".trim($tech_name_data["LAST_NAME"]);
+    $tech_name = trim($tech_name_data["FIRST_NAME"]) . " " . trim($tech_name_data["LAST_NAME"]);
 
     return $tech_name;
 }
@@ -174,7 +174,8 @@ function get_location_name_from_id(string $location_sw_id)
     return $location_name;
 }
 
-function sortByDate($x, $y) {
+function sortByDate($x, $y)
+{
     return $x['date'] < $y['date'];
 }
 
@@ -200,11 +201,11 @@ function sortByDate($x, $y) {
                 // Loop through the results and create an option for each site
                 while ($locations = mysqli_fetch_assoc($location_result)) {
                     $selected = '';
-                    if ($locations['sitenumber'] == $row['location']) {
+                    if (isset($locations['sitenumber']) && isset($row['location']) && $locations['sitenumber'] == $row['location']) {
                         $selected = 'selected';
                     }
                 ?>
-                    <option value="<?= $locations['sitenumber'] ?>" <?= $search_location === $locations['sitenumber'] ? 'selected' : '' ?>><?= $locations['location_name'] ?></option>
+                    <option value="<?= isset($locations['sitenumber']) ? $locations['sitenumber'] : '' ?>" <?= isset($search_location) && $search_location === $locations['sitenumber'] ? 'selected' : '' ?>><?= isset($locations['location_name']) ? $locations['location_name'] : '' ?></option>
                 <?php
                 }
                 ?>
@@ -282,21 +283,21 @@ function sortByDate($x, $y) {
                     if ($notes_stmt) {
                         mysqli_stmt_bind_param($notes_stmt, "i", $row["id"]);
                         mysqli_stmt_execute($notes_stmt);
-                    
+
                         mysqli_stmt_bind_result($notes_stmt, $creator, $note_data);
                         // Fetch the result
                         mysqli_stmt_fetch($notes_stmt);
-                    
+
                         // Use $location_name as needed
                         mysqli_stmt_close($notes_stmt);
                     }
-                    
+
                     $latest_note_str = "";
                     if ($creator != null && $note_data != null) {
-                        $latest_note_str = $creator.': '.strip_tags(html_entity_decode(html_entity_decode($note_data)));
+                        $latest_note_str = $creator . ': ' . strip_tags(html_entity_decode(html_entity_decode($note_data)));
                         log_app(LOG_INFO, $latest_note_str);
                     }
-                    
+
                     if (isset($row['id'])) {
                         $descriptionWithouthtml = strip_tags(html_entity_decode($row["description"]));
                     ?>
@@ -366,10 +367,10 @@ function sortByDate($x, $y) {
                             $stmt = mysqli_prepare($swdb, $tech_notes_query);
                             mysqli_stmt_bind_param($stmt, "i", $archived_ticket_id);
                             mysqli_stmt_execute($stmt);
-                            
+
                             $stmt_res = $stmt->get_result();
-                            
-                            
+
+
                             while ($tech_note_row = $stmt_res->fetch_array(MYSQLI_ASSOC)) {
                                 $note_text = $tech_note_row["NOTE_TEXT"];
                                 $tech_id = $tech_note_row["TECHNICIAN_ID"];
@@ -377,39 +378,39 @@ function sortByDate($x, $y) {
                                 $hidden = $tech_note_row["HIDDEN"];
                                 $effective_date = $tech_note_row["TECH_NOTE_DATE"];
                                 $note_time = $tech_note_row["BILLING_MINUTES"];
-                                
+
                                 if ($note_time == null)
                                     $note_time = 0;
-                            
+
                                 $note_date = $effective_date;
                                 if ($created_date != $effective_date) {
-                                    $note_date = $effective_date."*";
+                                    $note_date = $effective_date . "*";
                                 }
                                 $all_notes[] = [
-                                    "creator" => get_tech_name_from_id($tech_id), 
+                                    "creator" => get_tech_name_from_id($tech_id),
                                     "text" => $note_text,
                                     "date" => $note_date,
                                     "time" => $note_time,
                                     "hidden" => $hidden
                                 ];
                             }
-                            
+
                             mysqli_stmt_close($stmt);
-                            
+
                             $client_notes_query = "SELECT CLIENT_ID, TICKET_DATE, NOTE_TEXT FROM CLIENT_NOTE WHERE JOB_TICKET_ID = ?";
                             $stmt = mysqli_prepare($swdb, $client_notes_query);
                             mysqli_stmt_bind_param($stmt, "i", $archived_ticket_id);
                             mysqli_stmt_execute($stmt);
-                            
+
                             $stmt_res = $stmt->get_result();
-                        
+
                             while ($client_note_row = $stmt_res->fetch_array(MYSQLI_ASSOC)) {
                                 $client_id = $client_note_row["CLIENT_ID"];
                                 $note_text = $client_note_row["NOTE_TEXT"];
                                 $note_date = $client_note_row["TICKET_DATE"];
-                            
+
                                 $all_notes[] = [
-                                    "creator" => get_client_name_from_id($client_id), 
+                                    "creator" => get_client_name_from_id($client_id),
                                     "text" => $note_text,
                                     "date" => $note_date,
                                     "time" => "—",
@@ -421,7 +422,7 @@ function sortByDate($x, $y) {
                             usort($all_notes, 'sortByDate');
 
                             if ($all_notes[0] != null && $all_notes[0]["text"] != null && $all_notes[0]["creator"] != null)
-                                echo $all_notes[0]["creator"].": ".$all_notes[0]["text"];
+                                echo $all_notes[0]["creator"] . ": " . $all_notes[0]["text"];
 
                             ?>
                         </td>
@@ -451,11 +452,11 @@ function sortByDate($x, $y) {
                             ?>
                         </td>
                         <td data-cell="Assigned Employee">
-                            <?php if ($row['ASSIGNED_TECH_ID'] != null) 
-                                    echo get_tech_name_from_id($row['ASSIGNED_TECH_ID']); 
-                                else
-                                    echo "unassigned";    
-                                ?></td>
+                            <?php if ($row['ASSIGNED_TECH_ID'] != null)
+                                echo get_tech_name_from_id($row['ASSIGNED_TECH_ID']);
+                            else
+                                echo "unassigned";
+                            ?></td>
                         <td data-cell="Current Status"></td>
                         <td data-cell="Created"><?= $row['REPORT_DATE'] ?></td>
                         <td data-cell="Last Updated"><?= $row['LAST_UPDATED'] ?></td>

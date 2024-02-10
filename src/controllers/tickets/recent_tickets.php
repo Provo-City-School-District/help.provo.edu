@@ -22,6 +22,7 @@ LEFT JOIN notes ON tickets.id = notes.linked_id
 LEFT JOIN ticket_logs ON tickets.id = ticket_logs.ticket_id
 WHERE notes.creator = '$username' OR ticket_logs.user_id = '$username'
 ORDER BY tickets.last_updated DESC
+LIMIT 100
 QUERY;
 
 

@@ -103,7 +103,7 @@ if (resetBtn) {
 window.onload = function () {
   // tech department
   var allTechsChart = new CanvasJS.Chart("techOpenTicket", {
-    height: 2500,
+    height: 1000,
     animationEnabled: true,
     title: {
       text: "All Technicians Open Tickets",
@@ -117,10 +117,10 @@ window.onload = function () {
         type: "bar",
         yValueFormatString: "#,##",
         indexLabel: "{y}",
-        indexLabelPlacement: "inside",
+        indexLabelPlacement: "outside",
         indexLabelFontWeight: "bolder",
         indexLabelFontColor: "white",
-        indexLabelFontSize: 8,
+        indexLabelFontSize: 4,
         dataPoints: allTechs,
       },
     ],
@@ -128,7 +128,7 @@ window.onload = function () {
   allTechsChart.render();
   // by location
   var byLocationChart = new CanvasJS.Chart("byLocation", {
-    height: 2500,
+    height: 1000,
     animationEnabled: true,
     title: {
       text: "All Open Tickets By Location",
@@ -142,10 +142,10 @@ window.onload = function () {
         type: "bar",
         yValueFormatString: "#,##",
         indexLabel: "{y}",
-        indexLabelPlacement: "inside",
+        indexLabelPlacement: "outside",
         indexLabelFontWeight: "bolder",
         indexLabelFontColor: "white",
-        indexLabelFontSize: 8,
+        indexLabelFontSize: 4,
         dataPoints: byLocation,
       },
     ],
@@ -153,7 +153,7 @@ window.onload = function () {
   byLocationChart.render();
   //field techs open tickets
   var fieldTechOpenChart = new CanvasJS.Chart("fieldTechOpen", {
-    height: 2500,
+    height: 1000,
     animationEnabled: true,
     title: {
       text: "Field Tech's Open Tickets",
@@ -167,10 +167,10 @@ window.onload = function () {
         type: "bar",
         yValueFormatString: "#,##",
         indexLabel: "{y}",
-        indexLabelPlacement: "inside",
+        indexLabelPlacement: "outside",
         indexLabelFontWeight: "bolder",
         indexLabelFontColor: "white",
-        indexLabelFontSize: 8,
+        indexLabelFontSize: 4,
         dataPoints: fieldTechOpen,
       },
     ],

@@ -112,15 +112,18 @@ window.onload = function () {
       title: "Ticket Count",
       includeZero: true,
     },
+    axisX: {
+      interval: 1, // Set the interval of the x-axis labels to 1
+    },
     data: [
       {
         type: "bar",
         yValueFormatString: "#,##",
         indexLabel: "{y}",
-        indexLabelPlacement: "inside",
+        indexLabelPlacement: "outside",
         indexLabelFontWeight: "bolder",
         indexLabelFontColor: "white",
-        indexLabelFontSize: 8,
+        indexLabelFontSize: 4,
         dataPoints: allTechs,
       },
     ],
@@ -137,15 +140,18 @@ window.onload = function () {
       title: "Ticket Count",
       includeZero: true,
     },
+    axisX: {
+      interval: 1, // Set the interval of the x-axis labels to 1
+    },
     data: [
       {
         type: "bar",
         yValueFormatString: "#,##",
         indexLabel: "{y}",
-        indexLabelPlacement: "inside",
+        indexLabelPlacement: "outside",
         indexLabelFontWeight: "bolder",
         indexLabelFontColor: "white",
-        indexLabelFontSize: 8,
+        indexLabelFontSize: 4,
         dataPoints: byLocation,
       },
     ],
@@ -162,15 +168,18 @@ window.onload = function () {
       title: "Ticket Count",
       includeZero: true,
     },
+    axisX: {
+      interval: 1, // Set the interval of the x-axis labels to 1
+    },
     data: [
       {
         type: "bar",
         yValueFormatString: "#,##",
         indexLabel: "{y}",
-        indexLabelPlacement: "inside",
+        indexLabelPlacement: "outside",
         indexLabelFontWeight: "bolder",
         indexLabelFontColor: "white",
-        indexLabelFontSize: 8,
+        indexLabelFontSize: 4,
         dataPoints: fieldTechOpen,
       },
     ],

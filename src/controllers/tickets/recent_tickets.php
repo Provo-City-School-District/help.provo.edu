@@ -14,13 +14,16 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
 require_once('helpdbconnect.php');
 include("ticket_utils.php");
 
-//page query
-$ticket_query = "(SELECT * FROM tickets WHERE employee = '" . $_SESSION['username'] . "')
-UNION
-(SELECT tickets.* FROM tickets 
-JOIN notes ON tickets.id = notes.linked_id 
-WHERE notes.creator = '" . $_SESSION['username'] . "')
-ORDER BY last_updated DESC";
+$username = $_SESSION['username'];
+
+$ticket_query = <<<QUERY
+SELECT DISTINCT tickets.* FROM tickets 
+LEFT JOIN notes ON tickets.id = notes.linked_id 
+LEFT JOIN ticket_logs ON tickets.id = ticket_logs.ticket_id
+WHERE notes.creator = '$username' OR ticket_logs.user_id = '$username'
+ORDER BY tickets.last_updated DESC
+QUERY;
+
 
 $ticket_result = mysqli_query($database, $ticket_query);
 

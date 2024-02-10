@@ -7,6 +7,7 @@ function display_tickets_table($tickets, $database)
                 <th class="tID">ID</th>
                 <th class="reqDetail">Request Detail</th>
                 <th class="tLatestNote">Latest Note</th>
+                <th class="client">Client</th>
                 <th class="tLocation">Location</th>
                 <th class="category">Request Category</th>
                 <th class="status">Current Status</th>
@@ -51,7 +52,7 @@ function display_tickets_table($tickets, $database)
         if ($notes_stmt) {
             mysqli_stmt_bind_param($notes_stmt, "i", $ticket["id"]);
             mysqli_stmt_execute($notes_stmt);
-            
+
             mysqli_stmt_bind_result($notes_stmt, $creator, $note_data);
             // Fetch the result
             mysqli_stmt_fetch($notes_stmt);
@@ -61,13 +62,19 @@ function display_tickets_table($tickets, $database)
         }
         $latest_note_str = "";
         if ($creator != null && $note_data != null)
-            $latest_note_str = $creator.": ".strip_tags(html_entity_decode($note_data));
+            $latest_note_str = $creator . ": " . strip_tags(html_entity_decode($note_data));
 
         $descriptionWithoutLinks = strip_tags(html_entity_decode($ticket["description"]));
+        if (isset($ticket["client"])) {
+            $result = get_client_name($ticket["client"]);
+            $clientFirstName = $result['firstname'];
+            $clientLastName = $result['lastname'];
+        }
         echo '<tr>
             <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id=' . $ticket["id"] . '">' . $ticket["id"] . '</a></td>
             <td class="details" data-cell="Request Detail"><a href="/controllers/tickets/edit_ticket.php?id=' . $ticket["id"] . '">' . $ticket["name"] . ':</a>' . limitChars($descriptionWithoutLinks, 100) . '</td>
-            <td data-cell="Latest Note:">'.limitChars($latest_note_str, 100).'</td>
+            <td data-cell="Latest Note:">' . limitChars($latest_note_str, 100) . '</td>
+            <td data-cell="Client: ">' . $clientFirstName . " " . $clientLastName . " (" . $ticket['client'] . ")" . '</td>
             <td data-cell="Location">' . $location_name . '<br><br>RM ' . $ticket['room'] . '</td>
             <td data-cell="Request Category">' .  $request_type_name . '</td>
             <td data-cell="Current Status">' . $ticket["status"] . '</td>

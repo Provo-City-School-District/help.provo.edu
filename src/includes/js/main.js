@@ -112,6 +112,9 @@ window.onload = function () {
       title: "Ticket Count",
       includeZero: true,
     },
+    axisX: {
+      interval: 1, // Set the interval of the x-axis labels to 1
+    },
     data: [
       {
         type: "bar",
@@ -164,6 +167,9 @@ window.onload = function () {
     axisY: {
       title: "Ticket Count",
       includeZero: true,
+    },
+    axisX: {
+      interval: 1, // Set the interval of the x-axis labels to 1
     },
     data: [
       {

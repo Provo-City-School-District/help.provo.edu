@@ -65,11 +65,16 @@ function display_tickets_table($tickets, $database)
             $latest_note_str = $creator . ": " . strip_tags(html_entity_decode($note_data));
 
         $descriptionWithoutLinks = strip_tags(html_entity_decode($ticket["description"]));
+        if (isset($ticket["client"])) {
+            $result = get_client_name($ticket["client"]);
+            $clientFirstName = $result['firstname'];
+            $clientLastName = $result['lastname'];
+        }
         echo '<tr>
             <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id=' . $ticket["id"] . '">' . $ticket["id"] . '</a></td>
             <td class="details" data-cell="Request Detail"><a href="/controllers/tickets/edit_ticket.php?id=' . $ticket["id"] . '">' . $ticket["name"] . ':</a>' . limitChars($descriptionWithoutLinks, 100) . '</td>
             <td data-cell="Latest Note:">' . limitChars($latest_note_str, 100) . '</td>
-            <td data-cell="Client: ">' . $ticket['client'] . '</td>
+            <td data-cell="Client: ">' . $clientFirstName . " " . $clientLastName . " (" . $ticket['client'] . ")" . '</td>
             <td data-cell="Location">' . $location_name . '<br><br>RM ' . $ticket['room'] . '</td>
             <td data-cell="Request Category">' .  $request_type_name . '</td>
             <td data-cell="Current Status">' . $ticket["status"] . '</td>

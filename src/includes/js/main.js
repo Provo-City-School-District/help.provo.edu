@@ -103,7 +103,7 @@ if (resetBtn) {
 window.onload = function () {
   // tech department
   var allTechsChart = new CanvasJS.Chart("techOpenTicket", {
-    height: 1000,
+    height: 1500,
     animationEnabled: true,
     title: {
       text: "All Technicians Open Tickets",
@@ -128,7 +128,7 @@ window.onload = function () {
   allTechsChart.render();
   // by location
   var byLocationChart = new CanvasJS.Chart("byLocation", {
-    height: 1000,
+    height: 1500,
     animationEnabled: true,
     title: {
       text: "All Open Tickets By Location",
@@ -153,7 +153,7 @@ window.onload = function () {
   byLocationChart.render();
   //field techs open tickets
   var fieldTechOpenChart = new CanvasJS.Chart("fieldTechOpen", {
-    height: 1000,
+    height: 1500,
     animationEnabled: true,
     title: {
       text: "Field Tech's Open Tickets",

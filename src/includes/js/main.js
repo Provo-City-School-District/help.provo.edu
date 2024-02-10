@@ -26,12 +26,12 @@ $(document).ready(function () {
 
 var skin, content_css;
 
-if (userPref === 'dark') {
-  skin = 'oxide-dark';
-  content_css = 'dark';
+if (userPref === "dark") {
+  skin = "oxide-dark";
+  content_css = "dark";
 } else {
-  skin = 'oxide';
-  content_css = 'default';
+  skin = "oxide";
+  content_css = "default";
 }
 
 tinymce.init({
@@ -42,11 +42,10 @@ tinymce.init({
   paste_as_text: true,
   browser_spellcheck: true,
   contextmenu: false,
-  plugins: ["lists", "code","link", "autolink", "wordcount"],
+  plugins: ["lists", "code", "link", "autolink", "wordcount"],
   skin: skin,
   content_css: content_css,
 });
-
 
 // display/hide new note form
 var newNoteButton = document.getElementById("new-note-button");

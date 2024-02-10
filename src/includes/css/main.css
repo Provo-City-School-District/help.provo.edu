@@ -393,9 +393,11 @@ select {
 	gap: 10px;
 	justify-items: start;
 }
+
 .userPermissions label {
 	grid-area: label;
 }
+
 .userPermissions input {
 	grid-area: input;
 }

@@ -95,7 +95,7 @@ input[type=submit] {
 }
 
 .grid3.canvasjsreport>* {
-	min-height: 500px;
+	min-height: 1000px;
 }
 
 .warning {
@@ -393,9 +393,11 @@ select {
 	gap: 10px;
 	justify-items: start;
 }
+
 .userPermissions label {
 	grid-area: label;
 }
+
 .userPermissions input {
 	grid-area: input;
 }

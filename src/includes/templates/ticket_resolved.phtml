@@ -1,8 +1,10 @@
 Ticket <?= $this->ticket_id ?> has been resolved
 <p>Request Detail:</p>
 <div><?= $this->description ?></div>
-<p><strong>Changes Made: </strong></p>
-<ul><?= $this->changes_message ?></ul>
+if ($this->changes_message) {
+    <p><strong>Changes Made: </strong></p>
+    <ul><?= $this->changes_message ?></ul>
+}
 <p><strong>Recent Notes:</strong></p>
 <ul><?= $this->notes_message ?> </ul>
 <p>You have 10 days to re-open this ticket if your issue has not been resolved.</p>

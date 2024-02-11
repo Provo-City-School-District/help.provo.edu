@@ -262,3 +262,19 @@ function get_ticket_notes($ticket_id, $limit)
 
     return $notes;
 }
+
+function displayTime($note, $type)
+{
+    $hours = $note[$type . '_hours'];
+    $minutes = $note[$type . '_minutes'];
+
+    if ((isset($hours) && $hours > 0) || (isset($minutes) && $minutes > 0)) {
+        echo "<p><strong>" . ucfirst($type) . " Time</strong></p>";
+        if (isset($hours) && $hours > 0) {
+            echo $hours . " hours ";
+        }
+        if (isset($minutes) && $minutes > 0) {
+            echo $minutes . " minutes";
+        }
+    }
+}

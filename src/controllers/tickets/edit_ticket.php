@@ -615,57 +615,17 @@ if (isset($ticket["client"])) {
 
                         <td data-cell="Time Taken">
                             <?php
-                            // if ($note['work_hours'] != null || isset($note['work_hours']) || $note['work_minutes'] != null || isset($note['work_minutes'])) {
-                            // 
+                            displayTime($note, 'work');
+                            displayTime($note, 'travel');
+                            $totalHours = $note['work_hours'] + $note['travel_hours'];
+                            $totalMinutes = $note['work_minutes'] + $note['travel_minutes'];
+
+                            // If total minutes is 60 or more, convert it to hours
+                            // if ($totalMinutes >= 60) {
+                            //     $totalHours += floor($totalMinutes / 60);
+                            //     $totalMinutes = $totalMinutes % 60;
+                            // }
                             ?>
-                            // <p><strong>Work Time</strong></p>
-                            // <?php
-                                //     if ($note['work_hours'] != null && isset($note['work_hours'])) {
-                                //         echo $note['work_hours'] . " hours";
-                                //     }
-                                //     if ($note['work_minutes'] != null && isset($note['work_minutes'])) {
-                                //         echo $note['work_minutes'] . " minutes";
-                                //     }
-                                // }
-
-                                // if ($note['travel_hours'] != null || isset($note['travel_hours']) || $note['travel_minutes'] != null || isset($note['travel_minutes'])) {
-                                //     
-                                ?>
-                            // <p><strong>Travel Time</strong></p>
-                            // <?php
-                                //     if ($note['travel_hours'] != null && isset($note['travel_hours'])) {
-                                //         echo $note['travel_hours'] . " hours";
-                                //     }
-                                //     if ($note['travel_minutes'] != null && isset($note['travel_minutes'])) {
-                                //         echo $note['travel_minutes'] . " minutes";
-                                //     }
-                                // }
-                                function displayTime($note, $type)
-                                {
-                                    $hours = $note[$type . '_hours'];
-                                    $minutes = $note[$type . '_minutes'];
-
-                                    if ((isset($hours) && $hours > 0) || (isset($minutes) && $minutes > 0)) {
-                                        echo "<p><strong>" . ucfirst($type) . " Time</strong></p>";
-                                        if (isset($hours) && $hours > 0) {
-                                            echo $hours . " hours ";
-                                        }
-                                        if (isset($minutes) && $minutes > 0) {
-                                            echo $minutes . " minutes";
-                                        }
-                                    }
-                                }
-                                displayTime($note, 'work');
-                                displayTime($note, 'travel');
-                                $totalHours = $note['work_hours'] + $note['travel_hours'];
-                                $totalMinutes = $note['work_minutes'] + $note['travel_minutes'];
-
-                                // If total minutes is 60 or more, convert it to hours
-                                if ($totalMinutes >= 60) {
-                                    $totalHours += floor($totalMinutes / 60);
-                                    $totalMinutes = $totalMinutes % 60;
-                                }
-                                ?>
                         </td>
                     </tr>
                 <?php endforeach; ?>

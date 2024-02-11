@@ -762,20 +762,23 @@ if (isset($ticket["client"])) {
         if ($is_ticket_flagged) :
         ?>
             <form id="flag-form" method="post">
-                <input type="submit" name="unflag_ticket" value="Unflag ticket">
+                <input type="submit" name="unflag_ticket" value="Unflag ticket" class="right">
             </form>
         <?php else : ?>
             <form id="flag-form" method="post">
-                <input type="submit" name="flag_ticket" value="Flag ticket">
+                <input type="submit" name="flag_ticket" value="Flag ticket" class="right">
             </form>
         <?php endif; ?>
-        <br>
-        <form id="merge-form" method="post" action="merge_tickets_handler.php">
-            <label for="merge_ticket_id">Merge this ticket into:</label>
-            <input type="hidden" name="ticket_id_source" value="<?= $ticket_id ?>">
-            <input type="text" name="ticket_id_host" value=""><br>
-            <input type="submit" value="Merge">
-        </form>
+
+        <?php if ($_SESSION['permissions']['is_tech']) : ?>
+            <br>
+            <form id="merge-form" method="post" action="merge_tickets_handler.php">
+                <label for="merge_ticket_id">Merge this ticket into:</label>
+                <input type="hidden" name="ticket_id_source" value="<?= $ticket_id ?>">
+                <input type="text" name="ticket_id_host" value=""><br>
+                <input type="submit" value="Merge">
+            </form>
+        <?php endif; ?>
 </article>
 <script>
     const title = document.getElementById("ticket-title");

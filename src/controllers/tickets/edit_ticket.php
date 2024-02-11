@@ -613,17 +613,18 @@ if (isset($ticket["client"])) {
                             </span>
                         </td>
 
-                        <td data-cell="Time Taken"><?= $note['work_hours'] ?> hours <?= $note['work_minutes'] ?> minutes (Work Time)<br>
-                            <?= $note['travel_hours'] ?> hours <?= $note['travel_minutes'] ?> minutes (Travel Time)<br>
+                        <td data-cell="Time Taken">
                             <?php
+                            displayTime($note, 'work');
+                            displayTime($note, 'travel');
                             $totalHours = $note['work_hours'] + $note['travel_hours'];
                             $totalMinutes = $note['work_minutes'] + $note['travel_minutes'];
 
                             // If total minutes is 60 or more, convert it to hours
-                            if ($totalMinutes >= 60) {
-                                $totalHours += floor($totalMinutes / 60);
-                                $totalMinutes = $totalMinutes % 60;
-                            }
+                            // if ($totalMinutes >= 60) {
+                            //     $totalHours += floor($totalMinutes / 60);
+                            //     $totalMinutes = $totalMinutes % 60;
+                            // }
                             ?>
                         </td>
                     </tr>

@@ -48,16 +48,22 @@ tinymce.init({
 });
 
 // display/hide new note form
-var newNoteButton = document.getElementById("new-note-button");
+var newNoteButtons = document.getElementsByClassName("new-note-button");
 var newNoteForm = document.getElementById("new-note-form");
-if (newNoteButton && newNoteForm) {
-  newNoteButton.addEventListener("click", function () {
-    if (newNoteForm.style.display === "none") {
-      newNoteForm.style.display = "block";
-    } else {
-      newNoteForm.style.display = "none";
-    }
-  });
+var newNoteEditor = document.getElementById("new-note-form");
+
+if (newNoteButtons && newNoteForm && newNoteEditor) {
+  for (var i = 0; i < newNoteButtons.length; i++) {
+    newNoteButtons[i].addEventListener("click", function () {
+      if (newNoteForm.style.display === "none") {
+        newNoteForm.style.display = "block";
+        newNoteEditor.focus(); // Set focus to the new note editor
+        newNoteEditor.scrollIntoView({ behavior: "smooth" }); // Scroll the view to the new note editor
+      } else {
+        newNoteForm.style.display = "none";
+      }
+    });
+  }
 }
 
 // Check if the toggle-file-upload-form and file-upload-form elements exist before adding the event listener

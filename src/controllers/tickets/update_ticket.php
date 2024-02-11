@@ -236,19 +236,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $template = new Template(from_root("/includes/templates/ticket_updated.phtml"));
         $template->ticket_id = $ticket_id;
-        $template->changes_message = $changesMessage;
+        // $template->changes_message = $changesMessage;
         $template->notes_message = $notesMessage;
         $template->site_url = getenv('ROOTDOMAIN');
+        $template->description = html_entity_decode($updatedDescription);
 
         $email_res1 = true;
         $email_res2 = false;
-        
+
         if (strtolower($updatedEmployee) != "unassigned") {
             $email_res1 = false;
             log_app(LOG_INFO, email_address_from_username($updatedEmployee));
             $email_res1 = send_email_and_add_to_ticket($ticket_id, email_address_from_username($updatedEmployee), $ticket_subject, $template, $valid_cc_emails, $valid_bcc_emails);
         }
-        
+
         $email_res2 = send_email_and_add_to_ticket($ticket_id, $client_email, $ticket_subject, $template, $valid_cc_emails, $valid_bcc_emails);
         log_app(LOG_INFO, $email_res1 ? "yes" : "no");
         log_app(LOG_INFO, $email_res2 ? "yes" : "no");
@@ -270,9 +271,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $template = new Template(from_root("/includes/templates/ticket_resolved.phtml"));
         $template->ticket_id = $ticket_id;
-        $template->changes_message = $changesMessage;
+        // $template->changes_message = html_entity_decode($changesMessage);
         $template->notes_message = $notesMessage;
         $template->site_url = getenv('ROOTDOMAIN');
+        $template->description = html_entity_decode($updatedDescription);
 
         $email_res = send_email_and_add_to_ticket($ticket_id, $client_email, $ticket_subject, $template, $valid_cc_emails, $valid_bcc_emails);
 

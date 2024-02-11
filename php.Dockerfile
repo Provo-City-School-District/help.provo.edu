@@ -66,11 +66,8 @@ RUN chmod +x /root/run_ticket_alerts.sh
 COPY run_email_check.sh /root/run_email_check.sh
 RUN chmod +x /root/run_email_check.sh
 
-# Install Composer packages
-RUN composer install --no-interaction --no-ansi --no-scripts --no-progress --prefer-dist
-
 # Create the uploads directory and set permissions
 RUN mkdir -p /var/www/html/uploads && chown -R www-data:www-data /var/www/html/uploads && chmod -R 775 /var/www/html/uploads
 
 # CMD cron && docker-php-entrypoint apache2-foreground
-CMD service cron start && chown -R www-data:www-data /var/www/html/uploads && docker-php-entrypoint apache2-foreground
+CMD service cron start && chown -R www-data:www-data /var/www/html/uploads && composer install --no-interaction --no-ansi --no-scripts --no-progress --prefer-dist && docker-php-entrypoint apache2-foreground

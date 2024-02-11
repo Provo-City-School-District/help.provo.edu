@@ -208,6 +208,7 @@ if (isset($ticket["client"])) {
         <div id="search-results"></div>
     </div>
     <!-- Form for updating ticket information -->
+    <button class="new-note-button button right">Add Note</button>
     <form id="updateTicketForm" method="POST" action="update_ticket.php">
         <!-- Add a submit button to update the information -->
         <input id="green-button" type="submit" value="Update Ticket">
@@ -337,11 +338,11 @@ if (isset($ticket["client"])) {
                 <div>
                     <span>Current Due Date:</span> <?= $ticket['due_date'] ?>
                 </div>
-            <?php else: ?>
-            <div>
-                <input type="hidden" id="due_date" name="due_date" value="<?= $ticket['due_date'] ?>">
-                <span>Current Due Date:</span> <?= $ticket['due_date'] ?>
-            </div>
+            <?php else : ?>
+                <div>
+                    <input type="hidden" id="due_date" name="due_date" value="<?= $ticket['due_date'] ?>">
+                    <span>Current Due Date:</span> <?= $ticket['due_date'] ?>
+                </div>
             <?php endif; ?>
             <div>
                 <label for="status">Current Status:</label>
@@ -567,7 +568,7 @@ if (isset($ticket["client"])) {
                                         // when doing https:// the : kept disappearing, not sure why
                                         // will just let it choose https automatically
                                         $url = "<a target=\"_blank\" href=\"//vault.provo.edu/nac_edit.php?barcode=$barcode\">$match_str</a>";
-                                
+
                                         $note_data = str_replace($match_str, $url, $note_data);
                                     }
                                 }
@@ -582,7 +583,7 @@ if (isset($ticket["client"])) {
                                     }
                                 }*/
                             ?>
-                                <span <?php 
+                                <span <?php
                                         $note_creator = $note["creator"];
                                         $userPermissionsQuery = "SELECT is_tech FROM users WHERE username = '$note_creator'";
                                         $userPermissionsResult = mysqli_query($database, $userPermissionsQuery);
@@ -593,7 +594,7 @@ if (isset($ticket["client"])) {
                                             echo 'class="notClientVisible"';
                                         } else {
                                             echo 'class="clientVisible"';
-                                        }?>>
+                                        } ?>>
                                     <?php echo html_entity_decode($note_data); ?>
                                 </span>
                             <?php
@@ -639,7 +640,7 @@ if (isset($ticket["client"])) {
             </tr>
             </table>
         </div>
-        <button id="new-note-button">New Note</button>
+        <button class="new-note-button" id="new-note-button">New Note</button>
         <div id="new-note-form" style="display: none;">
             <h3>Add Note</h3>
             <form id="note-submit" method="post" action="add_note_handler.php">

@@ -1,8 +1,9 @@
 Ticket <?= $this->ticket_id ?> has been resolved
 <p>Request Detail:</p>
 <div><?= $this->description ?></div>
+<p><strong>Changes Made: </strong></p>
+<ul><?= $this->changes_message ?></ul>
 <p><strong>Recent Notes:</strong></p>
 <ul><?= $this->notes_message ?> </ul>
-<p>Has your Issue been Resolved? If not, you'll have 10 business days to re-open this ticket</p>
 <p>You have 10 days to re-open this ticket if your issue has not been resolved.</p>
 <p><a href="<?= $this->site_url ?>/controllers/tickets/edit_ticket.php?id=<?= $this->ticket_id ?>">View ticket <?= $this->ticket_id ?></a></p>

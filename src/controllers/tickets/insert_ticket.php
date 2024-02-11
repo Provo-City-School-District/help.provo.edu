@@ -206,7 +206,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $template = new Template(from_root("/includes/templates/ticket_creation_receipt.phtml"));
         $template->ticket_id = $ticketId;
         $template->site_url = getenv('ROOTDOMAIN');
-        $template->description = $description;
+        $template->description = html_entity_decode($description);
 
         $receipt_subject = "Ticket $ticketId";
         send_email(email_address_from_username($username), $receipt_subject, $template);

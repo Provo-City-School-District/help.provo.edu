@@ -619,7 +619,7 @@ if (isset($ticket["client"])) {
                             displayTime($note, 'travel');
                             $totalHours = $note['work_hours'] + $note['travel_hours'];
                             $totalMinutes = $note['work_minutes'] + $note['travel_minutes'];
-
+                            //I wonder if this was left over from something else.
                             // If total minutes is 60 or more, convert it to hours
                             // if ($totalMinutes >= 60) {
                             //     $totalHours += floor($totalMinutes / 60);

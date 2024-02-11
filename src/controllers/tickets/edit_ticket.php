@@ -651,39 +651,52 @@ if (isset($ticket["client"])) {
                     <label for="note">Note:</label>
                     <textarea id="note" name="note" class="tinyMCEtextarea"></textarea>
                 </div>
-                <!-- TODO: Hide the visible to client option for non admins,
-                        forms make this a pain because it needs to submit a value if false, system currently relies on not receiving
-                        a value to assume no (thus hiding it from client) -->
-                <div>
-                    <label for="visible_to_client">Visible to Client:</label>
-                    <input type="checkbox" id="visible_to_client" name="visible_to_client" checked="checked">
-                </div>
-                <h4>Work Time</h4>
-                <div>
-                    <label for="work_hours">Hours:</label>
-                    <input id="work_hours" name="work_hours" type="number" value="0" required>
+                <?php
+                if ($_SESSION['permissions']['is_tech']) {
+                ?>
+                    <div>
+                        <label for="visible_to_client">Visible to Client:</label>
+                        <input type="checkbox" id="visible_to_client" name="visible_to_client" checked="checked">
+                    </div>
+                    <h4>Work Time</h4>
+                    <div>
+                        <label for="work_hours">Hours:</label>
+                        <input id="work_hours" name="work_hours" type="number" value="0" required>
 
-                    <label for="work_minutes">Minutes:</label>
-                    <input id="work_minutes" name="work_minutes" type="number" value="0" required>
-                </div>
-                <h4>Travel Time</h4>
-                <div>
-                    <label for="travel_hours">Hours:</label>
-                    <input id="travel_hours" name="travel_hours" type="number" value="0" required>
+                        <label for="work_minutes">Minutes:</label>
+                        <input id="work_minutes" name="work_minutes" type="number" value="0" required>
+                    </div>
+                    <h4>Travel Time</h4>
+                    <div>
+                        <label for="travel_hours">Hours:</label>
+                        <input id="travel_hours" name="travel_hours" type="number" value="0" required>
 
-                    <label for="travel_minutes">Minutes:</label>
-                    <input id="travel_minutes" name="travel_minutes" type="number" value="0" required>
-                </div>
+                        <label for="travel_minutes">Minutes:</label>
+                        <input id="travel_minutes" name="travel_minutes" type="number" value="0" required>
+                    </div>
 
-                <div>
-                    <label for="total_time">Total Time in Minutes:</label>
-                    <input id="total_time" name="total_time" type="number" readonly>
-                </div>
-                <div>
-                    <label for="date_override_enable">Date Override:</label>
-                    <input type="checkbox" id="date_override_enable" name="date_override_enable">
-                    <input style="display:none;" id="date_override_input" type="datetime-local" name="date_override">
-                </div>
+                    <div>
+                        <label for="total_time">Total Time in Minutes:</label>
+                        <input id="total_time" name="total_time" type="number" readonly>
+                    </div>
+                    <div>
+                        <label for="date_override_enable">Date Override:</label>
+                        <input type="checkbox" id="date_override_enable" name="date_override_enable">
+                        <input style="display:none;" id="date_override_input" type="datetime-local" name="date_override">
+                    </div>
+                <?php
+                } else {
+                ?>
+                    <input type="hidden" id="visible_to_client" name="visible_to_client" value="1">
+                    <input id="total_time" name="total_time" type="hidden" value="0">
+                    <input id="travel_minutes" name="travel_minutes" type="hidden" value="0" required>
+                    <input id="travel_hours" name="travel_hours" type="hidden" value="0" required>
+                    <input id="work_minutes" name="work_minutes" type="hidden" value="0" required>
+                    <input id="work_hours" name="work_hours" type="hidden" value="0" required>
+                <?php
+                }
+                ?>
+
                 <input type="submit" value="Add Note">
             </form>
             <script src="../../includes/js/jquery-3.7.1.min.js"></script>
@@ -776,31 +789,34 @@ if (isset($ticket["client"])) {
             console.log(event.clipboardData.getData("text"))
         }
     });
-    //calc time on the fly
-    document.querySelectorAll('#work_hours, #work_minutes, #travel_hours, #travel_minutes').forEach(function(el) {
-        el.addEventListener('input', function() {
-            var workHours = parseInt(document.getElementById('work_hours').value) || 0;
-            var workMinutes = parseInt(document.getElementById('work_minutes').value) || 0;
-            var travelHours = parseInt(document.getElementById('travel_hours').value) || 0;
-            var travelMinutes = parseInt(document.getElementById('travel_minutes').value) || 0;
-
-            var totalTime = (workHours + travelHours) * 60 + workMinutes + travelMinutes;
-
-            document.getElementById('total_time').value = totalTime;
-        });
-    });
-    // add alert if no time is entered
-    document.getElementById('note-submit').addEventListener('submit', function(e) {
-        var fields = ['work_hours', 'work_minutes', 'travel_hours', 'travel_minutes'];
-        var allZero = fields.every(function(field) {
-            return parseInt(document.getElementById(field).value, 10) === 0;
-        });
-
-        if (allZero) {
-            alert('Please enter a value greater than 0 for at least one of the time fields.');
-            e.preventDefault(); // Prevent the form submission
-        }
-    });
 </script>
+<?php if ($_SESSION['permissions']['is_tech']) : ?>
+    <script>
+        //calc time on the fly
+        document.querySelectorAll('#work_hours, #work_minutes, #travel_hours, #travel_minutes').forEach(function(el) {
+            el.addEventListener('input', function() {
+                var workHours = parseInt(document.getElementById('work_hours').value) || 0;
+                var workMinutes = parseInt(document.getElementById('work_minutes').value) || 0;
+                var travelHours = parseInt(document.getElementById('travel_hours').value) || 0;
+                var travelMinutes = parseInt(document.getElementById('travel_minutes').value) || 0;
 
+                var totalTime = (workHours + travelHours) * 60 + workMinutes + travelMinutes;
+
+                document.getElementById('total_time').value = totalTime;
+            });
+        });
+        // add alert if no time is entered
+        document.getElementById('note-submit').addEventListener('submit', function(e) {
+            var fields = ['work_hours', 'work_minutes', 'travel_hours', 'travel_minutes'];
+            var allZero = fields.every(function(field) {
+                return parseInt(document.getElementById(field).value, 10) === 0;
+            });
+
+            if (allZero) {
+                alert('Please enter a value greater than 0 for at least one of the time fields.');
+                e.preventDefault(); // Prevent the form submission
+            }
+        });
+    </script>
+<?php endif; ?>
 <?php include("footer.php"); ?>

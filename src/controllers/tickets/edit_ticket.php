@@ -634,7 +634,7 @@ if (isset($ticket["client"])) {
                                 if ($note['travel_hours'] != null && isset($note['travel_hours'])) {
                                     echo $note['travel_hours'] . " hours";
                                 }
-                                if ($note['travel_minutes'] != null && isset($note['work_minutes'])) {
+                                if ($note['travel_minutes'] != null && isset($note['travel_minutes'])) {
                                     echo $note['travel_minutes'] . " minutes";
                                 }
                             }

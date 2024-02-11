@@ -103,13 +103,7 @@ $current_page = $_SERVER['REQUEST_URI'];
             if ($is_logged_in) {
             ?>
                 <nav id="headerNav">
-                    <?php
-                    if ($_SESSION['permissions']['is_tech'] == 1) {
-                    ?>
-                        <a href="/profile.php">Profile</a>
-                    <?php
-                    }
-                    ?>
+                    <a href="/profile.php">Profile</a>
                     <a href="/tickets.php">Tickets</a>
                     <?php
                     if ($_SESSION['permissions']['is_supervisor'] == 1) {

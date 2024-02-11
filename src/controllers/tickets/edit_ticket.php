@@ -615,7 +615,7 @@ if (isset($ticket["client"])) {
 
                         <td data-cell="Time Taken">
                             <?php
-                            if ($note['work_hours'] === null || isset($note['work_hours']) || $note['work_minutes'] === null || isset($note['work_minutes'])) {
+                            if ($note['work_hours'] != null || isset($note['work_hours']) || $note['work_minutes'] != null || isset($note['work_minutes'])) {
                             ?>
                                 <p><strong>Work Time</strong></p>
                                 <?php
@@ -627,7 +627,7 @@ if (isset($ticket["client"])) {
                                 }
                             }
 
-                            if ($note['work_hours'] === null || isset($note['work_hours']) || $note['work_minutes'] === null || isset($note['work_minutes'])) {
+                            if ($note['work_hours'] != null || isset($note['work_hours']) || $note['work_minutes'] != null || isset($note['work_minutes'])) {
                                 ?>
                                 <p><strong>Travel Time</strong></p>
                             <?php

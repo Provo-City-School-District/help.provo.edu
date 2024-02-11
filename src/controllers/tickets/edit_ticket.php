@@ -16,6 +16,11 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
 }
 require_once('helpdbconnect.php');
 require_once("status_popup.php");
+$is_tech = $_SESSION['permissions']['is_tech'];
+$is_admin = $_SESSION['permissions']['is_admin'];
+$is_supervisor = $_SESSION['permissions']['is_supervisor'];
+$readonly_permission = (!$is_tech || !$is_admin || !$is_supervisor) ? 'readonly' : '';
+
 
 // Check if an error message is set
 if (isset($_SESSION['current_status'])) {

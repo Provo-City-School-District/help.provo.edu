@@ -1,7 +1,6 @@
 <?php
 include("header.php");
 require_once("helpdbconnect.php");
-require_once("time_utils.php");
 require_once("status_popup.php");
 
 $user = $_SESSION["username"];
@@ -20,31 +19,6 @@ $lastname = $user_data['lastname'];
 $email = $user_data['email'];
 $current_color_scheme = $user_data['color_scheme'];
 
-
-// Get day for M-F belonging to current work week
-$monday_timestamp = null;
-if (date('w') == 1)
-    $monday_timestamp = strtotime("today");
-else
-    $monday_timestamp = strtotime("last Monday");
-
-$tuesday_timestamp = strtotime('+1 day', $monday_timestamp);
-$wednesday_timestamp = strtotime('+2 day', $monday_timestamp);
-$thursday_timestamp = strtotime('+3 day', $monday_timestamp);
-$friday_timestamp = strtotime('+4 day', $monday_timestamp);
-
-$user_times = get_note_time_for_days($user, [$monday_timestamp, $tuesday_timestamp, $wednesday_timestamp, $thursday_timestamp, $friday_timestamp]);
-
-// Convert times to hours
-$user_times[0] /= 60;
-$user_times[1] /= 60;
-$user_times[2] /= 60;
-$user_times[3] /= 60;
-$user_times[4] /= 60;
-
-// Add up all the hours for the total
-$user_times[5] = array_sum($user_times);
-
 if (isset($_SESSION['current_status'])) {
     $status_popup = new StatusPopup($_SESSION["current_status"], StatusPopupType::fromString($_SESSION["status_type"]));
     echo $status_popup;
@@ -53,8 +27,34 @@ if (isset($_SESSION['current_status'])) {
     unset($_SESSION['status_type']);
 }
 
-?>
+if ($_SESSION['permissions']['is_tech'] == 1) {
+    require_once("time_utils.php");
 
+    // Get day for M-F belonging to current work week
+    $monday_timestamp = null;
+    if (date('w') == 1)
+        $monday_timestamp = strtotime("today");
+    else
+        $monday_timestamp = strtotime("last Monday");
+
+    $tuesday_timestamp = strtotime('+1 day', $monday_timestamp);
+    $wednesday_timestamp = strtotime('+2 day', $monday_timestamp);
+    $thursday_timestamp = strtotime('+3 day', $monday_timestamp);
+    $friday_timestamp = strtotime('+4 day', $monday_timestamp);
+
+    $user_times = get_note_time_for_days($user, [$monday_timestamp, $tuesday_timestamp, $wednesday_timestamp, $thursday_timestamp, $friday_timestamp]);
+
+    // Convert times to hours
+    $user_times[0] /= 60;
+    $user_times[1] /= 60;
+    $user_times[2] /= 60;
+    $user_times[3] /= 60;
+    $user_times[4] /= 60;
+
+    // Add up all the hours for the total
+    $user_times[5] = array_sum($user_times);
+}
+?>
 <h1>Profile For <?= ucfirst(strtolower($user_data['firstname'])) . ' ' . ucfirst(strtolower($user_data['lastname'])) ?> (<span><?= $user_data['username'] ?></span>)</h1>
 <h2>My Information</h2>
 <ul>
@@ -62,27 +62,6 @@ if (isset($_SESSION['current_status'])) {
     <li>Email: <?= $email ?></li>
     <li>Employee ID: <?= $user_data['ifasid'] ?></li>
 </ul>
-
-
-<h2>Current Week Work Order Hours</h2>
-<table id="profile_time_table">
-    <tr>
-        <th>Monday</th>
-        <th>Tuesday</th>
-        <th>Wednesday</th>
-        <th>Thursday</th>
-        <th>Friday</th>
-        <th>Total</th>
-    </tr>
-    <tr>
-        <td data-cell="Monday"><?= number_format($user_times[0], 2) ?> hrs</td>
-        <td data-cell="Tuesday"><?= number_format($user_times[1], 2) ?> hrs</td>
-        <td data-cell="Wednesday"><?= number_format($user_times[2], 2) ?> hrs</td>
-        <td data-cell="Thursday"><?= number_format($user_times[3], 2) ?> hrs</td>
-        <td data-cell="Friday"><?= number_format($user_times[4], 2) ?> hrs</td>
-        <td data-cell="Week Total"><?= number_format($user_times[5], 2) ?> hrs</td>
-    </tr>
-</table>
 <h2>My Settings</h2>
 <form action="controllers/users/update_user_settings.php" method="post">
     <input type="hidden" name="id" value="<?= $user_id ?>">
@@ -101,6 +80,29 @@ if (isset($_SESSION['current_status'])) {
 
 <h2>Help / Documentation</h2>
 <a href="/note_shortcuts.php">Note Shorthand</a>
-
-
+<?php
+if ($_SESSION['permissions']['is_tech'] == 1) {
+?>
+    <h2>Current Week Work Order Hours</h2>
+    <table id="profile_time_table">
+        <tr>
+            <th>Monday</th>
+            <th>Tuesday</th>
+            <th>Wednesday</th>
+            <th>Thursday</th>
+            <th>Friday</th>
+            <th>Total</th>
+        </tr>
+        <tr>
+            <td data-cell="Monday"><?= number_format($user_times[0], 2) ?> hrs</td>
+            <td data-cell="Tuesday"><?= number_format($user_times[1], 2) ?> hrs</td>
+            <td data-cell="Wednesday"><?= number_format($user_times[2], 2) ?> hrs</td>
+            <td data-cell="Thursday"><?= number_format($user_times[3], 2) ?> hrs</td>
+            <td data-cell="Friday"><?= number_format($user_times[4], 2) ?> hrs</td>
+            <td data-cell="Week Total"><?= number_format($user_times[5], 2) ?> hrs</td>
+        </tr>
+    </table>
+<?php
+}
+?>
 <?php include("footer.php"); ?>

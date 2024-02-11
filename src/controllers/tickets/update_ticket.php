@@ -139,7 +139,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $old_ticket_data['employee'] = "unassigned";
         }
-        // $old_assigned = email_address_from_username($old_ticket_data['employee']) ?: "";
         $new_assigned = email_address_from_username($updatedEmployee);
         $valid_cc_emails[] = $new_assigned;
         $changesMessage .= "<li>Changed Employee from " . $old_ticket_data['employee'] . " to " . $updatedEmployee . "</li>";

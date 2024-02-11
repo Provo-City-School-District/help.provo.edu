@@ -235,7 +235,7 @@ if (isset($ticket["client"])) {
 
 
             <div> <label for="employee">Assigned Tech:</label>
-                <select id="employee" name="employee" <?php echo $readonly_permission; ?>>
+                <select id="employee" name="employee">
                     <option value="unassigned">Unassigned</option>
                     <?php foreach ($techusernames as $username) : ?>
                         <option value="<?= $username ?>" <?= $ticket['employee'] === $username ? 'selected' : '' ?>><?= $username ?></option>
@@ -244,7 +244,7 @@ if (isset($ticket["client"])) {
             </div>
             <div>
                 <label for="location">Location:</label>
-                <select id="location" name="location" <?php echo $readonly_permission; ?>>
+                <select id="location" name="location">
                     <?php
                     // Query the sites table to get the site information
                     $location_query = "SELECT sitenumber, location_name FROM locations";
@@ -270,7 +270,7 @@ if (isset($ticket["client"])) {
             </div>
             <div>
                 <label for="request_type">Request Type:</label>
-                <select id="request_type" name="request_type" <?php echo $readonly_permission; ?>>
+                <select id="request_type" name="request_type">
                     <option value="0">Select a more specific request type otherwise (Other)</option>
                     <?php
                     // Fetch the top-level request types
@@ -363,7 +363,7 @@ if (isset($ticket["client"])) {
             </div>
             <div>
                 <label for="priority">Priority:</label>
-                <select id="priority" name="priority" <?php echo $readonly_permission; ?>>
+                <select id="priority" name="priority">
                     <option value="1" <?= ($ticket['priority'] == '1') ? ' selected' : '' ?>>Critical</option>
                     <option value="3" <?= ($ticket['priority'] == '3') ? ' selected' : '' ?>>Urgent</option>
                     <option value="5" <?= ($ticket['priority'] == '5') ? ' selected' : '' ?>>High</option>
@@ -375,7 +375,7 @@ if (isset($ticket["client"])) {
             </div>
             <div>
                 <label for="parent_ticket">Parent Ticket:</label>
-                <input type="number" id="parent_ticket" name="parent_ticket" value="<?= $ticket['parent_ticket'] == 0 ? '' : $ticket['parent_ticket'] ?>" <?php echo $readonly_permission; ?>>
+                <input type="number" id="parent_ticket" name="parent_ticket" value="<?= $ticket['parent_ticket'] == 0 ? '' : $ticket['parent_ticket'] ?>">
             </div>
             <div>
                 <label for="cc_emails">CC:</label>
@@ -406,7 +406,7 @@ if (isset($ticket["client"])) {
             </div>
 
             <div id="edit-description-form" style="display: none;">
-                <textarea id="description" name="description" class="tinyMCEtextarea" <?php echo $readonly_permission; ?>><?= $ticket['description'] ?></textarea>
+                <textarea id="description" name="description" class="tinyMCEtextarea"><?= $ticket['description'] ?></textarea>
             </div>
         </div>
 

@@ -613,8 +613,27 @@ if (isset($ticket["client"])) {
                             </span>
                         </td>
 
-                        <td data-cell="Time Taken"><?= $note['work_hours'] ?> hours <?= $note['work_minutes'] ?> minutes (Work Time)<br>
-                            <?= $note['travel_hours'] ?> hours <?= $note['travel_minutes'] ?> minutes (Travel Time)<br>
+                        <td data-cell="Time Taken">
+                            <p><strong>Work Time</strong></p>
+                            <?php
+                            if ($note['work_hours'] === null && isset($note['work_hours'])) {
+                                echo $note['work_hours'] . " hours";
+                            }
+                            if ($note['work_minutes'] === null && isset($note['work_minutes'])) {
+                                echo $note['work_minutes'] . " minutes";
+                            }
+                            ?>
+                            <p><strong>Travel Time</strong></p>
+                            <?php
+                            if ($note['travel_hours'] === null && isset($note['travel_hours'])) {
+                                echo $note['travel_hours'] . " hours";
+                            }
+                            if ($note['travel_minutes'] === null && isset($note['work_minutes'])) {
+                                echo $note['travel_minutes'] . " minutes";
+                            }
+                            ?>
+
+
                             <?php
                             $totalHours = $note['work_hours'] + $note['travel_hours'];
                             $totalMinutes = $note['work_minutes'] + $note['travel_minutes'];

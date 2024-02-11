@@ -109,18 +109,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Log the ticket changes and build message of changes for email
     $log_query = "INSERT INTO ticket_logs (ticket_id, user_id, field_name, old_value, new_value, created_at) VALUES (?, ?, ?, ?, ?, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'))";
     $log_stmt = mysqli_prepare($database, $log_query);
-    if ($old_ticket_data['priority'] != $updatedPriority) {
+    if (isset($old_ticket_data['priority'], $updatedPriority) && $old_ticket_data['priority'] != $updatedPriority) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $priorityColumn, $old_ticket_data['priority'], $updatedPriority);
         mysqli_stmt_execute($log_stmt);
         $changesMessage .= "<li>Changed Priority from " . $priorityTypes[$old_ticket_data['priority']] . " to " . $priorityTypes[$updatedPriority] . "</li>";
     }
 
-    if ($old_ticket_data['request_type_id'] != $updatedRequestType) {
+    if (isset($old_ticket_data['request_type_id'], $updatedRequestType) && $old_ticket_data['request_type_id'] != $updatedRequestType) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $requestTypeColumn, $old_ticket_data['request_type_id'], $updatedRequestType);
         mysqli_stmt_execute($log_stmt);
         $changesMessage .= "<li>Changed Request Type from " . $old_ticket_data['request_type_id'] . " to " . $updatedRequestType . "</li>";
     }
-    if ($old_ticket_data['client'] != $updatedClient) {
+
+    if (isset($old_ticket_data['client'], $updatedClient) && $old_ticket_data['client'] != $updatedClient) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $clientColumn, $old_ticket_data['client'], $updatedClient);
         mysqli_stmt_execute($log_stmt);
         $changesMessage .= "<li>Changed Client from " . $old_ticket_data['client'] . " to " . $updatedClient . "</li>";
@@ -129,7 +130,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         array_push($valid_cc_emails, $old_client);
         $forceEmails = true;
     }
-    if ($old_ticket_data['employee'] != $updatedEmployee) {
+
+    if (isset($old_ticket_data['employee'], $updatedEmployee) && $old_ticket_data['employee'] != $updatedEmployee) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $employeeColumn, $old_ticket_data['employee'], $updatedEmployee);
         mysqli_stmt_execute($log_stmt);
 
@@ -139,49 +141,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $old_ticket_data['employee'] = "unassigned";
         }
-        // $old_assigned = email_address_from_username($old_ticket_data['employee']) ?: "";
         $new_assigned = email_address_from_username($updatedEmployee);
         $valid_cc_emails[] = $new_assigned;
         $changesMessage .= "<li>Changed Employee from " . $old_ticket_data['employee'] . " to " . $updatedEmployee . "</li>";
         $forceEmails = true;
     }
-    if ($old_ticket_data['location'] != $updatedLocation) {
+
+    if (isset($old_ticket_data['location'], $updatedLocation) && $old_ticket_data['location'] != $updatedLocation) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $locationColumn, $old_ticket_data['location'], $updatedLocation);
         mysqli_stmt_execute($log_stmt);
         $changesMessage .= "<li>Changed Location from " . $old_ticket_data['location'] . " to " . $updatedLocation . "</li>";
     }
-    if ($old_ticket_data['room'] != $updatedRoom) {
+
+    if (isset($old_ticket_data['room'], $updatedRoom) && $old_ticket_data['room'] != $updatedRoom) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $roomColumn, $old_ticket_data['room'], $updatedRoom);
         mysqli_stmt_execute($log_stmt);
         $changesMessage .= "<li>Changed Room from " . $old_ticket_data['room'] . " to " . $updatedRoom . "</li>";
     }
-    if ($old_ticket_data['name'] != $updatedName) {
+
+    if (isset($old_ticket_data['name'], $updatedName) && $old_ticket_data['name'] != $updatedName) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $nameColumn, $old_ticket_data['name'], $updatedName);
         mysqli_stmt_execute($log_stmt);
         $changesMessage .= "<li>Changed Subject from " . $old_ticket_data['name'] . " to " . $updatedName . "</li>";
     }
-    if ($old_ticket_data['description'] != $updatedDescription) {
+
+    if (isset($old_ticket_data['description'], $updatedDescription) && $old_ticket_data['description'] != $updatedDescription) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $descriptionColumn, $old_ticket_data['description'], $updatedDescription);
         mysqli_stmt_execute($log_stmt);
         $changesMessage .= "<li>Changed Description from " . $old_ticket_data['description'] . " to " . $updatedDescription . "</li>";
     }
-    if ($old_ticket_data['due_date'] != $updatedDueDate) {
+
+    if (isset($old_ticket_data['due_date'], $updatedDueDate) && $old_ticket_data['due_date'] != $updatedDueDate) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $dueDateColumn, $old_ticket_data['due_date'], $updatedDueDate);
         mysqli_stmt_execute($log_stmt);
         removeAlert($database, $pastDueMessage, $ticket_id);
         $changesMessage .= "<li>Changed Due Date from " . $old_ticket_data['due_date'] . " to " . $updatedDueDate . "</li>";
     }
-    if ($old_ticket_data['status'] != $updatedStatus) {
+
+    if (isset($old_ticket_data['status'], $updatedStatus) && $old_ticket_data['status'] != $updatedStatus) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $statusColumn, $old_ticket_data['status'], $updatedStatus);
         mysqli_stmt_execute($log_stmt);
         $changesMessage .= "<li>Changed Status from " . $statusTypes[$old_ticket_data['status']] . " to " . $statusTypes[$updatedStatus] . "</li>";
     }
-    if ($old_ticket_data['phone'] != $updatedPhone) {
+
+    if (isset($old_ticket_data['phone'], $updatedPhone) && $old_ticket_data['phone'] != $updatedPhone) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $phoneColumn, $old_ticket_data['phone'], $updatedPhone);
         mysqli_stmt_execute($log_stmt);
         $changesMessage .= "<li>Changed Phone from " . $old_ticket_data['phone'] . " to " . $updatedPhone . "</li>";
     }
-    if ($old_ticket_data['cc_emails'] != $updatedCCEmails) {
+
+    if (isset($old_ticket_data['cc_emails'], $updatedCCEmails) && $old_ticket_data['cc_emails'] != $updatedCCEmails) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $ccEmailsColumn, $old_ticket_data['cc_emails'], $updatedCCEmails);
         mysqli_stmt_execute($log_stmt);
         if ($old_ticket_data['cc_emails'] == "") {
@@ -190,7 +199,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $changesMessage .= "<li>Changed CC Emails from " . $old_ticket_data['cc_emails'] . " to " . $updatedCCEmails . "</li>";
         }
     }
-    if ($old_ticket_data['bcc_emails'] != $updatedBCCEmails) {
+
+    if (isset($old_ticket_data['bcc_emails'], $updatedBCCEmails) && $old_ticket_data['bcc_emails'] != $updatedBCCEmails) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $bccEmailsColumn, $old_ticket_data['bcc_emails'], $updatedBCCEmails);
         mysqli_stmt_execute($log_stmt);
         if ($old_ticket_data['bcc_emails']) {
@@ -199,11 +209,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $changesMessage .= "<li>Changed BCC Emails from " . $old_ticket_data['bcc_emails'] . " to " . $updatedBCCEmails . "</li>";
         }
     }
-    if ($old_ticket_data['parent_ticket'] != $updatedParentTicket) {
+
+    if (isset($old_ticket_data['parent_ticket'], $updatedParentTicket) && $old_ticket_data['parent_ticket'] != $updatedParentTicket) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $parentTicketColumn, $old_ticket_data['parent_ticket'], $updatedParentTicket);
         mysqli_stmt_execute($log_stmt);
         $changesMessage .= "<li>Changed Parent Ticket from " . $old_ticket_data['parent_ticket'] . " to " . $updatedParentTicket . "</li>";
     }
+
 
     // Check if the ticket has an alert about not being updated in last 48 hours and clear it since the ticket was just updated.
     removeAlert($database, $alert48Message, $ticket_id);
@@ -236,7 +248,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $template = new Template(from_root("/includes/templates/ticket_updated.phtml"));
         $template->ticket_id = $ticket_id;
-        // $template->changes_message = $changesMessage;
+        $template->changes_message = $changesMessage;
         $template->notes_message = $notesMessage;
         $template->site_url = getenv('ROOTDOMAIN');
         $template->description = html_entity_decode($updatedDescription);
@@ -271,7 +283,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $template = new Template(from_root("/includes/templates/ticket_resolved.phtml"));
         $template->ticket_id = $ticket_id;
-        // $template->changes_message = html_entity_decode($changesMessage);
+        $template->changes_message = html_entity_decode($changesMessage);
         $template->notes_message = $notesMessage;
         $template->site_url = getenv('ROOTDOMAIN');
         $template->description = html_entity_decode($updatedDescription);

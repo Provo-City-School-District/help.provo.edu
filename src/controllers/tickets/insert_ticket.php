@@ -53,8 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    if ((empty($room) || empty($phone)) && !$_SESSION["permissions"]["is_tech"])
-    {
+    if ((empty($room) || empty($phone)) && !$_SESSION["permissions"]["is_tech"]) {
         // Handle empty fields (e.g., show an error message)
         $error = 'All fields are required';
         $formData = http_build_query($_POST);
@@ -139,7 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             die;
         }
     }
-    
+
 
     // Create an SQL INSERT query
     $insertQuery = "INSERT INTO tickets (location, room, name, description, created, last_updated, due_date, status, client,attachment_path,phone,cc_emails,bcc_emails,request_type_id,priority,employee)
@@ -207,7 +206,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $template = new Template(from_root("/includes/templates/ticket_creation_receipt.phtml"));
         $template->ticket_id = $ticketId;
         $template->site_url = getenv('ROOTDOMAIN');
-        
+        $template->description = $description;
+
         $receipt_subject = "Ticket $ticketId";
         send_email(email_address_from_username($username), $receipt_subject, $template);
 

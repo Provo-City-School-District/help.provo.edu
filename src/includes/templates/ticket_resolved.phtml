@@ -1,6 +1,6 @@
 Ticket <?= $this->ticket_id ?> has been resolved
-<p><strong>Changes Made: </strong></p>
-<ul><?= $this->changes_message ?></ul>
+{% comment %} <p><strong>Changes Made: </strong></p>
+<ul><?= $this->changes_message ?></ul> {% endcomment %}
 <p><strong>Recent Notes:</strong></p>
 <ul><?= $this->notes_message ?> </ul>
 <p>Has your Issue been Resolved? If not, you'll have 10 business days to re-open this ticket</p>

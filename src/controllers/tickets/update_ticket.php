@@ -236,7 +236,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $template = new Template(from_root("/includes/templates/ticket_updated.phtml"));
         $template->ticket_id = $ticket_id;
-        $template->changes_message = $changesMessage;
+        // $template->changes_message = $changesMessage;
         $template->notes_message = $notesMessage;
         $template->site_url = getenv('ROOTDOMAIN');
 
@@ -270,7 +270,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $template = new Template(from_root("/includes/templates/ticket_resolved.phtml"));
         $template->ticket_id = $ticket_id;
-        $template->changes_message = $changesMessage;
+        // $template->changes_message = html_entity_decode($changesMessage);
         $template->notes_message = $notesMessage;
         $template->site_url = getenv('ROOTDOMAIN');
 

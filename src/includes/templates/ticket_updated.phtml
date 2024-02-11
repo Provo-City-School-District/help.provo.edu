@@ -1,6 +1,6 @@
 Ticket <?= $this->ticket_id ?> has been updated
-<p><strong>Changes Made: </strong></p>
-<ul><?= $this->changes_message ?></ul>
+{% comment %} <p><strong>Changes Made: </strong></p>
+<ul><?= $this->changes_message ?></ul> {% endcomment %}
 <p><strong>Recent Notes:</strong></p>
 <ul><?= $this->notes_message?> </ul>
 <p><a href="<?= $this->site_url ?>/controllers/tickets/edit_ticket.php?id=<?= $this->ticket_id ?>">View ticket <?= $this->ticket_id ?></a></p>

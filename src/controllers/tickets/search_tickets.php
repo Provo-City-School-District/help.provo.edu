@@ -129,9 +129,9 @@ $techusernames = array();
 while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
 
     if ($usernameRow['is_tech'] == 1) {
-        $techusernames[] = $usernameRow['username'];
+        $techusernames[] = strtolower($usernameRow['username']);
     } else {
-        $usernames[] = $usernameRow['username'];
+        $usernames[] = strtolower($usernameRow['username']);
     }
 }
 

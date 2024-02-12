@@ -28,6 +28,7 @@
 
 .welcomeMessage {
 	text-align: center;
-	font-size: 2em;
+	font-size: 3em;
 	margin-top: 50px;
+	font-weight: bold;
 }

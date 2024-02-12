@@ -219,6 +219,7 @@ td::before {
 
 table.dataTable .details a {
 	display: block;
+	margin-bottom: 1em;
 }
 
 /* =============================== Alerts Styles =============================== */

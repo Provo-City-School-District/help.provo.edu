@@ -10,9 +10,9 @@ if (isset($_SESSION['username'])) {
 }
 ?>
 
-<?php 
+<?php
 // Display Front End
-include("header.php"); 
+include("header.php");
 // Display Status Popup
 if (isset($_SESSION['current_status'])) {
     $status_popup = new StatusPopup($_SESSION["current_status"], StatusPopupType::fromString($_SESSION["status_type"]));
@@ -23,6 +23,7 @@ if (isset($_SESSION['current_status'])) {
 }
 
 ?>
+<div class="welcomeMessage">Welcome to The Technology Help Desk</div>
 <div id="loginWrapper">
     <h1>Login for Help</h1>
 

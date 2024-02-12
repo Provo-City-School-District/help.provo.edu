@@ -9,108 +9,109 @@ include("ticket_utils.php");
 $location_query = "SELECT sitenumber, location_name FROM locations";
 $location_result = mysqli_query($database, $location_query);
 
-
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    // Get the search terms from the form
-    $search_id = isset($_GET['search_id']) ? mysqli_real_escape_string($database, $_GET['search_id']) : '';
-    $search_name = isset($_GET['search_name']) ? mysqli_real_escape_string($database, $_GET['search_name']) : '';
-    $search_location = isset($_GET['search_location']) ? mysqli_real_escape_string($database, $_GET['search_location']) : '';
-    $search_employee = isset($_GET['search_employee']) ? mysqli_real_escape_string($database, $_GET['search_employee']) : '';
-    $search_client = isset($_GET['search_client']) ? mysqli_real_escape_string($database, $_GET['search_client']) : '';
-    $search_status = isset($_GET['search_status']) ? mysqli_real_escape_string($database, $_GET['search_status']) : '';
+
+    if (!empty($_GET)) {
+        // Get the search terms from the form
+        $search_id = isset($_GET['search_id']) ? mysqli_real_escape_string($database, $_GET['search_id']) : '';
+        $search_name = isset($_GET['search_name']) ? mysqli_real_escape_string($database, $_GET['search_name']) : '';
+        $search_location = isset($_GET['search_location']) ? mysqli_real_escape_string($database, $_GET['search_location']) : '';
+        $search_employee = isset($_GET['search_employee']) ? mysqli_real_escape_string($database, $_GET['search_employee']) : '';
+        $search_client = isset($_GET['search_client']) ? mysqli_real_escape_string($database, $_GET['search_client']) : '';
+        $search_status = isset($_GET['search_status']) ? mysqli_real_escape_string($database, $_GET['search_status']) : '';
 
 
-    // Construct the SQL query based on the selected search options
-    $ticket_query = "SELECT * FROM tickets WHERE 1=0";
-    if (!empty($search_id)) {
-        $search_id = intval($search_id);
-        $ticket_query .= " OR id LIKE '$search_id'";
-    }
-    if (!empty($search_name)) {
-        $ticket_query .= " OR (name LIKE '%$search_name%' OR description LIKE '%$search_name%')";
-    }
-    if (!empty($search_location)) {
-        $ticket_query .= " OR location LIKE '%$search_location%'";
-    }
-    if (!empty($search_employee)) {
-        $ticket_query .= " OR employee LIKE '%$search_employee%'";
-    }
-    if (!empty($search_client)) {
-        $ticket_query .= " OR client LIKE '%$search_client%'";
-    }
-    if (!empty($search_status)) {
-        $ticket_query .= " OR status LIKE '%$search_status%'";
-    }
-
-    // Query the archived_location_id values for the given sitenumber
-    $archived_location_ids = array();
-    $arch_location_query = "SELECT archived_location_id FROM locations WHERE sitenumber = '$search_location'";
-    $arch_location_result = $database->query($arch_location_query);
-    if ($arch_location_result->num_rows > 0) {
-        while ($arch_row = $arch_location_result->fetch_assoc()) {
-            $archived_location_ids[] = $arch_row['archived_location_id'];
+        // Construct the SQL query based on the selected search options
+        $ticket_query = "SELECT * FROM tickets WHERE 1=1";
+        if (!empty($search_id)) {
+            $search_id = intval($search_id);
+            $ticket_query .= " AND id LIKE '$search_id'";
         }
-    }
+        if (!empty($search_name)) {
+            $ticket_query .= " AND (name LIKE '%$search_name%' OR description LIKE '%$search_name%')";
+        }
+        if (!empty($search_location)) {
+            $ticket_query .= " AND location LIKE '%$search_location%'";
+        }
+        if (!empty($search_employee)) {
+            $ticket_query .= " AND employee LIKE '%$search_employee%'";
+        }
+        if (!empty($search_client)) {
+            $ticket_query .= " AND client LIKE '%$search_client%'";
+        }
+        if (!empty($search_status)) {
+            $ticket_query .= " AND status LIKE '%$search_status%'";
+        }
 
-    // Construct the SQL query for the old ticket database
-    $old_ticket_query = "SELECT CONCAT('A-', JOB_TICKET_ID) AS a_id,PROBLEM_TYPE_ID,SUBJECT,QUESTION_TEXT,REPORT_DATE,LAST_UPDATED,JOB_TIME,ASSIGNED_TECH_ID,ROOM,LOCATION_ID,STATUS_TYPE_ID FROM whd.job_ticket WHERE 1=0";
+        // Query the archived_location_id values for the given sitenumber
+        $archived_location_ids = array();
+        $arch_location_query = "SELECT archived_location_id FROM locations WHERE sitenumber = '$search_location'";
+        $arch_location_result = $database->query($arch_location_query);
+        if ($arch_location_result->num_rows > 0) {
+            while ($arch_row = $arch_location_result->fetch_assoc()) {
+                $archived_location_ids[] = $arch_row['archived_location_id'];
+            }
+        }
 
-    // map old system status ids to our current system
-    switch ($search_status) {
-        case 'open':
-            $search_status = 1;
-            break;
-        case 'closed':
-            $search_status = 3;
-            break;
-        case 'resolved':
-            $search_status = 5;
-            break;
-        case 'pending':
-            $search_status = 7;
-            break;
-        case 'maintenance':
-            $search_status = 11;
-            break;
-        case 'vendor':
-            $search_status = 12;
-            break;
-        default:
-            $search_status = null;
-    }
-    if (!empty($search_id)) {
-        $search_id = intval($search_id);
-        $old_ticket_query .= " OR JOB_TICKET_ID LIKE '$search_id'";
-    }
-    if (!empty($search_name)) {
-        $old_ticket_query .= " OR (SUBJECT LIKE '%$search_name%' OR QUESTION_TEXT LIKE '%$search_name%')";
-    }
-    if (!empty($search_location)) {
-        $old_ticket_query .= " OR LOCATION_ID IN (" . implode(",", $archived_location_ids) . ")";
-    }
-    if (!empty($search_employee)) {
-        $old_ticket_query .= " OR ASSIGNED_TECH_ID LIKE '%$search_employee%'";
-    }
-    if (!empty($search_client)) {
-        $old_ticket_query .= " OR CLIENT_ID LIKE '%$search_client%'";
-    }
-    if (!empty($search_status)) {
-        $old_ticket_query .= " OR STATUS_TYPE_ID  LIKE '%$search_status%'";
-    }
+        // Construct the SQL query for the old ticket database
+        $old_ticket_query = "SELECT CONCAT('A-', JOB_TICKET_ID) AS a_id,PROBLEM_TYPE_ID,SUBJECT,QUESTION_TEXT,REPORT_DATE,LAST_UPDATED,JOB_TIME,ASSIGNED_TECH_ID,ROOM,LOCATION_ID,STATUS_TYPE_ID FROM whd.job_ticket WHERE 1=1";
+
+        // map old system status ids to our current system
+        switch ($search_status) {
+            case 'open':
+                $search_status = 1;
+                break;
+            case 'closed':
+                $search_status = 3;
+                break;
+            case 'resolved':
+                $search_status = 5;
+                break;
+            case 'pending':
+                $search_status = 7;
+                break;
+            case 'maintenance':
+                $search_status = 11;
+                break;
+            case 'vendor':
+                $search_status = 12;
+                break;
+            default:
+                $search_status = null;
+        }
+        if (!empty($search_id)) {
+            $search_id = intval($search_id);
+            $old_ticket_query .= " AND JOB_TICKET_ID LIKE '$search_id'";
+        }
+        if (!empty($search_name)) {
+            $old_ticket_query .= " AND (SUBJECT LIKE '%$search_name%' OR QUESTION_TEXT LIKE '%$search_name%')";
+        }
+        if (!empty($search_location)) {
+            $old_ticket_query .= " AND LOCATION_ID IN (" . implode(",", $archived_location_ids) . ")";
+        }
+        if (!empty($search_employee)) {
+            $old_ticket_query .= " AND ASSIGNED_TECH_ID LIKE '%$search_employee%'";
+        }
+        if (!empty($search_client)) {
+            $old_ticket_query .= " AND CLIENT_ID LIKE '%$search_client%'";
+        }
+        if (!empty($search_status)) {
+            $old_ticket_query .= " AND STATUS_TYPE_ID  LIKE '%$search_status%'";
+        }
+
+        // Execute the SQL query to search for matching tickets
+        $ticket_result = mysqli_query($database, $ticket_query);
+        $old_ticket_result = mysqli_query($swdb, $old_ticket_query);
 
 
-    // Execute the SQL query to search for matching tickets
-    $ticket_result = mysqli_query($database, $ticket_query);
-    $old_ticket_result = mysqli_query($swdb, $old_ticket_query);
-
-
-    // Combine the results from both queries into a single array
-    $combined_results = array();
-    while ($row = mysqli_fetch_assoc($ticket_result)) {
-        $combined_results[] = $row;
-    }
-    while ($row = mysqli_fetch_assoc($old_ticket_result)) {
-        $combined_results[] = $row;
+        // Combine the results from both queries into a single array
+        $combined_results = array();
+        while ($row = mysqli_fetch_assoc($ticket_result)) {
+            $combined_results[] = $row;
+        }
+        while ($row = mysqli_fetch_assoc($old_ticket_result)) {
+            $combined_results[] = $row;
+        }
     }
 }
 
@@ -236,12 +237,12 @@ function sortByDate($x, $y)
             <label for="search_status">Status:</label>
             <select id="status" name="search_status">
                 <option value="" selected></option>
-                <option value="open" <?= ($search_status == 'open') ? ' selected' : '' ?>>Open</option>
-                <option value="closed" <?= ($search_status == 'closed') ? ' selected' : '' ?>>Closed</option>
-                <option value="resolved" <?= ($search_status == 'resolved') ? ' selected' : '' ?>>Resolved</option>
-                <option value="pending" <?= ($search_status == 'pending') ? ' selected' : '' ?>>Pending</option>
-                <option value="vendor" <?= ($search_status == 'vendor') ? ' selected' : '' ?>>Vendor</option>
-                <option value="maintenance" <?= ($search_status == 'maintenance') ? ' selected' : '' ?>>Maintenance</option>
+                <option value="open" <?= ($search_status == 'open' || $search_status == 1) ? ' selected' : '' ?>>Open</option>
+                <option value="closed" <?= ($search_status == 'closed' || $search_status == 3) ? ' selected' : '' ?>>Closed</option>
+                <option value="resolved" <?= ($search_status == 'resolved' || $search_status == 5) ? ' selected' : '' ?>>Resolved</option>
+                <option value="pending" <?= ($search_status == 'pending' || $search_status == 7) ? ' selected' : '' ?>>Pending</option>
+                <option value="vendor" <?= ($search_status == 'vendor' || $search_status == 12) ? ' selected' : '' ?>>Vendor</option>
+                <option value="maintenance" <?= ($search_status == 'maintenance' || $search_status == 11) ? ' selected' : '' ?>>Maintenance</option>
             </select>
         </div>
         <button type="submit" class="btn btn-primary">Search</button>
@@ -421,7 +422,7 @@ function sortByDate($x, $y)
 
                             usort($all_notes, 'sortByDate');
 
-                            if ($all_notes[0] != null && $all_notes[0]["text"] != null && $all_notes[0]["creator"] != null)
+                            if (isset($all_notes[0]) && $all_notes[0]["text"] != null && $all_notes[0]["creator"] != null)
                                 echo $all_notes[0]["creator"] . ": " . $all_notes[0]["text"];
 
                             ?>

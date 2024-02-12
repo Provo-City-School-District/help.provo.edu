@@ -12,6 +12,9 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
 }
 include("status_popup.php");
 
+//variables
+$techusername = $_SESSION['username'];
+
 // Check if an error message is set
 if (isset($_SESSION['current_status'])) {
     $status_popup = new StatusPopup($_SESSION["current_status"], StatusPopupType::fromString($_SESSION["status_type"]));
@@ -89,8 +92,9 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                     <select id="assigned" name="assigned">
                         <option value="unassigned">Unassigned</option>
                         <?php
-                        foreach ($techusernames as $techusername) {
-                            echo "<option value=\"$techusername\">$techusername</option>";
+                        foreach ($techusernames as $username) {
+                            $selected = ($username == $techusername) ? 'selected' : '';
+                            echo "<option value=\"$username\" $selected>$username</option>";
                         }
                         ?>
                     </select>

@@ -17,8 +17,8 @@ function get_note_time_for_days(string $user, array $days)
     $user_sanitized = mysqli_real_escape_string($database, $user);
 
     // Hasn't been fully battle tested but should work fine
-    $query = 
-    <<<STR
+    $query =
+        <<<STR
     SELECT 
         created, date_override, work_hours, work_minutes, travel_hours, travel_minutes FROM notes
     WHERE 
@@ -32,15 +32,14 @@ function get_note_time_for_days(string $user, array $days)
     STR;
 
     $query_result = mysqli_query($database, $query);
-
-    while ($row = mysqli_fetch_assoc($query_result))  {
-        log_app(LOG_INFO, "Parsing tickets for '$user_sanitized'");
+    log_app(LOG_INFO, "Parsing tickets for '$user_sanitized'");
+    while ($row = mysqli_fetch_assoc($query_result)) {
         $created = $row["created"];
         $date_override = $row["date_override"];
 
         $time = ($row["travel_hours"] + $row["work_hours"]) * 60;
         $time += $row["travel_minutes"] + $row["work_minutes"];
-        
+
         $used_date = $created;
         if ($date_override != null)
             $used_date = $date_override;

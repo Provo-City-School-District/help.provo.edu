@@ -4,13 +4,13 @@
 #loginWrapper {
 	max-width: 400px;
 	margin: 0 auto;
-	margin-top: 5%;
+	margin-top: 1em;
 	background-color: var(--theme-white);
 	border-radius: 5px;
-	box-shadow: 0 0 5px 0 rgba(0,0,0,.5);
+	box-shadow: 0 0 5px 0 rgba(0, 0, 0, .5);
 	padding: 1em;
 	display: grid;
-	gap:1em;
+	gap: 1em;
 	grid-template-columns: 1fr;
 	align-items: center;
 	justify-items: center;
@@ -19,9 +19,15 @@
 #loginWrapper a {
 	background-image: url('../img/Flat-design-Google-logo-design-Vector-PNG.png');
 	background-repeat: no-repeat;
-	background-position: 10px center; 
+	background-position: 10px center;
 	background-size: 35px 35px;
 	width: 90%;
 	text-align: center;
 
+}
+
+.welcomeMessage {
+	text-align: center;
+	font-size: 2em;
+	margin-top: 50px;
 }

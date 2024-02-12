@@ -12,12 +12,13 @@ $(document).ready(function () {
   });
 
   // Change default sorting on /recent_tickets.php
-  if (
-    window.location.pathname == "/controllers/tickets/recent_tickets.php" ||
-    window.location.pathname == "/tickets.php"
-  ) {
+  if (window.location.pathname == "/controllers/tickets/recent_tickets.php") {
     var column = table.column(7); // Get the column object for the 9th column (index 8)
     column.order("desc").draw(); // Set the sorting order to ascending and redraw the table
+  }
+  if (window.location.pathname == "/tickets.php") {
+    var column = table.column(7); // Get the column object for the 9th column (index 8)
+    column.order("asc").draw(); // Set the sorting order to ascending and redraw the table
   }
 });
 

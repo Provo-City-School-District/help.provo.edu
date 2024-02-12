@@ -15,8 +15,9 @@ function isCurrentPage($urls)
     }
     return false;
 }
-
-$userId = $_SESSION['username'];
+if (isset($_SESSION['username'])) {
+    $userId = $_SESSION['username'];
+}
 
 $subord_query = "SELECT count(supervisor_username) as supervisor_username FROM users WHERE supervisor_username = ?";
 $subord_stmt = $database->prepare($subord_query);
@@ -87,7 +88,7 @@ $current_page = $_SERVER['REQUEST_URI'];
     //load login page styles
     if ($_SERVER['REQUEST_URI'] === '/index.php' || $_SERVER['REQUEST_URI'] === '/') {
     ?>
-        <link rel="stylesheet" type="text/css" href="/includes/css/login-styles.css?v=0.1.0">
+        <link rel="stylesheet" type="text/css" href="/includes/css/login-styles.css?v=0.1.01">
     <?php
     }
     ?>

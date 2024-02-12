@@ -70,6 +70,9 @@ function display_tickets_table($tickets, $database)
             $clientFirstName = $result['firstname'];
             $clientLastName = $result['lastname'];
         }
+        if (!isset($ticket['location']) || $ticket['location'] == null) {
+            $location_name = "N/A";
+        }
         echo '<tr>
             <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id=' . $ticket["id"] . '">' . $ticket["id"] . '</a></td>
             <td class="details" data-cell="Request Detail"><a href="/controllers/tickets/edit_ticket.php?id=' . $ticket["id"] . '">' . $ticket["name"] . ':</a>' . limitChars($descriptionWithoutLinks, 100) . '</td>

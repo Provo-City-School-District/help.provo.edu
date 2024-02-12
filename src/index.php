@@ -1,7 +1,7 @@
 <?php
 require_once("status_popup.php");
 session_start();
-session_regenerate_id(true);
+// session_regenerate_id(true);
 
 // Check if user is already logged in
 if (isset($_SESSION['username'])) {

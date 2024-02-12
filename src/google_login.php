@@ -24,6 +24,7 @@ if (isset($_GET['code'])) {
 
     // Check if fetching token did not return any errors
     if (!isset($token['error'])) {
+        $user_ucode = $_GET['code'];
         // Setting Access token
         $client->setAccessToken($token['access_token']);
 
@@ -38,7 +39,7 @@ if (isset($_GET['code'])) {
         foreach ($udata as $k => $v) {
             $_SESSION['login_' . $k] = $v;
         }
-        $_SESSION['ucode'] = $_GET['code'];
+        $_SESSION['ucode'] = $user_ucode;
 
 
         $email = $_SESSION['login_email'];
@@ -76,18 +77,26 @@ if (isset($_GET['code'])) {
         // Store user's permissions in the session
         $_SESSION['permissions'] = $permissions;
 
-        // Update login timestamp
-        $update_query = "UPDATE users SET last_login = NOW() WHERE email = '" . $email . "'";
-        $update_result = mysqli_query($database, $update_query);
-        if (!$update_result) {
-            echo 'Update query error: ' . mysqli_error($database);
+        // Update login timestamp and add google sso code to user record.
+        $update_stmt = $database->prepare("UPDATE users SET last_login = NOW(), gsso = ? WHERE email = ?");
+        $update_stmt->bind_param("ss", $user_ucode, $email);
+        $update_stmt->execute();
+        if ($update_stmt === false) {
+            $error_message = 'Prepare failed: (' . $database->errno . ') ' . $database->error;
+            error_log($error_message, 0);
+        } else {
+            $update_stmt->bind_param("ss", $user_ucode, $email);
+            if ($update_stmt->execute() === false) {
+                $error_message = 'Execute failed: (' . $update_stmt->errno . ') ' . $update_stmt->error;
+                error_log($error_message, 0);
+            }
         }
 
         // Log the successful login
         $loginMessage = "Successful login using Google SSO for username: " .  $input_username . " IP: " . $_SERVER["REMOTE_ADDR"] . " at " . date("Y-m-d H:i:s") . "\n";
         error_log($loginMessage, 0);
 
-        if($_SESSION['requested_page']) {
+        if ($_SESSION['requested_page']) {
             header('Location: ' . $_SESSION['requested_page']);
             unset($_SESSION['requested_page']);
         } else {

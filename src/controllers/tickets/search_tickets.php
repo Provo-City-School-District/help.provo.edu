@@ -6,8 +6,14 @@ require_once('swdbconnect.php');
 include("ticket_utils.php");
 
 // Query the locations table to get the location information
-$location_query = "SELECT sitenumber, location_name FROM locations";
+$location_query = "SELECT sitenumber, location_name FROM locations ORDER BY location_name ASC";
 $location_result = mysqli_query($database, $location_query);
+$search_id = '';
+$search_name = '';
+$search_location = '';
+$search_employee = '';
+$search_client = '';
+$search_status = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
@@ -116,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 }
 
 // Fetch the list of usernames from the users table
-$usernamesQuery = "SELECT username,is_tech FROM users";
+$usernamesQuery = "SELECT username,is_tech FROM users ORDER BY username ASC";
 $usernamesResult = mysqli_query($database, $usernamesQuery);
 
 if (!$usernamesResult) {
@@ -129,9 +135,9 @@ $techusernames = array();
 while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
 
     if ($usernameRow['is_tech'] == 1) {
-        $techusernames[] = $usernameRow['username'];
+        $techusernames[] = strtolower($usernameRow['username']);
     } else {
-        $usernames[] = $usernameRow['username'];
+        $usernames[] = strtolower($usernameRow['username']);
     }
 }
 
@@ -249,231 +255,235 @@ function sortByDate($x, $y)
         <button type="reset" id="resetBtn" class="btn btn-secondary">Reset</button>
     </form>
 
-
-    <h2>Search Results</h2>
-    <table class="ticketsTable data-table">
-        <thead>
-            <tr>
-                <th class="tID">ID</th>
-                <th>Subject</th>
-                <th>Request Detail</th>
-                <th>Latest Note</th>
-                <th class="tLocation">Location</th>
-                <th>Request Category</th>
-                <th class="tUser">Assigned Tech</th>
-                <th>Current Status</th>
-                <th class="tDate">Created</th>
-                <th class="tDate">Last Updated</th>
-                <th class="tDate">Due</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-
-            // Display the search results in an HTML table
-            foreach ($combined_results as $row) {
-            ?>
+    <?php if ($combined_results > 0) {
+    ?>
+        <h2>Search Results</h2>
+        <table class="ticketsTable data-table">
+            <thead>
                 <tr>
-                    <?php
-                    $notes_query = "SELECT creator, note FROM help.notes WHERE linked_id = ? ORDER BY
+                    <th class="tID">ID</th>
+                    <th>Subject</th>
+                    <th>Request Detail</th>
+                    <th>Latest Note</th>
+                    <th class="tLocation">Location</th>
+                    <th>Request Category</th>
+                    <th class="tUser">Assigned Tech</th>
+                    <th>Current Status</th>
+                    <th class="tDate">Created</th>
+                    <th class="tDate">Last Updated</th>
+                    <th class="tDate">Due</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+
+                // Display the search results in an HTML table
+                foreach ($combined_results as $row) {
+                ?>
+                    <tr>
+                        <?php
+                        $notes_query = "SELECT creator, note FROM help.notes WHERE linked_id = ? ORDER BY
                         (CASE WHEN date_override IS NULL THEN created ELSE date_override END) DESC
                     ";
-                    $notes_stmt = mysqli_prepare($database, $notes_query);
-                    $creator = null;
-                    $note_data = null;
-                    if ($notes_stmt) {
-                        mysqli_stmt_bind_param($notes_stmt, "i", $row["id"]);
-                        mysqli_stmt_execute($notes_stmt);
+                        $notes_stmt = mysqli_prepare($database, $notes_query);
+                        $creator = null;
+                        $note_data = null;
+                        if ($notes_stmt) {
+                            mysqli_stmt_bind_param($notes_stmt, "i", $row["id"]);
+                            mysqli_stmt_execute($notes_stmt);
 
-                        mysqli_stmt_bind_result($notes_stmt, $creator, $note_data);
-                        // Fetch the result
-                        mysqli_stmt_fetch($notes_stmt);
+                            mysqli_stmt_bind_result($notes_stmt, $creator, $note_data);
+                            // Fetch the result
+                            mysqli_stmt_fetch($notes_stmt);
 
-                        // Use $location_name as needed
-                        mysqli_stmt_close($notes_stmt);
-                    }
-
-                    $latest_note_str = "";
-                    if ($creator != null && $note_data != null) {
-                        $latest_note_str = $creator . ': ' . strip_tags(html_entity_decode(html_entity_decode($note_data)));
-                        log_app(LOG_INFO, $latest_note_str);
-                    }
-
-                    if (isset($row['id'])) {
-                        $descriptionWithouthtml = strip_tags(html_entity_decode($row["description"]));
-                    ?>
-                        <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["id"]; ?>&nr=1"><?= $row["id"] ?></a></td>
-                        <td data-cell="Subject"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["id"]; ?>&nr=1"><?= $row["name"] ?></a></td>
-                        <td data-cell="Request Detail"><?= limitChars($descriptionWithouthtml, 100) ?></td>
-                        <td data-cell="Latest Note"><?= limitChars($latest_note_str, 100) ?></td>
-                        <td data-cell="Location">
-                            <?php
-                            // Query the sites table to get the location name
-                            // $location_query = "SELECT location_name FROM locations WHERE sitenumber = " . $row["location"];
-                            // $location_result = mysqli_query($database, $location_query);
-                            // $location_name = mysqli_fetch_assoc($location_result)['location_name'];
-
-                            // // Display the location name and room number
-                            // echo $location_name . '<br><br>RM ' . $row['room'];
-                            ?>
-                        </td>
-                        <td data-cell="Category">
-                            <?php
-                            if ($row['request_type_id'] === '0') {
-                                echo "Other";
-                            } else {
-                                $request_type_query = "SELECT request_name FROM request_type WHERE request_id = " . $row['request_type_id'];
-                                $request_type_query_result = mysqli_query($database, $request_type_query);
-                                $request_type_name = mysqli_fetch_assoc($request_type_query_result)['request_name'];
-                                echo $request_type_name;
-                            }
-                            ?>
-                        </td>
-                        <td data-cell="Assigned Employee"><?= $row['employee'] ?></td>
-                        <td data-cell="Current Status"><?= $row['status'] ?></td>
-                        <td data-cell="Created"><?= $row['created'] ?></td>
-                        <td data-cell="Last Updated"><?= $row['last_updated'] ?></td>
-                        <?php
-                        // Get the priority value from the ticket row
-                        $priority = $row['priority'];
-                        // Calculate the due date by adding the priority days to the created date
-                        $created_date = new DateTime($row['created']);
-                        $due_date = clone $created_date;
-                        $due_date->modify("+{$priority} weekdays");
-
-                        // Check if the due date falls on a weekend or excluded date
-                        while (isWeekend($due_date)) {
-                            $due_date->modify("+1 day");
+                            // Use $location_name as needed
+                            mysqli_stmt_close($notes_stmt);
                         }
-                        $count = hasExcludedDate($created_date->format('Y-m-d'), $due_date->format('Y-m-d'));
-                        if ($count > 0) {
-                            $due_date->modify("{$count} day");
+
+                        $latest_note_str = "";
+                        if ($creator != null && $note_data != null) {
+                            $latest_note_str = $creator . ': ' . strip_tags(html_entity_decode(html_entity_decode($note_data)));
+                            log_app(LOG_INFO, $latest_note_str);
                         }
-                        // Format the due date as a string
-                        $due_date = $due_date->format('Y-m-d');
+
+                        if (isset($row['id'])) {
+                            $descriptionWithouthtml = strip_tags(html_entity_decode($row["description"]));
                         ?>
-                        <td data-cell="Due"><?= $due_date ?></td>
-                    <?php
-                    } elseif (isset($row['a_id'])) {
-                    ?>
-                        <td data-cell="ID"><a href="/controllers/tickets/archived_ticket_view.php?id=<?= $row["a_id"]; ?>"><?= $row["a_id"] ?></a></td>
-                        <td data-cell="Subject"><a href="/controllers/tickets/archived_ticket_view.php?id=<?= $row["a_id"]; ?>"><?= $row["SUBJECT"] ?></a></td>
-                        <td data-cell="Request Detail"><?= limitChars(html_entity_decode($row["QUESTION_TEXT"]), 100) ?></td>
-                        <td data-cell="Latest Note">
-                            <?php
-                            $archived_ticket_id = substr($row["a_id"], 2);
-                            $all_notes = [];
+                            <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["id"]; ?>&nr=1"><?= $row["id"] ?></a></td>
+                            <td data-cell="Subject"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["id"]; ?>&nr=1"><?= $row["name"] ?></a></td>
+                            <td data-cell="Request Detail"><?= limitChars($descriptionWithouthtml, 100) ?></td>
+                            <td data-cell="Latest Note"><?= limitChars($latest_note_str, 100) ?></td>
+                            <td data-cell="Location">
+                                <?php
+                                // Query the sites table to get the location name
+                                // $location_query = "SELECT location_name FROM locations WHERE sitenumber = " . $row["location"];
+                                // $location_result = mysqli_query($database, $location_query);
+                                // $location_name = mysqli_fetch_assoc($location_result)['location_name'];
 
-                            $tech_notes_query = "SELECT TECHNICIAN_ID, NOTE_TEXT, CREATION_DATE, HIDDEN, TECH_NOTE_DATE, BILLING_MINUTES FROM TECH_NOTE WHERE JOB_TICKET_ID = ?";
-                            $stmt = mysqli_prepare($swdb, $tech_notes_query);
-                            mysqli_stmt_bind_param($stmt, "i", $archived_ticket_id);
-                            mysqli_stmt_execute($stmt);
-
-                            $stmt_res = $stmt->get_result();
-
-
-                            while ($tech_note_row = $stmt_res->fetch_array(MYSQLI_ASSOC)) {
-                                $note_text = $tech_note_row["NOTE_TEXT"];
-                                $tech_id = $tech_note_row["TECHNICIAN_ID"];
-                                $created_date = $tech_note_row["CREATION_DATE"];
-                                $hidden = $tech_note_row["HIDDEN"];
-                                $effective_date = $tech_note_row["TECH_NOTE_DATE"];
-                                $note_time = $tech_note_row["BILLING_MINUTES"];
-
-                                if ($note_time == null)
-                                    $note_time = 0;
-
-                                $note_date = $effective_date;
-                                if ($created_date != $effective_date) {
-                                    $note_date = $effective_date . "*";
+                                // // Display the location name and room number
+                                // echo $location_name . '<br><br>RM ' . $row['room'];
+                                ?>
+                            </td>
+                            <td data-cell="Category">
+                                <?php
+                                if ($row['request_type_id'] === '0') {
+                                    echo "Other";
+                                } else {
+                                    $request_type_query = "SELECT request_name FROM request_type WHERE request_id = " . $row['request_type_id'];
+                                    $request_type_query_result = mysqli_query($database, $request_type_query);
+                                    $request_type_name = mysqli_fetch_assoc($request_type_query_result)['request_name'];
+                                    echo $request_type_name;
                                 }
-                                $all_notes[] = [
-                                    "creator" => get_tech_name_from_id($tech_id),
-                                    "text" => $note_text,
-                                    "date" => $note_date,
-                                    "time" => $note_time,
-                                    "hidden" => $hidden
-                                ];
-                            }
-
-                            mysqli_stmt_close($stmt);
-
-                            $client_notes_query = "SELECT CLIENT_ID, TICKET_DATE, NOTE_TEXT FROM CLIENT_NOTE WHERE JOB_TICKET_ID = ?";
-                            $stmt = mysqli_prepare($swdb, $client_notes_query);
-                            mysqli_stmt_bind_param($stmt, "i", $archived_ticket_id);
-                            mysqli_stmt_execute($stmt);
-
-                            $stmt_res = $stmt->get_result();
-
-                            while ($client_note_row = $stmt_res->fetch_array(MYSQLI_ASSOC)) {
-                                $client_id = $client_note_row["CLIENT_ID"];
-                                $note_text = $client_note_row["NOTE_TEXT"];
-                                $note_date = $client_note_row["TICKET_DATE"];
-
-                                $all_notes[] = [
-                                    "creator" => get_client_name_from_id($client_id),
-                                    "text" => $note_text,
-                                    "date" => $note_date,
-                                    "time" => "—",
-                                    "hidden" => false
-                                ];
-                            }
-
-
-                            usort($all_notes, 'sortByDate');
-
-                            if (isset($all_notes[0]) && $all_notes[0]["text"] != null && $all_notes[0]["creator"] != null)
-                                echo $all_notes[0]["creator"] . ": " . $all_notes[0]["text"];
-
-                            ?>
-                        </td>
-                        <td data-cell="Location">
+                                ?>
+                            </td>
+                            <td data-cell="Assigned Employee"><?= $row['employee'] ?></td>
+                            <td data-cell="Current Status"><?= $row['status'] ?></td>
+                            <td data-cell="Created"><?= $row['created'] ?></td>
+                            <td data-cell="Last Updated"><?= $row['last_updated'] ?></td>
                             <?php
-                            // Query the sites table to get the location name
-                            // $location_query = "SELECT location_name FROM locations WHERE archived_location_id = " . $row["LOCATION_ID"];
-                            // $location_result = mysqli_query($database, $location_query);
-                            // $location_data = mysqli_fetch_assoc($location_result);
+                            // Get the priority value from the ticket row
+                            $priority = $row['priority'];
+                            // Calculate the due date by adding the priority days to the created date
+                            $created_date = new DateTime($row['created']);
+                            $due_date = clone $created_date;
+                            $due_date->modify("+{$priority} weekdays");
 
-                            // TODO support archived tickets
-                            // if ($location_data != null) {
-                            //     $location_name = $location_data['location_name'];
-
-                            //     // Display the location name and room number
-                            //     echo $location_name . '<br><br>RM ' . $row['ROOM'];
-                            // }
+                            // Check if the due date falls on a weekend or excluded date
+                            while (isWeekend($due_date)) {
+                                $due_date->modify("+1 day");
+                            }
+                            $count = hasExcludedDate($created_date->format('Y-m-d'), $due_date->format('Y-m-d'));
+                            if ($count > 0) {
+                                $due_date->modify("{$count} day");
+                            }
+                            // Format the due date as a string
+                            $due_date = $due_date->format('Y-m-d');
                             ?>
-                        </td>
-                        <td data-cell="Category">
-                            <?php
-                            // $request_type_query = "SELECT request_name FROM request_type WHERE archived_request_ID = " . $row['PROBLEM_TYPE_ID'];
-                            // $request_type_query_result = mysqli_query($database, $request_type_query);
-                            // $request_type_name = mysqli_fetch_assoc($request_type_query_result)['request_name'];
-                            //if ($request_type_name != null)
-                            //    echo $request_type_name;
-                            ?>
-                        </td>
-                        <td data-cell="Assigned Employee">
-                            <?php if ($row['ASSIGNED_TECH_ID'] != null)
-                                echo get_tech_name_from_id($row['ASSIGNED_TECH_ID']);
-                            else
-                                echo "unassigned";
-                            ?></td>
-                        <td data-cell="Current Status"></td>
-                        <td data-cell="Created"><?= $row['REPORT_DATE'] ?></td>
-                        <td data-cell="Last Updated"><?= $row['LAST_UPDATED'] ?></td>
-                        <td data-cell="Due"></td>
-                    <?php
-                    } else {
-                        echo "Error";
-                    }
-                    ?>
-                </tr>
+                            <td data-cell="Due"><?= $due_date ?></td>
+                        <?php
+                        } elseif (isset($row['a_id'])) {
+                        ?>
+                            <td data-cell="ID"><a href="/controllers/tickets/archived_ticket_view.php?id=<?= $row["a_id"]; ?>"><?= $row["a_id"] ?></a></td>
+                            <td data-cell="Subject"><a href="/controllers/tickets/archived_ticket_view.php?id=<?= $row["a_id"]; ?>"><?= $row["SUBJECT"] ?></a></td>
+                            <td data-cell="Request Detail"><?= limitChars(html_entity_decode($row["QUESTION_TEXT"]), 100) ?></td>
+                            <td data-cell="Latest Note">
+                                <?php
+                                $archived_ticket_id = substr($row["a_id"], 2);
+                                $all_notes = [];
 
-            <?php
-            }
+                                $tech_notes_query = "SELECT TECHNICIAN_ID, NOTE_TEXT, CREATION_DATE, HIDDEN, TECH_NOTE_DATE, BILLING_MINUTES FROM TECH_NOTE WHERE JOB_TICKET_ID = ?";
+                                $stmt = mysqli_prepare($swdb, $tech_notes_query);
+                                mysqli_stmt_bind_param($stmt, "i", $archived_ticket_id);
+                                mysqli_stmt_execute($stmt);
 
-            ?>
-        </tbody>
-    </table>
+                                $stmt_res = $stmt->get_result();
+
+
+                                while ($tech_note_row = $stmt_res->fetch_array(MYSQLI_ASSOC)) {
+                                    $note_text = $tech_note_row["NOTE_TEXT"];
+                                    $tech_id = $tech_note_row["TECHNICIAN_ID"];
+                                    $created_date = $tech_note_row["CREATION_DATE"];
+                                    $hidden = $tech_note_row["HIDDEN"];
+                                    $effective_date = $tech_note_row["TECH_NOTE_DATE"];
+                                    $note_time = $tech_note_row["BILLING_MINUTES"];
+
+                                    if ($note_time == null)
+                                        $note_time = 0;
+
+                                    $note_date = $effective_date;
+                                    if ($created_date != $effective_date) {
+                                        $note_date = $effective_date . "*";
+                                    }
+                                    $all_notes[] = [
+                                        "creator" => get_tech_name_from_id($tech_id),
+                                        "text" => $note_text,
+                                        "date" => $note_date,
+                                        "time" => $note_time,
+                                        "hidden" => $hidden
+                                    ];
+                                }
+
+                                mysqli_stmt_close($stmt);
+
+                                $client_notes_query = "SELECT CLIENT_ID, TICKET_DATE, NOTE_TEXT FROM CLIENT_NOTE WHERE JOB_TICKET_ID = ?";
+                                $stmt = mysqli_prepare($swdb, $client_notes_query);
+                                mysqli_stmt_bind_param($stmt, "i", $archived_ticket_id);
+                                mysqli_stmt_execute($stmt);
+
+                                $stmt_res = $stmt->get_result();
+
+                                while ($client_note_row = $stmt_res->fetch_array(MYSQLI_ASSOC)) {
+                                    $client_id = $client_note_row["CLIENT_ID"];
+                                    $note_text = $client_note_row["NOTE_TEXT"];
+                                    $note_date = $client_note_row["TICKET_DATE"];
+
+                                    $all_notes[] = [
+                                        "creator" => get_client_name_from_id($client_id),
+                                        "text" => $note_text,
+                                        "date" => $note_date,
+                                        "time" => "—",
+                                        "hidden" => false
+                                    ];
+                                }
+
+
+                                usort($all_notes, 'sortByDate');
+
+                                if (isset($all_notes[0]) && $all_notes[0]["text"] != null && $all_notes[0]["creator"] != null)
+                                    echo $all_notes[0]["creator"] . ": " . $all_notes[0]["text"];
+
+                                ?>
+                            </td>
+                            <td data-cell="Location">
+                                <?php
+                                // Query the sites table to get the location name
+                                // $location_query = "SELECT location_name FROM locations WHERE archived_location_id = " . $row["LOCATION_ID"];
+                                // $location_result = mysqli_query($database, $location_query);
+                                // $location_data = mysqli_fetch_assoc($location_result);
+
+                                // TODO support archived tickets
+                                // if ($location_data != null) {
+                                //     $location_name = $location_data['location_name'];
+
+                                //     // Display the location name and room number
+                                //     echo $location_name . '<br><br>RM ' . $row['ROOM'];
+                                // }
+                                ?>
+                            </td>
+                            <td data-cell="Category">
+                                <?php
+                                // $request_type_query = "SELECT request_name FROM request_type WHERE archived_request_ID = " . $row['PROBLEM_TYPE_ID'];
+                                // $request_type_query_result = mysqli_query($database, $request_type_query);
+                                // $request_type_name = mysqli_fetch_assoc($request_type_query_result)['request_name'];
+                                //if ($request_type_name != null)
+                                //    echo $request_type_name;
+                                ?>
+                            </td>
+                            <td data-cell="Assigned Employee">
+                                <?php if ($row['ASSIGNED_TECH_ID'] != null)
+                                    echo get_tech_name_from_id($row['ASSIGNED_TECH_ID']);
+                                else
+                                    echo "unassigned";
+                                ?></td>
+                            <td data-cell="Current Status"></td>
+                            <td data-cell="Created"><?= $row['REPORT_DATE'] ?></td>
+                            <td data-cell="Last Updated"><?= $row['LAST_UPDATED'] ?></td>
+                            <td data-cell="Due"></td>
+                        <?php
+                        } else {
+                            echo "Error";
+                        }
+                        ?>
+                    </tr>
+
+                <?php
+                }
+
+                ?>
+            </tbody>
+        </table>
+
+    <?php
+    } ?>
 </article>
 <?php include("footer.php"); ?>

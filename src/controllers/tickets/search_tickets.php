@@ -6,7 +6,7 @@ require_once('swdbconnect.php');
 include("ticket_utils.php");
 
 // Query the locations table to get the location information
-$location_query = "SELECT sitenumber, location_name FROM locations ORDERED BY location_name ASC";
+$location_query = "SELECT sitenumber, location_name FROM locations ORDER BY location_name ASC";
 $location_result = mysqli_query($database, $location_query);
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {

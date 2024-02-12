@@ -116,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 }
 
 // Fetch the list of usernames from the users table
-$usernamesQuery = "SELECT username,is_tech FROM users";
+$usernamesQuery = "SELECT username,is_tech FROM users ORDER BY username ASC";
 $usernamesResult = mysqli_query($database, $usernamesQuery);
 
 if (!$usernamesResult) {

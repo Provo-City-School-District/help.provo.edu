@@ -15,8 +15,9 @@ function isCurrentPage($urls)
     }
     return false;
 }
-
-$userId = $_SESSION['username'];
+if (isset($_SESSION['username'])) {
+    $userId = $_SESSION['username'];
+}
 
 $subord_query = "SELECT count(supervisor_username) as supervisor_username FROM users WHERE supervisor_username = ?";
 $subord_stmt = $database->prepare($subord_query);

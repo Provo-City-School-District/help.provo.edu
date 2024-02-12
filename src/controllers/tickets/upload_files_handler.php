@@ -66,7 +66,7 @@ $ticket_id = $_POST['ticket_id'];
 $username = $_POST['username'];
 
 // Define the allowed file extensions
-$allowed_extensions = ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt'];
+$allowed_extensions = ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'csv'];
 $allowed_mime_types = [
     'txt' => 'text/plain',
     'png' => 'image/png',
@@ -77,6 +77,7 @@ $allowed_mime_types = [
     'xls' => 'application/vnd.ms-excel',
     'docx' => 'application/msword',
     'xlsx' => 'application/vnd.ms-excel',
+    'csv' => 'text/csv',
 ];
 
 // Define max filesize

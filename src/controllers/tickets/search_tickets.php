@@ -237,12 +237,12 @@ function sortByDate($x, $y)
             <label for="search_status">Status:</label>
             <select id="status" name="search_status">
                 <option value="" selected></option>
-                <option value="open" <?= ($search_status == 'open') ? ' selected' : '' ?>>Open</option>
-                <option value="closed" <?= ($search_status == 'closed') ? ' selected' : '' ?>>Closed</option>
-                <option value="resolved" <?= ($search_status == 'resolved') ? ' selected' : '' ?>>Resolved</option>
-                <option value="pending" <?= ($search_status == 'pending') ? ' selected' : '' ?>>Pending</option>
-                <option value="vendor" <?= ($search_status == 'vendor') ? ' selected' : '' ?>>Vendor</option>
-                <option value="maintenance" <?= ($search_status == 'maintenance') ? ' selected' : '' ?>>Maintenance</option>
+                <option value="open" <?= ($search_status == 'open' || $search_status == 1) ? ' selected' : '' ?>>Open</option>
+                <option value="closed" <?= ($search_status == 'closed' || $search_status == 3) ? ' selected' : '' ?>>Closed</option>
+                <option value="resolved" <?= ($search_status == 'resolved' || $search_status == 5) ? ' selected' : '' ?>>Resolved</option>
+                <option value="pending" <?= ($search_status == 'pending' || $search_status == 7) ? ' selected' : '' ?>>Pending</option>
+                <option value="vendor" <?= ($search_status == 'vendor' || $search_status == 12) ? ' selected' : '' ?>>Vendor</option>
+                <option value="maintenance" <?= ($search_status == 'maintenance' || $search_status == 11) ? ' selected' : '' ?>>Maintenance</option>
             </select>
         </div>
         <button type="submit" class="btn btn-primary">Search</button>

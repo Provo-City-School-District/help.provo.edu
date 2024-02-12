@@ -421,7 +421,7 @@ function sortByDate($x, $y)
 
                             usort($all_notes, 'sortByDate');
 
-                            if ($all_notes[0] != null && $all_notes[0]["text"] != null && $all_notes[0]["creator"] != null)
+                            if (isset($all_notes[0]) && $all_notes[0]["text"] != null && $all_notes[0]["creator"] != null)
                                 echo $all_notes[0]["creator"] . ": " . $all_notes[0]["text"];
 
                             ?>

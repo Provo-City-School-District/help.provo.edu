@@ -2,7 +2,8 @@
 // handle 500 error
 register_shutdown_function("handleFatalError");
 
-function handleFatalError() {
+function handleFatalError()
+{
     $error = error_get_last();
     if ($error && $error['type'] === E_ERROR) {
         // Redirect to your custom 500 error page
@@ -26,12 +27,13 @@ function limitChars($string, $limit)
     return $string;
 }
 //simple validator that can be used for user input
-function test_input($data) {
+function test_input($data)
+{
     $data = trim($data);
     $data = stripslashes($data);
     $data = htmlspecialchars($data);
     return $data;
-  }
+}
 
 
 function log_app(int $priority, string $message)
@@ -67,22 +69,22 @@ function get_client_name(string $client)
     $ldap_dn = getenv('LDAP_DN');
     $ldap_user = getenv('LDAP_USER');
     $ldap_password = getenv('LDAP_PASS');
-    
+
     $ldap_conn = ldap_connect($ldap_host, $ldap_port);
     ldap_set_option($ldap_conn, LDAP_OPT_PROTOCOL_VERSION, 3);
     $ldap_bind = ldap_bind($ldap_conn, $ldap_user, $ldap_password);
-    
+
     if (!$ldap_bind) {
         die('Could not bind to LDAP server.');
     }
-    
+
     $search = "(&(objectCategory=person)(objectClass=user)(samaccountname=$client))";
     $ldap_result = ldap_search($ldap_conn, $ldap_dn, $search);
     $entries = ldap_get_entries($ldap_conn, $ldap_result);
-    
+
     // Should only be one match, get the first one
-    $firstname = $entries[0]['givenname'][0];
-    $lastname = $entries[0]['sn'][0];
+    $firstname = isset($entries[0]['givenname'][0]) ? $entries[0]['givenname'][0] : null;
+    $lastname = isset($entries[0]['sn'][0]) ? $entries[0]['sn'][0] : null;
     $result = ['firstname' => $firstname, 'lastname' => $lastname];
     return $result;
 }
@@ -94,24 +96,24 @@ function find_clients(string $name)
     $ldap_dn = getenv('LDAP_DN');
     $ldap_user = getenv('LDAP_USER');
     $ldap_password = getenv('LDAP_PASS');
-    
+
     $ldap_conn = ldap_connect($ldap_host, $ldap_port);
     ldap_set_option($ldap_conn, LDAP_OPT_PROTOCOL_VERSION, 3);
     $ldap_bind = ldap_bind($ldap_conn, $ldap_user, $ldap_password);
-    
+
     if (!$ldap_bind) {
         die('Could not bind to LDAP server.');
     }
-    
+
     $search = '(&(objectCategory=person)(objectClass=user)';
     if ($name !== '') {
         $search .= '(givenname=*' . $name . '*)';
     }
     $search .= ')';
-    
+
     $ldap_result = ldap_search($ldap_conn, $ldap_dn, $search);
     $entries = ldap_get_entries($ldap_conn, $ldap_result);
-    
+
     $results = [];
     for ($i = 0; $i < $entries['count']; $i++) {
         $username = $entries[$i]['samaccountname'][0];

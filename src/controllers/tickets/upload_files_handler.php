@@ -36,19 +36,19 @@ function compress_and_resize_image(string $image_path, string $image_type)
         $image = imagecreatefromjpeg($image_path);
     else if ($image_type == "image/png")
         $image = imagecreatefrompng($image_path);
-    else 
+    else
         return false;
 
 
     $size = getimagesize($image_path);
     $oldWidth = $size[0];
     $oldHeight = $size[1];
-    
+
     $image_to_compress = $image;
     if ($oldWidth > $newWidth) {
         $width_change_ratio = $newWidth / $oldWidth;
         $newHeight = $size[1] * $width_change_ratio;
-    
+
         $image_to_compress = imagescale($image, $newWidth, $newHeight);
     }
 
@@ -58,7 +58,6 @@ function compress_and_resize_image(string $image_path, string $image_type)
     else
         // Uses default zlib compression
         return imagepng($image_to_compress, $image_path);
-
 }
 
 // Get the ticket ID and username from the POST data
@@ -96,12 +95,12 @@ if (isset($_FILES['attachment'])) {
         $tmpFilePath = $_FILES['attachment']['tmp_name'][$i];
         if ($tmpFilePath == null || $fileName == null) {
             $failed_files[] = [
-                "filename" => null, 
+                "filename" => null,
                 "fail_reason" => "File is null"
             ];
             continue;
-        }   
-        
+        }
+
         $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
         $fileType = mime_content_type($tmpFilePath);
 
@@ -112,8 +111,10 @@ if (isset($_FILES['attachment'])) {
         if ($tmpFilePath != "") {
             // Max upload size
             if ($fileSize <= $maxFileSize) {
-                if (in_array($fileExtension, $allowed_extensions) &&
-                    in_array($fileType, $allowed_mime_types)) {
+                if (
+                    in_array($fileExtension, $allowed_extensions) &&
+                    in_array($fileType, $allowed_mime_types)
+                ) {
                     // Generate a unique file name
                     $newFilePath = "/uploads/" . $ticket_id . "-" . $fileName;
                     $absolute_path = from_root($newFilePath);
@@ -129,28 +130,27 @@ if (isset($_FILES['attachment'])) {
                         $stmt = mysqli_prepare($database, $query);
                         mysqli_stmt_bind_param($stmt, "si", $newFilePath, $ticket_id);
                         mysqli_stmt_execute($stmt);
-
                     } else {
                         $failed_files[] = [
-                            "filename" => $fileName, 
+                            "filename" => $fileName,
                             "fail_reason" => "Failed to move file to the uploads directory"
                         ];
                     }
                 } else {
                     $failed_files[] = [
-                        "filename" => $fileName, 
+                        "filename" => $fileName,
                         "fail_reason" => "'$fileExtension' or '$fileType' not allowed"
                     ];
                 }
             } else {
                 $failed_files[] = [
-                    "filename" => $fileName, 
+                    "filename" => $fileName,
                     "fail_reason" => "File size is too large ($fileSize MiB > $maxFileSize MiB)"
                 ];
             }
         } else {
             $failed_files[] = [
-                "filename" => $fileName, 
+                "filename" => $fileName,
                 "fail_reason" => "Failed to upload file to the server"
             ];
         }

@@ -21,25 +21,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
 
     // Construct the SQL query based on the selected search options
-    $ticket_query = "SELECT * FROM tickets WHERE 1=0";
+        $ticket_query = "SELECT * FROM tickets WHERE 1=1";
     if (!empty($search_id)) {
         $search_id = intval($search_id);
-        $ticket_query .= " OR id LIKE '$search_id'";
+            $ticket_query .= " AND id LIKE '$search_id'";
     }
     if (!empty($search_name)) {
-        $ticket_query .= " OR (name LIKE '%$search_name%' OR description LIKE '%$search_name%')";
+            $ticket_query .= " AND (name LIKE '%$search_name%' OR description LIKE '%$search_name%')";
     }
     if (!empty($search_location)) {
-        $ticket_query .= " OR location LIKE '%$search_location%'";
+            $ticket_query .= " AND location LIKE '%$search_location%'";
     }
     if (!empty($search_employee)) {
-        $ticket_query .= " OR employee LIKE '%$search_employee%'";
+            $ticket_query .= " AND employee LIKE '%$search_employee%'";
     }
     if (!empty($search_client)) {
-        $ticket_query .= " OR client LIKE '%$search_client%'";
+            $ticket_query .= " AND client LIKE '%$search_client%'";
     }
     if (!empty($search_status)) {
-        $ticket_query .= " OR status LIKE '%$search_status%'";
+            $ticket_query .= " AND status LIKE '%$search_status%'";
     }
 
     // Query the archived_location_id values for the given sitenumber
@@ -80,24 +80,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     }
     if (!empty($search_id)) {
         $search_id = intval($search_id);
-        $old_ticket_query .= " OR JOB_TICKET_ID LIKE '$search_id'";
+            $old_ticket_query .= " AND JOB_TICKET_ID LIKE '$search_id'";
     }
     if (!empty($search_name)) {
-        $old_ticket_query .= " OR (SUBJECT LIKE '%$search_name%' OR QUESTION_TEXT LIKE '%$search_name%')";
+            $old_ticket_query .= " AND (SUBJECT LIKE '%$search_name%' OR QUESTION_TEXT LIKE '%$search_name%')";
     }
     if (!empty($search_location)) {
-        $old_ticket_query .= " OR LOCATION_ID IN (" . implode(",", $archived_location_ids) . ")";
+            $old_ticket_query .= " AND LOCATION_ID IN (" . implode(",", $archived_location_ids) . ")";
     }
     if (!empty($search_employee)) {
-        $old_ticket_query .= " OR ASSIGNED_TECH_ID LIKE '%$search_employee%'";
+            $old_ticket_query .= " AND ASSIGNED_TECH_ID LIKE '%$search_employee%'";
     }
     if (!empty($search_client)) {
-        $old_ticket_query .= " OR CLIENT_ID LIKE '%$search_client%'";
+            $old_ticket_query .= " AND CLIENT_ID LIKE '%$search_client%'";
     }
     if (!empty($search_status)) {
-        $old_ticket_query .= " OR STATUS_TYPE_ID  LIKE '%$search_status%'";
+            $old_ticket_query .= " AND STATUS_TYPE_ID  LIKE '%$search_status%'";
     }
-
 
     // Execute the SQL query to search for matching tickets
     $ticket_result = mysqli_query($database, $ticket_query);

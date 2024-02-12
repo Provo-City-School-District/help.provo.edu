@@ -75,7 +75,7 @@ $allowed_mime_types = [
     'doc' => 'application/msword',
     'xls' => 'application/vnd.ms-excel',
     'docx' => 'application/msword',
-    'xlsx' => 'application/vnd.ms-excel',
+    'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     'csv' => 'text/csv',
 ];
 

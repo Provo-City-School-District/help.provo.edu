@@ -717,7 +717,7 @@ if (isset($ticket["client"])) {
         mysqli_stmt_bind_param($log_stmt, "i", $ticket_id);
         mysqli_stmt_execute($log_stmt);
         $log_result = mysqli_stmt_get_result($log_stmt);
-
+            echo $_SESSION["permissions"]["is_tech"];
         // Display the ticket logs in a table
         if ($_SESSION["permissions"]["is_tech"] && mysqli_num_rows($log_result) > 0) {
         ?>

@@ -64,6 +64,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $old_ticket_result = mysqli_stmt_get_result($old_ticket_stmt);
     $old_ticket_data = mysqli_fetch_assoc($old_ticket_result);
 
+
+    // Recalculate the due date if the priority has changed
+    if (isset($old_ticket_data['priority'], $updatedPriority) && $old_ticket_data['priority'] != $updatedPriority) {
+        $today = new DateTime();
+        $new_due_date = clone $today;
+        $new_due_date->modify("+{$updatedPriority} weekdays");
+        $has_excludes = hasExcludedDate($today->format('Y-m-d'), $new_due_date->format('Y-m-d'));
+        $new_due_date->modify("+{$has_excludes} days");
+        $updatedDueDate = $new_due_date->format('y-m-d');
+    }
+
+
+
     // Perform SQL UPDATE queries to update the ticket information
     $updateTicketQuery = "UPDATE tickets SET
         client = '$updatedClient',

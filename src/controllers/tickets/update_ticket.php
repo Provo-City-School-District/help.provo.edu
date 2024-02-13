@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $updatedEmployee = trim(htmlspecialchars($_POST['employee']));
     $updatedLocation = trim(htmlspecialchars($_POST['location']));
     $updatedRoom = trim(htmlspecialchars($_POST['room']));
-    $updatedName = trim(htmlspecialchars($_POST['name']));
+    $updatedName = trim(htmlspecialchars($_POST['ticket_name']));
     $updatedDescription = trim(htmlspecialchars($_POST['description']));
     $updatedDueDate = trim(htmlspecialchars($_POST['due_date']));
     $updatedStatus = trim(htmlspecialchars($_POST['status']));
@@ -233,7 +233,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     foreach ($notes as $note) {
         $noteCreator = $note['creator'];
-        $decodedNote = $noteCreator.": ".htmlspecialchars_decode($note['note']);
+        $decodedNote = $noteCreator . ": " . htmlspecialchars_decode($note['note']);
         $notesMessageTech .= "<li>" . $decodedNote . "</li>";
         if ($note['visible_to_client']) {
             $notesMessageClient .= "<li>" . $decodedNote . "</li>";

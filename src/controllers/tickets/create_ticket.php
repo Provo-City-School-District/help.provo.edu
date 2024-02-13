@@ -38,7 +38,6 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
         $techusernames[] = $usernameRow['username'];
     }
 }
-
 ?>
 
 <article id="ticketWrapper">
@@ -104,8 +103,8 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
         </div>
         <div class="detailContainer">
             <div class="grid2 ticketSubject">
-                <label for="name">Ticket Title:</label>
-                <input type="text" id="name" name="name" value="<?= isset($_GET['name']) ? htmlspecialchars($_GET['name']) : '' ?>" maxlength="100">
+                <label for="ticket_name">Ticket Title:</label>
+                <input type="text" id="ticket_name" name="ticket_name" value="<?= isset($_GET['ticket_name']) ? htmlspecialchars($_GET['ticket_name']) : '' ?>" maxlength="100">
             </div>
 
             <label for="description" class="heading2">Ticket Description:</label>

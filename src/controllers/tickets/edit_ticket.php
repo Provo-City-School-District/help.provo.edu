@@ -383,8 +383,8 @@ if (isset($ticket["client"])) {
 
         <div class="detailContainer">
             <div class="grid2 ticketSubject">
-                <label for="name">Ticket Title:</label>
-                <input type="text" id="name" name="name" value="<?= $ticket['name'] ?>">
+                <label for="ticket_name">Ticket Title:</label>
+                <input type="text" id="ticket_name" name="ticket_name" value="<?= $ticket['name'] ?>">
             </div>
             <label for="description" class="heading2">Request Detail:</label>
             <div class="ticket-description">

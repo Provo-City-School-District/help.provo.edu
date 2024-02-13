@@ -694,7 +694,7 @@ if (isset($ticket["client"])) {
                 }
                 ?>
 
-                <input type="submit" value="Add Note">
+                <input type="submit" value="Submit Note">
             </form>
             <script src="../../includes/js/jquery-3.7.1.min.js"></script>
             <script>

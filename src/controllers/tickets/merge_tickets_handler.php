@@ -57,9 +57,9 @@ $username = trim(htmlspecialchars($_POST['username']));
 
 // Deep copy all source ticket's notes
 $query = <<<STR
-    INSERT INTO notes (linked_id, created, creator, note, time, idx, visible_to_client, date_override)
-        SELECT '$ticket_id_host', created, creator, note, time, idx, visible_to_client, date_override FROM notes 
-            WHERE linked_id = '$ticket_id_source'
+    INSERT INTO notes (linked_id, created, creator, note, time, idx, visible_to_client, date_override, email_msg_id, work_hours, work_minutes, travel_hours, travel_minutes)
+        (SELECT '$ticket_id_host', created, creator, note, time, idx, visible_to_client, date_override, email_msg_id, work_hours, work_minutes, travel_hours, travel_minutes FROM notes 
+            WHERE linked_id = '$ticket_id_source')
 STR;
 
 $result = mysqli_query($database, $query);

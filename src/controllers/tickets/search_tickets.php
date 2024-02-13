@@ -312,7 +312,7 @@ function sortByDate($x, $y)
                             <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["id"]; ?>&nr=1"><?= $row["id"] ?></a></td>
                             <td data-cell="Subject"><a href="/controllers/tickets/edit_ticket.php?id=<?= $row["id"]; ?>&nr=1"><?= $row["name"] ?></a></td>
                             <td data-cell="Request Detail"><?= limitChars($descriptionWithouthtml, 100) ?></td>
-                            <td data-cell="Latest Note"><?= limitChars($latest_note_str, 100) ?></td>
+                            <td data-cell="Latest Note"><?= limitChars($latest_note_str, 150) ?></td>
                             <td data-cell="Location">
                                 <?php
                                 // Query the sites table to get the location name
@@ -365,7 +365,7 @@ function sortByDate($x, $y)
                         ?>
                             <td data-cell="ID"><a href="/controllers/tickets/archived_ticket_view.php?id=<?= $row["a_id"]; ?>"><?= $row["a_id"] ?></a></td>
                             <td data-cell="Subject"><a href="/controllers/tickets/archived_ticket_view.php?id=<?= $row["a_id"]; ?>"><?= $row["SUBJECT"] ?></a></td>
-                            <td data-cell="Request Detail"><?= limitChars(html_entity_decode($row["QUESTION_TEXT"]), 100) ?></td>
+                            <td data-cell="Request Detail"><?= limitChars(html_entity_decode($row["QUESTION_TEXT"]), 150) ?></td>
                             <td data-cell="Latest Note">
                                 <?php
                                 $archived_ticket_id = substr($row["a_id"], 2);

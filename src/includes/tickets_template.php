@@ -76,7 +76,7 @@ function display_tickets_table($tickets, $database)
         echo '<tr>
             <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id=' . $ticket["id"] . '">' . $ticket["id"] . '</a></td>
             <td class="details" data-cell="Request Detail"><a href="/controllers/tickets/edit_ticket.php?id=' . $ticket["id"] . '">' . $ticket["name"] . ':</a>' . limitChars($descriptionWithoutLinks, 100) . '</td>
-            <td data-cell="Latest Note:">' . limitChars($latest_note_str, 100) . '</td>
+            <td data-cell="Latest Note:">' . limitChars($latest_note_str, 150) . '</td>
             <td data-cell="Client: ">' . $clientFirstName . " " . $clientLastName . " (" . $ticket['client'] . ")" . '</td>
             <td data-cell="Location">' . $location_name . '<br><br>RM ' . $ticket['room'] . '</td>
             <td data-cell="Request Category">' .  $request_type_name . '</td>

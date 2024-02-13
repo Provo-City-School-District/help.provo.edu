@@ -7,9 +7,7 @@ require_once("email_utils.php");
 require_once("template.php");
 
 
-$blacklisted_emails = [
-    "donotreply@provo.edu"
-];
+$blacklisted_emails = [];
 
 $move_emails_after_parsed = true;
 

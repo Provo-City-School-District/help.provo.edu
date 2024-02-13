@@ -154,7 +154,7 @@ function add_note_with_filters(
     mysqli_stmt_execute($log_stmt);
     mysqli_stmt_close($log_stmt);
 
-    if (!isset($_SESSION) || !$_SESSION["permissions"]["is_tech"]) {
+    if (!isset($_SESSION) || !session_is_tech()) {
         $update_query = "UPDATE tickets SET tickets.status = 'open' WHERE tickets.id = '$ticket_id'";
         $result = mysqli_query($database, $update_query);
         if (!$result) {

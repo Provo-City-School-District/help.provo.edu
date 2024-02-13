@@ -383,8 +383,8 @@ if (isset($ticket["client"])) {
 
         <div class="detailContainer">
             <div class="grid2 ticketSubject">
-                <label for="name">Ticket Title:</label>
-                <input type="text" id="name" name="name" value="<?= $ticket['name'] ?>">
+                <label for="ticket_name">Ticket Title:</label>
+                <input type="text" id="ticket_name" name="ticket_name" value="<?= $ticket['name'] ?>">
             </div>
             <label for="description" class="heading2">Request Detail:</label>
             <div class="ticket-description">
@@ -476,7 +476,7 @@ if (isset($ticket["client"])) {
     <!-- Loop through the notes and display them -->
     <?php if ($ticket['notes'] !== null) : ?>
         <h2>Notes</h2>
-        <div class="note">
+        <div id="note-table" class="note">
             <table class="ticketsTable">
                 <tr>
                     <th>Date</th>
@@ -586,11 +586,11 @@ if (isset($ticket["client"])) {
                                 <span <?php
                                         $note_creator = $note["creator"];
                                         if (!user_is_tech($note_creator)) {
-                                            echo 'class="nonTech"';
+                                            echo 'class="note-content nonTech"';
                                         } else if ($note['visible_to_client'] == 0) {
-                                            echo 'class="notClientVisible"';
+                                            echo 'class="note-content notClientVisible"';
                                         } else {
-                                            echo 'class="clientVisible"';
+                                            echo 'class="note-content clientVisible"';
                                         } ?>>
                                     <?php echo html_entity_decode($note_data); ?>
                                 </span>
@@ -639,73 +639,76 @@ if (isset($ticket["client"])) {
             </table>
         </div>
         <button class="new-note-button" id="new-note-button">New Note</button>
-        <div id="new-note-form" style="display: none;">
-            <h3>Add Note</h3>
-            <form id="note-submit" method="post" action="add_note_handler.php">
-                <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
-                <input type="hidden" name="username" value="<?= $_SESSION['username'] ?>">
-                <div>
-                    <label for="note">Note:</label>
-                    <textarea id="note" name="note" class="tinyMCEtextarea"></textarea>
-                </div>
-                <?php
-                if ($_SESSION['permissions']['is_tech']) {
-                ?>
+        <div id="new-note-form-background">
+            <div id="new-note-form" style="display: none;">
+                <div id="new-note-form-header"><span id="new-note-form-close">&times;</span></div>
+                <h3>Add Note</h3>
+                <form id="note-submit" method="post" action="add_note_handler.php">
+                    <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
+                    <input type="hidden" name="username" value="<?= $_SESSION['username'] ?>">
                     <div>
-                        <label for="visible_to_client">Visible to Client:</label>
-                        <input type="checkbox" id="visible_to_client" name="visible_to_client" checked="checked">
+                        <label for="note">Note:</label>
+                        <textarea id="note" name="note" class="tinyMCEtextarea"></textarea>
                     </div>
-                    <h4>Work Time</h4>
-                    <div>
-                        <label for="work_hours">Hours:</label>
-                        <input id="work_hours" name="work_hours" type="number" value="0" required>
+                    <?php
+                    if ($_SESSION['permissions']['is_tech']) {
+                    ?>
+                        <div>
+                            <label for="visible_to_client">Visible to Client:</label>
+                            <input type="checkbox" id="visible_to_client" name="visible_to_client" checked="checked">
+                        </div>
+                        <h4>Work Time</h4>
+                        <div>
+                            <label for="work_hours">Hours:</label>
+                            <input id="work_hours" name="work_hours" type="number" value="0" required>
 
-                        <label for="work_minutes">Minutes:</label>
-                        <input id="work_minutes" name="work_minutes" type="number" value="0" required>
-                    </div>
-                    <h4>Travel Time</h4>
-                    <div>
-                        <label for="travel_hours">Hours:</label>
-                        <input id="travel_hours" name="travel_hours" type="number" value="0" required>
+                            <label for="work_minutes">Minutes:</label>
+                            <input id="work_minutes" name="work_minutes" type="number" value="0" required>
+                        </div>
+                        <h4>Travel Time</h4>
+                        <div>
+                            <label for="travel_hours">Hours:</label>
+                            <input id="travel_hours" name="travel_hours" type="number" value="0" required>
 
-                        <label for="travel_minutes">Minutes:</label>
-                        <input id="travel_minutes" name="travel_minutes" type="number" value="0" required>
-                    </div>
+                            <label for="travel_minutes">Minutes:</label>
+                            <input id="travel_minutes" name="travel_minutes" type="number" value="0" required>
+                        </div>
 
-                    <div>
-                        <label for="total_time">Total Time in Minutes:</label>
-                        <input id="total_time" name="total_time" type="number" readonly>
-                    </div>
-                    <div>
-                        <label for="date_override_enable">Date Override:</label>
-                        <input type="checkbox" id="date_override_enable" name="date_override_enable">
-                        <input style="display:none;" id="date_override_input" type="datetime-local" name="date_override">
-                    </div>
-                <?php
-                } else {
-                ?>
-                    <input type="hidden" id="visible_to_client" name="visible_to_client" value="1">
-                    <input id="total_time" name="total_time" type="hidden" value="0">
-                    <input id="travel_minutes" name="travel_minutes" type="hidden" value="0" required>
-                    <input id="travel_hours" name="travel_hours" type="hidden" value="0" required>
-                    <input id="work_minutes" name="work_minutes" type="hidden" value="0" required>
-                    <input id="work_hours" name="work_hours" type="hidden" value="0" required>
-                <?php
-                }
-                ?>
-
-                <input type="submit" value="Add Note">
-            </form>
-            <script src="../../includes/js/jquery-3.7.1.min.js"></script>
-            <script>
-                $('input[name=date_override_enable]').on('change', function() {
-                    if (!this.checked) {
-                        $('#date_override_input').hide();
+                        <div>
+                            <label for="total_time">Total Time in Minutes:</label>
+                            <input id="total_time" name="total_time" type="number" readonly>
+                        </div>
+                        <div>
+                            <label for="date_override_enable">Date Override:</label>
+                            <input type="checkbox" id="date_override_enable" name="date_override_enable">
+                            <input style="display:none;" id="date_override_input" type="datetime-local" name="date_override">
+                        </div>
+                    <?php
                     } else {
-                        $('#date_override_input').show();
+                    ?>
+                        <input type="hidden" id="visible_to_client" name="visible_to_client" value="1">
+                        <input id="total_time" name="total_time" type="hidden" value="0">
+                        <input id="travel_minutes" name="travel_minutes" type="hidden" value="0" required>
+                        <input id="travel_hours" name="travel_hours" type="hidden" value="0" required>
+                        <input id="work_minutes" name="work_minutes" type="hidden" value="0" required>
+                        <input id="work_hours" name="work_hours" type="hidden" value="0" required>
+                    <?php
                     }
-                });
-            </script>
+                    ?>
+
+                    <input type="submit" value="Submit Note">
+                </form>
+                <script src="../../includes/js/jquery-3.7.1.min.js"></script>
+                <script>
+                    $('input[name=date_override_enable]').on('change', function() {
+                        if (!this.checked) {
+                            $('#date_override_input').hide();
+                        } else {
+                            $('#date_override_input').show();
+                        }
+                    });
+                </script>
+            </div>
         </div>
         <?php
         // Fetch the ticket logs for the current ticket
@@ -778,6 +781,9 @@ if (isset($ticket["client"])) {
         <?php endif; ?>
 </article>
 <script>
+    // Make links in note content open in new tab
+    $('.note-content a').attr('target', '_blank');
+
     const title = document.getElementById("ticket-title");
     title.onclick = function() {
         document.execCommand("copy");

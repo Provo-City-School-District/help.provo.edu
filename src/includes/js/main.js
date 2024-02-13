@@ -47,18 +47,23 @@ tinymce.init({
   plugins: ["lists", "code", "link", "autolink", "wordcount"],
   skin: skin,
   content_css: content_css,
+  link_default_target: "_blank",
+  text_patterns: false
 });
 
 // display/hide new note form
 var newNoteButtons = document.getElementsByClassName("new-note-button");
+var newNoteModalBackground = document.getElementById("new-note-form-background");
 var newNoteForm = document.getElementById("new-note-form");
 var newNoteEditor = document.getElementById("new-note-form");
+var newNoteModalCloseButton = document.getElementById("new-note-form-close");
 
 if (newNoteButtons && newNoteForm && newNoteEditor) {
   for (var i = 0; i < newNoteButtons.length; i++) {
     newNoteButtons[i].addEventListener("click", function () {
       if (newNoteForm.style.display === "none") {
         newNoteForm.style.display = "block";
+        newNoteModalBackground.style.display = "block";
         newNoteEditor.focus(); // Set focus to the new note editor
         newNoteEditor.scrollIntoView({ behavior: "smooth" }); // Scroll the view to the new note editor
       } else {
@@ -68,6 +73,21 @@ if (newNoteButtons && newNoteForm && newNoteEditor) {
   }
 }
 
+window.onclick = function(event) {
+  if (event.target == newNoteModalBackground) {
+    newNoteModalBackground.style.display = "none";
+    newNoteForm.style.display = "none";
+  }
+}
+
+if (newNoteModalCloseButton) {
+  newNoteModalCloseButton.onclick = function(event) {
+    if (event.target == newNoteModalCloseButton) {
+      newNoteModalBackground.style.display = "none";
+      newNoteForm.style.display = "none";
+    }
+  }
+}
 // Check if the toggle-file-upload-form and file-upload-form elements exist before adding the event listener
 var toggleFileUploadForm = document.getElementById("toggle-file-upload-form");
 var fileUploadForm = document.getElementById("file-upload-form");

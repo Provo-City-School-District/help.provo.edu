@@ -716,7 +716,7 @@ if (isset($ticket["client"])) {
         $log_result = mysqli_stmt_get_result($log_stmt);
 
         // Display the ticket logs in a table
-        if ($_SESSION["permissions"]["is_tech"] && mysqli_num_rows($log_result) > 0) {
+        if (session_is_tech() && mysqli_num_rows($log_result) > 0) {
         ?>
             <div class="ticket_log">
                 <h2>Ticket History</h2>

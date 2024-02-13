@@ -422,12 +422,12 @@ select {
 	#mainHeader {
 		grid-template-columns: 175px 1fr;
 		align-items: center;
-		justify-items: end;
+		justify-items: var(--header-location);
 	}
 
 	#headerNav {
 		display: flex;
-		justify-content: end;
+		justify-content: var(--header-location);
 	}
 
 	.totalTime {
@@ -495,7 +495,7 @@ select {
 
 	#subMenu {
 		display: flex;
-		justify-content: end;
+		justify-content: var(--header-location);
 		align-items: center;
 		gap: 2em;
 	}

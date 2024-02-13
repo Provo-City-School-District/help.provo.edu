@@ -260,10 +260,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $template->site_url = getenv('ROOTDOMAIN');
         $template->description = html_entity_decode($updatedDescription);
 
-        $email_res1 = false;
+        $email_res1 = true;
         $email_res2 = false;
 
         if (strtolower($updatedEmployee) != "unassigned") {
+            $email_res1 = false;
             log_app(LOG_INFO, email_address_from_username($updatedEmployee));
             $email_res1 = send_email_and_add_to_ticket($ticket_id, email_address_from_username($updatedEmployee), $ticket_subject, $template, $valid_cc_emails, $valid_bcc_emails);
         }

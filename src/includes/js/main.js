@@ -47,7 +47,8 @@ tinymce.init({
   plugins: ["lists", "code", "link", "autolink", "wordcount"],
   skin: skin,
   content_css: content_css,
-  link_default_target: "_blank"
+  link_default_target: "_blank",
+  text_patterns: false
 });
 
 // display/hide new note form

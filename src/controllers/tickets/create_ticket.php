@@ -58,7 +58,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                     // Loop through the results and create an option for each site
                     while ($locations = mysqli_fetch_assoc($location_result)) {
                         $selected = '';
-                        if ($locations['sitenumber'] == $locations['location_name']) {
+                        if ($locations['sitenumber'] == $_GET['location']) {
                             $selected = 'selected';
                         }
                         echo '<option value="' . $locations['sitenumber'] . '" ' . $selected . '>' . $locations['location_name'] . '</option>';

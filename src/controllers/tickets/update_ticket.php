@@ -75,8 +75,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         due_date = '$updatedDueDate',
         status = '$updatedStatus',
         phone = '$updatedPhone',
-        cc_emails = '$cc_emails_clean',
-        bcc_emails = '$bcc_emails_clean',
+        cc_emails = '$updatedCCEmails',
+        bcc_emails = '$updatedBCCEmails',
         priority = '$updatedPriority',
         request_type_id = '$updatedRequestType',
         parent_ticket = '$updatedParentTicket',
@@ -228,11 +228,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Get the last 3 notes for the ticket
     $notes = get_ticket_notes($ticket_id, 3);
-    $notesMessage = "";
+    $notesMessageClient = "";
+    $notesMessageTech = "";
+
     foreach ($notes as $note) {
-        $decodedNote = htmlspecialchars_decode($note['note']);
-        $notesMessage .= "<li>" . $decodedNote . "</li>";
+        $noteCreator = $note['creator'];
+        $decodedNote = $noteCreator.": ".htmlspecialchars_decode($note['note']);
+        $notesMessageTech .= "<li>" . $decodedNote . "</li>";
+        if ($note['visible_to_client']) {
+            $notesMessageClient .= "<li>" . $decodedNote . "</li>";
+        }
     }
+
+    // Eventually use notesMessageClient to send a unique email to clients without tech notes
 
     // Repack emails
     $cc_emails_clean = implode(',', $valid_cc_emails);
@@ -240,7 +248,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Send emails if the user checked the send_emails checkbox
     if ($sendEmails || $forceEmails) {
-        //log_app(LOG_INFO, var_dump($valid_cc_emails));
         // message for gui to display
         $msg = "Ticket updated successfully. An email was sent to the client, CC and BCC emails.";
         $client_email = email_address_from_username($updatedClient);
@@ -249,22 +256,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $template = new Template(from_root("/includes/templates/ticket_updated.phtml"));
         $template->ticket_id = $ticket_id;
         $template->changes_message = $changesMessage;
-        $template->notes_message = $notesMessage;
+        $template->notes_message = $notesMessageClient;
         $template->site_url = getenv('ROOTDOMAIN');
         $template->description = html_entity_decode($updatedDescription);
 
-        $email_res1 = true;
+        $email_res1 = false;
         $email_res2 = false;
 
         if (strtolower($updatedEmployee) != "unassigned") {
-            $email_res1 = false;
             log_app(LOG_INFO, email_address_from_username($updatedEmployee));
             $email_res1 = send_email_and_add_to_ticket($ticket_id, email_address_from_username($updatedEmployee), $ticket_subject, $template, $valid_cc_emails, $valid_bcc_emails);
         }
 
         $email_res2 = send_email_and_add_to_ticket($ticket_id, $client_email, $ticket_subject, $template, $valid_cc_emails, $valid_bcc_emails);
-        log_app(LOG_INFO, $email_res1 ? "yes" : "no");
-        log_app(LOG_INFO, $email_res2 ? "yes" : "no");
         if (!($email_res1 && $email_res2)) {
             $error = 'Error sending email to client, CC and BCC';
             $formData = http_build_query($_POST);
@@ -284,7 +288,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $template = new Template(from_root("/includes/templates/ticket_resolved.phtml"));
         $template->ticket_id = $ticket_id;
         $template->changes_message = html_entity_decode($changesMessage);
-        $template->notes_message = $notesMessage;
+        $template->notes_message = $notesMessageClient;
         $template->site_url = getenv('ROOTDOMAIN');
         $template->description = html_entity_decode($updatedDescription);
 

@@ -6,6 +6,11 @@ require_once("ticket_utils.php");
 require_once("email_utils.php");
 require_once("template.php");
 
+
+$blacklisted_emails = [
+    "donotreply@provo.edu"
+];
+
 $move_emails_after_parsed = true;
 
 $imap_path = '{imap.gmail.com:993/imap/ssl}INBOX';
@@ -17,6 +22,7 @@ $msg_count = imap_num_msg($mbox);
 if ($msg_count == false) {
     log_app(LOG_ERR, "IMAP message count failed to query: ".imap_last_error());
 }
+
 // Sort by msg date
 imap_sort($mbox, SORTDATE, false);
 
@@ -45,8 +51,17 @@ for ($i = 1; $i <= $msg_count; $i++) {
     $sender_email = strtolower($sender_username.'@'.$from_host);
     $subject = $header->subject;
 
+    // Ignore blacklisted emails
+    if (in_array($sender_email, $blacklisted_emails)) {
+        log_app(LOG_INFO, "Received email from $sender_email but it is on the blacklist. Ignoring...");
+
+        // These can be safely moved as we don't care about them
+        $succeeded_uids[] = imap_uid($mbox, $i); 
+        continue;
+    }
+
     // Ignore non district emails
-    if (($from_host != "provo.edu")) {
+    if ($from_host != "provo.edu") {
         log_app(LOG_INFO, "Received email from $sender_email, ignoring...");
 
         // These can be safely moved as we don't care about them

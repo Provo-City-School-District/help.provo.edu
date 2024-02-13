@@ -6,6 +6,7 @@ $(document).ready(function () {
   table = $(".data-table").DataTable({
     paging: true, // Enable pagination
     pageLength: 10, // Set the number of rows per page
+    stateSave: true, // Enable state saving
     ordering: true, // Enable sorting
     order: [[0, "asc"]], // Set the default sort order
     autoWidth: false, // Disable auto width calculation

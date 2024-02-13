@@ -2,6 +2,23 @@
 require_once("ticket_utils.php");
 // DB connection can fail if not included first, TODO fix maybe
 
+function session_is_tech()
+{
+    return $_SESSION["permissions"]["is_tech"] != 0;
+}
+
+function user_is_tech(string $username)
+{
+    global $database;
+
+    $username_clean = mysqli_real_escape_string($database, $username);
+    $userPermissionsQuery = "SELECT is_tech FROM users WHERE username = '$username_clean'";
+    $userPermissionsResult = mysqli_query($database, $userPermissionsQuery);
+    $userPermissionsData = mysqli_fetch_assoc($userPermissionsResult);
+
+    return $userPermissionsData["is_tech"];
+}
+
 function email_if_valid(string $email)
 {
     $clean_email = filter_var($email, FILTER_SANITIZE_EMAIL);

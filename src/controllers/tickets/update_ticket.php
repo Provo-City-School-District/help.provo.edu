@@ -228,11 +228,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Get the last 3 notes for the ticket
     $notes = get_ticket_notes($ticket_id, 3);
-    $notesMessage = "";
+    $notesMessageClient = "";
+    $notesMessageTech = "";
     foreach ($notes as $note) {
         $decodedNote = htmlspecialchars_decode($note['note']);
-        $notesMessage .= "<li>" . $decodedNote . "</li>";
+        $notesMessageTech .= "<li>" . $decodedNote . "</li>";
+        if ($note['visible_to_client']) {
+            $notesMessageClient .= "<li>" . $decodedNote . "</li>";
+        }
     }
+
+    // Eventually use notesMessageClient to send a unique email to clients without tech notes
 
     // Repack emails
     $cc_emails_clean = implode(',', $valid_cc_emails);

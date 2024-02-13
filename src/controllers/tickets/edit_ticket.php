@@ -585,10 +585,7 @@ if (isset($ticket["client"])) {
                             ?>
                                 <span <?php
                                         $note_creator = $note["creator"];
-                                        $userPermissionsQuery = "SELECT is_tech FROM users WHERE username = '$note_creator'";
-                                        $userPermissionsResult = mysqli_query($database, $userPermissionsQuery);
-                                        $userPermissionsData = mysqli_fetch_assoc($userPermissionsResult);
-                                        if ($userPermissionsData && !$userPermissionsData["is_tech"]) {
+                                        if (!user_is_tech($note_creator)) {
                                             echo 'class="nonTech"';
                                         } else if ($note['visible_to_client'] == 0) {
                                             echo 'class="notClientVisible"';

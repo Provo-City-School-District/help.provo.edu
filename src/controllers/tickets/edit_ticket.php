@@ -722,7 +722,7 @@ if (isset($ticket["client"])) {
         if (session_is_tech() && mysqli_num_rows($log_result) > 0) {
         ?>
             <div class="ticket_log">
-                <h2>Ticket History</h2>
+                <h2>Ticket History</h2><p id="ticket-history-status">(collapsed)</p>
                 <table id="ticket-history">
                     <tr class="ticket-history-header">
                         <th>Created At</th>
@@ -790,6 +790,16 @@ if (isset($ticket["client"])) {
     // Toggle ticket history visibility when clicked
     $('#ticket-history .ticket-history-header').click(function() {
         $(this).nextUntil('tr.header').toggle();
+        const ticketHistoryStatus = document.getElementById("ticket-history-status");
+
+        let ticketHistoryStatusText = ticketHistoryStatus.textContent;
+
+        if (ticketHistoryStatusText == "(collapsed)")
+            ticketHistoryStatusText = "(expanded)"
+        else if (ticketHistoryStatusText == "(expanded)")
+            ticketHistoryStatusText = "(collapsed)"
+
+        ticketHistoryStatus.textContent = ticketHistoryStatusText;
     });
 
     const title = document.getElementById("ticket-title");

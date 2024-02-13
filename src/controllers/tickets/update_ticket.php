@@ -75,8 +75,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         due_date = '$updatedDueDate',
         status = '$updatedStatus',
         phone = '$updatedPhone',
-        cc_emails = '$cc_emails_clean',
-        bcc_emails = '$bcc_emails_clean',
+        cc_emails = '$updatedCCEmails',
+        bcc_emails = '$updatedBCCEmails',
         priority = '$updatedPriority',
         request_type_id = '$updatedRequestType',
         parent_ticket = '$updatedParentTicket',
@@ -230,6 +230,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $notes = get_ticket_notes($ticket_id, 3);
     $notesMessageClient = "";
     $notesMessageTech = "";
+
     foreach ($notes as $note) {
         $decodedNote = htmlspecialchars_decode($note['note']);
         $notesMessageTech .= "<li>" . $decodedNote . "</li>";

@@ -723,8 +723,8 @@ if (isset($ticket["client"])) {
         ?>
             <div class="ticket_log">
                 <h2>Ticket History</h2>
-                <table>
-                    <tr>
+                <table id="ticket-history">
+                    <tr class="ticket-history-header">
                         <th>Created At</th>
                         <th>Changed By</th>
                         <th>Changes made</th>
@@ -783,6 +783,14 @@ if (isset($ticket["client"])) {
 <script>
     // Make links in note content open in new tab
     $('.note-content a').attr('target', '_blank');
+
+    // Toggle ticket history visibility to closed on page load
+    $('#ticket-history .ticket-history-header').nextUntil('tr.header').toggle();
+
+    // Toggle ticket history visibility when clicked
+    $('#ticket-history .ticket-history-header').click(function() {
+        $(this).nextUntil('tr.header').toggle();
+    });
 
     const title = document.getElementById("ticket-title");
     title.onclick = function() {

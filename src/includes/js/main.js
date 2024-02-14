@@ -11,16 +11,6 @@ $(document).ready(function () {
     order: [[0, "asc"]], // Set the default sort order
     autoWidth: false, // Disable auto width calculation
   });
-
-  // Change default sorting on /recent_tickets.php
-  if (window.location.pathname == "/controllers/tickets/recent_tickets.php") {
-    var column = table.column(7); // Get the column object for the 9th column (index 8)
-    column.order("desc").draw(); // Set the sorting order to ascending and redraw the table
-  }
-  if (window.location.pathname == "/tickets.php") {
-    var column = table.column(7); // Get the column object for the 9th column (index 8)
-    column.order("asc").draw(); // Set the sorting order to ascending and redraw the table
-  }
 });
 
 //initialize tinyMCE for for textarea with class tinyMCEtextarea
@@ -48,12 +38,14 @@ tinymce.init({
   skin: skin,
   content_css: content_css,
   link_default_target: "_blank",
-  text_patterns: false
+  text_patterns: false,
 });
 
 // display/hide new note form
 var newNoteButtons = document.getElementsByClassName("new-note-button");
-var newNoteModalBackground = document.getElementById("new-note-form-background");
+var newNoteModalBackground = document.getElementById(
+  "new-note-form-background"
+);
 var newNoteForm = document.getElementById("new-note-form");
 var newNoteEditor = document.getElementById("new-note-form");
 var newNoteModalCloseButton = document.getElementById("new-note-form-close");
@@ -73,20 +65,20 @@ if (newNoteButtons && newNoteForm && newNoteEditor) {
   }
 }
 
-window.onclick = function(event) {
+window.onclick = function (event) {
   if (event.target == newNoteModalBackground) {
     newNoteModalBackground.style.display = "none";
     newNoteForm.style.display = "none";
   }
-}
+};
 
 if (newNoteModalCloseButton) {
-  newNoteModalCloseButton.onclick = function(event) {
+  newNoteModalCloseButton.onclick = function (event) {
     if (event.target == newNoteModalCloseButton) {
       newNoteModalBackground.style.display = "none";
       newNoteForm.style.display = "none";
     }
-  }
+  };
 }
 // Check if the toggle-file-upload-form and file-upload-form elements exist before adding the event listener
 var toggleFileUploadForm = document.getElementById("toggle-file-upload-form");

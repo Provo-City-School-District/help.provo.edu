@@ -208,7 +208,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $template->site_url = getenv('ROOTDOMAIN');
         $template->description = html_entity_decode($description);
 
-        $receipt_subject = "Ticket $ticketId";
+        $receipt_subject = "Ticket $ticketId - $name";
         send_email(email_address_from_username($username), $receipt_subject, $template);
 
         // Redirect to the edit page for the new ticket

@@ -266,7 +266,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // message for gui to display
         $msg = "Ticket updated successfully. An email was sent to the client, CC and BCC emails.";
         $client_email = email_address_from_username($updatedClient);
-        $ticket_subject = "Ticket " . $ticket_id . " (Updated)";
+        $ticket_subject = "Ticket " . $ticket_id . " (Updated) - " . $updatedName;
 
         $template = new Template(from_root("/includes/templates/ticket_updated.phtml"));
         $template->ticket_id = $ticket_id;
@@ -299,7 +299,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         //message for gui to display
         $msg = "Ticket updated successfully. An email was sent to the client.";
         $client_email = email_address_from_username($updatedClient) . "," . email_address_from_username($updatedEmployee);
-        $ticket_subject = "Ticket " . $ticket_id  . " (Resolved)";
+        $ticket_subject = "Ticket " . $ticket_id  . " (Resolved) - "  . $updatedName;
 
         $template = new Template(from_root("/includes/templates/ticket_resolved.phtml"));
         $template->ticket_id = $ticket_id;

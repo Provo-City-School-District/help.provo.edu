@@ -3,6 +3,7 @@ require_once("block_file.php");
 
 ob_start();
 include("ticket_utils.php");
+$readonly = session_is_tech() ? '' : 'readonly';
 $ticket_id = sanitize_numeric_input($_GET['id']);
 // Check if the user is logged in
 require("header.php");
@@ -218,43 +219,198 @@ if (isset($ticket["client"])) {
             <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
             <input type="hidden" name="madeby" value="<?= $_SESSION['username'] ?>">
             <input type="hidden" id="client" name="client" value="<?= $ticket['client'] ?>">
-            <div class="currentClient">
-                <span>Client: </span> <span id="client-display"><?= $clientFirstName . " " . $clientLastName . " (" . $ticket['client'] . ")" ?></span> <a>Change Client</a>
-            </div>
+            <?php
+            // If the user is not a tech, display read only form fields if is client
+            if ($readonly) {
+            ?>
+                <div class="readonlyClient">
+                    <span>Client: </span> <span id="client-display"><?= $clientFirstName . " " . $clientLastName . " (" . $ticket['client'] . ")" ?></span>
+                </div>
+            <?php
+
+            } else {
+            ?>
+                <div class="currentClient">
+                    <span>Client: </span> <span id="client-display"><?= $clientFirstName . " " . $clientLastName . " (" . $ticket['client'] . ")" ?></span> <a>Change Client</a>
+                </div>
+            <?php
+            }
+            ?>
+
             <div>
                 <span>Created:</span> <?= $ticket['created'] ?>
             </div>
             <div>
                 <span>Last Updated:</span> <?= $ticket['last_updated'] ?>
             </div>
-
-
-            <div> <label for="employee">Assigned Tech:</label>
-                <select id="employee" name="employee">
-                    <option value="unassigned">Unassigned</option>
-                    <?php foreach ($techusernames as $username) : ?>
-                        <option value="<?= $username ?>" <?= $ticket['employee'] === $username ? 'selected' : '' ?>><?= $username ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
             <div>
-                <label for="location">Location:</label>
-                <select id="location" name="location">
-                    <?php
-                    // Query the sites table to get the site information
-                    $location_query = "SELECT sitenumber, location_name FROM locations";
-                    $location_result = mysqli_query($database, $location_query);
-                    // Loop through the results and create an option for each site
-                    while ($locations = mysqli_fetch_assoc($location_result)) {
-                        $selected = '';
-                        if ($locations['sitenumber'] == $ticket['location']) {
-                            $selected = 'selected';
-                        }
-                        echo '<option value="' . $locations['sitenumber'] . '" ' . $selected . '>' . $locations['location_name'] . '</option>';
-                    }
-                    ?>
-                </select>
+                <input type="hidden" id="due_date" name="due_date" value="<?= $ticket['due_date'] ?>">
+                <span>Current Due Date:</span> <?= $ticket['due_date'] ?>
             </div>
+
+
+            <?php
+            // If the user is not a tech, display read only form fields if is client
+            if ($readonly) {
+            ?>
+                <div>
+                    <span>Assigned Tech:</span> <?= $ticket['employee'] ?>
+                </div>
+                <input type="hidden" id="employee" name="employee" value="<?= $ticket['employee'] ?>">
+
+                <div>
+                    <span>Location:</span> <?= $ticket['location'] ?>
+                </div>
+                <input type="hidden" id="location" name="location" value="<?= $ticket['location'] ?>">
+
+                <div>
+                    <span>Request Type:</span> <?= $ticket['request_type_id'] ?>
+                </div>
+                <input type="hidden" id="request_type" name="request_type" value="<?= $ticket['location'] ?>">
+
+                <div>
+                    <span>Current Status:</span> <?= $ticket['status'] ?>
+                </div>
+                <input type="hidden" id="status" name="status" value="<?= $ticket['status'] ?>">
+
+                <div>
+                    <span>Priority:</span> <?= $ticket['priority'] ?>
+                </div>
+                <input type="hidden" id="priority" name="priority" value="<?= $ticket['priority'] ?>">
+
+                <input type="hidden" id="parent_ticket" name="parent_ticket" value="<?= $ticket['parent_ticket'] == 0 ? '' : $ticket['parent_ticket'] ?>">
+            <?php
+
+            } else {
+                // Display Fields that tech can edit
+            ?>
+                <div> <label for="employee">Assigned Tech:</label>
+                    <select id="employee" name="employee">
+                        <option value="unassigned">Unassigned</option>
+                        <?php foreach ($techusernames as $username) : ?>
+                            <option value="<?= $username ?>" <?= $ticket['employee'] === $username ? 'selected' : '' ?>><?= $username ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div>
+                    <label for="location">Location:</label>
+                    <select id="location" name="location">
+                        <?php
+                        // Query the sites table to get the site information
+                        $location_query = "SELECT sitenumber, location_name FROM locations";
+                        $location_result = mysqli_query($database, $location_query);
+                        // Loop through the results and create an option for each site
+                        while ($locations = mysqli_fetch_assoc($location_result)) {
+                            $selected = '';
+                            if ($locations['sitenumber'] == $ticket['location']) {
+                                $selected = 'selected';
+                            }
+                            echo '<option value="' . $locations['sitenumber'] . '" ' . $selected . '>' . $locations['location_name'] . '</option>';
+                        }
+                        ?>
+                    </select>
+                </div>
+                <div>
+                    <label for="request_type">Request Type:</label>
+                    <select id="request_type" name="request_type">
+                        <option value="0">Select a more specific request type otherwise (Other)</option>
+                        <?php
+                        // Fetch the top-level request types
+                        $topLevelQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_parent IS NULL ORDER BY request_name";
+                        $topLevelResult = $database->query($topLevelQuery);
+
+                        // Add the top-level request types as options
+                        while ($topLevelRow = $topLevelResult->fetch_assoc()) {
+                            $selected = '';
+                            if ($topLevelRow['request_id'] == $ticket['request_type_id']) {
+                                $selected = 'selected';
+                            } else {
+                                // Check if the ticket's request type is a child or grandchild of this top-level request type
+                                $childQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_id = " . $ticket['request_type_id'] . " AND request_parent = " . $topLevelRow['request_id'];
+                                $childResult = $database->query($childQuery);
+                                if ($childResult->num_rows > 0) {
+                                    $selected = 'selected';
+                                } else {
+                                    $grandchildQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_id = " . $ticket['request_type_id'];
+                                    $grandchildResult = $database->query($grandchildQuery);
+                                    while ($grandchildRow = $grandchildResult->fetch_assoc()) {
+                                        $childQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_id = " . $grandchildRow['request_parent'] . " AND request_parent = " . $topLevelRow['request_id'];
+                                        $childResult = $database->query($childQuery);
+                                        if ($childResult->num_rows > 0) {
+                                            $selected = 'selected';
+                                        }
+                                    }
+                                }
+                            }
+                            echo '<option disabled value="' . $topLevelRow['request_id'] . '" ' . $selected . '>' . $topLevelRow['request_name'] . '</option>';
+
+                            // Fetch the child request types
+                            $childQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_parent = " . $topLevelRow['request_id'] . " ORDER BY request_name";
+                            $childResult = $database->query($childQuery);
+
+                            // Add the child request types as options
+                            while ($childRow = $childResult->fetch_assoc()) {
+                                $selected = '';
+                                if ($childRow['request_id'] == $ticket['request_type_id']) {
+                                    $selected = 'selected';
+                                } else {
+                                    // Check if the ticket's request type is a grandchild of this child request type
+                                    $grandchildQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_id = " . $ticket['request_type_id'] . " AND request_parent = " . $childRow['request_id'];
+                                    $grandchildResult = $database->query($grandchildQuery);
+                                    if ($grandchildResult->num_rows > 0) {
+                                        $selected = 'selected';
+                                    }
+                                }
+                                echo '<option value="' . $childRow['request_id'] . '" ' . $selected . '>&nbsp;&nbsp;&nbsp;&nbsp;' . $childRow['request_name'] . '</option>';
+
+                                // Fetch the grandchild request types
+                                $grandchildQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_parent = " . $childRow['request_id'] . " ORDER BY request_name";
+                                $grandchildResult = $database->query($grandchildQuery);
+
+                                // Add the grandchild request types as options
+                                while ($grandchildRow = $grandchildResult->fetch_assoc()) {
+                                    $selected = ($grandchildRow['request_id'] == $ticket['request_type_id']) ? 'selected' : '';
+                                    echo '<option value="' . $grandchildRow['request_id'] . '" ' . $selected . '>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . $grandchildRow['request_name'] . '</option>';
+                                }
+                            }
+                        }
+                        ?>
+                    </select>
+                </div>
+                <div>
+                    <label for="status">Current Status:</label>
+                    <select id="status" name="status">
+                        <option value="open" <?= ($ticket['status'] == 'open') ? ' selected' : '' ?>>Open</option>
+                        <option value="closed" <?= ($ticket['status'] == 'closed') ? ' selected' : '' ?>>Closed</option>
+                        <option value="resolved" <?= ($ticket['status'] == 'resolved') ? ' selected' : '' ?>>Resolved</option>
+                        <option value="pending" <?= ($ticket['status'] == 'pending') ? ' selected' : '' ?>>Pending</option>
+                        <option value="vendor" <?= ($ticket['status'] == 'vendor') ? ' selected' : '' ?>>Vendor</option>
+                        <option value="maintenance" <?= ($ticket['status'] == 'maintenance') ? ' selected' : '' ?>>Maintenance</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="priority">Priority:</label>
+                    <select id="priority" name="priority">
+                        <option value="1" <?= ($ticket['priority'] == '1') ? ' selected' : '' ?>>Critical</option>
+                        <option value="3" <?= ($ticket['priority'] == '3') ? ' selected' : '' ?>>Urgent</option>
+                        <option value="5" <?= ($ticket['priority'] == '5') ? ' selected' : '' ?>>High</option>
+                        <option value="10" <?= ($ticket['priority'] == '10') ? ' selected' : '' ?>>Standard</option>
+                        <option value="15" <?= ($ticket['priority'] == '15') ? ' selected' : '' ?>>Client Response</option>
+                        <option value="30" <?= ($ticket['priority'] == '30') ? ' selected' : '' ?>>Project</option>
+                        <option value="60" <?= ($ticket['priority'] == '60') ? ' selected' : '' ?>>Meeting Support</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="parent_ticket">Parent Ticket:</label>
+                    <input type="number" id="parent_ticket" name="parent_ticket" value="<?= $ticket['parent_ticket'] == 0 ? '' : $ticket['parent_ticket'] ?>">
+                </div>
+            <?php
+            }
+            ?>
+
+
+            <!-- Fields that are editable by client -->
+
             <div>
                 <label for="room">Room:</label>
                 <input type="text" id="room" name="room" value="<?= $ticket['room'] ?>">
@@ -263,115 +419,16 @@ if (isset($ticket["client"])) {
                 <label for="phone">Phone:</label>
                 <input type="text" id="phone" name="phone" value="<?= $ticket['phone'] ?>">
             </div>
-            <div>
-                <label for="request_type">Request Type:</label>
-                <select id="request_type" name="request_type">
-                    <option value="0">Select a more specific request type otherwise (Other)</option>
-                    <?php
-                    // Fetch the top-level request types
-                    $topLevelQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_parent IS NULL ORDER BY request_name";
-                    $topLevelResult = $database->query($topLevelQuery);
 
-                    // Add the top-level request types as options
-                    while ($topLevelRow = $topLevelResult->fetch_assoc()) {
-                        $selected = '';
-                        if ($topLevelRow['request_id'] == $ticket['request_type_id']) {
-                            $selected = 'selected';
-                        } else {
-                            // Check if the ticket's request type is a child or grandchild of this top-level request type
-                            $childQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_id = " . $ticket['request_type_id'] . " AND request_parent = " . $topLevelRow['request_id'];
-                            $childResult = $database->query($childQuery);
-                            if ($childResult->num_rows > 0) {
-                                $selected = 'selected';
-                            } else {
-                                $grandchildQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_id = " . $ticket['request_type_id'];
-                                $grandchildResult = $database->query($grandchildQuery);
-                                while ($grandchildRow = $grandchildResult->fetch_assoc()) {
-                                    $childQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_id = " . $grandchildRow['request_parent'] . " AND request_parent = " . $topLevelRow['request_id'];
-                                    $childResult = $database->query($childQuery);
-                                    if ($childResult->num_rows > 0) {
-                                        $selected = 'selected';
-                                    }
-                                }
-                            }
-                        }
-                        echo '<option disabled value="' . $topLevelRow['request_id'] . '" ' . $selected . '>' . $topLevelRow['request_name'] . '</option>';
-
-                        // Fetch the child request types
-                        $childQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_parent = " . $topLevelRow['request_id'] . " ORDER BY request_name";
-                        $childResult = $database->query($childQuery);
-
-                        // Add the child request types as options
-                        while ($childRow = $childResult->fetch_assoc()) {
-                            $selected = '';
-                            if ($childRow['request_id'] == $ticket['request_type_id']) {
-                                $selected = 'selected';
-                            } else {
-                                // Check if the ticket's request type is a grandchild of this child request type
-                                $grandchildQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_id = " . $ticket['request_type_id'] . " AND request_parent = " . $childRow['request_id'];
-                                $grandchildResult = $database->query($grandchildQuery);
-                                if ($grandchildResult->num_rows > 0) {
-                                    $selected = 'selected';
-                                }
-                            }
-                            echo '<option value="' . $childRow['request_id'] . '" ' . $selected . '>&nbsp;&nbsp;&nbsp;&nbsp;' . $childRow['request_name'] . '</option>';
-
-                            // Fetch the grandchild request types
-                            $grandchildQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_parent = " . $childRow['request_id'] . " ORDER BY request_name";
-                            $grandchildResult = $database->query($grandchildQuery);
-
-                            // Add the grandchild request types as options
-                            while ($grandchildRow = $grandchildResult->fetch_assoc()) {
-                                $selected = ($grandchildRow['request_id'] == $ticket['request_type_id']) ? 'selected' : '';
-                                echo '<option value="' . $grandchildRow['request_id'] . '" ' . $selected . '>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . $grandchildRow['request_name'] . '</option>';
-                            }
-                        }
-                    }
-                    ?>
-                </select>
-            </div>
 
             <?php if ($_SESSION['permissions']['is_supervisor'] != 0 || $_SESSION['permissions']['is_admin'] != 0) : ?>
                 <div>
                     <label for="due_date">Modify Due Date:</label>
                     <input type="date" id="due_date" name="due_date" value="<?= $ticket['due_date'] ?>">
                 </div>
-                <div>
-                    <span>Current Due Date:</span> <?= $ticket['due_date'] ?>
-                </div>
-            <?php else : ?>
-                <div>
-                    <input type="hidden" id="due_date" name="due_date" value="<?= $ticket['due_date'] ?>">
-                    <span>Current Due Date:</span> <?= $ticket['due_date'] ?>
-                </div>
             <?php endif; ?>
-            <div>
-                <label for="status">Current Status:</label>
-                <select id="status" name="status">
-                    <option value="open" <?= ($ticket['status'] == 'open') ? ' selected' : '' ?>>Open</option>
-                    <option value="closed" <?= ($ticket['status'] == 'closed') ? ' selected' : '' ?>>Closed</option>
-                    <option value="resolved" <?= ($ticket['status'] == 'resolved') ? ' selected' : '' ?>>Resolved</option>
-                    <option value="pending" <?= ($ticket['status'] == 'pending') ? ' selected' : '' ?>>Pending</option>
-                    <option value="vendor" <?= ($ticket['status'] == 'vendor') ? ' selected' : '' ?>>Vendor</option>
-                    <option value="maintenance" <?= ($ticket['status'] == 'maintenance') ? ' selected' : '' ?>>Maintenance</option>
-                </select>
-            </div>
-            <div>
-                <label for="priority">Priority:</label>
-                <select id="priority" name="priority">
-                    <option value="1" <?= ($ticket['priority'] == '1') ? ' selected' : '' ?>>Critical</option>
-                    <option value="3" <?= ($ticket['priority'] == '3') ? ' selected' : '' ?>>Urgent</option>
-                    <option value="5" <?= ($ticket['priority'] == '5') ? ' selected' : '' ?>>High</option>
-                    <option value="10" <?= ($ticket['priority'] == '10') ? ' selected' : '' ?>>Standard</option>
-                    <option value="15" <?= ($ticket['priority'] == '15') ? ' selected' : '' ?>>Client Response</option>
-                    <option value="30" <?= ($ticket['priority'] == '30') ? ' selected' : '' ?>>Project</option>
-                    <option value="60" <?= ($ticket['priority'] == '60') ? ' selected' : '' ?>>Meeting Support</option>
-                </select>
-            </div>
-            <div>
-                <label for="parent_ticket">Parent Ticket:</label>
-                <input type="number" id="parent_ticket" name="parent_ticket" value="<?= $ticket['parent_ticket'] == 0 ? '' : $ticket['parent_ticket'] ?>">
-            </div>
+
+
             <div>
                 <label for="cc_emails">CC:</label>
                 <input type="text" id="cc_emails" name="cc_emails" value="<?= $ticket['cc_emails'] ?>">

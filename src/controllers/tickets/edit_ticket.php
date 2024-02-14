@@ -214,6 +214,7 @@ if (isset($ticket["client"])) {
         <input id="green-button" type="submit" value="Update Ticket">
         Send Emails on Update:<input type="checkbox" name="send_emails" value="send_emails" checked>
         <div class="ticketGrid">
+            <input type="hidden" name="ticket_create_date" value="<?= $ticket['created'] ?>">
             <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
             <input type="hidden" name="madeby" value="<?= $_SESSION['username'] ?>">
             <input type="hidden" id="client" name="client" value="<?= $ticket['client'] ?>">
@@ -722,7 +723,8 @@ if (isset($ticket["client"])) {
         if (session_is_tech() && mysqli_num_rows($log_result) > 0) {
         ?>
             <div class="ticket_log">
-                <h2>Ticket History</h2><p id="ticket-history-status">(collapsed)</p>
+                <h2>Ticket History</h2>
+                <p id="ticket-history-status">(collapsed)</p>
                 <table id="ticket-history">
                     <tr class="ticket-history-header">
                         <th>Created At</th>

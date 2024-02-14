@@ -80,7 +80,7 @@ $current_page = $_SERVER['REQUEST_URI'];
     } else {
         echo "/includes/css/main-right-header.css";
     } ?> >
-    <link rel="stylesheet" href="/includes/css/main.css?v=00.01.15">
+    <link rel="stylesheet" href="/includes/css/main.css?v=00.01.16">
     <link rel="icon" type="image/png" href="/includes/img/favicons/favicon-16x16.png" sizes="16x16">
 
     <?php

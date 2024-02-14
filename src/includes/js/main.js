@@ -119,17 +119,18 @@ if (resetBtn) {
 }
 
 //================================= Ticket - Client Search =================================
-document
-  .querySelector(".currentClient")
-  .addEventListener("click", function (event) {
+// Show the search-for-client div when the currentClient link is clicked
+var currentClient = document.querySelector(".currentClient");
+if (currentClient) {
+  currentClient.addEventListener("click", function (event) {
     event.preventDefault(); // Prevent the default action
     document.querySelector("#search-for-client").style.display = "grid"; // Show the div
   });
-
+}
 //sends info to client_search.php then returns results
-document
-  .getElementById("search-form")
-  .addEventListener("submit", function (event) {
+var searchForm = document.getElementById("search-form");
+if (searchForm) {
+  searchForm.addEventListener("submit", function (event) {
     event.preventDefault(); // Prevent the form from being submitted normally
 
     var firstname = document.getElementById("firstname").value;
@@ -168,10 +169,11 @@ document
         encodeURIComponent(lastname)
     );
   });
+}
 //update the value based on selection
-document
-  .getElementById("search-results")
-  .addEventListener("click", function (event) {
+var searchResults = document.getElementById("search-results");
+if (searchResults) {
+  searchResults.addEventListener("click", function (event) {
     // console.log('Clicked inside search results'); // Debug line
     if (event.target.classList.contains("username-link")) {
       event.preventDefault(); // Prevent the link from being followed
@@ -183,10 +185,11 @@ document
         "Changing Client to: " + username + " on next save";
     }
   });
+}
 
-document
-  .querySelector("#updateTicketForm")
-  .addEventListener("submit", function (e) {
+var updateTicketForm = document.querySelector("#updateTicketForm");
+if (updateTicketForm) {
+  updateTicketForm.addEventListener("submit", function (e) {
     var statusField = document.querySelector("#status");
     var employeeField = document.querySelector("#employee");
 
@@ -199,4 +202,6 @@ document
         "You cannot resolve/close a ticket if ticket is not assigned to an employee. Please assign the ticket to an employee first."
       );
     }
+  });
+}
   });

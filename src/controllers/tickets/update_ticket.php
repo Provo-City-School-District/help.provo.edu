@@ -8,6 +8,7 @@ require("email_utils.php");
 require("template.php");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
     // Retrieve updated values from the form
     $ticket_id = trim(htmlspecialchars($_POST['ticket_id']));
     $updatedClient = trim(htmlspecialchars($_POST['client']));
@@ -26,6 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $updatedPriority = trim(htmlspecialchars($_POST['priority']));
     $updatedParentTicket = intval(trim(htmlspecialchars($_POST['parent_ticket'])));
     $changesMessage = "";
+    $created_at = trim(htmlspecialchars($_POST['ticket_create_date']));
     $forceEmails = false;
 
     // Validate the emails in CC and BCC fields
@@ -67,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Recalculate the due date if the priority has changed
     if (isset($old_ticket_data['priority'], $updatedPriority) && $old_ticket_data['priority'] != $updatedPriority) {
-        $today = new DateTime();
+        $today = new DateTime($created_at);
         $new_due_date = clone $today;
         $new_due_date->modify("+{$updatedPriority} weekdays");
         $has_excludes = hasExcludedDate($today->format('Y-m-d'), $new_due_date->format('Y-m-d'));

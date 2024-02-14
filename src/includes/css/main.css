@@ -528,7 +528,13 @@ select {
 		grid-template-columns: minmax(min-content, 160px) 1fr 1fr;
 	}
 
-	.currentClient {
+	.readonlyClient {
+		display: grid;
+		grid-template-columns: minmax(min-content, 160px) 1fr;
+	}
+
+	.currentClient,
+	.readonlyClient {
 		grid-column: span 2;
 	}
 
@@ -571,4 +577,3 @@ select {
 	display: inline-block;
 	cursor: pointer;
 }
-

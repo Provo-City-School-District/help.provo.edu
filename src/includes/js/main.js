@@ -216,4 +216,4 @@ document.querySelectorAll("form").forEach((form) => {
     // Add class to hook our visual indicator on
     form.classList.add("is-submitting");
   });
-  });
+});

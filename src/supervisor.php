@@ -108,7 +108,7 @@ unassigned_tickets;
 $ticket_result = mysqli_query($database, $unassigned_ticket_query);
 display_tickets_table($ticket_result, $database);
 ?>
-
+<script src="/includes/js/charts.js?v=0.1.0" type="text/javascript"></script>
 <script>
     let allTechs = <?php echo json_encode($allTechs, JSON_NUMERIC_CHECK); ?>;
     let byLocation = <?php echo json_encode($allLocations, JSON_NUMERIC_CHECK); ?>;

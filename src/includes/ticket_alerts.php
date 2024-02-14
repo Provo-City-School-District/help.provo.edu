@@ -61,21 +61,20 @@ while ($hoursBack > 0) {
 
 
 // Prepare a SQL statement to select tickets
-$selectTicketsQuery = "SELECT id, employee, priority, due_date,last_updated FROM tickets WHERE status NOT IN ('closed', 'resolved')";
+$selectTicketsQuery = "SELECT id, employee, priority, due_date,last_updated,status FROM tickets WHERE status NOT IN ('closed', 'resolved')";
 $selectTicketsStmt = $database->prepare($selectTicketsQuery);
 $selectTicketsStmt->execute();
 
 // Bind result variables
-$selectTicketsStmt->bind_result($ticketId, $ticketEmployee, $ticketPriority, $ticketDueDate, $ticketLastUpdated);
+$selectTicketsStmt->bind_result($ticketId, $ticketEmployee, $ticketPriority, $ticketDueDate, $ticketLastUpdated, $ticketStatus);
 
 // Fetch all tickets and store them in an array
 $oldTickets = [];
 while ($selectTicketsStmt->fetch()) {
     if ($ticketEmployee !== 'unassigned' && !is_null($ticketEmployee)) {
-        $oldTickets[] = ['id' => $ticketId, 'employee' => $ticketEmployee, 'priority' => $ticketPriority, 'due_date' => $ticketDueDate, 'last_updated' => $ticketLastUpdated];
+        $oldTickets[] = ['id' => $ticketId, 'employee' => $ticketEmployee, 'priority' => $ticketPriority, 'due_date' => $ticketDueDate, 'last_updated' => $ticketLastUpdated, 'status' => $ticketStatus];
     }
 }
-
 $selectTicketsStmt->close();
 
 // Current Alerts available
@@ -87,8 +86,12 @@ foreach ($oldTickets as $oldTicket) {
     // Convert the last_updated time to a DateTime object
     $lastUpdated = new DateTime($oldTicket['last_updated']);
     $dueDate = $oldTicket['due_date'];
-    // If the last_updated time is longer than two days ago, insert an alert for 48 hours since last update
-    if ($lastUpdated < $twoDaysAgo) {
+
+    if ($oldTicket['status'] == 'vendor' || $oldTicket['status'] == 'maintenance' || $oldTicket['status'] == 'pending') {
+        // alert to be written I believe in the old system this status gets a 7 day alert
+
+        // If the last_updated time is longer than two days ago, insert an alert for 48 hours since last update
+    } elseif ($lastUpdated < $twoDaysAgo) {
         insertAlertIfNotExists($database, $oldTicket, $alert48Message, 'warn');
     }
 

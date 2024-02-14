@@ -11,16 +11,6 @@ $(document).ready(function () {
     order: [[0, "asc"]], // Set the default sort order
     autoWidth: false, // Disable auto width calculation
   });
-
-  // Change default sorting on /recent_tickets.php
-  if (window.location.pathname == "/controllers/tickets/recent_tickets.php") {
-    var column = table.column(7); // Get the column object for the 9th column (index 8)
-    column.order("desc").draw(); // Set the sorting order to ascending and redraw the table
-  }
-  if (window.location.pathname == "/tickets.php") {
-    var column = table.column(7); // Get the column object for the 9th column (index 8)
-    column.order("asc").draw(); // Set the sorting order to ascending and redraw the table
-  }
 });
 
 //initialize tinyMCE for for textarea with class tinyMCEtextarea
@@ -48,12 +38,14 @@ tinymce.init({
   skin: skin,
   content_css: content_css,
   link_default_target: "_blank",
-  text_patterns: false
+  text_patterns: false,
 });
 
 // display/hide new note form
 var newNoteButtons = document.getElementsByClassName("new-note-button");
-var newNoteModalBackground = document.getElementById("new-note-form-background");
+var newNoteModalBackground = document.getElementById(
+  "new-note-form-background"
+);
 var newNoteForm = document.getElementById("new-note-form");
 var newNoteEditor = document.getElementById("new-note-form");
 var newNoteModalCloseButton = document.getElementById("new-note-form-close");
@@ -73,20 +65,20 @@ if (newNoteButtons && newNoteForm && newNoteEditor) {
   }
 }
 
-window.onclick = function(event) {
+window.onclick = function (event) {
   if (event.target == newNoteModalBackground) {
     newNoteModalBackground.style.display = "none";
     newNoteForm.style.display = "none";
   }
-}
+};
 
 if (newNoteModalCloseButton) {
-  newNoteModalCloseButton.onclick = function(event) {
+  newNoteModalCloseButton.onclick = function (event) {
     if (event.target == newNoteModalCloseButton) {
       newNoteModalBackground.style.display = "none";
       newNoteForm.style.display = "none";
     }
-  }
+  };
 }
 // Check if the toggle-file-upload-form and file-upload-form elements exist before adding the event listener
 var toggleFileUploadForm = document.getElementById("toggle-file-upload-form");
@@ -126,107 +118,19 @@ if (resetBtn) {
   });
 }
 
-//================================= Charts =================================
-// Chart for all techs open tickets.
-window.onload = function () {
-  // tech department
-  var allTechsChart = new CanvasJS.Chart("techOpenTicket", {
-    height: 1000,
-    animationEnabled: true,
-    title: {
-      text: "All Technicians Open Tickets",
-    },
-    axisY: {
-      title: "Ticket Count",
-      includeZero: true,
-    },
-    axisX: {
-      interval: 1, // Set the interval of the x-axis labels to 1
-    },
-    data: [
-      {
-        type: "bar",
-        yValueFormatString: "#,##",
-        indexLabel: "{y}",
-        indexLabelPlacement: "outside",
-        indexLabelFontWeight: "bolder",
-        indexLabelFontColor: "white",
-        indexLabelFontSize: 4,
-        dataPoints: allTechs,
-      },
-    ],
-  });
-  allTechsChart.render();
-  // by location
-  var byLocationChart = new CanvasJS.Chart("byLocation", {
-    height: 1000,
-    animationEnabled: true,
-    title: {
-      text: "All Open Tickets By Location",
-    },
-    axisY: {
-      title: "Ticket Count",
-      includeZero: true,
-    },
-    axisX: {
-      interval: 1, // Set the interval of the x-axis labels to 1
-    },
-    data: [
-      {
-        type: "bar",
-        yValueFormatString: "#,##",
-        indexLabel: "{y}",
-        indexLabelPlacement: "outside",
-        indexLabelFontWeight: "bolder",
-        indexLabelFontColor: "white",
-        indexLabelFontSize: 4,
-        dataPoints: byLocation,
-      },
-    ],
-  });
-  byLocationChart.render();
-  //field techs open tickets
-  var fieldTechOpenChart = new CanvasJS.Chart("fieldTechOpen", {
-    height: 1000,
-    animationEnabled: true,
-    title: {
-      text: "Field Tech's Open Tickets",
-    },
-    axisY: {
-      title: "Ticket Count",
-      includeZero: true,
-    },
-    axisX: {
-      interval: 1, // Set the interval of the x-axis labels to 1
-    },
-    data: [
-      {
-        type: "bar",
-        yValueFormatString: "#,##",
-        indexLabel: "{y}",
-        indexLabelPlacement: "outside",
-        indexLabelFontWeight: "bolder",
-        indexLabelFontColor: "white",
-        indexLabelFontSize: 4,
-        dataPoints: fieldTechOpen,
-      },
-    ],
-  });
-  fieldTechOpenChart.render();
-};
-
 //================================= Ticket - Client Search =================================
-document
-  .querySelector(".currentClient")
-  .addEventListener("click", function (event) {
+// Show the search-for-client div when the currentClient link is clicked
+var currentClient = document.querySelector(".currentClient");
+if (currentClient) {
+  currentClient.addEventListener("click", function (event) {
     event.preventDefault(); // Prevent the default action
     document.querySelector("#search-for-client").style.display = "grid"; // Show the div
   });
-
+}
 //sends info to client_search.php then returns results
-document
-  .getElementById("search-form")
-  .addEventListener("submit", function (event) {
+var searchForm = document.getElementById("search-form");
+if (searchForm) {
+  searchForm.addEventListener("submit", function (event) {
     event.preventDefault(); // Prevent the form from being submitted normally
 
     var firstname = document.getElementById("firstname").value;
@@ -265,10 +169,11 @@ document
         encodeURIComponent(lastname)
     );
   });
+}
 //update the value based on selection
-document
-  .getElementById("search-results")
-  .addEventListener("click", function (event) {
+var searchResults = document.getElementById("search-results");
+if (searchResults) {
+  searchResults.addEventListener("click", function (event) {
     // console.log('Clicked inside search results'); // Debug line
     if (event.target.classList.contains("username-link")) {
       event.preventDefault(); // Prevent the link from being followed
@@ -280,10 +185,11 @@ document
         "Changing Client to: " + username + " on next save";
     }
   });
+}
 
-document
-  .querySelector("#updateTicketForm")
-  .addEventListener("submit", function (e) {
+var updateTicketForm = document.querySelector("#updateTicketForm");
+if (updateTicketForm) {
+  updateTicketForm.addEventListener("submit", function (e) {
     var statusField = document.querySelector("#status");
     var employeeField = document.querySelector("#employee");
 
@@ -297,3 +203,17 @@ document
       );
     }
   });
+}
+//================================= Prevent Form Double Submit =================================
+// Prevent Double Submits
+document.querySelectorAll("form").forEach((form) => {
+  form.addEventListener("submit", (e) => {
+    // Prevent if already submitting
+    if (form.classList.contains("is-submitting")) {
+      e.preventDefault();
+    }
+
+    // Add class to hook our visual indicator on
+    form.classList.add("is-submitting");
+  });
+});

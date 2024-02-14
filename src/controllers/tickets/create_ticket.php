@@ -119,13 +119,5 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
         <input type="submit" value="Create Ticket">
     </form>
 </article>
-<script>
-    // Add a new file input field when the "Add Attachment" button is clicked
-    document.getElementById('add-attachment-field').addEventListener('click', function() {
-        var attachmentFields = document.getElementById('attachment-fields');
-        var newAttachmentField = document.createElement('div');
-        newAttachmentField.innerHTML = '<label for="attachment">Attachment:</label><input type="file" id="attachment" name="attachment[]"><br>';
-        attachmentFields.appendChild(newAttachmentField);
-    });
-</script>
+
 <?php include("footer.php"); ?>

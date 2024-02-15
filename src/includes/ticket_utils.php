@@ -301,3 +301,21 @@ function displayTime($note, $type)
         }
     }
 }
+
+function location_name_from_id(string $site_id)
+{
+    global $database;
+
+    $location_query = "SELECT location_name FROM help.locations WHERE sitenumber = '$site_id'";
+    $location_result = mysqli_query($database, $location_query);
+    if (!isset($location_result)) {
+        log_app(LOG_ERR, "[location_name_from_id] Failed to get location query result");
+    }
+
+    $location_data = mysqli_fetch_assoc($location_result);
+    if (!isset($location_data)) {
+        log_app(LOG_ERR, "[location_name_from_id] Failed to get location data");
+    }
+
+    return $location_data["location_name"];
+}

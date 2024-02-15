@@ -590,7 +590,7 @@ if (isset($ticket["client"])) {
                                     foreach ($ticket_matches[0] as $match) {
                                         $match_str = $match[0];
                                         $url_ticket_id = substr($match_str, 3);
-                                        $url = "<a target=\"_blank\" href=\"edit_ticket.php?id=$url_ticket_id\">$match_str</a>";
+                                        $url = "<a target=\"_blank\" href=\"edit_ticket.php?id=$url_ticket_id&nr=1\">$match_str</a>";
                                         $note_data = str_replace($match_str, $url, $note_data);
                                     }
                                 }

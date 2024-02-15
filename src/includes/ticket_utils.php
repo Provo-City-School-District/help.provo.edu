@@ -15,8 +15,10 @@ function user_is_tech(string $username)
     $userPermissionsQuery = "SELECT is_tech FROM users WHERE username = '$username_clean'";
     $userPermissionsResult = mysqli_query($database, $userPermissionsQuery);
     $userPermissionsData = mysqli_fetch_assoc($userPermissionsResult);
-
-    return $userPermissionsData["is_tech"];
+    if (isset($userPermissionsResult) && isset($userPermissionsData))
+        return $userPermissionsData["is_tech"];
+    else
+        return "0";
 }
 
 function email_if_valid(string $email)

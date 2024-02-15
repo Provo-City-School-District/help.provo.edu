@@ -269,7 +269,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $ticket_subject = "Ticket " . $ticket_id . " (Updated) - " . $updatedName;
 
         $template = new Template(from_root("/includes/templates/ticket_updated.phtml"));
-        $template->client = $updatedClient;
+
+        $client_name = get_client_name($updatedClient);
+
+        $template->client = $client_name["firstname"]." ".$client_name["lastname"];
         $template->location = location_name_from_id($updatedLocation);
         $template->ticket_id = $ticket_id;
         $template->changes_message = $changesMessage;

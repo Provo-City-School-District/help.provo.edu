@@ -103,16 +103,30 @@ if (!$result) {
 }
 
 $username = $_SESSION["username"];
-// Create note on ticket that was merged into
+
+// Create note on host ticket
 add_note_with_filters(
     $ticket_id_host,
     "System",
-    "This ticket was merged by $username from WO#$ticket_id_source",
+    "This ticket ($ticket_id_host) was merged from WO#$ticket_id_source by $username",
     0,
     0,
     0,
     0,
     false
 );
+
+// Create note on source ticket
+add_note_with_filters(
+    $ticket_id_source,
+    "System",
+    "This ticket ($ticket_id_source) was merged into WO#$ticket_id_host by $username",
+    0,
+    0,
+    0,
+    0,
+    false
+);
+
 
 return_to_ticket_with_status("Tickets merged successfully", "success", $ticket_id_host);

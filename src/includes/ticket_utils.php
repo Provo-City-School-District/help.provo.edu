@@ -287,11 +287,17 @@ function displayTime($note, $type)
 
     if ((isset($hours) && $hours > 0) || (isset($minutes) && $minutes > 0)) {
         echo "<p><strong>" . ucfirst($type) . " Time</strong></p>";
-        if (isset($hours) && $hours > 0) {
-            echo $hours . " hours ";
+        if (isset($hours)) {
+            if ($hours == 1)
+                echo $hours . " hour ";
+            else if ($hours > 1)
+                echo $hours . " hours ";
         }
-        if (isset($minutes) && $minutes > 0) {
-            echo $minutes . " minutes";
+        if (isset($minutes)) {
+            if ($minutes == 1)
+                echo $minutes . " minute";
+            else if ($minutes > 1)
+                echo $minutes . " minutes";
         }
     }
 }

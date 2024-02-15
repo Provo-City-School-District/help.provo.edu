@@ -494,7 +494,7 @@ if (isset($ticket["client"])) {
             <input type="submit" value="Upload">
         </form>
         <div id="maximum-file-size-text">
-            Maximum of 50MiB
+            Maximum of 50MB
         </div>
     </div>
 

@@ -60,6 +60,14 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                         $selected = '';
                         if (isset($_GET['location']) && $locations['sitenumber'] == $_GET['location']) {
                             $selected = 'selected';
+                        } else {
+                            /*
+                            Disabled due to performance considerations
+
+                            $loc = get_client_location($_SESSION["username"]);
+                            if ($locations['sitenumber'] == $loc) {
+                                $selected = 'selected';
+                            }*/
                         }
                         echo '<option value="' . $locations['sitenumber'] . '" ' . $selected . '>' . $locations['location_name'] . '</option>';
                     }

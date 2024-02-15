@@ -262,7 +262,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $bcc_emails_clean = implode(',', $valid_bcc_emails);
 
     // Send emails if the user checked the send_emails checkbox
-    if ($sendEmails || $forceEmails) {
+    if (($sendEmails || $forceEmails || $updatedStatus == "pending") && $updatedStatus != "resolved") {
         // message for gui to display
         $msg = "Ticket updated successfully. An email was sent to the client, CC and BCC emails.";
         $client_email = email_address_from_username($updatedClient);
@@ -294,10 +294,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header("Location: edit_ticket.php?$formData&id=$ticket_id");
             exit;
         }
-    } else if ($updatedStatus == "resolved" || $updatedStatus == "pending") {
+    } else if ($updatedStatus == "resolved") {
 
         //message for gui to display
-        $msg = "Ticket updated successfully. An email was sent to the client.";
+        $msg = "Ticket resolved successfully. An email was sent to the client.";
         $client_email = email_address_from_username($updatedClient) . "," . email_address_from_username($updatedEmployee);
         $ticket_subject = "Ticket " . $ticket_id  . " (Resolved) - "  . $updatedName;
 

@@ -29,16 +29,16 @@ if (userPref === "dark") {
 tinymce.init({
   selector: ".tinyMCEtextarea",
   toolbar:
-    "undo redo | bold italic strikethrough | blockquote | paste pastetext removeformat | numlist bullist | code | link unlink",
+    "undo redo | bold italic strikethrough | blockquote | paste pastetext removeformat | numlist bullist | code | link unlink | emoticons",
   menubar: false,
   paste_as_text: true,
   browser_spellcheck: true,
   contextmenu: false,
-  plugins: ["lists", "code", "link", "autolink", "wordcount"],
+  plugins: ["lists", "code", "link", "autolink", "wordcount", "emoticons"],
   skin: skin,
   content_css: content_css,
   link_default_target: "_blank",
-  text_patterns: false,
+  text_patterns: false
 });
 
 // display/hide new note form

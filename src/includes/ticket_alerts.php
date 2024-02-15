@@ -87,7 +87,7 @@ foreach ($oldTickets as $oldTicket) {
     $lastUpdated = new DateTime($oldTicket['last_updated']);
     $dueDate = $oldTicket['due_date'];
 
-    if ($oldTicket['status'] == 'vendor' || $oldTicket['status'] == 'maintenance' || $oldTicket['status'] == 'pending') {
+    if ($oldTicket['status'] == 'vendor' || $oldTicket['status'] == 'maintenance' || $oldTicket['status'] == 'pending' || $oldTicket['priority'] == 15 || $oldTicket['priority'] == 30 || $oldTicket['priority'] == 60) {
         // alert to be written I believe in the old system this status gets a 7 day alert
 
         // If the last_updated time is longer than two days ago, insert an alert for 48 hours since last update

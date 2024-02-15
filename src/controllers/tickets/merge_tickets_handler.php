@@ -2,6 +2,7 @@
 require_once("block_file.php");
 require_once('init.php');
 require_once('helpdbconnect.php');
+require_once('ticket_utils.php');
 
 /*
 The host ticket is the one that will stay and will 'duplicate' from the source ticket.
@@ -100,5 +101,32 @@ $result = mysqli_stmt_execute($complete_merge_stmt);
 if (!$result) {
     return_to_ticket_with_status("failed to update merge status on source ticket", "error", $ticket_id_source);
 }
+
+$username = $_SESSION["username"];
+
+// Create note on host ticket
+add_note_with_filters(
+    $ticket_id_host,
+    "System",
+    "This ticket ($ticket_id_host) was merged from WO#$ticket_id_source by $username",
+    0,
+    0,
+    0,
+    0,
+    false
+);
+
+// Create note on source ticket
+add_note_with_filters(
+    $ticket_id_source,
+    "System",
+    "This ticket ($ticket_id_source) was merged into WO#$ticket_id_host by $username",
+    0,
+    0,
+    0,
+    0,
+    false
+);
+
 
 return_to_ticket_with_status("Tickets merged successfully", "success", $ticket_id_host);

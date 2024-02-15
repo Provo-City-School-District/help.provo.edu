@@ -15,8 +15,10 @@ function user_is_tech(string $username)
     $userPermissionsQuery = "SELECT is_tech FROM users WHERE username = '$username_clean'";
     $userPermissionsResult = mysqli_query($database, $userPermissionsQuery);
     $userPermissionsData = mysqli_fetch_assoc($userPermissionsResult);
-
-    return $userPermissionsData["is_tech"];
+    if (isset($userPermissionsResult) && isset($userPermissionsData))
+        return $userPermissionsData["is_tech"];
+    else
+        return "0";
 }
 
 function email_if_valid(string $email)
@@ -287,11 +289,35 @@ function displayTime($note, $type)
 
     if ((isset($hours) && $hours > 0) || (isset($minutes) && $minutes > 0)) {
         echo "<p><strong>" . ucfirst($type) . " Time</strong></p>";
-        if (isset($hours) && $hours > 0) {
-            echo $hours . " hours ";
+        if (isset($hours)) {
+            if ($hours == 1)
+                echo $hours . " hour ";
+            else if ($hours > 1)
+                echo $hours . " hours ";
         }
-        if (isset($minutes) && $minutes > 0) {
-            echo $minutes . " minutes";
+        if (isset($minutes)) {
+            if ($minutes == 1)
+                echo $minutes . " minute";
+            else if ($minutes > 1)
+                echo $minutes . " minutes";
         }
     }
+}
+
+function location_name_from_id(string $site_id)
+{
+    global $database;
+
+    $location_query = "SELECT location_name FROM help.locations WHERE sitenumber = '$site_id'";
+    $location_result = mysqli_query($database, $location_query);
+    if (!isset($location_result)) {
+        log_app(LOG_ERR, "[location_name_from_id] Failed to get location query result");
+    }
+
+    $location_data = mysqli_fetch_assoc($location_result);
+    if (!isset($location_data)) {
+        log_app(LOG_ERR, "[location_name_from_id] Failed to get location data");
+    }
+
+    return $location_data["location_name"];
 }

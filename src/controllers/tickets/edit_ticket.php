@@ -543,7 +543,8 @@ if (isset($ticket["client"])) {
                     <th class="timeColumn">Time</th>
                 </tr>
                 <?php
-                $total_minutes = 0; // Initialize total time to 0
+                $total_minutes = 0;
+                $total_hours = 0;
 
                 foreach (json_decode($ticket['notes'], true) as $note) :
                     // Hidden notes should only be viewable by admins
@@ -552,15 +553,10 @@ if (isset($ticket["client"])) {
                         !$_SESSION['permissions']['is_tech']
                     )
                         continue;
-                    // Calculate the total time for this note in minutes
-                    $note_total_minutes = $note['work_hours'] * 60 + $note['work_minutes'] + $note['travel_hours'] * 60 + $note['travel_minutes'];
 
                     // Add the total time for this note to the total time for all notes
-                    $total_minutes += $note_total_minutes;
-
-                    // Convert the total time for this note to hours and minutes
-                    $note_total_hours = floor($note_total_minutes / 60);
-                    $note_remaining_minutes = $note_total_minutes % 60;
+                    $total_minutes += $note['work_minutes'] + $note['travel_minutes'];
+                    $total_hours += $note['work_hours'] + $note['travel_hours'];
                 ?>
 
                     <tr>
@@ -594,7 +590,7 @@ if (isset($ticket["client"])) {
                                     foreach ($ticket_matches[0] as $match) {
                                         $match_str = $match[0];
                                         $url_ticket_id = substr($match_str, 3);
-                                        $url = "<a target=\"_blank\" href=\"edit_ticket.php?id=$url_ticket_id\">$match_str</a>";
+                                        $url = "<a target=\"_blank\" href=\"edit_ticket.php?id=$url_ticket_id&nr=1\">$match_str</a>";
                                         $note_data = str_replace($match_str, $url, $note_data);
                                     }
                                 }
@@ -674,25 +670,23 @@ if (isset($ticket["client"])) {
                             displayTime($note, 'travel');
                             $totalHours = $note['work_hours'] + $note['travel_hours'];
                             $totalMinutes = $note['work_minutes'] + $note['travel_minutes'];
-                            //I wonder if this was left over from something else.
-                            // If total minutes is 60 or more, convert it to hours
-                            // if ($totalMinutes >= 60) {
-                            //     $totalHours += floor($totalMinutes / 60);
-                            //     $totalMinutes = $totalMinutes % 60;
-                            // }
                             ?>
                         </td>
                     </tr>
                 <?php endforeach; ?>
             <?php endif; ?>
             <tr class="totalTime">
-                <?php
-                // Convert the total time for all notes to hours and minutes
-                $total_hours = floor($total_minutes / 60);
-                $remaining_minutes = $total_minutes % 60;
-                ?>
-                <td data-cell="Total Time" colspan=4><span>Total Time: </span> <?php echo "$total_hours hours $remaining_minutes minutes";  ?></td>
+                <td data-cell="Total Time" colspan=4><span>Total Time: </span> <?php
+                    if ($total_hours == 1)
+                        echo "$total_hours hour ";
+                    else if ($total_hours > 1) 
+                        echo "$total_hours hours ";
 
+                    if ($total_minutes == 1)
+                        echo "$total_minutes minute";
+                    else
+                        echo "$total_minutes minutes";
+                ?></td>
             </tr>
             </table>
         </div>

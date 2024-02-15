@@ -262,13 +262,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $bcc_emails_clean = implode(',', $valid_bcc_emails);
 
     // Send emails if the user checked the send_emails checkbox
-    if ($sendEmails || $forceEmails) {
+    if (($sendEmails || $forceEmails || $updatedStatus == "pending") && $updatedStatus != "resolved") {
         // message for gui to display
         $msg = "Ticket updated successfully. An email was sent to the client, CC and BCC emails.";
         $client_email = email_address_from_username($updatedClient);
         $ticket_subject = "Ticket " . $ticket_id . " (Updated) - " . $updatedName;
 
         $template = new Template(from_root("/includes/templates/ticket_updated.phtml"));
+
+        $client_name = get_client_name($updatedClient);
+
+        $template->client = $client_name["firstname"]." ".$client_name["lastname"];
+        $template->location = location_name_from_id($updatedLocation);
         $template->ticket_id = $ticket_id;
         $template->changes_message = $changesMessage;
         $template->notes_message = $notesMessageClient;
@@ -278,7 +283,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $email_res1 = true;
         $email_res2 = false;
 
-        if (strtolower($updatedEmployee) != "unassigned") {
+        if ((strtolower($updatedEmployee) != "unassigned") && ($updatedEmployee != $_SESSION["username"])) {
             $email_res1 = false;
             log_app(LOG_INFO, email_address_from_username($updatedEmployee));
             $email_res1 = send_email_and_add_to_ticket($ticket_id, email_address_from_username($updatedEmployee), $ticket_subject, $template, $valid_cc_emails, $valid_bcc_emails);
@@ -294,14 +299,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header("Location: edit_ticket.php?$formData&id=$ticket_id");
             exit;
         }
-    } else if ($updatedStatus == "resolved" || $updatedStatus == "pending") {
+    } else if ($updatedStatus == "resolved") {
 
         //message for gui to display
-        $msg = "Ticket updated successfully. An email was sent to the client.";
+        $msg = "Ticket resolved successfully. An email was sent to the client.";
         $client_email = email_address_from_username($updatedClient) . "," . email_address_from_username($updatedEmployee);
         $ticket_subject = "Ticket " . $ticket_id  . " (Resolved) - "  . $updatedName;
 
         $template = new Template(from_root("/includes/templates/ticket_resolved.phtml"));
+
+        $client_name = get_client_name($updatedClient);
+
+        $template->client = $client_name["firstname"]." ".$client_name["lastname"];
+        $template->location = location_name_from_id($updatedLocation);
         $template->ticket_id = $ticket_id;
         $template->changes_message = html_entity_decode($changesMessage);
         $template->notes_message = $notesMessageClient;

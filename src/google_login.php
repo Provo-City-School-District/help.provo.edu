@@ -77,15 +77,16 @@ if (isset($_GET['code'])) {
         // Store user's permissions in the session
         $_SESSION['permissions'] = $permissions;
 
+        $loc = get_client_location($username);
         // Update login timestamp and add google sso code to user record.
-        $update_stmt = $database->prepare("UPDATE users SET last_login = NOW(), gsso = ? WHERE email = ?");
-        $update_stmt->bind_param("ss", $user_ucode, $email);
+        $update_stmt = $database->prepare("UPDATE users SET last_login = NOW(), gsso = ?, ldap_location = ? WHERE email = ?");
+        $update_stmt->bind_param("sis", $user_ucode, $loc, $email);
         $update_stmt->execute();
         if ($update_stmt === false) {
             $error_message = 'Prepare failed: (' . $database->errno . ') ' . $database->error;
             error_log($error_message, 0);
         } else {
-            $update_stmt->bind_param("ss", $user_ucode, $email);
+            $update_stmt->bind_param("sis", $user_ucode, $loc, $email);
             if ($update_stmt->execute() === false) {
                 $error_message = 'Execute failed: (' . $update_stmt->errno . ') ' . $update_stmt->error;
                 error_log($error_message, 0);

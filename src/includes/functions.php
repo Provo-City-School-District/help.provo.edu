@@ -155,3 +155,23 @@ function find_clients(string $name)
     return $results;
 }
 
+
+function get_fast_client_location(string $name)
+{
+    global $database;
+
+    $location_query = "SELECT ldap_location FROM help.users WHERE username = '$name'";
+    $location_result = mysqli_query($database, $location_query);
+    if (!isset($location_result)) {
+        log_app(LOG_ERR, "[get_fast_client_location] Failed to get location query result");
+        return null;
+    }
+
+    $location_data = mysqli_fetch_assoc($location_result);
+    if (!isset($location_data)) {
+        log_app(LOG_ERR, "[get_fast_client_location] Failed to get location data");
+        return null;
+    }
+
+    return $location_data["ldap_location"];
+}

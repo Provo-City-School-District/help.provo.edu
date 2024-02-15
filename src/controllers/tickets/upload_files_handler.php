@@ -66,7 +66,7 @@ $username = $_POST['username'];
 
 // Define the allowed file extensions
 $allowed_extensions = ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'csv', 'zip', 'rar', '7z', 'tar', 'mp3', 'mp4', 'svg'];
-$allowed_mime_types = [
+/*$allowed_mime_types = [
     'txt' => 'text/plain',
     'png' => 'image/png',
     'jpeg' => 'image/jpeg',
@@ -85,7 +85,7 @@ $allowed_mime_types = [
     'mp3' => 'audio/mpeg',
     'mp4' => 'video/mp4',
     'svg' => 'image/svg+xml',
-];
+];*/
 
 // Define max filesize
 // TODO: make 100, however POST length needs to be increased
@@ -120,8 +120,7 @@ if (isset($_FILES['attachment'])) {
             // Max upload size
             if ($fileSize <= $maxFileSize) {
                 if (
-                    in_array($fileExtension, $allowed_extensions) &&
-                    in_array($fileType, $allowed_mime_types)
+                    in_array($fileExtension, $allowed_extensions)
                 ) {
                     // Generate a unique file name
                     $newFilePath = "/uploads/" . $ticket_id . "-" . $fileName;

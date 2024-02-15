@@ -41,23 +41,36 @@ function getDaysUntilDueDate($dueDateStr)
     return $daysUntilDueDate;
 }
 
-// Calculate for 48 hours ago, not counting weekends hours
-$twoDaysAgo = clone $today;
-// Set counter for hours back
-$hoursBack = 48;
-// Parse 48 hours back since last update
-while ($hoursBack > 0) {
-    $twoDaysAgo->modify('-1 hour');
-    $dayOfWeek = $twoDaysAgo->format('w');
+$hoursBack48 = 48;
+$hoursBack7Days = 168;
+function calculate_hours_back($hoursBack)
+{
+    $date = new DateTime();
 
-    // If the day of the week is not a weekend, subtract an hour
-    // 0 = Sunday, 6 = Saturday
-    if ($dayOfWeek > 0 && $dayOfWeek < 6) {
-        $hoursBack--;
+    while ($hoursBack > 0) {
+        $date->modify('-1 hour');
+        $dayOfWeek = $date->format('w');
+
+        // If the day of the week is not a weekend, and the date is not an excluded date, subtract an hour
+        // 0 = Sunday, 6 = Saturday
+        if ($dayOfWeek > 0 && $dayOfWeek < 6) {
+            $startDate = clone $date;
+            $startDate->modify('-1 hour');
+            $endDate = clone $date;
+
+            // Format the dates as 'Y-m-d'
+            $startDateFormatted = $startDate->format('Y-m-d');
+            $endDateFormatted = $endDate->format('Y-m-d');
+
+            // Check if the date is an excluded date
+            if (hasExcludedDate($startDateFormatted, $endDateFormatted) == 0) {
+                $hoursBack--;
+            }
+        }
     }
+
+    return $date;
 }
-
-
 
 
 // Prepare a SQL statement to select tickets
@@ -86,15 +99,18 @@ foreach ($oldTickets as $oldTicket) {
     // Convert the last_updated time to a DateTime object
     $lastUpdated = new DateTime($oldTicket['last_updated']);
     $dueDate = $oldTicket['due_date'];
+    $date48HoursBack = calculate_hours_back($hoursBack48);
+    $date7DaysBack = calculate_hours_back($hoursBack7Days);
 
-    if ($oldTicket['status'] == 'vendor' || $oldTicket['status'] == 'maintenance' || $oldTicket['status'] == 'pending' || $oldTicket['priority'] == 15 || $oldTicket['priority'] == 30 || $oldTicket['priority'] == 60) {
-        // alert to be written I believe in the old system this status gets a 7 day alert
-
-        // If the last_updated time is longer than two days ago, insert an alert for 48 hours since last update
-    } elseif ($lastUpdated < $twoDaysAgo) {
+    // If the last_updated time is longer than 7 days ago, insert an alert for 7 days.
+    if ($lastUpdated < $date7DaysBack && $oldTicket['status'] == 'vendor' || $oldTicket['status'] == 'maintenance' || $oldTicket['status'] == 'pending' || $oldTicket['priority'] == 15 || $oldTicket['priority'] == 30 || $oldTicket['priority'] == 60) {
+        insertAlertIfNotExists($database, $oldTicket, $alert7DayMessage, 'warn');
+        //else if not updated in 48 hours
+    } elseif ($lastUpdated < $date48HoursBack) {
         insertAlertIfNotExists($database, $oldTicket, $alert48Message, 'warn');
     }
 
+    //================================================================================================
     // Alert for past due
     $daysUntilDueDate = getDaysUntilDueDate($dueDate);
     $todaystr = $today->format('Y-m-d');

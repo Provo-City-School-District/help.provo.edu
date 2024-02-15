@@ -236,6 +236,7 @@ function create_ticket(string $client, string $subject, string $content, string 
 
 // Messages for alerts
 $alert48Message = "Ticket hasn't been updated in 48 hours";
+$alert7DayMessage = "Ticket hasn't been updated in 7 days";
 $pastDueMessage = "Past Due";
 
 //remove alerts from the database function that can be used on ticket updates and such.

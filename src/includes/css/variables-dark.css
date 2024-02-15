@@ -2,8 +2,8 @@
 	--header-grad-start: #181818;
 	--header-grad-end: #242424;
 	--theme-url-color: #34e0e3;
-	--theme-text-color: #ffffff;
-	--theme-tertiary: #919191;
+	--theme-text-color: #e0e0e0;
+	--theme-tertiary: #df6d1b;
 	--theme-secondary: #3b3b3b;
 	--theme-primary: #282828;
 	--page-background: #181818;
@@ -11,9 +11,10 @@
 	--odd-color: #4A4A4a;
 	--theme-url-highlight: var(--theme-secondary);
 	--theme-table-border-color: var(--theme-white);
-	--warn-color:#FF8C00;
-    --crit-color:#8B0000;
-	--theme-note-invisible:#4b4b4b;
+	--warn-color: #FF8C00;
+	--crit-color: #8B0000;
+	--theme-note-invisible: #4b4b4b;
+	--theme-white: #e0e0e0;
 }
 
 input,
@@ -43,12 +44,15 @@ table.dataTable tbody tr {
 table a {
 	color: var(--theme-text-color);
 }
+
 .ticketGrid>* {
 	background-color: var(--theme-black);
 }
+
 .canvasjs-chart-canvas {
-	filter:invert(1)
+	filter: invert(1)
 }
+
 #search-for-client {
 	background-color: unset;
 }
@@ -72,7 +76,7 @@ table a {
 }
 
 .nonTech {
-    background-color: rgb(137, 135, 0);
+	background-color: rgb(137, 135, 0);
 	color: var(--theme-white);
 	display: block;
 	padding: 1em;
@@ -81,18 +85,26 @@ table a {
 }
 
 #new-note-form-background {
-	display: none; /* Hidden by default */
-	position: fixed; /* Stay in place */
-	z-index: 1; /* Sit on top */
+	display: none;
+	/* Hidden by default */
+	position: fixed;
+	/* Stay in place */
+	z-index: 1;
+	/* Sit on top */
 	left: 0;
 	top: 0;
-	width: 100%; /* Full width */
-	height: 100%; /* Full height */
-	overflow: auto; /* Enable scroll if needed */
-	background-color: rgb(0,0,0); /* Fallback color */
-	background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-  }
-  
+	width: 100%;
+	/* Full width */
+	height: 100%;
+	/* Full height */
+	overflow: auto;
+	/* Enable scroll if needed */
+	background-color: rgb(0, 0, 0);
+	/* Fallback color */
+	background-color: rgba(0, 0, 0, 0.4);
+	/* Black w/ opacity */
+}
+
 /* Modal Content */
 #new-note-form {
 	position: relative;
@@ -102,7 +114,7 @@ table a {
 	padding: 20px;
 	border: 1px solid #888;
 	width: 80%;
-	box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 	animation-name: animatetop;
 	animation-duration: 0.4s;
 	border-radius: 10px;
@@ -111,7 +123,7 @@ table a {
 #new-note-form-header {
 	padding: 2px 16px;
 	color: var(--page-background);
-  }
+}
 
 #new-note-form-close {
 	color: grey;
@@ -122,9 +134,9 @@ table a {
 
 #new-note-form-close:hover,
 #new-note-form-close:focus {
-  color: lightgrey;
-  text-decoration: none;
-  cursor: pointer;
+	color: lightgrey;
+	text-decoration: none;
+	cursor: pointer;
 }
 
 
@@ -132,6 +144,7 @@ table a {
 	0% {
 		transform: translateY(-300px);
 	}
+
 	100% {
 		transform: translateY(0px);
 	}

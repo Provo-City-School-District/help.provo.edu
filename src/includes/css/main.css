@@ -17,6 +17,7 @@ a {
 
 a:hover {
 	color: var(--theme-tertiary);
+	text-decoration: underline;
 }
 
 #green-button {

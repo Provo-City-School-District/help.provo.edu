@@ -167,7 +167,7 @@ function add_note_with_filters(
 }
 
 // Returns true on success, false on failure
-function create_ticket(string $client, string $subject, string $content, string $email_msg_id, int &$created_ticket_id)
+function create_ticket(string $client, string $subject, string $content, string $email_msg_id, int $location_code, int &$created_ticket_id)
 {
     global $database;
 
@@ -177,7 +177,7 @@ function create_ticket(string $client, string $subject, string $content, string 
 
     // Create an SQL INSERT query
     $insertQuery = "INSERT INTO tickets (location, room, name, description, created, last_updated, due_date, status, client,attachment_path,phone,cc_emails,bcc_emails,request_type_id,priority)
-                VALUES (NULL, NULL, ?, ?, ?, ?, ?, 'open', ?, '', '', '', '', 0, 10)";
+                VALUES (?, NULL, ?, ?, ?, ?, ?, 'open', ?, '', '', '', '', 0, 10)";
 
     // Prepare the SQL statement
     $create_stmt = mysqli_prepare($database, $insertQuery);
@@ -208,7 +208,8 @@ function create_ticket(string $client, string $subject, string $content, string 
 
     mysqli_stmt_bind_param(
         $create_stmt,
-        'ssssss',
+        'issssss',
+        $location_code,
         $subject_clean,
         $content_clean,
         $created_time,
@@ -235,6 +236,7 @@ function create_ticket(string $client, string $subject, string $content, string 
 
 // Messages for alerts
 $alert48Message = "Ticket hasn't been updated in 48 hours";
+$alert7DayMessage = "Ticket hasn't been updated in 7 days";
 $pastDueMessage = "Past Due";
 
 //remove alerts from the database function that can be used on ticket updates and such.

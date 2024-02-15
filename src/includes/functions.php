@@ -89,6 +89,36 @@ function get_client_name(string $client)
     return $result;
 }
 
+function get_client_location(string $client)
+{
+    $ldap_host = getenv('LDAPHOST');
+    $ldap_port = getenv('LDAPPORT');
+    $ldap_dn = getenv('LDAP_DN');
+    $ldap_user = getenv('LDAP_USER');
+    $ldap_password = getenv('LDAP_PASS');
+
+    $ldap_conn = ldap_connect($ldap_host, $ldap_port);
+    ldap_set_option($ldap_conn, LDAP_OPT_PROTOCOL_VERSION, 3);
+    $ldap_bind = ldap_bind($ldap_conn, $ldap_user, $ldap_password);
+
+    if (!$ldap_bind) {
+        die('Could not bind to LDAP server.');
+    }
+
+    $search = "(&(objectCategory=person)(objectClass=user)(samaccountname=$client))";
+    $ldap_result = ldap_search($ldap_conn, $ldap_dn, $search);
+    $entries = ldap_get_entries($ldap_conn, $ldap_result);
+
+    // Should only be one match, get the first one, default to District Office
+    $location_code = intval($entries[0]["ou"][0] ?: 38);
+
+    // Hacky mapping for aux services, should be 1896 internally
+    if ($location_code == 1892)
+        return 1896;
+    else
+        return $location_code;
+}
+
 function find_clients(string $name)
 {
     $ldap_host = getenv('LDAPHOST');
@@ -124,3 +154,4 @@ function find_clients(string $name)
 
     return $results;
 }
+

@@ -197,6 +197,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $statusColumn, $old_ticket_data['status'], $updatedStatus);
         mysqli_stmt_execute($log_stmt);
         $changesMessage .= "<li>Changed Status from " . $statusTypes[$old_ticket_data['status']] . " to " . $statusTypes[$updatedStatus] . "</li>";
+        if ($updatedStatus == "resolved") {
+            removeAlert($database, $pastDueMessage, $ticket_id);
+        }
     }
 
     if (isset($old_ticket_data['phone'], $updatedPhone) && $old_ticket_data['phone'] != $updatedPhone) {

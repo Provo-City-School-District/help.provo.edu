@@ -68,7 +68,7 @@ mysqli_stmt_close($update_stmt);
 // Check if the ticket has an alert about not being updated in last 48 hours and clear it since the ticket was just updated.
 
 removeAlert($database, $alert48Message, $ticket_id);
-
+removeAlert($database, $alert7DayMessage, $ticket_id);
 
 // Redirect back to the edit ticket page
 header("Location: edit_ticket.php?id=$ticket_id");

@@ -283,7 +283,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $email_res1 = true;
         $email_res2 = false;
 
-        if (strtolower($updatedEmployee) != "unassigned") {
+        if ((strtolower($updatedEmployee) != "unassigned") && ($updatedEmployee != $_SESSION["username"])) {
             $email_res1 = false;
             log_app(LOG_INFO, email_address_from_username($updatedEmployee));
             $email_res1 = send_email_and_add_to_ticket($ticket_id, email_address_from_username($updatedEmployee), $ticket_subject, $template, $valid_cc_emails, $valid_bcc_emails);
@@ -307,6 +307,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $ticket_subject = "Ticket " . $ticket_id  . " (Resolved) - "  . $updatedName;
 
         $template = new Template(from_root("/includes/templates/ticket_resolved.phtml"));
+
+        $client_name = get_client_name($updatedClient);
+
+        $template->client = $client_name["firstname"]." ".$client_name["lastname"];
+        $template->location = location_name_from_id($updatedLocation);
         $template->ticket_id = $ticket_id;
         $template->changes_message = html_entity_decode($changesMessage);
         $template->notes_message = $notesMessageClient;

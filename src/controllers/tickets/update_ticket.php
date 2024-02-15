@@ -234,6 +234,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Check if the ticket has an alert about not being updated in last 48 hours and clear it since the ticket was just updated.
     removeAlert($database, $alert48Message, $ticket_id);
+    removeAlert($database, $alert7DayMessage, $ticket_id);
 
     // Send emails if the user checked the send_emails checkbox
     $sendEmails = isset($_POST['send_emails']) && ($_POST['send_emails'] == "send_emails");
@@ -272,7 +273,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $client_name = get_client_name($updatedClient);
 
-        $template->client = $client_name["firstname"]." ".$client_name["lastname"];
+        $template->client = $client_name["firstname"] . " " . $client_name["lastname"];
         $template->location = location_name_from_id($updatedLocation);
         $template->ticket_id = $ticket_id;
         $template->changes_message = $changesMessage;
@@ -310,7 +311,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $client_name = get_client_name($updatedClient);
 
-        $template->client = $client_name["firstname"]." ".$client_name["lastname"];
+        $template->client = $client_name["firstname"] . " " . $client_name["lastname"];
         $template->location = location_name_from_id($updatedLocation);
         $template->ticket_id = $ticket_id;
         $template->changes_message = html_entity_decode($changesMessage);

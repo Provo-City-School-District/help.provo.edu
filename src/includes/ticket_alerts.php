@@ -103,12 +103,23 @@ foreach ($oldTickets as $oldTicket) {
     $date7DaysBack = calculate_hours_back($hoursBack7Days);
 
     // If the last_updated time is longer than 7 days ago, insert an alert for 7 days.
-    if ($lastUpdated < $date7DaysBack && $oldTicket['status'] == 'vendor' || $oldTicket['status'] == 'maintenance' || $oldTicket['status'] == 'pending' || $oldTicket['priority'] == 15 || $oldTicket['priority'] == 30 || $oldTicket['priority'] == 60) {
+    if (
+        $lastUpdated < $date7DaysBack &&
+        ($oldTicket['status'] == 'vendor' ||
+            $oldTicket['status'] == 'maintenance' ||
+            $oldTicket['status'] == 'pending' ||
+            $oldTicket['priority'] == 15 ||
+            $oldTicket['priority'] == 30 ||
+            $oldTicket['priority'] == 60)
+    ) {
         insertAlertIfNotExists($database, $oldTicket, $alert7DayMessage, 'warn');
         //else if not updated in 48 hours
-    } elseif ($lastUpdated < $date48HoursBack) {
-        insertAlertIfNotExists($database, $oldTicket, $alert48Message, 'warn');
+    } else {
+        if ($lastUpdated < $date48HoursBack) {
+            insertAlertIfNotExists($database, $oldTicket, $alert48Message, 'warn');
+        }
     }
+
 
     //================================================================================================
     // Alert for past due

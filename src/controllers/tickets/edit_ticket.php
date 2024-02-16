@@ -872,26 +872,27 @@ if (isset($ticket["client"])) {
         //calc time on the fly
         document.querySelectorAll('#work_hours, #work_minutes, #travel_hours, #travel_minutes').forEach(function(el) {
             el.addEventListener('input', function() {
-                var workHours = parseInt(document.getElementById('work_hours').value) || 0;
-                var workMinutes = parseInt(document.getElementById('work_minutes').value) || 0;
-                var travelHours = parseInt(document.getElementById('travel_hours').value) || 0;
-                var travelMinutes = parseInt(document.getElementById('travel_minutes').value) || 0;
+                const workHours = parseInt(document.getElementById('work_hours').value) || 0;
+                const workMinutes = parseInt(document.getElementById('work_minutes').value) || 0;
+                const travelHours = parseInt(document.getElementById('travel_hours').value) || 0;
+                const travelMinutes = parseInt(document.getElementById('travel_minutes').value) || 0;
 
-                var totalTime = (workHours + travelHours) * 60 + workMinutes + travelMinutes;
+                const totalTime = (workHours + travelHours) * 60 + workMinutes + travelMinutes;
 
                 document.getElementById('total_time').value = totalTime;
             });
         });
+
         // add alert if no time is entered
-        document.getElementById('note-submit').addEventListener('submit', function(e) {
-            var fields = ['work_hours', 'work_minutes', 'travel_hours', 'travel_minutes'];
-            var allZero = fields.every(function(field) {
+        $("#note-submit").on("submit", function(evt) {
+            let fields = ['work_hours', 'work_minutes', 'travel_hours', 'travel_minutes'];
+            let allZero = fields.every(function(field) {
                 return parseInt(document.getElementById(field).value, 10) === 0;
             });
 
             if (allZero) {
                 alert('Please enter a value greater than 0 for at least one of the time fields.');
-                e.preventDefault(); // Prevent the form submission
+                evt.preventDefault(); // Prevent the form submission
             }
         });
     </script>

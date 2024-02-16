@@ -266,7 +266,7 @@ function sortByDate($x, $y)
     <?php if ($combined_results > 0) {
     ?>
         <h2>Search Results</h2>
-        <table class="ticketsTable data-table">
+        <table class="ticketsTable search-data-table">
             <thead>
                 <tr>
                     <th class="tID">ID</th>

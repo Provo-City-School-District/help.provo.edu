@@ -8,6 +8,7 @@ require_once("template.php");
 
 
 $blacklisted_emails = [
+    "dev@provo.edu",
     "help@provo.edu",
     "helpdesk@provo.edu"
 ];

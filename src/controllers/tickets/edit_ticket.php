@@ -516,11 +516,11 @@ if (isset($ticket["client"])) {
                 foreach ($child_tickets as $child_ticket) {
                 ?>
                     <tr>
-                        <td><a href="edit_ticket.php?id=<?= $child_ticket['id'] ?>"><?= $child_ticket['id'] ?></a></td>
-                        <td><?= $child_ticket['status'] ?></td>
-                        <td><?= $child_ticket['employee'] ?></td>
-                        <td><?= $child_ticket['name'] ?></td>
-                        <td><?= html_entity_decode($child_ticket['description']) ?></td>
+                        <td data-cell="Ticket ID"><a href="edit_ticket.php?id=<?= $child_ticket['id'] ?>"><?= $child_ticket['id'] ?></a></td>
+                        <td data-cell="Status"><?= $child_ticket['status'] ?></td>
+                        <td data-cell="Tech"><?= $child_ticket['employee'] ?></td>
+                        <td data-cell="Ticket Title"><?= $child_ticket['name'] ?></td>
+                        <td data-cell="Request Detail"><?= html_entity_decode($child_ticket['description']) ?></td>
                     </tr>
                 <?php
                 }

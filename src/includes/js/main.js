@@ -34,12 +34,21 @@ tinymce.init({
   paste_as_text: true,
   browser_spellcheck: true,
   contextmenu: false,
-  plugins: ["autosave", "lists", "code", "link", "autolink", "wordcount", "emoticons"],
+  plugins: [
+    "autosave",
+    "lists",
+    "code",
+    "link",
+    "autolink",
+    "wordcount",
+    "emoticons",
+  ],
   skin: skin,
+  paste_data_images: false,
   content_css: content_css,
   link_default_target: "_blank",
   text_patterns: false,
-  autosave_interval: '10s'
+  autosave_interval: "10s",
 });
 
 // display/hide new note form
@@ -205,4 +214,3 @@ if (updateTicketForm) {
     }
   });
 }
-

@@ -282,14 +282,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($sendEmails || $forceEmails || $updatedStatus == "pending" || $updatedStatus == "resolved") {
         $subject_status = "Updated";
         $template_path = "ticket_updated";
-        
+        $msg = "Ticket updated successfully. An email was sent to the client, CC and BCC emails.";
+
         if ($updatedStatus == "resolved") {
             $subject_status = "Resolved";
             $template_path = "ticket_resolved";
+            $msg = "Ticket resolved successfully. An email was sent to the client, CC and BCC emails.";
         }
 
         // message for gui to display
-        $msg = "Ticket updated successfully. An email was sent to the client, CC and BCC emails.";
         $client_email = email_address_from_username($updatedClient);
         $ticket_subject = "Ticket " . $ticket_id . " ($subject_status) - " . $updatedName;
         $client_name = get_client_name($updatedClient);

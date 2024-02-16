@@ -322,13 +322,13 @@ function sortByDate($x, $y)
                             <td data-cell="Latest Note"><?= limitChars($latest_note_str, 150) ?></td>
                             <td data-cell="Location">
                                 <?php
-                                // Query the sites table to get the location name
-                                // $location_query = "SELECT location_name FROM locations WHERE sitenumber = " . $row["location"];
-                                // $location_result = mysqli_query($database, $location_query);
-                                // $location_name = mysqli_fetch_assoc($location_result)['location_name'];
-
-                                // // Display the location name and room number
-                                // echo $location_name . '<br><br>RM ' . $row['room'];
+                                if ($row["location"] != null) {
+                                    echo get_location_name_from_id($row["location"], false);
+                                    // echo $row["location"];
+                                }
+                                if ($row["room"] != null) {
+                                    echo '<br>RM ' . $row["room"];
+                                }
                                 ?>
                             </td>
                             <td data-cell="Category">
@@ -445,18 +445,12 @@ function sortByDate($x, $y)
                             </td>
                             <td data-cell="Location">
                                 <?php
-                                // Query the sites table to get the location name
-                                // $location_query = "SELECT location_name FROM locations WHERE archived_location_id = " . $row["LOCATION_ID"];
-                                // $location_result = mysqli_query($database, $location_query);
-                                // $location_data = mysqli_fetch_assoc($location_result);
-
-                                // TODO support archived tickets
-                                // if ($location_data != null) {
-                                //     $location_name = $location_data['location_name'];
-
-                                //     // Display the location name and room number
-                                //     echo $location_name . '<br><br>RM ' . $row['ROOM'];
-                                // }
+                                if ($row["LOCATION_ID"] != null) {
+                                    echo get_location_name_from_id($row["LOCATION_ID"], true);
+                                }
+                                if ($row["ROOM"] != null) {
+                                    echo '<br>RM ' . $row["ROOM"];
+                                }
                                 ?>
                             </td>
                             <td data-cell="Category">

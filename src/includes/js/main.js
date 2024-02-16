@@ -34,11 +34,13 @@ tinymce.init({
   paste_as_text: true,
   browser_spellcheck: true,
   contextmenu: false,
-  plugins: ["lists", "code", "link", "autolink", "wordcount", "emoticons"],
+  plugins: ["autosave", "lists", "code", "link", "autolink", "wordcount", "emoticons"],
   skin: skin,
   content_css: content_css,
   link_default_target: "_blank",
-  text_patterns: false
+  text_patterns: false,
+  autosave_interval: '10s',
+  autosave_restore_when_empty: true
 });
 
 // display/hide new note form
@@ -48,7 +50,6 @@ var newNoteModalBackground = document.getElementById(
 );
 var newNoteForm = document.getElementById("new-note-form");
 var newNoteEditor = document.getElementById("new-note-form");
-var newNoteModalCloseButton = document.getElementById("new-note-form-close");
 
 if (newNoteButtons && newNoteForm && newNoteEditor) {
   for (var i = 0; i < newNoteButtons.length; i++) {
@@ -72,6 +73,7 @@ window.onclick = function (event) {
   }
 };
 
+let newNoteModalCloseButton = document.getElementById("new-note-form-close");
 if (newNoteModalCloseButton) {
   newNoteModalCloseButton.onclick = function (event) {
     if (event.target == newNoteModalCloseButton) {

@@ -423,9 +423,11 @@ function sortByDate($x, $y)
                                     $client_id = $client_note_row["CLIENT_ID"];
                                     $note_text = $client_note_row["NOTE_TEXT"];
                                     $note_date = $client_note_row["TICKET_DATE"];
-
+                                    if ($client_id != null) {
+                                        $client_name = get_client_name_from_id($client_id);
+                                    }
                                     $all_notes[] = [
-                                        "creator" => get_client_name_from_id($client_id),
+                                        "creator" => $client_name,
                                         "text" => $note_text,
                                         "date" => $note_date,
                                         "time" => "—",

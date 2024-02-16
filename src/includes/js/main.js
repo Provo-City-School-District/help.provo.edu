@@ -8,7 +8,29 @@ $(document).ready(function () {
     pageLength: 10, // Set the number of rows per page
     stateSave: true, // Enable state saving
     ordering: true, // Enable sorting
-    order: [[0, "asc"]], // Set the default sort order
+    columns: [
+      { width: "50px" },
+      { width: "250px" },
+      { width: "250px" },
+      { width: "100px" },
+      { width: "75px" },
+      { width: "75px" },
+      { width: "75px" },
+      { width: "75px" },
+      { width: "75px" },
+      { width: "75px" },
+      { width: "75px" },
+      { width: "50px" },
+    ],
+    autoWidth: false, // Disable auto width calculation
+  });
+});
+$(document).ready(function () {
+  table = $(".search-data-table").DataTable({
+    paging: true, // Enable pagination
+    pageLength: 10, // Set the number of rows per page
+    stateSave: true, // Enable state saving
+    ordering: true, // Enable sorting
     autoWidth: false, // Disable auto width calculation
   });
 });

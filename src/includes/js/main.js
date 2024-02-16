@@ -29,18 +29,26 @@ if (userPref === "dark") {
 tinymce.init({
   selector: ".tinyMCEtextarea",
   toolbar:
-    "undo redo | bold italic strikethrough | blockquote | paste pastetext removeformat | numlist bullist | code | link unlink | emoticons",
+    "undo redo restoredraft | bold italic strikethrough | blockquote | paste pastetext removeformat | numlist bullist | code | link unlink | emoticons",
   menubar: false,
   paste_as_text: true,
   browser_spellcheck: true,
   contextmenu: false,
-  plugins: ["autosave", "lists", "code", "link", "autolink", "wordcount", "emoticons"],
+  plugins: [
+    "autosave",
+    "lists",
+    "code",
+    "link",
+    "autolink",
+    "wordcount",
+    "emoticons",
+  ],
   skin: skin,
+  paste_data_images: false,
   content_css: content_css,
   link_default_target: "_blank",
   text_patterns: false,
-  autosave_interval: '10s',
-  autosave_restore_when_empty: true
+  autosave_interval: "10s",
 });
 
 // display/hide new note form
@@ -206,16 +214,3 @@ if (updateTicketForm) {
     }
   });
 }
-//================================= Prevent Form Double Submit =================================
-// Prevent Double Submits
-document.querySelectorAll("form").forEach((form) => {
-  form.addEventListener("submit", (e) => {
-    // Prevent if already submitting
-    if (form.classList.contains("is-submitting")) {
-      e.preventDefault();
-    }
-
-    // Add class to hook our visual indicator on
-    form.classList.add("is-submitting");
-  });
-});

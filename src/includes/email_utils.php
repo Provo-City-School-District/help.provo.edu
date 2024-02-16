@@ -11,6 +11,11 @@ function email_address_from_username(string $username)
     return $username."@provo.edu";
 }
 
+function username_from_email_address(string $email)
+{
+    return str_replace("@provo.edu", "", $email);
+}
+
 /*
 Returns true on success, false otherwise
 */

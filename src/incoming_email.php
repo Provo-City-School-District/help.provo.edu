@@ -8,6 +8,7 @@ require_once("template.php");
 
 
 $blacklisted_emails = [
+    "dev@provo.edu",
     "help@provo.edu",
     "helpdesk@provo.edu"
 ];
@@ -108,6 +109,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
         }
     }
 
+    $text = strip_tags($text);
     $message = preg_replace('#(^\w.+:\n)?(^>.*(\n|$))+#mi', "", nl2br($text));
 
     $msg_is_reply = isset($email_ancestor_id);

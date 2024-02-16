@@ -156,8 +156,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $old_ticket_data['employee'] = "unassigned";
         }
-        $new_assigned = email_address_from_username($updatedEmployee);
-        $valid_cc_emails[] = $new_assigned;
         $changesMessage .= "<li>Changed Employee from " . $old_ticket_data['employee'] . " to " . $updatedEmployee . "</li>";
         $forceEmails = true;
     }
@@ -260,72 +258,72 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Eventually use notesMessageClient to send a unique email to clients without tech notes
+    $tech_cc_emails = [];
+    $client_cc_emails = [];
+    foreach ($valid_cc_emails as $email) {
+        $email_username = username_from_email_address($email);
+        if (user_is_tech($email_username))
+            $tech_cc_emails[] = $email;
+        else
+            $client_cc_emails[] = $email;
+    }
 
-    // Repack emails
-    $cc_emails_clean = implode(',', $valid_cc_emails);
-    $bcc_emails_clean = implode(',', $valid_bcc_emails);
+    $tech_bcc_emails = [];
+    $client_bcc_emails = [];
+    foreach ($valid_bcc_emails as $email) {
+        $email_username = username_from_email_address($email);
+        if (user_is_tech($email_username))
+            $tech_bcc_emails[] = $email;
+        else
+            $client_bcc_emails[] = $email;
+    }
 
     // Send emails if the user checked the send_emails checkbox
-    if (($sendEmails || $forceEmails || $updatedStatus == "pending") && $updatedStatus != "resolved") {
+    if ($sendEmails || $forceEmails || $updatedStatus == "pending" || $updatedStatus == "resolved") {
+        $subject_status = "Updated";
+        $template_path = "ticket_updated";
+        
+        if ($updatedStatus == "resolved") {
+            $subject_status = "Resolved";
+            $template_path = "ticket_resolved";
+        }
+
         // message for gui to display
         $msg = "Ticket updated successfully. An email was sent to the client, CC and BCC emails.";
         $client_email = email_address_from_username($updatedClient);
-        $ticket_subject = "Ticket " . $ticket_id . " (Updated) - " . $updatedName;
-
-        $template = new Template(from_root("/includes/templates/ticket_updated.phtml"));
-
+        $ticket_subject = "Ticket " . $ticket_id . " ($subject_status) - " . $updatedName;
         $client_name = get_client_name($updatedClient);
+        $location_name = location_name_from_id($updatedLocation);
+        $assigned_tech_email = email_address_from_username($updatedEmployee); 
 
-        $template->client = $client_name["firstname"] . " " . $client_name["lastname"];
-        $template->location = location_name_from_id($updatedLocation);
-        $template->ticket_id = $ticket_id;
-        $template->changes_message = $changesMessage;
-        $template->notes_message = $notesMessageClient;
-        $template->site_url = getenv('ROOTDOMAIN');
-        $template->description = html_entity_decode($updatedDescription);
+        $template_tech = new Template(from_root("/includes/templates/{$template_path}_tech.phtml"));
 
-        $email_res1 = true;
-        $email_res2 = false;
+        $template_tech->client = $client_name["firstname"] . " " . $client_name["lastname"];
+        $template_tech->location = $location_name;
+        $template_tech->ticket_id = $ticket_id;
+        $template_tech->changes_message = $changesMessage;
+        $template_tech->notes_message = $notesMessageTech;
+        $template_tech->site_url = getenv('ROOTDOMAIN');
+        $template_tech->description = html_entity_decode($updatedDescription);
 
-        if ((strtolower($updatedEmployee) != "unassigned") && ($updatedEmployee != $updatedClient)) {
-            $email_res1 = false;
-            log_app(LOG_INFO, email_address_from_username($updatedEmployee));
-            $email_res1 = send_email_and_add_to_ticket($ticket_id, email_address_from_username($updatedEmployee), $ticket_subject, $template, $valid_cc_emails, $valid_bcc_emails);
-        }
+        $template_client = new Template(from_root("/includes/templates/{$template_path}_client.phtml"));
 
-        $email_res2 = send_email_and_add_to_ticket($ticket_id, $client_email, $ticket_subject, $template, $valid_cc_emails, $valid_bcc_emails);
-        if (!($email_res1 && $email_res2)) {
-            $error = 'Error sending email to client, CC and BCC';
-            $formData = http_build_query($_POST);
-            $_SESSION['current_status'] = $error;
-            $_SESSION['status_type'] = 'error';
-            log_app(LOG_ERR, "$error \n\n $formData");
-            header("Location: edit_ticket.php?$formData&id=$ticket_id");
-            exit;
-        }
-    } else if ($updatedStatus == "resolved") {
+        $template_client->client = $client_name["firstname"] . " " . $client_name["lastname"];
+        $template_client->location = $location_name;
+        $template_client->ticket_id = $ticket_id;
+        $template_client->notes_message = $notesMessageClient;
+        $template_client->site_url = getenv('ROOTDOMAIN');
+        $template_client->description = html_entity_decode($updatedDescription);
 
-        //message for gui to display
-        $msg = "Ticket resolved successfully. An email was sent to the client.";
-        $client_email = email_address_from_username($updatedClient) . "," . email_address_from_username($updatedEmployee);
-        $ticket_subject = "Ticket " . $ticket_id  . " (Resolved) - "  . $updatedName;
+        $email_tech_res = send_email_and_add_to_ticket($ticket_id, $assigned_tech_email, $ticket_subject, $template_tech, $tech_cc_emails, $tech_bcc_emails);
 
-        $template = new Template(from_root("/includes/templates/ticket_resolved.phtml"));
+        if ($client_email == $assigned_tech_email)
+            $email_client_res = send_email_and_add_to_ticket($ticket_id, getenv("GMAIL_USER"), $ticket_subject, $template_client, $client_cc_emails, $client_bcc_emails);
+        else
+            $email_client_res = send_email_and_add_to_ticket($ticket_id, $client_email, $ticket_subject, $template_client, $client_cc_emails, $client_bcc_emails);
 
-        $client_name = get_client_name($updatedClient);
-
-        $template->client = $client_name["firstname"] . " " . $client_name["lastname"];
-        $template->location = location_name_from_id($updatedLocation);
-        $template->ticket_id = $ticket_id;
-        $template->changes_message = html_entity_decode($changesMessage);
-        $template->notes_message = $notesMessageClient;
-        $template->site_url = getenv('ROOTDOMAIN');
-        $template->description = html_entity_decode($updatedDescription);
-
-        $email_res = send_email_and_add_to_ticket($ticket_id, $client_email, $ticket_subject, $template, $valid_cc_emails, $valid_bcc_emails);
-
-        if (!$email_res) {
-            $error = 'Error sending email to client';
+        if (!($email_tech_res && $email_client_res)) {
+            $error = 'Error sending email to assigned tech and CC/BCC';
             $formData = http_build_query($_POST);
             $_SESSION['current_status'] = $error;
             $_SESSION['status_type'] = 'error';
@@ -334,6 +332,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
     }
+
     $_SESSION['current_status'] = $msg;
     $_SESSION['status_type'] = "success";
 

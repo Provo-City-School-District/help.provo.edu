@@ -11,6 +11,7 @@ function display_tickets_table($tickets, $database)
                 <th class="tLocation">Location</th>
                 <th class="category">Request Category</th>
                 <th class="status">Current Status</th>
+                <th class="tDate">Created Date</th>
                 <th class="tDate">Last Updated</th>
                 <th class="tDate">Due</th>
                 <th class="">Assigned</th>
@@ -81,6 +82,7 @@ function display_tickets_table($tickets, $database)
             <td data-cell="Location">' . $location_name . '<br><br>RM ' . $ticket['room'] . '</td>
             <td data-cell="Request Category">' .  $request_type_name . '</td>
             <td data-cell="Current Status">' . $ticket["status"] . '</td>
+            <td data-cell="Current Status">' . $ticket["created"] . '</td>
             <td data-cell="Last Updated">' . $ticket["last_updated"] . '</td>
             <td data-cell="Due">' . $ticket["due_date"] . '</td>
             <td data-cell="Assigned">' . $ticket["employee"] . '</td>

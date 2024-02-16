@@ -562,11 +562,12 @@ if (isset($ticket["client"])) {
                     <tr>
                         <td data-cell="Date"><a href="edit_note.php?note_id=<?= $note['note_id'] ?>&ticket_id=<?= $ticket_id ?>">
                                 <?php
-                                $date_override = $note['date_override'];
+                                $created_date = $note['created'];
+                                $date_override = $created_date;
                                 if ($date_override != null)
                                     echo $date_override . "*";
                                 else
-                                    echo $note['created'];
+                                    echo $created_date;
                                 ?></a></td>
                         <td data-cell="Created By"><?= $note['creator'] ?></td>
                         <td class="ticket_note" data-cell="Note Message">
@@ -657,8 +658,10 @@ if (isset($ticket["client"])) {
                                 $visible_to_client = $note['visible_to_client'];
                                 if ($note_id !== null) {
                                     $note_id_text =  html_entity_decode($note_id);
-                                    echo "<a href=\"edit_note.php?note_id=$note_id&ticket_id=$ticket_id\">Note#: $note_id_text</a><br>";
+                                    echo "<a href=\"edit_note.php?note_id=$note_id&ticket_id=$ticket_id\">Note#: $note_id_text</a>";
                                     echo $note['visible_to_client'] ? "Visible to Client" : "Invisible to Client";
+                                    echo '<span class="created_date">' . $note['created'] . '</span>';
+                                    echo '<span class="time_since_last_note"></span>';
                                 }
                                 ?>
                             </span>
@@ -677,16 +680,16 @@ if (isset($ticket["client"])) {
             <?php endif; ?>
             <tr class="totalTime">
                 <td data-cell="Total Time" colspan=4><span>Total Time: </span> <?php
-                    if ($total_hours == 1)
-                        echo "$total_hours hour ";
-                    else if ($total_hours > 1) 
-                        echo "$total_hours hours ";
+                                                                                if ($total_hours == 1)
+                                                                                    echo "$total_hours hour ";
+                                                                                else if ($total_hours > 1)
+                                                                                    echo "$total_hours hours ";
 
-                    if ($total_minutes == 1)
-                        echo "$total_minutes minute";
-                    else
-                        echo "$total_minutes minutes";
-                ?></td>
+                                                                                if ($total_minutes == 1)
+                                                                                    echo "$total_minutes minute";
+                                                                                else
+                                                                                    echo "$total_minutes minutes";
+                                                                                ?></td>
             </tr>
             </table>
         </div>
@@ -900,6 +903,35 @@ if (isset($ticket["client"])) {
                 evt.preventDefault();
             }
         });
+
+        function updateTimeSinceLastNote() {
+            // Loop over each element with the class 'created_date'
+            $('.created_date').each(function() {
+                // Get the created date from the element
+                var createdDate = new Date($(this).text());
+
+                // Calculate the time since the last note
+                var currentTime = new Date();
+                var diffInMinutes = Math.round((currentTime - createdDate) / 60000); // in minutes
+
+                var timeSinceLastNote;
+                if (diffInMinutes < 60) {
+                    timeSinceLastNote = diffInMinutes + ' minutes ago';
+                } else if (diffInMinutes < 24 * 60) {
+                    var diffInHours = Math.round(diffInMinutes / 60);
+                    timeSinceLastNote = diffInHours + ' hours ago';
+                } else {
+                    var diffInDays = Math.round(diffInMinutes / (24 * 60));
+                    timeSinceLastNote = diffInDays + ' days ago';
+                }
+
+                // Update the time displayed in the corresponding 'time_since_last_note' element
+                $(this).next('.time_since_last_note').text(timeSinceLastNote);
+            });
+        }
+
+        // Update the time every minute
+        setInterval(updateTimeSinceLastNote, 60);
     </script>
 <?php endif; ?>
 <?php include("footer.php"); ?>

@@ -564,6 +564,15 @@ select {
 	text-align: right;
 }
 
+.note_id .created_date {
+	display: none;
+}
+
+.note_id a,
+.note_id span {
+	display: block;
+}
+
 #profile_time_table {
 	max-width: 800px;
 }

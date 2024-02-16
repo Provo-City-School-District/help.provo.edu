@@ -178,7 +178,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $changesMessage .= "<li>Changed Subject from " . $old_ticket_data['name'] . " to " . $updatedName . "</li>";
     }
 
-    if (isset($old_ticket_data['description'], $updatedDescription) && $old_ticket_data['description'] != $updatedDescription) {
+    if (isset($old_ticket_data['description'], $updatedDescription) && html_entity_decode($old_ticket_data['description']) != html_entity_decode($updatedDescription)) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $descriptionColumn, $old_ticket_data['description'], $updatedDescription);
         mysqli_stmt_execute($log_stmt);
         $changesMessage .= "<li>Changed Description from " . html_entity_decode($old_ticket_data['description']) . " to " . html_entity_decode($updatedDescription) . "</li>";

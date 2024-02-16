@@ -257,8 +257,9 @@ function sortByDate($x, $y)
                 <option value="vendor" <?= ($search_status == 'vendor' || $search_status == 12) ? ' selected' : '' ?>>Vendor</option>
                 <option value="maintenance" <?= ($search_status == 'maintenance' || $search_status == 11) ? ' selected' : '' ?>>Maintenance</option>
             </select>
-        </div>
+        </div><br>
         <button type="submit" class="btn btn-primary">Search</button>
+        <br><br>
         <button type="reset" id="resetBtn" class="btn btn-secondary">Reset</button>
     </form>
 

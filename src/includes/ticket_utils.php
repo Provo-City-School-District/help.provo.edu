@@ -157,11 +157,21 @@ function add_note_with_filters(
     mysqli_stmt_close($log_stmt);
 
     if (!isset($_SESSION) || !session_is_tech()) {
-        $update_query = "UPDATE tickets SET tickets.status = 'open' WHERE tickets.id = '$ticket_id'";
+        $update_query = "UPDATE tickets SET tickets.status = 'open' WHERE tickets.id = '$ticket_id_clean'";
         $result = mysqli_query($database, $update_query);
         if (!$result) {
             log_app(LOG_ERR, "Failed to update ticket status for id=$operating_ticket");
         }
+/*
+        Needs testing
+
+        // Email tech if client has updated ticket
+        $email_subject = "Ticket $ticket_id_clean (Updated)";
+        $email_msg = "Ticket $ticket_id_clean has been updated by the client.\n<a href=\"//help.provo.edu/controllers/tickets/edit_ticket.php?id=$ticket_id_clean\">View ticket here</a>";
+        $assigned_tech = assigned_tech_for_ticket($ticket_id_clean);
+
+        send_email_and_add_to_ticket($ticket_id_clean, email_address_from_username($assigned_tech), $email_subject, $email_msg);
+*/
     }
     return true;
 }
@@ -322,4 +332,22 @@ function location_name_from_id(string $site_id)
     }
 
     return $location_data["location_name"];
+}
+
+function assigned_tech_for_ticket(int $ticket_id)
+{
+    global $database;
+
+    $assigned_query = "SELECT tech FROM help.tickets WHERE tickets.id = '$ticket_id'";
+    $assigned_result = mysqli_query($database, $assigned_query);
+    if (!isset($assigned_result)) {
+        log_app(LOG_ERR, "[assigned_tech_for_ticket] Failed to get location query result");
+    }
+
+    $assigned_data = mysqli_fetch_assoc($assigned_result);
+    if (!isset($assigned_data)) {
+        log_app(LOG_ERR, "[assigned_tech_for_ticket] Failed to get location data");
+    }
+
+    return $assigned_data["employee"];
 }

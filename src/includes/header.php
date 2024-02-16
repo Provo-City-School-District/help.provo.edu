@@ -85,6 +85,10 @@ $current_page = $_SERVER['REQUEST_URI'];
     }
 
     $left_header_result = $left_header_stmt->get_result();
+    if (!isset($left_header_result)) {
+        log_app(LOG_ERR, "Failed to get prefers_left_header result on user {$_SESSION['username']}");
+    }
+
     $left_header_data = $left_header_result->fetch_assoc();
     $prefers_left_header = $left_header_data['prefers_left_header'];
 

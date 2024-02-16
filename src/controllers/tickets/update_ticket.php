@@ -156,8 +156,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $old_ticket_data['employee'] = "unassigned";
         }
-        $new_assigned = email_address_from_username($updatedEmployee);
-        $valid_cc_emails[] = $new_assigned;
         $changesMessage .= "<li>Changed Employee from " . $old_ticket_data['employee'] . " to " . $updatedEmployee . "</li>";
         $forceEmails = true;
     }
@@ -296,6 +294,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $ticket_subject = "Ticket " . $ticket_id . " ($subject_status) - " . $updatedName;
         $client_name = get_client_name($updatedClient);
         $location_name = location_name_from_id($updatedLocation);
+        $assigned_tech_email = email_address_from_username($updatedEmployee); 
 
         $template_tech = new Template(from_root("/includes/templates/{$template_path}_tech.phtml"));
 
@@ -316,8 +315,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $template_client->site_url = getenv('ROOTDOMAIN');
         $template_client->description = html_entity_decode($updatedDescription);
 
-        $email_tech_res = send_email_and_add_to_ticket($ticket_id, email_address_from_username($updatedEmployee), $ticket_subject, $template_tech, $tech_cc_emails, $tech_bcc_emails);
-        $email_client_res = send_email_and_add_to_ticket($ticket_id, $client_email, $ticket_subject, $template_client, $client_cc_emails, $client_bcc_emails);
+        $email_tech_res = send_email_and_add_to_ticket($ticket_id, $assigned_tech_email, $ticket_subject, $template_tech, $tech_cc_emails, $tech_bcc_emails);
+
+        if ($client_email == $assigned_tech_email)
+            $email_client_res = send_email_and_add_to_ticket($ticket_id, getenv("GMAIL_USER"), $ticket_subject, $template_client, $client_cc_emails, $client_bcc_emails);
+        else
+            $email_client_res = send_email_and_add_to_ticket($ticket_id, $client_email, $ticket_subject, $template_client, $client_cc_emails, $client_bcc_emails);
 
         if (!($email_tech_res && $email_client_res)) {
             $error = 'Error sending email to assigned tech and CC/BCC';

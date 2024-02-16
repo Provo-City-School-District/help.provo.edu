@@ -194,7 +194,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($old_ticket_data['status'], $updatedStatus) && $old_ticket_data['status'] != $updatedStatus) {
         mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $statusColumn, $old_ticket_data['status'], $updatedStatus);
         mysqli_stmt_execute($log_stmt);
-        $changesMessage .= "<li>Changed Status from " . $statusTypes[$old_ticket_data['status']] . " to " . $statusTypes[$updatedStatus] . "</li>";
+        $changesMessage .= "<li>Changed Status from " . $old_ticket_data['status'] . " to " . $updatedStatus . "</li>";
         if ($updatedStatus == "resolved") {
             removeAlert($database, $pastDueMessage, $ticket_id);
         }
@@ -295,7 +295,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $ticket_subject = "Ticket " . $ticket_id . " ($subject_status) - " . $updatedName;
         $client_name = get_client_name($updatedClient);
         $location_name = location_name_from_id($updatedLocation);
-        $assigned_tech_email = email_address_from_username($updatedEmployee); 
+        $assigned_tech_email = email_address_from_username($updatedEmployee);
 
         $template_tech = new Template(from_root("/includes/templates/{$template_path}_tech.phtml"));
 

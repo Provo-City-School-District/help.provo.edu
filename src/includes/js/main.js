@@ -29,7 +29,7 @@ if (userPref === "dark") {
 tinymce.init({
   selector: ".tinyMCEtextarea",
   toolbar:
-    "undo redo | bold italic strikethrough | blockquote | paste pastetext removeformat | numlist bullist | code | link unlink | emoticons",
+    "undo redo restoredraft | bold italic strikethrough | blockquote | paste pastetext removeformat | numlist bullist | code | link unlink | emoticons",
   menubar: false,
   paste_as_text: true,
   browser_spellcheck: true,
@@ -39,8 +39,7 @@ tinymce.init({
   content_css: content_css,
   link_default_target: "_blank",
   text_patterns: false,
-  autosave_interval: '10s',
-  autosave_restore_when_empty: true
+  autosave_interval: '10s'
 });
 
 // display/hide new note form

@@ -46,7 +46,7 @@ display_tickets_table($ticket_result, $database);
 ?>
 
 <h2>All Users</h2>
-<table class="allUsers data-table">
+<table class="allUsers search-data-table">
     <thead>
         <tr>
             <th>Username</th>
@@ -57,7 +57,7 @@ display_tickets_table($ticket_result, $database);
             <th>Is Tech</th>
             <th>is Supervisor</th>
             <!-- <th>Employee ID</th> -->
-            
+
             <th>Last Login</th>
         </tr>
     </thead>
@@ -100,7 +100,7 @@ $exclude_query = "SELECT * FROM exclude_days WHERE exclude_day >= CURDATE() ORDE
 
 $exclude_result = mysqli_query($database, $exclude_query);
 ?>
-<table class="exclude_days data-table">
+<table class="exclude_days search-data-table">
     <thead>
         <tr>
             <th>Exclude Day</th>

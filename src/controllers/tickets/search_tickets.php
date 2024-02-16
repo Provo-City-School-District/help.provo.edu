@@ -170,13 +170,20 @@ function get_tech_name_from_id(string $tech_sw_id)
 }
 
 // TODO could cache these
-function get_location_name_from_id(string $location_sw_id)
+function get_location_name_from_id(int $location_sw_id, $archived)
 {
-    global $swdb;
-    $location_name_query = "SELECT LOCATION_NAME FROM location WHERE LOCATION_ID = '$location_sw_id'";
-    $location_name_result = mysqli_query($swdb, $location_name_query);
+    global $database;
+    $location_name = "";
+    if ($archived) {
+        $location_name_query = "SELECT location_name FROM locations WHERE archived_location_id = '$location_sw_id'";
+    } else {
+        $location_name_query = "SELECT location_name FROM locations WHERE sitenumber = '$location_sw_id'";
+    }
+    $location_name_result = mysqli_query($database, $location_name_query);
     $location_name_data = mysqli_fetch_assoc($location_name_result);
-    $location_name = trim($location_name_data["LOCATION_NAME"]);
+    if (is_array($location_name_data) && isset($location_name_data["location_name"])) {
+        $location_name = trim($location_name_data["location_name"]);
+    }
 
     return $location_name;
 }

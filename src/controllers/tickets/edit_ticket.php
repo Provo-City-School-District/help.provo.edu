@@ -890,9 +890,14 @@ if (isset($ticket["client"])) {
                 return parseInt(document.getElementById(field).value, 10) === 0;
             });
 
+            const note_content = tinymce.activeEditor.getContent("note");
+            console.log(note_content);
             if (allZero) {
                 alert('Please enter a value greater than 0 for at least one of the time fields.');
                 evt.preventDefault(); // Prevent the form submission
+            } else if (!note_content) {
+                alert('Please enter some note content');
+                evt.preventDefault();
             }
         });
     </script>

@@ -68,6 +68,7 @@ RUN chmod +x /root/run_email_check.sh
 
 # Create the uploads directory and set permissions
 RUN mkdir -p /var/www/html/uploads && chown -R www-data:www-data /var/www/html/uploads && chmod -R 775 /var/www/html/uploads
+RUN mkdir -p /var/php/sessions && chown -R www-data:www-data /var/php/sessions && chmod -R 770 /var/www/html/uploads
 
 # CMD cron && docker-php-entrypoint apache2-foreground
-CMD service cron start && chown -R www-data:www-data /var/www/html/uploads && composer install --no-interaction --no-ansi --no-scripts --no-progress --prefer-dist && docker-php-entrypoint apache2-foreground
+CMD service cron start && chown -R www-data:www-data /var/www/html/uploads && chown -R www-data:www-data /var/php/sessions && composer install --no-interaction --no-ansi --no-scripts --no-progress --prefer-dist && docker-php-entrypoint apache2-foreground

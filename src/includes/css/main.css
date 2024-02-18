@@ -511,16 +511,30 @@ select {
 	}
 }
 
-@media (min-width:575px) {
+@media (min-width:800px) {
 	.ticketGrid>* {
-		display: grid;
-		grid-template-columns: minmax(min-content, 160px) 1fr;
+		/* display: grid;
+		grid-template-columns: 200px 1fr; */
+		display: flex;
+		/* justify-content: space-between; */
 		align-items: center;
+
+	}
+
+	.ticketGrid span,
+	.ticketGrid label {
+		width: 200px;
+		/* flex: 1; */
+	}
+
+	.ticketGrid input,
+	.ticketGrid select {
+		flex: 3;
 	}
 
 	.ticketGrid span:first-of-type {
 		margin-right: 5px;
-		width: 144px;
+		max-width: 200px;
 		margin-bottom: unset;
 	}
 

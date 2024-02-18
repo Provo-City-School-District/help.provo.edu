@@ -244,8 +244,9 @@ if (isset($ticket["client"])) {
                 <span>Last Updated:</span> <?= $ticket['last_updated'] ?>
             </div>
             <div>
-                <input type="hidden" id="due_date" name="due_date" value="<?= $ticket['due_date'] ?>">
+
                 <span>Current Due Date:</span> <?= $ticket['due_date'] ?>
+                <input type="hidden" id="due_date" name="due_date" value="<?= $ticket['due_date'] ?>">
             </div>
 
 
@@ -293,13 +294,30 @@ if (isset($ticket["client"])) {
                     </select>
                 </div>
                 <div>
-                    <label for="location">Location:</label>
+                    <label for="location">Department/Location:</label>
                     <select id="location" name="location">
                         <?php
-                        // Query the sites table to get the site information
-                        $location_query = "SELECT sitenumber, location_name FROM locations";
+                        // Query the locations table to get the departments
+                        $department_query = "SELECT sitenumber, location_name FROM locations WHERE is_department = TRUE ORDER BY location_name ASC";
+                        $department_result = mysqli_query($database, $department_query);
+
+                        // Create a "Department" optgroup and create an option for each department
+                        echo '<optgroup label="Department">';
+                        while ($locations = mysqli_fetch_assoc($department_result)) {
+                            $selected = '';
+                            if ($locations['sitenumber'] == $ticket['location']) {
+                                $selected = 'selected';
+                            }
+                            echo '<option value="' . $locations['sitenumber'] . '" ' . $selected . '>' . $locations['location_name'] . '</option>';
+                        }
+                        echo '</optgroup>';
+
+                        // Query the locations table to get the locations
+                        $location_query = "SELECT sitenumber, location_name FROM locations WHERE is_department = FALSE ORDER BY location_name ASC";
                         $location_result = mysqli_query($database, $location_query);
-                        // Loop through the results and create an option for each site
+
+                        // Create a "Location" optgroup and create an option for each location
+                        echo '<optgroup label="Location">';
                         while ($locations = mysqli_fetch_assoc($location_result)) {
                             $selected = '';
                             if ($locations['sitenumber'] == $ticket['location']) {
@@ -307,6 +325,7 @@ if (isset($ticket["client"])) {
                             }
                             echo '<option value="' . $locations['sitenumber'] . '" ' . $selected . '>' . $locations['location_name'] . '</option>';
                         }
+                        echo '</optgroup>';
                         ?>
                     </select>
                 </div>

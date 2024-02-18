@@ -207,21 +207,40 @@ function sortByDate($x, $y)
             <input type="text" class="form-control" id="search_name" name="search_name" value="<?php echo htmlspecialchars($search_name); ?>">
         </div>
         <div class="form-group">
-            <label for="search_location">Location:</label>
+            <label for="search_location">Department/Location:</label>
             <!-- <input type="text" class="form-control" id="search_location" name="search_location" value="<?php echo htmlspecialchars($search_location); ?>"> -->
             <select id="search_location" name="search_location">
                 <option value="" selected></option>
                 <?php
-                // Loop through the results and create an option for each site
-                while ($locations = mysqli_fetch_assoc($location_result)) {
+                // Query the locations table to get the departments
+                $department_query = "SELECT * FROM locations WHERE is_department = TRUE ORDER BY location_name ASC";
+                $department_result = mysqli_query($database, $department_query);
+
+                // Create a "Department" optgroup and create an option for each department
+                echo '<optgroup label="Department">';
+                while ($locations = mysqli_fetch_assoc($department_result)) {
                     $selected = '';
-                    if (isset($locations['sitenumber']) && isset($row['location']) && $locations['sitenumber'] == $row['location']) {
+                    if (isset($search_location) && $locations['sitenumber'] == $search_location) {
                         $selected = 'selected';
                     }
-                ?>
-                    <option value="<?= isset($locations['sitenumber']) ? $locations['sitenumber'] : '' ?>" <?= isset($search_location) && $search_location === $locations['sitenumber'] ? 'selected' : '' ?>><?= isset($locations['location_name']) ? $locations['location_name'] : '' ?></option>
-                <?php
+                    echo '<option value="' . $locations['sitenumber'] . '" ' . $selected . '>' . $locations['location_name'] . '</option>';
                 }
+                echo '</optgroup>';
+
+                // Query the locations table to get the locations
+                $location_query = "SELECT * FROM locations WHERE is_department = FALSE ORDER BY location_name ASC";
+                $location_result = mysqli_query($database, $location_query);
+
+                // Create a "Location" optgroup and create an option for each location
+                echo '<optgroup label="Location">';
+                while ($locations = mysqli_fetch_assoc($location_result)) {
+                    $selected = '';
+                    if (isset($search_location) && $locations['sitenumber'] == $search_location) {
+                        $selected = 'selected';
+                    }
+                    echo '<option value="' . $locations['sitenumber'] . '" ' . $selected . '>' . $locations['location_name'] . '</option>';
+                }
+                echo '</optgroup>';
                 ?>
             </select>
         </div>

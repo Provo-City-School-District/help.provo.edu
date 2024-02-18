@@ -56,8 +56,8 @@ if (!$supervisors_result) {
 }
 
 // Query the locations table to get the location information
-$location_query = "SELECT sitenumber, location_name FROM locations";
-$location_result = mysqli_query($database, $location_query);
+// $location_query = "SELECT sitenumber, location_name FROM locations";
+// $location_result = mysqli_query($database, $location_query);
 
 
 // SQL query for users Tickets
@@ -144,13 +144,35 @@ Username: <?= $username ?><br>
         <select id="man_location" name="man_location">
             <option value="" selected></option>
             <?php
-            // Loop through the results and create an option for each site
-            while ($locations = mysqli_fetch_assoc($location_result)) {
+            // Query the locations table to get the departments
+            $department_query = "SELECT * FROM locations WHERE is_department = TRUE ORDER BY location_name ASC";
+            $department_result = mysqli_query($database, $department_query);
 
-            ?>
-                <option value="<?= $locations['sitenumber'] ?>" <?= $man_location === $locations['sitenumber'] ? 'selected' : '' ?>><?= $locations['location_name'] ?></option>
-            <?php
+            // Create a "Department" optgroup and create an option for each department
+            echo '<optgroup label="Department">';
+            while ($locations = mysqli_fetch_assoc($department_result)) {
+                $selected = '';
+                if ($locations['sitenumber'] == $man_location) {
+                    $selected = 'selected';
+                }
+                echo '<option value="' . $locations['sitenumber'] . '" ' . $selected . '>' . $locations['location_name'] . '</option>';
             }
+            echo '</optgroup>';
+
+            // Query the locations table to get the locations
+            $location_query = "SELECT * FROM locations WHERE is_department = FALSE ORDER BY location_name ASC";
+            $location_result = mysqli_query($database, $location_query);
+
+            // Create a "Location" optgroup and create an option for each location
+            echo '<optgroup label="Location">';
+            while ($locations = mysqli_fetch_assoc($location_result)) {
+                $selected = '';
+                if ($locations['sitenumber'] == $man_location) {
+                    $selected = 'selected';
+                }
+                echo '<option value="' . $locations['sitenumber'] . '" ' . $selected . '>' . $locations['location_name'] . '</option>';
+            }
+            echo '</optgroup>';
             ?>
         </select>
 

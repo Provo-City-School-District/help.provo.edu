@@ -47,16 +47,17 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
         <input type="hidden" name="client" value="<?= $_SESSION['username'] ?>">
         <div class="ticketGrid">
             <div>
-                <label for="location">Location:</label>
+                <label for="location">Department/Location:</label>
                 <select id="location" name="location">
                     <option value=""></option>
                     <?php
-                    // Query the sites table to get the site information
-                    $location_query = "SELECT sitenumber, location_name FROM locations ORDER BY location_name ASC";
-                    $location_result = mysqli_query($database, $location_query);
-                    // Loop through the results and create an option for each site
-                    while ($locations = mysqli_fetch_assoc($location_result)) {
+                    // Query the locations table to get the departments
+                    $department_query = "SELECT * FROM locations WHERE is_department = TRUE ORDER BY location_name ASC";
+                    $department_result = mysqli_query($database, $department_query);
 
+                    // Create a "Department" optgroup and create an option for each department
+                    echo '<optgroup label="Department">';
+                    while ($locations = mysqli_fetch_assoc($department_result)) {
                         $selected = '';
                         if (isset($_GET['location']) && $locations['sitenumber'] == $_GET['location']) {
                             $selected = 'selected';
@@ -68,6 +69,27 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                         }
                         echo '<option value="' . $locations['sitenumber'] . '" ' . $selected . '>' . $locations['location_name'] . '</option>';
                     }
+                    echo '</optgroup>';
+
+                    // Query the locations table to get the locations
+                    $location_query = "SELECT * FROM locations WHERE is_department = FALSE ORDER BY location_name ASC";
+                    $location_result = mysqli_query($database, $location_query);
+
+                    // Create a "Location" optgroup and create an option for each location
+                    echo '<optgroup label="Location">';
+                    while ($locations = mysqli_fetch_assoc($location_result)) {
+                        $selected = '';
+                        if (isset($_GET['location']) && $locations['sitenumber'] == $_GET['location']) {
+                            $selected = 'selected';
+                        } else {
+                            $loc = get_fast_client_location($_SESSION["username"]);
+                            if ($locations['sitenumber'] == $loc) {
+                                $selected = 'selected';
+                            }
+                        }
+                        echo '<option value="' . $locations['sitenumber'] . '" ' . $selected . '>' . $locations['location_name'] . '</option>';
+                    }
+                    echo '</optgroup>';
                     ?>
                 </select required>
             </div>
@@ -131,7 +153,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
         form.addEventListener("submit", (e) => {
             // Prevent if already submitting
             if (form.classList.contains("is-submitting")) {
-            e.preventDefault();
+                e.preventDefault();
             }
 
             // Add class to hook our visual indicator on

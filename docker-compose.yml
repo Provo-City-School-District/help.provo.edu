@@ -12,6 +12,7 @@ services:
     volumes:
       - ./src:/var/www/html
       - /var/www/html/vendor
+      - ./session:/var/php/sessions/
     networks:
       - help-network
     logging:

@@ -59,14 +59,14 @@ $unassigned_ticket_result = mysqli_query($database, $unassigned_ticket_query);
 display_ticket_alerts($alerts_result); ?>
 
 
-<h1>Tickets For Location <?= location_name_from_id($managed_location) ?></h1>
+<h1>Tickets For Location: <?= location_name_from_id($managed_location) ?></h1>
 <?php
 //display location tickets
 display_tickets_table($location_ticket_result, $database);
 ?>
 
 
-<h2>Unassigned Tickets For Location <?= location_name_from_id($managed_location) ?> </h2>
+<h2>Unassigned Tickets For Location: <?= location_name_from_id($managed_location) ?> </h2>
 <?php
 //display unassigned tickets
 display_tickets_table($unassigned_ticket_result, $database);

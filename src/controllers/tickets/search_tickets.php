@@ -34,7 +34,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             $ticket_query .= " AND id LIKE '$search_id'";
         }
         if (!empty($search_name)) {
-            $ticket_query .= " AND (name LIKE '%$search_name%' OR description LIKE '%$search_name%')";
+            // Split the search terms into an array of words
+            $words = explode(" ", $search_name);
+            $wordCount = count($words);
+
+            $ticket_query .= " AND (";
+            for ($i = 0; $i < $wordCount; $i++) {
+                $ticket_query .= "name LIKE '%" . mysqli_real_escape_string($database, $words[$i]) . "%' OR description LIKE '%" . mysqli_real_escape_string($database, $words[$i]) . "%'";
+                if ($i != $wordCount - 1) {
+                    $ticket_query .= " AND ";
+                }
+            }
+            $ticket_query .= ")";
         }
         if (!empty($search_location)) {
             $ticket_query .= " AND location LIKE '%$search_location%'";

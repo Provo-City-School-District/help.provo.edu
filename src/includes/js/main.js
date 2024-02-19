@@ -9,18 +9,18 @@ $(document).ready(function () {
     stateSave: true, // Enable state saving
     ordering: true, // Enable sorting
     columns: [
-      { width: "50px" },
-      { width: "250px" },
-      { width: "250px" },
-      { width: "100px" },
-      { width: "75px" },
-      { width: "75px" },
-      { width: "75px" },
-      { width: "75px" },
-      { width: "75px" },
-      { width: "75px" },
-      { width: "75px" },
-      { width: "50px" },
+      { width: "5%" },
+      { width: "25%" },
+      { width: "25%" },
+      { width: "5%" },
+      { width: "5%" },
+      { width: "5%" },
+      { width: "5%" },
+      { width: "5%" },
+      { width: "5%" },
+      { width: "5%" },
+      { width: "5%" },
+      { width: "5%" },
     ],
     autoWidth: false, // Disable auto width calculation
   });

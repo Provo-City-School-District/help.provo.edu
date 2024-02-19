@@ -83,8 +83,11 @@ function display_tickets_table($tickets, $database)
             <td class="details" data-cell="Request Detail"><a href="/controllers/tickets/edit_ticket.php?id=' . $ticket["id"] . '">' . $ticket["name"] . ':</a>' . limitChars($descriptionWithoutLinks, 100) . '</td>
             <td data-cell="Latest Note:">' . limitChars($latest_note_str, 150) . '</td>
             <td data-cell="Client: ">' . $clientFirstName . " " . $clientLastName . " (" . $ticket['client'] . ")" . '</td>
-            <td data-cell="Location">' . $location_name . '<br><br>RM ' . $ticket['room'] . '</td>
-            <td data-cell="Request Category">' .  $request_type_name . '</td>
+            <td data-cell="Location">' .
+            (!empty($location_name) ? $location_name . '<br><br>' : '') .
+            (!empty($ticket['room']) ? 'RM ' . $ticket['room'] : '') .
+            '</td>' .
+            '<td data-cell="Request Category">' .  $request_type_name . '</td>
             <td data-cell="Current Status">' . $ticket["status"] . '</td>
             <td data-cell="Priority">' . $priorityTypes[$ticket["priority"]] . '</td>
             <td data-cell="Created">' . $ticket["created"] . '</td>

@@ -14,6 +14,7 @@ $search_location = '';
 $search_employee = '';
 $search_client = '';
 $search_status = '';
+$search_priority = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
@@ -25,6 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $search_employee = isset($_GET['search_employee']) ? mysqli_real_escape_string($database, $_GET['search_employee']) : '';
         $search_client = isset($_GET['search_client']) ? mysqli_real_escape_string($database, $_GET['search_client']) : '';
         $search_status = isset($_GET['search_status']) ? mysqli_real_escape_string($database, $_GET['search_status']) : '';
+        $search_priority = isset($_GET['priority']) ? mysqli_real_escape_string($database, $_GET['priority']) : '';
 
 
         // Construct the SQL query based on the selected search options
@@ -53,6 +55,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         if (!empty($search_employee)) {
             $ticket_query .= " AND employee LIKE '%$search_employee%'";
         }
+        if (!empty($search_priority)) {
+            $ticket_query .= " AND priority LIKE '$search_priority'";
+        }
         if (!empty($search_client)) {
             $ticket_query .= " AND client LIKE '%$search_client%'";
         }
@@ -71,8 +76,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         }
 
         // Construct the SQL query for the old ticket database
-        $old_ticket_query = "SELECT CONCAT('A-', JOB_TICKET_ID) AS a_id,PROBLEM_TYPE_ID,SUBJECT,QUESTION_TEXT,REPORT_DATE,LAST_UPDATED,JOB_TIME,ASSIGNED_TECH_ID,ROOM,LOCATION_ID,STATUS_TYPE_ID FROM whd.job_ticket WHERE 1=1";
-
+        $old_ticket_query = "SELECT CONCAT('A-', JOB_TICKET_ID) AS a_id,PROBLEM_TYPE_ID,SUBJECT,QUESTION_TEXT,REPORT_DATE,LAST_UPDATED,JOB_TIME,ASSIGNED_TECH_ID,ROOM,LOCATION_ID,STATUS_TYPE_ID FROM whd.job_ticket";
+        if (!empty($search_id) || !empty($search_name) || !empty($search_location) || !empty($search_employee) || !empty($search_client) || !empty($search_status)) {
+            $old_ticket_query .= " WHERE 1=1";
+        } else {
+            $old_ticket_query .= " WHERE 1=0";
+        }
         // map old system status ids to our current system
         switch ($search_status) {
             case 'open':
@@ -218,6 +227,20 @@ function sortByDate($x, $y)
             <input type="text" class="form-control" id="search_name" name="search_name" value="<?php echo htmlspecialchars($search_name); ?>">
         </div>
         <div class="form-group">
+            <label for="priority">Priority:</label>
+            <select id="priority" name="priority">
+                <option value="" selected></option>
+
+                <option value="1" <?= ($search_priority == '1') ? ' selected' : '' ?>>Critical</option>
+                <option value="3" <?= ($search_priority == '3') ? ' selected' : '' ?>>Urgent</option>
+                <option value="5" <?= ($search_priority == '5') ? ' selected' : '' ?>>High</option>
+                <option value="10" <?= ($search_priority == '10') ? ' selected' : '' ?>>Standard</option>
+                <option value="15" <?= ($search_priority == '15') ? ' selected' : '' ?>>Client Response</option>
+                <option value="30" <?= ($search_priority == '30') ? ' selected' : '' ?>>Project</option>
+                <option value="60" <?= ($search_priority == '60') ? ' selected' : '' ?>>Meeting Support</option>
+            </select>
+        </div>
+        <div class="form-group">
             <label for="search_location">Department/Location:</label>
             <!-- <input type="text" class="form-control" id="search_location" name="search_location" value="<?php echo htmlspecialchars($search_location); ?>"> -->
             <select id="search_location" name="search_location">
@@ -307,6 +330,7 @@ function sortByDate($x, $y)
                     <th>Request Category</th>
                     <th class="tUser">Assigned Tech</th>
                     <th>Current Status</th>
+                    <th>Priority</th>
                     <th class="tDate">Created</th>
                     <th class="tDate">Last Updated</th>
                     <th class="tDate">Due</th>
@@ -376,6 +400,7 @@ function sortByDate($x, $y)
                             </td>
                             <td data-cell="Assigned Employee"><?= $row['employee'] ?></td>
                             <td data-cell="Current Status"><?= $row['status'] ?></td>
+                            <td data-cell="Priority"><?= $row['priority'] ?></td>
                             <td data-cell="Created"><?= $row['created'] ?></td>
                             <td data-cell="Last Updated"><?= $row['last_updated'] ?></td>
                             <?php
@@ -500,6 +525,7 @@ function sortByDate($x, $y)
                                     echo "unassigned";
                                 ?></td>
                             <td data-cell="Current Status"></td>
+                            <td data-cell="Priority"></td>
                             <td data-cell="Created"><?= $row['REPORT_DATE'] ?></td>
                             <td data-cell="Last Updated"><?= $row['LAST_UPDATED'] ?></td>
                             <td data-cell="Due"></td>

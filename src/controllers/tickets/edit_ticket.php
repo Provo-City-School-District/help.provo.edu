@@ -581,12 +581,11 @@ if (isset($ticket["client"])) {
                     <tr>
                         <td data-cell="Date"><a href="edit_note.php?note_id=<?= $note['note_id'] ?>&ticket_id=<?= $ticket_id ?>">
                                 <?php
-                                $created_date = $note['created'];
-                                $date_override = $created_date;
+                                $date_override = $note['date_override'];
                                 if ($date_override != null)
                                     echo $date_override . "*";
                                 else
-                                    echo $created_date;
+                                    echo $note['created'];
                                 ?></a></td>
                         <td data-cell="Created By"><?= $note['creator'] ?></td>
                         <td class="ticket_note" data-cell="Note Message">

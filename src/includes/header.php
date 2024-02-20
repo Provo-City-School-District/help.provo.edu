@@ -1,6 +1,6 @@
 <?php
 // include init file
-include_once('init.php');
+require_once('init.php');
 // includes functions file
 include_once('functions.php');
 include_once('helpdbconnect.php');

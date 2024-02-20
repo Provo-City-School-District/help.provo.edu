@@ -8,6 +8,7 @@ require("email_utils.php");
 require("template.php");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $forceEmailOnClientUpdate = false;
 
     // Retrieve updated values from the form
     $ticket_id = trim(htmlspecialchars($_POST['ticket_id']));
@@ -143,7 +144,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $old_client = email_address_from_username($old_ticket_data['client']);
         //add old client to cc emails array so that they get an email about the ticket getting client changed
         array_push($valid_cc_emails, $old_client);
-        $forceEmails = true;
+
+        if ($forceEmailOnClientUpdate)
+            $forceEmails = true;
     }
 
     if (isset($old_ticket_data['employee'], $updatedEmployee) && $old_ticket_data['employee'] != $updatedEmployee) {
@@ -257,7 +260,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // Eventually use notesMessageClient to send a unique email to clients without tech notes
     $tech_cc_emails = [];
     $client_cc_emails = [];
     foreach ($valid_cc_emails as $email) {

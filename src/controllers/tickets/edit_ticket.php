@@ -465,7 +465,57 @@ if (isset($ticket["client"])) {
             </div>
             <label for="description" class="heading2">Request Detail:</label>
             <div class="ticket-description">
-                <?= html_entity_decode($ticket['description']) ?>
+                <?php
+                $ticket_pattern = "/WO#\\d{1,6}/";
+                $archived_ticket_pattern = "/WO#A-\\d{1,6}/";
+                $asset_tag_pattern = "/BC#\\d{6}/";
+                $request_detail = $ticket['description'];
+                $ticket_matches = [];
+                $ticket_match_result = preg_match_all($ticket_pattern, $request_detail, $ticket_matches, PREG_OFFSET_CAPTURE);
+
+                if ($ticket_match_result) {
+                    foreach ($ticket_matches[0] as $match) {
+                        $match_str = $match[0];
+                        $url_ticket_id = substr($match_str, 3);
+                        $url = "<a target=\"_blank\" href=\"edit_ticket.php?id=$url_ticket_id&nr=1\">$match_str</a>";
+                        $request_detail = str_replace($match_str, $url, $request_detail);
+                    }
+                }
+
+                $archived_ticket_matches = [];
+                $archived_ticket_match_result = preg_match_all($archived_ticket_pattern, $request_detail, $archived_ticket_matches, PREG_OFFSET_CAPTURE);
+
+                if ($archived_ticket_match_result) {
+                    foreach ($archived_ticket_matches[0] as $match) {
+                        $match_str = $match[0];
+                        $url_ticket_id = substr($match_str, 3);
+                        $url = "<a target=\"_blank\" href=\"archived_ticket_view.php?id=$url_ticket_id\">$match_str</a>";
+                        $request_detail = str_replace($match_str, $url, $request_detail);
+                    }
+                }
+
+
+                $asset_tag_matches = [];
+                $asset_tag_match_result = preg_match_all($asset_tag_pattern, $request_detail, $asset_tag_matches, PREG_OFFSET_CAPTURE);
+
+                if ($asset_tag_match_result) {
+                    foreach ($asset_tag_matches[0] as $match) {
+                        $match_str = $match[0];
+                        if ($match_str[0] == 'B')
+                            $barcode = substr($match_str, 3);
+                        else
+                            $barcode = $match_str;
+
+                        // when doing https:// the : kept disappearing, not sure why
+                        // will just let it choose https automatically
+                        $url = "<a target=\"_blank\" href=\"//vault.provo.edu/nac_edit.php?barcode=$barcode\">$match_str</a>";
+
+                        $request_detail = str_replace($match_str, $url, $request_detail);
+                    }
+                }
+                echo html_entity_decode($request_detail);
+                
+                ?>
                 <?php
                 if ($_SESSION['permissions']['is_admin'] == 1) {
                 ?>
@@ -590,13 +640,8 @@ if (isset($ticket["client"])) {
                         <td data-cell="Created By"><?= $note['creator'] ?></td>
                         <td class="ticket_note" data-cell="Note Message">
                             <?php
-                            /*
-                                    May want to reference archived tickets in the future,
-                                    ignoring for now though.
-                                */
                             $ticket_pattern = "/WO#\\d{1,6}/";
                             $archived_ticket_pattern = "/WO#A-\\d{1,6}/";
-                            //$asset_tag_pattern = "/BC#\\d{6}|(?<!BC#)\\d{6}/";
                             $asset_tag_pattern = "/BC#\\d{6}/";
                             $note_data = $note['note'];
                             if ($note_data !== null) {

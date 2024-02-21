@@ -106,17 +106,17 @@ $current_page = $_SERVER['REQUEST_URI'];
     //load color scheme if set. loads light scheme if not set
     if (isset($_SESSION['color_scheme'])) {
     ?>
-        <link rel="stylesheet" type="text/css" href="/includes/css/variables-<?= $_SESSION['color_scheme'] ?>.css?v=0.1.7">
+        <link rel="stylesheet" type="text/css" href="/includes/css/variables-<?= $_SESSION['color_scheme'] ?>.css?v=0.1.18">
     <?php
     } else {
     ?>
-        <link rel="stylesheet" type="text/css" href="/includes/css/variables-light.css?v=0.1.7">
+        <link rel="stylesheet" type="text/css" href="/includes/css/variables-light.css?v=0.1.18">
     <?php
     }
     //load login page styles
     if ($_SERVER['REQUEST_URI'] === '/index.php' || $_SERVER['REQUEST_URI'] === '/') {
     ?>
-        <link rel="stylesheet" type="text/css" href="/includes/css/login-styles.css?v=0.1.01">
+        <link rel="stylesheet" type="text/css" href="/includes/css/login-styles.css?v=0.1.18">
     <?php
     }
     ?>

@@ -115,7 +115,14 @@ foreach ($oldTickets as $oldTicket) {
         insertAlertIfNotExists($database, $oldTicket, $alert7DayMessage, 'warn');
         //else if not updated in 48 hours
     } else {
-        if ($lastUpdated < $date48HoursBack) {
+        if (
+            $lastUpdated < $date48HoursBack && $oldTicket['status'] != 'vendor' &&
+            $oldTicket['status'] != 'maintenance' &&
+            $oldTicket['status'] != 'pending' &&
+            $oldTicket['priority'] != 15 &&
+            $oldTicket['priority'] != 30 &&
+            $oldTicket['priority'] != 60
+        ) {
             insertAlertIfNotExists($database, $oldTicket, $alert48Message, 'warn');
         }
     }

@@ -66,6 +66,8 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
         }
     }
+    header("Location: edit_ticket.php?id=$ticket_id");
+    exit;
 }
 
 $ticket_flagged_query = <<<STR

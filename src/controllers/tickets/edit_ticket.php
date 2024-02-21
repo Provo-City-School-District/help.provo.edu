@@ -514,7 +514,7 @@ if (isset($ticket["client"])) {
                     }
                 }
                 echo html_entity_decode($request_detail);
-                
+
                 ?>
                 <?php
                 if ($_SESSION['permissions']['is_admin'] == 1) {
@@ -977,24 +977,33 @@ if (isset($ticket["client"])) {
                 var currentTime = new Date();
                 var diffInMinutes = Math.round((currentTime - createdDate) / 60000); // in minutes
 
-                var timeSinceLastNote;
+                // Calculate the new time since the last note
+                var newTimeSinceLastNote;
                 if (diffInMinutes < 60) {
-                    timeSinceLastNote = diffInMinutes + ' minutes ago';
+                    newTimeSinceLastNote = diffInMinutes + ' minutes ago';
                 } else if (diffInMinutes < 24 * 60) {
                     var diffInHours = Math.round(diffInMinutes / 60);
-                    timeSinceLastNote = diffInHours + ' hours ago';
+                    newTimeSinceLastNote = diffInHours + ' hours ago';
                 } else {
                     var diffInDays = Math.round(diffInMinutes / (24 * 60));
-                    timeSinceLastNote = diffInDays + ' days ago';
+                    newTimeSinceLastNote = diffInDays + ' days ago';
                 }
 
-                // Update the time displayed in the corresponding 'time_since_last_note' element
-                $(this).next('.time_since_last_note').text(timeSinceLastNote);
+                // Get the current time since the last note
+                var currentTimeSinceLastNote = $(this).next('.time_since_last_note').text();
+
+                // Only update the DOM if the new time is different from the current time
+                if (newTimeSinceLastNote !== currentTimeSinceLastNote) {
+                    $(this).next('.time_since_last_note').text(newTimeSinceLastNote);
+                }
             });
         }
 
-        // Update the time every minute
-        setInterval(updateTimeSinceLastNote, 60);
+        // Run the function when the page loads
+        updateTimeSinceLastNote();
+
+        // Then run the function every 60 seconds
+        setInterval(updateTimeSinceLastNote, 60000); // 60000 milliseconds
     </script>
 <?php endif; ?>
 <?php include("footer.php"); ?>

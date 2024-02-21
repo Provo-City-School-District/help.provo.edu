@@ -999,8 +999,11 @@ if (isset($ticket["client"])) {
             });
         }
 
-        // Update the time every minute
-        setInterval(updateTimeSinceLastNote, 1000);
+        // Run the function when the page loads
+        updateTimeSinceLastNote();
+
+        // Then run the function every 60 seconds
+        setInterval(updateTimeSinceLastNote, 60000); // 60000 milliseconds
     </script>
 <?php endif; ?>
 <?php include("footer.php"); ?>

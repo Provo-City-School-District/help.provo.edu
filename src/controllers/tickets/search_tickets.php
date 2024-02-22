@@ -413,7 +413,6 @@ function sortByDate($x, $y)
                         $latest_note_str = "";
                         if ($creator != null && $note_data != null) {
                             $latest_note_str = $creator . ': ' . strip_tags(html_entity_decode(html_entity_decode($note_data)));
-                            log_app(LOG_INFO, $latest_note_str);
                         }
 
                         if (isset($row['id'])) {

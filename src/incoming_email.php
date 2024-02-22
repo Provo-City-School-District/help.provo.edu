@@ -112,7 +112,8 @@ for ($i = 1; $i <= $msg_count; $i++) {
     $text = strip_tags($text);
     $message = preg_replace('#(^\w.+:\n)?(^>.*(\n|$))+#mi', "", nl2br($text));
 
-    $msg_is_reply = isset($email_ancestor_id);
+    $isForward = str_starts_with($subject, "Fwd:");
+    $msg_is_reply = isset($email_ancestor_id) && !$isForward;
     // Parse ticket here
     $subject_split = explode(' ', $subject);
     $operating_ticket = -1;
@@ -144,7 +145,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
                 add_note_with_filters($existing_ticket_id, $sender_username, $message, 0, 0, 0, 0, true, null, $email_msg_id);
             } else {
                 $failed_email_ids[] = $i;
-                log_app(LOG_ERR, "Failed to find ancestor id in database for message \"$email_msg_id\". This shouldn't happen on a receipt email we sent out");
+                log_app(LOG_ERR, "Failed to find ancestor id in database for message \"$email_msg_id\". This shouldn't happen on a receipt email we sent out.");
             }
         }
     } else {
@@ -157,7 +158,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
             if (!in_array($i, $failed_email_ids)) {
                 $location_code = get_client_location($sender_username);
                 log_app(LOG_INFO, "Client location code is $location_code");
-                $res = create_ticket($sender_username, $subject, $message, $email_msg_id, $location_code, $receipt_ticket_id);
+                $res = create_ticket($sender_username, limitChars($subject, 100), $message, $email_msg_id, $location_code, $receipt_ticket_id);
                 if (!$res || $receipt_ticket_id == -1) {
                     log_app(LOG_ERR, "Failed to create ticket from $sender_username");
                     $failed_email_ids[] = $i;

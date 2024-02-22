@@ -15,6 +15,9 @@ $search_employee = '';
 $search_client = '';
 $search_status = '';
 $search_priority = '';
+$search_start_date = '';
+$search_end_date = '';
+$dates_searched = [];
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
@@ -27,7 +30,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $search_client = isset($_GET['search_client']) ? mysqli_real_escape_string($database, $_GET['search_client']) : '';
         $search_status = isset($_GET['search_status']) ? mysqli_real_escape_string($database, $_GET['search_status']) : '';
         $search_priority = isset($_GET['priority']) ? mysqli_real_escape_string($database, $_GET['priority']) : '';
-
+        $search_start_date = isset($_GET['start_date']) ? mysqli_real_escape_string($database, $_GET['start_date']) : '';
+        $search_end_date = isset($_GET['end_date']) ? mysqli_real_escape_string($database, $_GET['end_date']) : '';
+        $dates_searched = isset($_GET['dates']) ? $_GET['dates'] : [];
 
         // Construct the SQL query based on the selected search options
         $ticket_query = "SELECT * FROM tickets WHERE 1=1";
@@ -64,6 +69,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         if (!empty($search_status)) {
             $ticket_query .= " AND status LIKE '%$search_status%'";
         }
+        if (!empty($search_start_date) && !empty($search_end_date) && !empty($dates_searched)) {
+
+            $date_conditions = array();
+            foreach ($dates_searched as $date) {
+                $date_conditions[] = "($date BETWEEN '$search_start_date' AND '$search_end_date')";
+            }
+            $ticket_query .= ' AND (' . implode(' OR ', $date_conditions) . ')';
+        }
 
         // Query the archived_location_id values for the given sitenumber
         $archived_location_ids = array();
@@ -76,8 +89,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         }
 
         // Construct the SQL query for the old ticket database
-        $old_ticket_query = "SELECT CONCAT('A-', JOB_TICKET_ID) AS a_id,PROBLEM_TYPE_ID,SUBJECT,QUESTION_TEXT,REPORT_DATE,LAST_UPDATED,JOB_TIME,ASSIGNED_TECH_ID,ROOM,LOCATION_ID,STATUS_TYPE_ID FROM whd.job_ticket";
-        if (!empty($search_id) || !empty($search_name) || !empty($search_location) || !empty($search_employee) || !empty($search_client) || !empty($search_status)) {
+        $old_ticket_query = "SELECT CONCAT('A-', JOB_TICKET_ID) AS a_id,PROBLEM_TYPE_ID,SUBJECT,QUESTION_TEXT,REPORT_DATE,LAST_UPDATED,JOB_TIME,ASSIGNED_TECH_ID,ROOM,LOCATION_ID,STATUS_TYPE_ID,CLOSE_DATE FROM whd.job_ticket";
+        if (!empty($search_id) || !empty($search_name) || !empty($search_location) || !empty($search_employee) || !empty($search_client) || !empty($search_status) || !empty($search_status) || !empty($search_priority) || !empty($dates_searched) || !empty($search_end_date) || !empty($search_start_date)) {
             $old_ticket_query .= " WHERE 1=1";
         } else {
             $old_ticket_query .= " WHERE 1=0";
@@ -124,7 +137,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         if (!empty($search_status)) {
             $old_ticket_query .= " AND STATUS_TYPE_ID  LIKE '%$search_status%'";
         }
+        if (!empty($search_start_date) && !empty($search_end_date) && !empty($dates_searched)) {
 
+            $date_conditions = array();
+            foreach ($dates_searched as $date) {
+                switch ($date) {
+                    case 'due_date':
+                        $date = 'CLOSE_DATE';
+                        break;
+                    case 'created':
+                        $date = 'REPORT_DATE';
+                        break;
+                    case 'last_updated':
+                        $date = 'LAST_UPDATED';
+                        break;
+                    default:
+                        $date = null;
+                }
+                $date_conditions[] = "($date BETWEEN '$search_start_date' AND '$search_end_date')";
+            }
+            $old_ticket_query .= ' AND (' . implode(' OR ', $date_conditions) . ')';
+        }
         // Execute the SQL query to search for matching tickets
         $ticket_result = mysqli_query($database, $ticket_query);
         $old_ticket_result = mysqli_query($swdb, $old_ticket_query);
@@ -310,7 +343,21 @@ function sortByDate($x, $y)
                 <option value="vendor" <?= ($search_status == 'vendor' || $search_status == 12) ? ' selected' : '' ?>>Vendor</option>
                 <option value="maintenance" <?= ($search_status == 'maintenance' || $search_status == 11) ? ' selected' : '' ?>>Maintenance</option>
             </select>
-        </div><br>
+        </div>
+
+        <div>
+
+            <label for="start_date">Start Date:</label>
+            <input type="date" id="start_date" name="start_date" value="<?php echo isset($_GET['start_date']) ? $_GET['start_date'] : ''; ?>">
+
+            <label for="end_date">End Date:</label>
+            <input type="date" id="end_date" name="end_date" value="<?php echo isset($_GET['end_date']) ? $_GET['end_date'] : ''; ?>">
+
+            <input type="checkbox" name="dates[]" value="created" <?php echo (isset($_GET['dates']) && in_array('created', $_GET['dates'])) ? 'checked' : ''; ?>> Created Date
+            <input type="checkbox" name="dates[]" value="last_updated" <?php echo (isset($_GET['dates']) && in_array('last_updated', $_GET['dates'])) ? 'checked' : ''; ?>> Last Updated
+            <input type="checkbox" name="dates[]" value="due_date" <?php echo (isset($_GET['dates']) && in_array('due_date', $_GET['dates'])) ? 'checked' : ''; ?>> Due Date
+            <!-- Add more checkboxes as needed -->
+        </div>
         <button type="submit" class="btn btn-primary">Search</button>
         <br><br>
         <button type="reset" id="resetBtn" class="btn btn-secondary">Reset</button>
@@ -365,7 +412,6 @@ function sortByDate($x, $y)
                         $latest_note_str = "";
                         if ($creator != null && $note_data != null) {
                             $latest_note_str = $creator . ': ' . strip_tags(html_entity_decode(html_entity_decode($note_data)));
-                            log_app(LOG_INFO, $latest_note_str);
                         }
 
                         if (isset($row['id'])) {
@@ -528,7 +574,7 @@ function sortByDate($x, $y)
                             <td data-cell="Priority"></td>
                             <td data-cell="Created"><?= $row['REPORT_DATE'] ?></td>
                             <td data-cell="Last Updated"><?= $row['LAST_UPDATED'] ?></td>
-                            <td data-cell="Due"></td>
+                            <td data-cell="Due">Date Close: <?= $row['CLOSE_DATE'] ?></td>
                         <?php
                         } else {
                             echo "Error";

@@ -158,7 +158,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             }
             $old_ticket_query .= ' AND (' . implode(' OR ', $date_conditions) . ')';
         }
-        print_r($old_ticket_query);
         // Execute the SQL query to search for matching tickets
         $ticket_result = mysqli_query($database, $ticket_query);
         $old_ticket_result = mysqli_query($swdb, $old_ticket_query);

@@ -225,7 +225,7 @@ $current_page = $_SERVER['REQUEST_URI'];
                         mysqli_stmt_close($flagged_stmt);
                     ?>
 
-                        <li><a href="/tickets.php">Assigned Tickets (<?= $num_assigned_tickets ?>)</a></li>
+                        <li><a href="/tickets.php">My Tickets (<?= $num_assigned_tickets ?>)</a></li>
 
                         <?php
                         if ($num_flagged_tickets != 0) {

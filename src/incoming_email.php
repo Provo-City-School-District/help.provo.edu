@@ -124,7 +124,7 @@ function add_note_with_filters(
             $receipt_ticket_id = -1;
             // Check if the user is in the local database. If the value isn't in failed_email_ids, they exist in local db
             if (!in_array($i, $failed_email_ids)) {
-                $res = create_ticket($sender_username, $subject, $message, $email_msg_id, $receipt_ticket_id);
+                $res = create_ticket($sender_username, limitChars($subject, 100), $message, $email_msg_id, $receipt_ticket_id);
                 if (!$res || $receipt_ticket_id == -1) {
                     log_app(LOG_ERR, "Failed to create ticket from $sender_username");
                     $failed_email_ids[] = $i;

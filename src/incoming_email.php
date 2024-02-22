@@ -158,7 +158,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
             if (!in_array($i, $failed_email_ids)) {
                 $location_code = get_client_location($sender_username);
                 log_app(LOG_INFO, "Client location code is $location_code");
-                $res = create_ticket($sender_username, $subject, $message, $email_msg_id, $location_code, $receipt_ticket_id);
+                $res = create_ticket($sender_username, limitChars($subject, 100), $message, $email_msg_id, $location_code, $receipt_ticket_id);
                 if (!$res || $receipt_ticket_id == -1) {
                     log_app(LOG_ERR, "Failed to create ticket from $sender_username");
                     $failed_email_ids[] = $i;

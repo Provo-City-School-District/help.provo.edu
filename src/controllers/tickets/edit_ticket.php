@@ -211,7 +211,9 @@ if (isset($ticket["client"])) {
         <div id="search-results"></div>
     </div>
     <!-- Form for updating ticket information -->
-    <button class="new-note-button button right">Add Note</button>
+    <div class="right">
+        <button class="new-note-button button">Add Note</button>
+    </div>
     <form id="updateTicketForm" method="POST" action="update_ticket.php">
         <!-- Add a submit button to update the information -->
         <input id="green-button" type="submit" value="Update Ticket">
@@ -771,7 +773,7 @@ if (isset($ticket["client"])) {
                         <textarea id="note" name="note" class="tinyMCEtextarea"></textarea>
                     </div>
                     <?php
-                    if ($_SESSION['permissions']['is_tech']) {
+                    if (session_is_tech()) {
                     ?>
                         <div>
                             <label for="visible_to_client">Visible to Client:</label>

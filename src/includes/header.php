@@ -99,7 +99,7 @@ $current_page = $_SERVER['REQUEST_URI'];
                                 $left_header_stmt->close();
 
                                 ?>>
-    <link rel="stylesheet" href="/includes/css/main.css?v=00.01.18">
+    <link rel="stylesheet" href="/includes/css/main.css?v=00.01.19">
     <link rel="icon" type="image/png" href="/includes/img/favicons/favicon-16x16.png" sizes="16x16">
 
     <?php

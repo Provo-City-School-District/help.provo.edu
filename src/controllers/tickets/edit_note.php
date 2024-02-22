@@ -1,6 +1,6 @@
 <?php
 require_once("block_file.php");
-
+require("ticket_utils.php");
 require_once('init.php');
 require_once('helpdbconnect.php');
 
@@ -104,49 +104,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <label for="note">Note:</label>
     <textarea id="note" name="note" class="tinyMCEtextarea"><?= $note['note'] ?></textarea><br>
 
-    <h4>Work Time</h4>
-                <div>
-                    <label for="work_hours">Hours:</label>
-                    <input id="work_hours" name="work_hours" type="number" value="<?= $note['work_hours'] ?>" required>
+    <?php if (session_is_tech()): ?>
+        <h4>Work Time</h4>  
+        <div>
+            <label for="work_hours">Hours:</label>
+            <input id="work_hours" name="work_hours" type="number" value="<?= $note['work_hours'] ?>" required>
 
-                    <label for="work_minutes">Minutes:</label>
-                    <input id="work_minutes" name="work_minutes" type="number" value="<?= $note['work_minutes'] ?>" required>
-                </div>
-                <h4>Travel Time</h4>
-                <div>
-                    <label for="travel_hours">Hours:</label>
-                    <input id="travel_hours" name="travel_hours" type="number" value="<?= $note['travel_hours'] ?>" required>
+            <label for="work_minutes">Minutes:</label>
+            <input id="work_minutes" name="work_minutes" type="number" value="<?= $note['work_minutes'] ?>" required>
+        </div>
+        <h4>Travel Time</h4>
+        <div>
+            <label for="travel_hours">Hours:</label>
+            <input id="travel_hours" name="travel_hours" type="number" value="<?= $note['travel_hours'] ?>" required>
 
-                    <label for="travel_minutes">Minutes:</label>
-                    <input id="travel_minutes" name="travel_minutes" type="number" value="<?= $note['travel_minutes'] ?>" required>
-                </div>
+            <label for="travel_minutes">Minutes:</label>
+            <input id="travel_minutes" name="travel_minutes" type="number" value="<?= $note['travel_minutes'] ?>" required>
+        </div>
 
-                <div>
-                    <label for="total_time">Total Time in Minutes:</label>
-                    <input id="total_time" name="total_time" type="number" readonly>
-                </div>
+        <div>
+            <label for="total_time">Total Time in Minutes:</label>
+            <input id="total_time" name="total_time" type="number" readonly>
+        </div>
+        <label for="visible_to_client">Visible to Client:</label>
+        <input type="checkbox" id="visible_to_client" name="visible_to_client" <?php
+            if ($note['visible_to_client'] == 1) {
+                echo "checked=\"checked\"";
+            }
+        ?> value="true"><br>
+            <label for="date_override_enable">Date Override:</label>
+            <input <?php 
+                if ($note['date_override'] != null) 
+                    echo "checked=\"checked\""; ?> type="checkbox" id="date_override_enable" name="date_override_enable">
+            <input <?php 
+                if ($note['date_override'] == null) 
+                    echo "style=\"display:none;\""; ?> id="date_override_input" type="datetime-local" name="date_override" value="<?= $note['date_override']?>"><br>
+    <?php else: ?>
+        <input type="hidden" id="visible_to_client" name="visible_to_client" value="1">
+        <input id="total_time" name="total_time" type="hidden" value="0">
+        <input id="travel_minutes" name="travel_minutes" type="hidden" value="0" required>
+        <input id="travel_hours" name="travel_hours" type="hidden" value="0" required>
+        <input id="work_minutes" name="work_minutes" type="hidden" value="0" required>
+        <input id="work_hours" name="work_hours" type="hidden" value="0" required>
+    <?php endif; ?>
     <!-- TODO: Hide the visible to client option for non admins,
                 forms make this a pain because it needs to submit a value if false, system currentlyelies on not receiving
                 a value to assume no (thus hiding it from client) 
             
                 Although non admins maybe shouldn't be able to edit notes anyway?
             -->
-    <label for="visible_to_client">Visible to Client:</label>
-    <input type="checkbox" id="visible_to_client" name="visible_to_client" <?php
-                                                                            if ($note['visible_to_client'] == 1) {
-                                                                                echo "checked=\"checked\"";
-                                                                            }
-                                                                            ?> value="true"><br>
-    <label for="date_override_enable">Date Override:</label>
-    <input <?php 
-        if ($note['date_override'] != null) 
-            echo "checked=\"checked\""; ?> type="checkbox" id="date_override_enable" name="date_override_enable">
-    <input <?php 
-        if ($note['date_override'] == null) 
-            echo "style=\"display:none;\""; ?> id="date_override_input" type="datetime-local" name="date_override" value="<?= $note['date_override']?>"><br>
     <input type="submit" value="Save Note">
 </form>
 <script src="/includes/js/jquery-3.7.1.min.js"></script>
+<?php if (session_is_tech()): ?>
 <script>
     $('input[name=date_override_enable]').on('change', function() {
         if (!this.checked) {
@@ -182,4 +192,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     });
 </script>
+<?php endif; ?>
 <?php include("footer.php"); ?>

@@ -22,7 +22,7 @@ function endsWith($haystack, $needle)
 function limitChars($string, $limit)
 {
     if (strlen($string) > $limit) {
-        $string = substr($string, 0, $limit) . '...';
+        $string = substr($string, 0, $limit - 3) . '...';
     }
     return $string;
 }

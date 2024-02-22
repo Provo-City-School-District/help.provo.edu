@@ -102,6 +102,16 @@ if (!$result) {
     return_to_ticket_with_status("failed to update merge status on source ticket", "error", $ticket_id_source);
 }
 
+// Copy attachments from old ticket to new one
+// Point old ticket towards new one
+$complete_merge_query = "UPDATE tickets SET attachment_path = (SELECT attachment_path FROM tickets WHERE id = ?) WHERE id = ?";
+$complete_merge_stmt = mysqli_prepare($database, $complete_merge_query);
+mysqli_stmt_bind_param($complete_merge_stmt, "ii", $ticket_id_source, $ticket_id_host);
+$result = mysqli_stmt_execute($complete_merge_stmt);
+if (!$result) {
+    log_app(LOG_ERR, "Failed to copy attachment paths from source ticket $ticket_id_source. Ignoring...");
+}
+
 $username = $_SESSION["username"];
 
 // Create note on host ticket

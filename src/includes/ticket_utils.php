@@ -182,7 +182,7 @@ function create_ticket(string $client, string $subject, string $content, string 
     global $database;
 
     $client_clean = trim(htmlspecialchars($client));
-    $subject_clean = trim(htmlspecialchars($subject));
+    $subject_clean = limitChars(trim(htmlspecialchars($subject)), 100);
     $content_clean = trim(htmlspecialchars($content));
 
     // Create an SQL INSERT query

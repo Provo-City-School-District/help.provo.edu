@@ -103,16 +103,40 @@ if (!$result) {
 }
 
 // Copy attachments from old ticket to new one
-// Point old ticket towards new one
-/*
-$complete_merge_query = "UPDATE tickets SET attachment_path = (SELECT attachment_path FROM tickets WHERE id = ?) WHERE id = ?";
-$complete_merge_stmt = mysqli_prepare($database, $complete_merge_query);
-mysqli_stmt_bind_param($complete_merge_stmt, "ii", $ticket_id_source, $ticket_id_host);
-$result = mysqli_stmt_execute($complete_merge_stmt);
+
+$attachment_source_query = "SELECT attachment_path FROM tickets WHERE id = ?";
+$attachment_source_stmt = mysqli_prepare($database, $attachment_source_query);
+mysqli_stmt_bind_param($attachment_source_stmt, "i", $ticket_id_source);
+$result = mysqli_stmt_execute($attachment_source_stmt);
 if (!$result) {
     log_app(LOG_ERR, "Failed to copy attachment paths from source ticket $ticket_id_source. Ignoring...");
 }
-*/
+$data_source = mysqli_fetch_assoc(mysqli_stmt_get_result($attachment_source_stmt));
+
+$attachment_host_query = "SELECT attachment_path FROM tickets WHERE id = ?";
+$attachment_host_stmt = mysqli_prepare($database, $attachment_host_query);
+mysqli_stmt_bind_param($attachment_host_stmt, "i", $ticket_id_host);
+$result = mysqli_stmt_execute($attachment_host_stmt);
+if (!$result) {
+    log_app(LOG_ERR, "Failed to copy attachment paths from source ticket $ticket_id_host. Ignoring...");
+}
+$data_host = mysqli_fetch_assoc(mysqli_stmt_get_result($attachment_host_stmt));
+
+$attachment_path_source = $data_source["attachment_path"];
+$attachment_path_host = $data_host["attachment_path"];
+
+$attachment_path_total = explode(',', $attachment_path_source.$attachment_path_host);
+$attachment_path_new = implode(',', $attachment_path_total);
+
+
+$attachment_insert_query = "UPDATE tickets SET attachment_path = ? WHERE id = ?";
+$attachment_insert_stmt = mysqli_prepare($database, $attachment_insert_query);
+mysqli_stmt_bind_param($attachment_insert_stmt, "si", $attachment_path_new, $ticket_id_host);
+$result = mysqli_stmt_execute($attachment_insert_stmt);
+if (!$result) {
+    log_app(LOG_ERR, "Failed to merged combined attachment paths into $ticket_id_host. Ignoring...");
+}
+
 $username = $_SESSION["username"];
 
 // Create note on host ticket

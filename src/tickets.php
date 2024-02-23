@@ -33,6 +33,7 @@ $client_ticket_query = <<<STR
     FROM tickets
     WHERE status NOT IN ('Closed', 'Resolved')
     AND client = '$username'
+    AND employee != '$username'
     ORDER BY id ASC
     STR;
 $client_ticket_result = mysqli_query($database, $client_ticket_query);

@@ -94,7 +94,7 @@ if (isset($_GET['code'])) {
         }
 
         // Log the successful login
-        $loginMessage = "Successful login using Google SSO for username: " .  $input_username . " IP: " . $_SERVER["REMOTE_ADDR"] . " at " . date("Y-m-d H:i:s") . "\n";
+        $loginMessage = "Successful login using Google SSO for username: " .  $username . " IP: " . $_SERVER["REMOTE_ADDR"] . " at " . date("Y-m-d H:i:s") . "\n";
         error_log($loginMessage, 0);
 
         if ($_SESSION['requested_page']) {

@@ -52,6 +52,7 @@ services:
       - 8085:80
     environment:
       PMA_HOST: help-db
+      UPLOAD_LIMIT: 5000000000
     depends_on:
       - help-db
     networks:

@@ -140,16 +140,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.333.1",
+            "version": "v0.336.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "f82f631755771082cc9070592b82596b359ce6da"
+                "reference": "3b854a073508a6d4887319b1101647501861ab9a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/f82f631755771082cc9070592b82596b359ce6da",
-                "reference": "f82f631755771082cc9070592b82596b359ce6da",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/3b854a073508a6d4887319b1101647501861ab9a",
+                "reference": "3b854a073508a6d4887319b1101647501861ab9a",
                 "shasum": ""
             },
             "require": {
@@ -178,22 +178,22 @@
             ],
             "support": {
                 "issues": "https://github.com/googleapis/google-api-php-client-services/issues",
-                "source": "https://github.com/googleapis/google-api-php-client-services/tree/v0.333.1"
+                "source": "https://github.com/googleapis/google-api-php-client-services/tree/v0.336.0"
             },
-            "time": "2024-01-29T01:16:44+00:00"
+            "time": "2024-02-18T01:04:15+00:00"
         },
         {
             "name": "google/auth",
-            "version": "v1.35.0",
+            "version": "v1.37.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-auth-library-php.git",
-                "reference": "6e9c9fd4e2bbd7042f50083076346e4a1eff4e4b"
+                "reference": "5f16f67375b6f202b857183d7ef4e076acd7d4aa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/6e9c9fd4e2bbd7042f50083076346e4a1eff4e4b",
-                "reference": "6e9c9fd4e2bbd7042f50083076346e4a1eff4e4b",
+                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/5f16f67375b6f202b857183d7ef4e076acd7d4aa",
+                "reference": "5f16f67375b6f202b857183d7ef4e076acd7d4aa",
                 "shasum": ""
             },
             "require": {
@@ -236,9 +236,9 @@
             "support": {
                 "docs": "https://googleapis.github.io/google-auth-library-php/main/",
                 "issues": "https://github.com/googleapis/google-auth-library-php/issues",
-                "source": "https://github.com/googleapis/google-auth-library-php/tree/v1.35.0"
+                "source": "https://github.com/googleapis/google-auth-library-php/tree/v1.37.0"
             },
-            "time": "2024-02-01T20:41:08+00:00"
+            "time": "2024-02-21T17:03:52+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -1346,16 +1346,16 @@
         },
         {
             "name": "tinymce/tinymce",
-            "version": "6.8.2",
+            "version": "6.8.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tinymce/tinymce-dist.git",
-                "reference": "b0073db409746748af4fc06fbee337bb99f462d9"
+                "reference": "01d1959b1200e0b872ea078e59ea5abfb5c54100"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tinymce/tinymce-dist/zipball/b0073db409746748af4fc06fbee337bb99f462d9",
-                "reference": "b0073db409746748af4fc06fbee337bb99f462d9",
+                "url": "https://api.github.com/repos/tinymce/tinymce-dist/zipball/01d1959b1200e0b872ea078e59ea5abfb5c54100",
+                "reference": "01d1959b1200e0b872ea078e59ea5abfb5c54100",
                 "shasum": ""
             },
             "type": "component",
@@ -1399,9 +1399,9 @@
                 "wysiwyg"
             ],
             "support": {
-                "source": "https://github.com/tinymce/tinymce-dist/tree/6.8.2"
+                "source": "https://github.com/tinymce/tinymce-dist/tree/6.8.3"
             },
-            "time": "2023-12-11T03:21:56+00:00"
+            "time": "2024-02-08T23:33:30+00:00"
         }
     ],
     "packages-dev": [],

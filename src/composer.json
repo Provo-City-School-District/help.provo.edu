@@ -1,7 +1,7 @@
 {
-    "require": {
-        "tinymce/tinymce": "^6.8.2",
-        "phpmailer/phpmailer": "^6.9.1",
-        "google/apiclient": "^2.15.3"
-    }
+  "require": {
+    "tinymce/tinymce": "^6.8.2",
+    "phpmailer/phpmailer": "^6.9.1",
+    "google/apiclient": "^2.15.3"
+  }
 }

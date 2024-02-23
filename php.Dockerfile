@@ -66,6 +66,9 @@ RUN chmod +x /root/run_ticket_alerts.sh
 COPY run_email_check.sh /root/run_email_check.sh
 RUN chmod +x /root/run_email_check.sh
 
+COPY run_close_resolved.sh /root/run_close_resolved.sh
+RUN chmod +x /root/run_close_resolved.sh
+
 # Create the uploads directory and set permissions
 RUN mkdir -p /var/www/html/uploads && chown -R www-data:www-data /var/www/html/uploads && chmod -R 775 /var/www/html/uploads
 RUN mkdir -p /var/php/sessions && chown -R www-data:www-data /var/php/sessions && chmod -R 770 /var/www/html/uploads

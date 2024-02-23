@@ -3,3 +3,4 @@
 #Run Ticket Alerts every hour
 0 * * * * /root/run_ticket_alerts.sh >> /var/log/cron.log 2>&1
 * * * * * /root/run_email_check.sh >> /var/log/cron.log 2>&1
+0 0 * * * /root/run_close_resolved.sh >> /var/log/cron.log 2>&1

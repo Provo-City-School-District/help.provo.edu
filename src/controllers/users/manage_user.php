@@ -196,10 +196,10 @@ Username: <?= $username ?><br>
             <label for="can_edit_tickets">Can Edit Tickets:</label>
             <input type="checkbox" id="can_edit_tickets" name="can_edit_tickets" <?= $can_edit_tickets == 1 ? 'checked' : '' ?>>
         </div>
-        <div>
+        <!-- <div>
             <label for="can_delete_tickets">Can Delete Tickets:</label>
             <input type="checkbox" id="can_delete_tickets" name="can_delete_tickets" <?= $can_delete_tickets == 1 ? 'checked' : '' ?>>
-        </div>
+        </div> -->
     </div>
 
     <input type="submit" value="Update User">

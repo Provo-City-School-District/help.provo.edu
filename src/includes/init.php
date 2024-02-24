@@ -12,6 +12,9 @@ function log_app(int $priority, string $message)
 }
 
 
+// Set the inactivity time
+$inactivity_time = 60 * 60; // 60 minutes
+
 
 // Update the last_timestamp session variable
 $_SESSION['last_timestamp'] = time();

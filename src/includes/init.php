@@ -12,3 +12,6 @@ function log_app(int $priority, string $message)
 }
 
 
+
+// Update the last_timestamp session variable
+$_SESSION['last_timestamp'] = time();

@@ -177,3 +177,34 @@ function isUserATech($usernameToCheck, $databaseConnection)
 
     return $userData['is_tech'] == 1;
 }
+
+function log_app(int $priority, string $message)
+{
+    openlog("appLog", LOG_PID | LOG_PERROR, LOG_LOCAL0);
+    syslog($priority, $message);
+    closelog();
+}
+function get_last_login_time($username)
+{
+    global $database;
+    // Prepare a SQL statement
+    $query_stmt = $database->prepare('SELECT last_login FROM users WHERE username = ?');
+
+    // Bind the username parameter
+    $query_stmt->bind_param('s', $username);
+
+    // Execute the statement
+    $query_stmt->execute();
+
+    // Bind the result to a variable
+    $query_stmt->bind_result($last_login);
+
+    // Fetch the result
+    $query_stmt->fetch();
+
+    // Close the statement
+    $query_stmt->close();
+
+    // Return the last login time
+    return $last_login;
+}

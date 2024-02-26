@@ -58,7 +58,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             $ticket_query .= " AND location LIKE '%$search_location%'";
         }
         if (!empty($search_employee)) {
-            $ticket_query .= " AND employee LIKE '%$search_employee%'";
+            if ($search_employee == 'Unassigned') {
+                $ticket_query .= " AND (employee IS NULL OR employee = 'unassigned')";
+            } else {
+                $ticket_query .= " AND employee LIKE '%$search_employee%'";
+            }
         }
         if (!empty($search_priority)) {
             $ticket_query .= " AND priority LIKE '$search_priority'";
@@ -316,6 +320,7 @@ function sortByDate($x, $y)
             <!-- <input type="text" class="form-control" id="search_employee" name="search_employee" value="<?php echo htmlspecialchars($search_employee); ?>"> -->
             <select id="search_employee" name="search_employee">
                 <option value="" selected></option>
+                <option value="Unassigned" <?= $search_employee == 'Unassigned' ? 'selected' : '' ?>>Unassigned</option>
                 <?php foreach ($techusernames as $techuser) : ?>
                     <option value="<?= $techuser ?>" <?= $search_employee === $techuser ? 'selected' : '' ?>><?= $techuser ?></option>
                 <?php endforeach; ?>

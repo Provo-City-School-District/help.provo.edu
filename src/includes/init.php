@@ -11,8 +11,9 @@ $inactivity_time = 60 * 60; // 60 minutes
 
 // Check if the last_timestamp session variable is set
 if (isset($_SESSION['last_timestamp'])) {
+    $current_time = time();
     // Calculate the inactivity time
-    $inactivity = time() - $_SESSION['last_timestamp'];
+    $inactivity = $current_time - $_SESSION['last_timestamp'];
 
     // Print the current time, the last timestamp, and the inactivity time
     log_app(LOG_INFO, 'Current time: ' . time());

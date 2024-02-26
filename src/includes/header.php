@@ -74,7 +74,7 @@ $current_page = $_SERVER['REQUEST_URI'];
     <title>Help For Provo City School District</title>
     <link rel="stylesheet" href="/includes/js/dataTables-1.13.7/jquery.dataTables.min.css">
     <?php
-    if ($_SESSION['username']) {
+    if (isset($_SESSION['username'])) {
     ?>
         <link rel="stylesheet" href=<?php
                                     $left_header_result = null;

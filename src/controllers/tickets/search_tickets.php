@@ -58,7 +58,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             $ticket_query .= " AND location LIKE '%$search_location%'";
         }
         if (!empty($search_employee)) {
-            $ticket_query .= " AND employee LIKE '%$search_employee%'";
+            if ($search_employee == 'Unassigned') {
+                $ticket_query .= " AND (employee IS NULL OR employee = 'unassigned')";
+            } else {
+                $ticket_query .= " AND employee LIKE '%$search_employee%'";
+            }
         }
         if (!empty($search_priority)) {
             $ticket_query .= " AND priority LIKE '$search_priority'";

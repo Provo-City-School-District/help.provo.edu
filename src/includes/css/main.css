@@ -1,5 +1,5 @@
 @import url("reset.css?v=2.0");
-@import url("variables-common.css?v=1.01.0");
+@import url("variables-common.css?v=1.01.2");
 @import url("headings.css?v=1.01.0");
 @import url("fonts.css?v=1.01.0");
 
@@ -139,7 +139,8 @@ input[type=submit] {
 	background: linear-gradient(to bottom, var(--header-grad-start), var(--header-grad-end) 50%, var(--header-grad-end) 55%, var(--header-grad-start));
 	display: grid;
 	grid-template-columns: 1fr;
-	max-height: 120px;
+	gap: 1em;
+	max-height: 160px;
 	padding: 1em;
 	justify-items: center;
 }
@@ -421,7 +422,7 @@ select {
 /* =============================== Responsive Styles =============================== */
 @media(min-width: 800px) {
 	#mainHeader {
-		grid-template-columns: 175px 1fr;
+		grid-template-columns: 175px 1fr 250px;
 		align-items: center;
 		justify-items: var(--header-location);
 	}

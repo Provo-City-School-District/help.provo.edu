@@ -1,10 +1,11 @@
 <?php
-include_once('functions.php');
-include_once('helpdbconnect.php');
 // Checks if Session exists, if not starts one.
 if (!session_id()) {
     session_start();
 }
+include_once('functions.php');
+include_once('helpdbconnect.php');
+
 
 // Set the inactivity time
 $inactivity_time = 60 * 60; // 60 minutes

@@ -318,12 +318,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $template_client->site_url = getenv('ROOTDOMAIN');
         $template_client->description = html_entity_decode($updatedDescription);
 
-        $email_tech_res = send_email_and_add_to_ticket($ticket_id, $assigned_tech_email, $ticket_subject, $template_tech, $tech_cc_emails, $tech_bcc_emails);
+        $select_attachments_query = "SELECT attachment_path from help.tickets WHERE id = ?";
+        $stmt = mysqli_prepare($database, $select_attachments_query);
+        mysqli_stmt_bind_param($stmt, "i", $ticket_id);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
+        //log_app(LOG_INFO, var_dump($result));
+        if (!$result) {
+            log_app(LOG_ERR, "Failed to get old attachment_path");
+        }
+        mysqli_stmt_close($stmt);
+    
+        $attachment_paths = explode(',', $result["attachment_path"]);
+
+        $email_tech_res = send_email_and_add_to_ticket($ticket_id, $assigned_tech_email, $ticket_subject, $template_tech, $tech_cc_emails, $tech_bcc_emails, $attachment_paths);
 
         if ($client_email == $assigned_tech_email)
-            $email_client_res = send_email_and_add_to_ticket($ticket_id, getenv("GMAIL_USER"), $ticket_subject, $template_client, $client_cc_emails, $client_bcc_emails);
+            $email_client_res = send_email_and_add_to_ticket($ticket_id, getenv("GMAIL_USER"), $ticket_subject, $template_client, $client_cc_emails, $client_bcc_emails, $attachment_paths);
         else
-            $email_client_res = send_email_and_add_to_ticket($ticket_id, $client_email, $ticket_subject, $template_client, $client_cc_emails, $client_bcc_emails);
+            $email_client_res = send_email_and_add_to_ticket($ticket_id, $client_email, $ticket_subject, $template_client, $client_cc_emails, $client_bcc_emails, $attachment_paths);
 
         if (!($email_tech_res && $email_client_res)) {
             $error = 'Error sending email to assigned tech and CC/BCC';

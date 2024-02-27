@@ -133,9 +133,11 @@ if (isset($_FILES['attachment'])) {
                     if (move_uploaded_file($tmpFilePath, $absolute_path)) {
                         // File was uploaded successfully, insert the file path into the database
 
-                        $query = "UPDATE tickets SET attachment_path = CONCAT(attachment_path, ',', ?) WHERE id = ?";
+                        $query = "UPDATE tickets SET attachment_path = 
+                        (CASE WHEN attachment_path IS null OR attachment_path = '' THEN ? ELSE CONCAT(attachment_path, ',', ?) END)
+                        WHERE id = ?";
                         $stmt = mysqli_prepare($database, $query);
-                        mysqli_stmt_bind_param($stmt, "si", $newFilePath, $ticket_id);
+                        mysqli_stmt_bind_param($stmt, "ssi", $newFilePath, $newFilePath, $ticket_id);
                         mysqli_stmt_execute($stmt);
                     } else {
                         $failed_files[] = [

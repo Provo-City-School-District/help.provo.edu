@@ -25,6 +25,7 @@ function send_email(
     string $message,
     array $cc_recipients = [],
     array $bcc_recipients = [],
+    array $attachments = [],
     string &$messageID = null
     )
 {
@@ -73,6 +74,16 @@ function send_email(
             }
         }
 
+        if ($attachments) {
+            foreach ($attachments as $attachment) {
+                // Takes direct path as argument
+                if ($attachment) {
+                    $mailer->addAttachment(from_root($attachment));
+                    log_app(LOG_INFO, "attachment: $attachment");
+                }
+            }
+        }
+
         // Send the email
         $mailer->send();
         $messageID = $mailer->getLastMessageID();
@@ -92,6 +103,7 @@ function send_email_and_add_to_ticket(
     string $message,
     array $cc_recipients = [],
     array $bcc_recipients = [],
+    array $attachments = []
 )
 {
     global $database;
@@ -99,7 +111,7 @@ function send_email_and_add_to_ticket(
     $res2 = false;
     
     $messageID = null;
-    $res1 = send_email($recipient, $subject, $message, $cc_recipients, $bcc_recipients, $messageID);
+    $res1 = send_email($recipient, $subject, $message, $cc_recipients, $bcc_recipients, $attachments, $messageID);
     if (isset($messageID))
         $res2 = add_ticket_msg_id_mapping($messageID, $ticket_id);
 

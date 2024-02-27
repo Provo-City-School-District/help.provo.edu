@@ -51,7 +51,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
     $from_host = strtolower($header->from[0]->host);
     $sender_username = $header->from[0]->mailbox;
     $sender_email = strtolower($sender_username.'@'.$from_host);
-    $subject = $header->subject;
+    $subject = isset($header->subject) ? $header->subject : "";
 
     // Ignore blacklisted emails
     if (in_array($sender_email, $blacklisted_emails)) {
@@ -301,13 +301,8 @@ function find_and_upload_attachments(int $ticket_id, IMAP\Connection $mbox, int 
                 $filename = date('Ymd_Hi').$attachment['name'];
 
 
-            $folder = from_root("/uploads");
-            if (!file_exists(from_root("/uploads"))) {
-                mkdir(from_root("/uploads"), 0766, true);
-            }
-
             $uploadPath = "/uploads/{$filename}";
-            log_app(LOG_INFO, from_root($uploadPath));
+            log_app(LOG_INFO, "Uploading image to ".from_root($uploadPath));
             $fp = fopen(from_root($uploadPath), "w+");
             fwrite($fp, $attachment['attachment']);
             fclose($fp);

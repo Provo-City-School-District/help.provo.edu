@@ -212,7 +212,7 @@ if (isset($ticket["client"])) {
     </div>
     <!-- Form for updating ticket information -->
     <div class="right">
-        <button class="new-note-button button">Add Note</button>
+        <button class="new-note-button button">New Note</button>
     </div>
     <form id="updateTicketForm" method="POST" action="update_ticket.php">
         <!-- Add a submit button to update the information -->
@@ -606,7 +606,11 @@ if (isset($ticket["client"])) {
     ?>
     <!-- Loop through the notes and display them -->
     <?php if ($ticket['notes'] !== null) : ?>
+
+
+
         <h2>Notes</h2>
+        <button class="new-note-button button">New Note</button><br>
         <div id="note-table" class="note">
             <table class="ticketsTable">
                 <tr>
@@ -764,7 +768,7 @@ if (isset($ticket["client"])) {
         <div id="new-note-form-background">
             <div id="new-note-form" style="display: none;">
                 <div id="new-note-form-header"><span id="new-note-form-close">&times;</span></div>
-                <h3>Add Note</h3>
+                <h3>New Note</h3>
                 <form id="note-submit" method="post" action="add_note_handler.php">
                     <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
                     <input type="hidden" name="username" value="<?= $_SESSION['username'] ?>">

@@ -4,6 +4,8 @@ require_once('init.php');
 // includes functions file
 include_once('functions.php');
 include_once('helpdbconnect.php');
+require("time_utils.php");
+
 // Function to check if the current URL matches any of the specified URLs
 function isCurrentPage($urls)
 {
@@ -72,40 +74,9 @@ $current_page = $_SERVER['REQUEST_URI'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Help For Provo City School District</title>
+    <meta http-equiv="refresh" content="3600">
     <link rel="stylesheet" href="/includes/js/dataTables-1.13.7/jquery.dataTables.min.css">
-    <?php
-    if (isset($_SESSION['username'])) {
-    ?>
-        <link rel="stylesheet" href=<?php
-                                    $left_header_result = null;
-
-                                    $left_header_query = "SELECT prefers_left_header FROM help.users WHERE username = ?";
-                                    $left_header_stmt = $database->prepare($left_header_query);
-                                    $left_header_stmt->bind_param("s", $_SESSION["username"]);
-                                    if (!$left_header_stmt->execute()) {
-                                        log_app(LOG_ERR, "Failed to get prefers_left_header");
-                                    }
-
-                                    $left_header_result = $left_header_stmt->get_result();
-                                    if (!isset($left_header_result)) {
-                                        log_app(LOG_ERR, "Failed to get prefers_left_header result on user {$_SESSION['username']}");
-                                    }
-
-                                    $left_header_data = $left_header_result->fetch_assoc();
-                                    $prefers_left_header = $left_header_data['prefers_left_header'];
-
-                                    if (isset($prefers_left_header) && $prefers_left_header != 0) {
-                                        echo "/includes/css/main-left-header.css";
-                                    } else {
-                                        echo "/includes/css/main-right-header.css";
-                                    }
-                                    $left_header_stmt->close();
-
-                                    ?>>
-    <?php
-    }
-    ?>
-    <link rel="stylesheet" href="/includes/css/main.css?v=00.01.19">
+    <link rel="stylesheet" href="/includes/css/main.css?v=00.01.23">
     <link rel="icon" type="image/png" href="/includes/img/favicons/favicon-16x16.png" sizes="16x16">
 
     <?php
@@ -158,6 +129,16 @@ $current_page = $_SERVER['REQUEST_URI'];
 
                     <a href="/controllers/logout.php">Logout</a>
                 </nav>
+                <div id="dayWOHours">
+                    <?php
+                    $day_timestamp = strtotime("today");
+                    $day_ticket_times = get_note_time_for_days($_SESSION["username"], [$day_timestamp]);
+
+                    $day_time_min = $day_ticket_times[0] / 60;
+                    ?>
+                    Today's WO time:
+                    <pre><?= number_format($day_time_min, 2); ?> hrs</pre>
+                </div>
             <?php
             }
             ?>

@@ -236,3 +236,18 @@ if (updateTicketForm) {
     }
   });
 }
+
+//================================= Inactive User Modal =================================
+function setupInactivityModal() {
+  var inactivityTime = 30 * 60 * 1000; // 30 minutes in milliseconds
+  var timeoutModal = document.getElementById("timeoutModal");
+
+  var timeoutId = setTimeout(showTimeoutModal, inactivityTime);
+
+  function showTimeoutModal() {
+    timeoutModal.style.display = "block";
+  }
+}
+
+// Call the function when the page loads
+window.onload = setupInactivityModal;

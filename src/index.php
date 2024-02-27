@@ -1,7 +1,5 @@
 <?php
 require_once("status_popup.php");
-session_start();
-// session_regenerate_id(true);
 
 // Check if user is already logged in
 if (isset($_SESSION['username'])) {
@@ -23,7 +21,7 @@ if (isset($_SESSION['current_status'])) {
 }
 
 ?>
-<div class="welcomeMessage">Welcome to The Technology Help Desk</div>
+<div class="welcomeMessage">Welcome to The Provo School District Help Desk</div>
 <div id="loginWrapper">
     <h1>Login for Help</h1>
 

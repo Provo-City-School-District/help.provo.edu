@@ -48,6 +48,7 @@ if (isset($_GET['code'])) {
         $username = str_replace('@provo.edu', '', $email);
 
         $_SESSION['username'] = $username;
+        $_SESSION['last_timestamp'] = time();
 
         if (!user_exists_locally($username)) {
             create_user_in_local_db($username);

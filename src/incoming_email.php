@@ -164,9 +164,10 @@ for ($i = 1; $i <= $msg_count; $i++) {
                     $failed_email_ids[] = $i;
                 }
 
-                $receipt_subject = "Ticket $receipt_ticket_id";
+                $receipt_subject = "Ticket $receipt_ticket_id - $subject";
                 $template = new Template(from_root("/includes/templates/ticket_creation_receipt.phtml"));
                 $template->ticket_id = $receipt_ticket_id;
+                $template->description = $subject;
                 $template->site_url = getenv('ROOTDOMAIN');
 
                 $res = send_email_and_add_to_ticket($receipt_ticket_id, $sender_email, $receipt_subject, $template);
@@ -301,7 +302,7 @@ function find_and_upload_attachments(int $ticket_id, IMAP\Connection $mbox, int 
                 $filename = date('Ymd_Hi').$attachment['name'];
 
 
-            $uploadPath = "/uploads/{$filename}";
+            $uploadPath = "/uploads/$filename";
             log_app(LOG_INFO, "Uploading image to ".from_root($uploadPath));
             $fp = fopen(from_root($uploadPath), "w+");
             fwrite($fp, $attachment['attachment']);

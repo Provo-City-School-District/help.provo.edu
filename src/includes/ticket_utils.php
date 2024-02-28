@@ -323,7 +323,7 @@ function displayTotalTime($total_hours, $total_minutes)
     $minutes = $total_minutes % 60;
 
     if ($hours > 0 || $minutes > 0) {
-        echo "<p><strong>Total Time</strong></p>";
+        echo "<span><strong>Total Time</strong></span>: ";
         if ($hours > 0) {
             echo $hours . ($hours == 1 ? " hour " : " hours ");
         }

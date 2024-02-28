@@ -16,7 +16,8 @@ if (isset($_SESSION['last_timestamp'])) {
     $current_time = time();
 
     // Calculate the time difference in seconds
-    $time_difference = $current_time - $user_last_login;
+    $time_difference = $current_time - strtotime($user_last_login);
+
 
     if ($time_since_last_login > 4 * 60 * 60) {
         // Unset all session variables

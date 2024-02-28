@@ -750,17 +750,11 @@ if (isset($ticket["client"])) {
                 <?php endforeach; ?>
             <?php endif; ?>
             <tr class="totalTime">
-                <td data-cell="Total Time" colspan=4><span>Total Time: </span> <?php
-                                                                                if ($total_hours == 1)
-                                                                                    echo "$total_hours hour ";
-                                                                                else if ($total_hours > 1)
-                                                                                    echo "$total_hours hours ";
-
-                                                                                if ($total_minutes == 1)
-                                                                                    echo "$total_minutes minute";
-                                                                                else
-                                                                                    echo "$total_minutes minutes";
-                                                                                ?></td>
+                <td data-cell="Total Time" colspan=4>
+                    <?php
+                    displayTotalTime($total_hours, $total_minutes);
+                    ?>
+                </td>
             </tr>
             </table>
         </div>

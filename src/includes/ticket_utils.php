@@ -162,7 +162,7 @@ function add_note_with_filters(
         if (!$result) {
             log_app(LOG_ERR, "Failed to update ticket status for id=$operating_ticket");
         }
-/*
+        /*
         Needs testing
 
         // Email tech if client has updated ticket
@@ -315,7 +315,23 @@ function displayTime($note, $type)
         }
     }
 }
+function displayTotalTime($total_hours, $total_minutes)
+{
+    // Convert minutes to hours and minutes
+    $total_minutes = $total_hours * 60 + $total_minutes;
+    $hours = floor($total_minutes / 60);
+    $minutes = $total_minutes % 60;
 
+    if ($hours > 0 || $minutes > 0) {
+        echo "<p><strong>Total Time</strong></p>";
+        if ($hours > 0) {
+            echo $hours . ($hours == 1 ? " hour " : " hours ");
+        }
+        if ($minutes > 0) {
+            echo $minutes . ($minutes == 1 ? " minute" : " minutes");
+        }
+    }
+}
 function location_name_from_id(string $site_id)
 {
     global $database;

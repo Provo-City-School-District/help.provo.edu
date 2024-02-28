@@ -35,25 +35,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $dates_searched = isset($_GET['dates']) ? $_GET['dates'] : [];
 
         // Construct the SQL query based on the selected search options
-        $ticket_query = "SELECT * FROM tickets WHERE 1=1";
-        if (!empty($search_id)) {
-            $search_id = intval($search_id);
-            $ticket_query .= " AND id LIKE '$search_id'";
-        }
+        $ticket_query = "SELECT * FROM tickets WHERE 1=1 ";
+
+
         if (!empty($search_name)) {
             // Split the search terms into an array of words
             $words = explode(" ", $search_name);
             $wordCount = count($words);
 
-            $ticket_query .= " AND (";
+            $ticket_query .= "AND tickets.id IN (SELECT linked_id FROM notes WHERE ";
             for ($i = 0; $i < $wordCount; $i++) {
-                $ticket_query .= "name LIKE '%" . mysqli_real_escape_string($database, $words[$i]) . "%' OR description LIKE '%" . mysqli_real_escape_string($database, $words[$i]) . "%'";
+                $ticket_query .= "name LIKE '%" . mysqli_real_escape_string($database, $words[$i]) . "%' OR description LIKE '%" . mysqli_real_escape_string($database, $words[$i]) . "%' OR note LIKE '%" . mysqli_real_escape_string($database, $words[$i]) . "%'";
                 if ($i != $wordCount - 1) {
                     $ticket_query .= " AND ";
                 }
             }
             $ticket_query .= ")";
         }
+
+        if (!empty($search_id)) {
+            $ticket_query .= " AND id LIKE '" . mysqli_real_escape_string($database, $search_id) . "'";
+        }
+
+
         if (!empty($search_location)) {
             $ticket_query .= " AND location LIKE '%$search_location%'";
         }
@@ -99,6 +103,46 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         } else {
             $old_ticket_query .= " WHERE 1=0";
         }
+
+        if (!empty($search_name)) {
+            // Split the search terms into an array of words
+            $words = explode(" ", $search_name);
+            $wordCount = count($words);
+
+            $old_ticket_query .= " AND JOB_TICKET_ID IN (SELECT JOB_TICKET_ID FROM tech_note WHERE ";
+            for ($i = 0; $i < $wordCount; $i++) {
+                $old_ticket_query .= "QUESTION_TEXT LIKE '%" . mysqli_real_escape_string($database, $words[$i]) . "%' OR SUBJECT LIKE '%" . mysqli_real_escape_string($database, $words[$i]) . "%' OR NOTE_TEXT LIKE '%" . mysqli_real_escape_string($database, $words[$i]) . "%'";
+                if ($i != $wordCount - 1) {
+                    $old_ticket_query .= " AND ";
+                }
+            }
+            $old_ticket_query .= ")";
+        }
+
+        if (!empty($search_id)) {
+            $search_id = intval($search_id);
+            $old_ticket_query .= " AND JOB_TICKET_ID LIKE '$search_id'";
+        }
+
+        if (!empty($search_location)) {
+            $old_ticket_query .= " AND LOCATION_ID IN (" . implode(",", $archived_location_ids) . ")";
+        }
+        if (!empty($search_employee)) {
+            // First, perform a query to get the CURRENT_DASHBOARD_ID for the given USERNAME
+            $employee_query = "SELECT CURRENT_DASHBOARD_ID FROM whd.tech WHERE USER_NAME = ?";
+            $employee_stmt = $swdb->prepare($employee_query);
+            $employee_stmt->bind_param('s', $search_employee);
+            $employee_stmt->execute();
+            $employee_result = $employee_stmt->get_result();
+            $employee_row = $employee_result->fetch_assoc();
+            $employee_id = $employee_row['CURRENT_DASHBOARD_ID'];
+
+            // Now, you can use $employee_id in your main query to get the tickets assigned to the given tech
+            $old_ticket_query .= " AND ASSIGNED_TECH_ID = $employee_id";
+        }
+        if (!empty($search_client)) {
+            $old_ticket_query .= " AND CLIENT_ID LIKE '%$search_client%'";
+        }
         // map old system status ids to our current system
         switch ($search_status) {
             case 'open':
@@ -121,22 +165,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                 break;
             default:
                 $search_status = null;
-        }
-        if (!empty($search_id)) {
-            $search_id = intval($search_id);
-            $old_ticket_query .= " AND JOB_TICKET_ID LIKE '$search_id'";
-        }
-        if (!empty($search_name)) {
-            $old_ticket_query .= " AND (SUBJECT LIKE '%$search_name%' OR QUESTION_TEXT LIKE '%$search_name%')";
-        }
-        if (!empty($search_location)) {
-            $old_ticket_query .= " AND LOCATION_ID IN (" . implode(",", $archived_location_ids) . ")";
-        }
-        if (!empty($search_employee)) {
-            $old_ticket_query .= " AND ASSIGNED_TECH_ID LIKE '%$search_employee%'";
-        }
-        if (!empty($search_client)) {
-            $old_ticket_query .= " AND CLIENT_ID LIKE '%$search_client%'";
         }
         if (!empty($search_status)) {
             $old_ticket_query .= " AND STATUS_TYPE_ID  LIKE '%$search_status%'";
@@ -260,7 +288,7 @@ function sortByDate($x, $y)
             <input type="number" class="form-control" id="search_id" name="search_id" value="<?php echo htmlspecialchars($search_id); ?>">
         </div>
         <div class="form-group">
-            <label for="search_name">Name or Description:</label>
+            <label for="search_name">Keywords:</label>
             <input type="text" class="form-control" id="search_name" name="search_name" value="<?php echo htmlspecialchars($search_name); ?>">
         </div>
         <div class="form-group">

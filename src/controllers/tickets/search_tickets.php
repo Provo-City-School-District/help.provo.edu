@@ -128,6 +128,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             $old_ticket_query .= " AND LOCATION_ID IN (" . implode(",", $archived_location_ids) . ")";
         }
         if (!empty($search_employee)) {
+            if ($search_employee == 'Unassigned') {
+                $search_employee = "helpdesk";
+            }
             // First, perform a query to get the CURRENT_DASHBOARD_ID for the given USERNAME
             $employee_query = "SELECT CURRENT_DASHBOARD_ID FROM whd.tech WHERE USER_NAME = ?";
             $employee_stmt = $swdb->prepare($employee_query);

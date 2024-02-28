@@ -98,7 +98,7 @@ $field_tech_query_result = mysqli_query($database, $field_tech_query);
 
 
 
-<?php echo json_encode($allTechs, JSON_NUMERIC_CHECK); ?>
+
 
 <h2>Unassigned Tickets</h2>
 

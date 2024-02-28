@@ -1,6 +1,6 @@
 //================================= Charts =================================
 // Chart for all techs open tickets.
-window.onload = function () {
+window.addEventListener("load", function () {
   // tech department
   var allTechsChart = new CanvasJS.Chart("techOpenTicket", {
     height: 1000,
@@ -29,6 +29,7 @@ window.onload = function () {
     ],
   });
   allTechsChart.render();
+
   // by location
   var byLocationChart = new CanvasJS.Chart("byLocation", {
     height: 1000,
@@ -57,6 +58,7 @@ window.onload = function () {
     ],
   });
   byLocationChart.render();
+
   //field techs open tickets
   var fieldTechOpenChart = new CanvasJS.Chart("fieldTechOpen", {
     height: 1000,
@@ -85,4 +87,4 @@ window.onload = function () {
     ],
   });
   fieldTechOpenChart.render();
-};
+});

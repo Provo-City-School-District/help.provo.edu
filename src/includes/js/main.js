@@ -250,4 +250,4 @@ function setupInactivityModal() {
 }
 
 // Call the function when the page loads
-window.onload = setupInactivityModal;
+window.addEventListener("load", setupInactivityModal);

@@ -17,7 +17,7 @@
 <script>
     var userPref = '<?php echo isset($_SESSION['color_scheme']) ? $_SESSION['color_scheme'] : 'light'; ?>';
 </script>
-<script src="/includes/js/main.js?v=0.1.14" type="text/javascript"></script>
+<script src="/includes/js/main.js?v=0.1.15" type="text/javascript"></script>
 
 </body>
 

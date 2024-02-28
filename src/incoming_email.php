@@ -22,7 +22,7 @@ $password = getenv("GMAIL_PASSWORD");
 $mbox = imap_open($imap_path, $username, $password) or die('Cannot connect to Gmail: ' . imap_last_error());
 $msg_count = imap_num_msg($mbox);
 if ($msg_count == false) {
-    log_app(LOG_ERR, "IMAP message count failed to query: ".imap_last_error());
+    log_app(LOG_ERR, "IMAP message count failed to query: " . imap_last_error());
 }
 
 // Sort by msg date
@@ -32,7 +32,8 @@ imap_sort($mbox, SORTDATE, false);
 $failed_email_ids = [];
 $succeeded_uids = [];
 
-function format_html($str) {
+function format_html($str)
+{
     // Convertit tous les caractères éligibles en entités HTML en convertissant les codes ASCII 10 en $lf
     $str = htmlentities($str, ENT_COMPAT, "UTF-8");
     $str = str_replace(chr(10), "<br>", $str);
@@ -50,7 +51,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
     $email_ancestor_id = $header->in_reply_to;
     $from_host = strtolower($header->from[0]->host);
     $sender_username = $header->from[0]->mailbox;
-    $sender_email = strtolower($sender_username.'@'.$from_host);
+    $sender_email = strtolower($sender_username . '@' . $from_host);
     $subject = isset($header->subject) ? $header->subject : "";
 
     // Ignore blacklisted emails
@@ -58,7 +59,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
         log_app(LOG_INFO, "Received email from $sender_email but it is on the blacklist. Ignoring...");
 
         // These can be safely moved as we don't care about them
-        $succeeded_uids[] = imap_uid($mbox, $i); 
+        $succeeded_uids[] = imap_uid($mbox, $i);
         continue;
     }
 
@@ -67,7 +68,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
         log_app(LOG_INFO, "Received email from $sender_email, ignoring...");
 
         // These can be safely moved as we don't care about them
-        $succeeded_uids[] = imap_uid($mbox, $i); 
+        $succeeded_uids[] = imap_uid($mbox, $i);
         continue;
     }
 
@@ -86,12 +87,12 @@ for ($i = 1; $i <= $msg_count; $i++) {
 
     $obj_section = $obj_structure;
     $section = "1";
-    for ($j = 0 ; $j < 10 ; $j++) {
+    for ($j = 0; $j < 10; $j++) {
         if ($obj_section->type == 0) {
             break;
         } else {
             $obj_section = $obj_section->parts[0];
-            $section.= ($j > 0 ? ".1" : "");
+            $section .= ($j > 0 ? ".1" : "");
         }
     }
     $text = imap_fetchbody($mbox, $i, $section);
@@ -151,8 +152,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
     } else {
         $subject_ticket_id = count($subject_split) > 1 ? intval($subject_split[1]) : 0;
         log_app(LOG_INFO, "Email is NOT a reply");
-        if (strtolower($subject_split[0]) != "ticket" ||  $subject_ticket_id <= 0 || count($subject_split) != 2)
-        {
+        if (strtolower($subject_split[0]) != "ticket" ||  $subject_ticket_id <= 0 || count($subject_split) != 2) {
             $receipt_ticket_id = -1;
             // Check if the user is in the local database. If the value isn't in failed_email_ids, they exist in local db
             if (!in_array($i, $failed_email_ids)) {
@@ -204,7 +204,7 @@ foreach ($succeeded_uids as $uid) {
     if ($move_emails_after_parsed) {
         $msg_move_result = imap_mail_move($mbox, $uid, "[Gmail]/Important", CP_UID);
         if (!$msg_move_result) {
-            log_app(LOG_ERR, "Failed to move message: ".imap_last_error());
+            log_app(LOG_ERR, "Failed to move message: " . imap_last_error());
         } else {
             $moved_emails++;
         }
@@ -226,7 +226,7 @@ function find_and_upload_attachments(int $ticket_id, IMAP\Connection $mbox, int 
 
     /* if any attachments found... */
     if (isset($structure->parts) && count($structure->parts)) {
-        for($i = 0; $i < count($structure->parts); $i++) {
+        for ($i = 0; $i < count($structure->parts); $i++) {
             $attachments[$i] = array(
                 'is_attachment' => false,
                 'filename' => '',
@@ -235,10 +235,8 @@ function find_and_upload_attachments(int $ticket_id, IMAP\Connection $mbox, int 
             );
 
             if ($structure->parts[$i]->ifdparameters) {
-                foreach ($structure->parts[$i]->dparameters as $object) 
-                {
-                    if(strtolower($object->attribute) == 'filename') 
-                    {
+                foreach ($structure->parts[$i]->dparameters as $object) {
+                    if (strtolower($object->attribute) == 'filename') {
                         $attachments[$i]['is_attachment'] = true;
                         $attachments[$i]['filename'] = $object->value;
                     }
@@ -255,16 +253,13 @@ function find_and_upload_attachments(int $ticket_id, IMAP\Connection $mbox, int 
             }
 
             if ($attachments[$i]['is_attachment']) {
-                $attachments[$i]['attachment'] = imap_fetchbody($mbox, $msg_num, $i+1);
+                $attachments[$i]['attachment'] = imap_fetchbody($mbox, $msg_num, $i + 1);
 
                 /* 3 = BASE64 encoding */
-                if($structure->parts[$i]->encoding == 3) 
-                { 
+                if ($structure->parts[$i]->encoding == 3) {
                     $attachments[$i]['attachment'] = base64_decode($attachments[$i]['attachment']);
                 }
-                /* 4 = QUOTED-PRINTABLE encoding */
-                elseif($structure->parts[$i]->encoding == 4) 
-                { 
+                /* 4 = QUOTED-PRINTABLE encoding */ elseif ($structure->parts[$i]->encoding == 4) {
                     $attachments[$i]['attachment'] = quoted_printable_decode($attachments[$i]['attachment']);
                 }
             }
@@ -291,19 +286,19 @@ function find_and_upload_attachments(int $ticket_id, IMAP\Connection $mbox, int 
     } else {
         $uploadPaths = [];
     }
-    
+
     /* iterate through each attachment and save it */
     foreach ($attachments as $attachment) {
         if ($attachment['is_attachment'] == 1) {
             $filename = null;
             if (!isset($attachment['name']))
-                $filename = date('Ymd_Hi').$attachment['filename'];
+                $filename = date('Ymd_Hi') . $attachment['filename'];
             else
-                $filename = date('Ymd_Hi').$attachment['name'];
+                $filename = date('Ymd_Hi') . $attachment['name'];
 
 
-            $uploadPath = "/uploads/$filename";
-            log_app(LOG_INFO, "Uploading image to ".from_root($uploadPath));
+            $uploadPath = "/$filename";
+            log_app(LOG_INFO, "Uploading image to " . from_root($uploadPath));
             $fp = fopen(from_root($uploadPath), "w+");
             fwrite($fp, $attachment['attachment']);
             fclose($fp);

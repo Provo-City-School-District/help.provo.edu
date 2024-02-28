@@ -12,26 +12,31 @@ require_once('helpdbconnect.php');
 require("ticket_utils.php");
 $managed_location = $_SESSION['permissions']['location_manager_sitenumber'];
 // process the data for admin report charts
-function process_query_result($query_result, $label_field)
+function process_query_result($query_result, $label_field, $id_field)
 {
     $count = [];
+    $ids = [];
 
     while ($row = mysqli_fetch_assoc($query_result)) {
         $label = $row[$label_field];
+        $id = $row[$id_field];
         if ($label == null || $label == "")
             $label = "unassigned";
 
-        if (!isset($count[$label]))
+        if (!isset($count[$label])) {
             $count[$label] = 1;
-        else
+            $ids[$label] = $id;
+        } else {
             $count[$label]++;
+        }
     }
 
     asort($count);
 
     $processedData = [];
     foreach ($count as $name => $count) {
-        $processedData[] = array("y" => $count, "label" => $name);
+        $url = "/controllers/users/manage_user.php?id=" . urlencode($ids[$name]);
+        $processedData[] = array("y" => $count, "label" => $name, "url" => $url);
     }
 
     return $processedData;
@@ -51,10 +56,13 @@ if (isset($_SESSION['current_status'])) {
 
 // Query open tickets based on tech
 $tech_query = <<<STR
-    SELECT employee FROM tickets WHERE status NOT IN ('closed', 'resolved')
+    SELECT t.employee, u.id 
+    FROM tickets t 
+    JOIN users u ON t.employee = u.username 
+    WHERE t.status NOT IN ('closed', 'resolved')
     STR;
 $tech_query_result = mysqli_query($database, $tech_query);
-$allTechs = process_query_result($tech_query_result, "employee");
+$allTechs = process_query_result($tech_query_result, "employee", "id");
 
 // Query open tickets based on location:
 $location_query = <<<STR
@@ -65,7 +73,7 @@ $location_query = <<<STR
 STR;
 
 $location_query_result = mysqli_query($database, $location_query);
-$allLocations = process_query_result($location_query_result, "location_name");
+// $allLocations = process_query_result($location_query_result, "location_name");
 
 // Query open tickets based on field tech:
 $field_tech_query = <<<STR
@@ -76,7 +84,7 @@ $field_tech_query = <<<STR
 STR;
 
 $field_tech_query_result = mysqli_query($database, $field_tech_query);
-$fieldTechs = process_query_result($field_tech_query_result, "employee");
+// $fieldTechs = process_query_result($field_tech_query_result, "employee");
 
 ?>
 <h1>Supervisor</h1>
@@ -90,7 +98,7 @@ $fieldTechs = process_query_result($field_tech_query_result, "employee");
 
 
 
-
+<?php echo json_encode($allTechs, JSON_NUMERIC_CHECK); ?>
 
 <h2>Unassigned Tickets</h2>
 

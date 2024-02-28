@@ -25,6 +25,9 @@ window.addEventListener("load", function () {
         indexLabelFontColor: "white",
         indexLabelFontSize: 4,
         dataPoints: allTechs,
+        click: function (e) {
+          window.location.href = e.dataPoint.url;
+        },
       },
     ],
   });

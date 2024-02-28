@@ -38,6 +38,9 @@ GMAIL_PASSWORD=
 GOOG_SSO_ID=
 GOOG_SSO_SECRET=
 GOOG_SSO_REDIRECT=
+# Read User for help database
+HELPSQL_READ_USER=
+HELPSQL_READ_PASS=
 ```
 ## Control Commands
 following commands must be run from within the root directory of the project.

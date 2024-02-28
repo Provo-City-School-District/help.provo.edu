@@ -87,7 +87,7 @@ if (newNoteButtons && newNoteForm && newNoteEditor) {
       if (newNoteForm.style.display === "none") {
         newNoteForm.style.display = "block";
         newNoteModalBackground.style.display = "block";
-        newNoteEditor.focus(); // Set focus to the new note editor
+        tinymce.activeEditor.focus(); // Set focus to the new note editor
         newNoteEditor.scrollIntoView({ behavior: "smooth" }); // Scroll the view to the new note editor
       } else {
         newNoteForm.style.display = "none";

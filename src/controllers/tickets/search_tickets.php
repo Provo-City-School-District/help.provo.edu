@@ -123,8 +123,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             $search_id = intval($search_id);
             $old_ticket_query .= " AND JOB_TICKET_ID LIKE '$search_id'";
         }
-
-        if (!empty($search_location)) {
+        $invalid_ids_legacy_system = [1897, 381];
+        if (!empty($search_location) && !in_array($search_location, $invalid_ids_legacy_system)) {
             $old_ticket_query .= " AND LOCATION_ID IN (" . implode(",", $archived_location_ids) . ")";
         }
         if (!empty($search_employee)) {

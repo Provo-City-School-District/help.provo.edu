@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         }
 
         if (!empty($search_id)) {
-            $ticket_query .= " AND id LIKE '" . mysqli_real_escape_string($database, $search_id) . "'";
+            $ticket_query .= " AND id LIKE '" . $search_id . "'";
         }
 
 

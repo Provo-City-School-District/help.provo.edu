@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         }
         if (!empty($search_employee)) {
             if ($search_employee == 'Unassigned') {
-                $ticket_query .= " AND (employee IS NULL OR employee = 'unassigned')";
+                $ticket_query .= " AND (employee IS NULL OR employee = 'unassigned' OR employee = '')";
             } else {
                 $ticket_query .= " AND employee LIKE '%$search_employee%'";
             }

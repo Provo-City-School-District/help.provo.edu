@@ -44,6 +44,9 @@ RUN echo "RemoteIPInternalProxy 158.91.1.103/24" >> /etc/apache2/apache2.conf
 RUN echo "ErrorDocument 404 /errors/404.html" >> /etc/apache2/apache2.conf \
   && echo "ErrorDocument 403 /errors/404.html" >> /etc/apache2/apache2.conf
 
+# Set ServerTokens directive to Prod
+RUN echo "ServerTokens Prod" >> /etc/apache2/apache2.conf
+
 # # Restart Apache to apply the changes
 RUN service apache2 restart
 

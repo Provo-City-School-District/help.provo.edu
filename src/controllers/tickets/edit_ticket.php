@@ -217,7 +217,12 @@ if (isset($ticket["client"])) {
     <form id="updateTicketForm" method="POST" action="update_ticket.php">
         <!-- Add a submit button to update the information -->
         <input id="green-button" type="submit" value="Update Ticket">
-        Send Emails on Update:<input type="checkbox" name="send_emails" value="send_emails" checked>
+        <div>
+            Send Client Email on Update:<input type="checkbox" name="send_emails" value="send_emails" checked>
+        </div>
+        <div>
+            Send CC/BCC Emails on Update:<input type="checkbox" name="send_cc_bcc_emails" value="send_cc_bcc_emails" checked>
+        </div>
         <div class="ticketGrid">
             <input type="hidden" name="ticket_create_date" value="<?= $ticket['created'] ?>">
             <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">

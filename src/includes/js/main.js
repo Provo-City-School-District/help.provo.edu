@@ -9,7 +9,7 @@ $(document).ready(function () {
     });
   } else if (window.location.pathname === "/tickets.php") {
     table = $(".data-table").DataTable({
-      order: [[9, "asc"]], // Sort by the second column in ascending order
+      order: [[8, "asc"]], // Sort by the second column in ascending order
     });
   } else {
     table = $(".data-table").DataTable({

@@ -149,3 +149,7 @@ table a {
 		transform: translateY(0px);
 	}
 }
+/* jqueryUI */
+.ui-autocomplete  {
+	background-color: var(--page-background);
+}

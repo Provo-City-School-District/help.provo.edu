@@ -23,8 +23,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $updatedStatus = trim(htmlspecialchars($_POST['status']));
     $updatedby = trim(htmlspecialchars($_POST['madeby']));
     $updatedPhone = filter_input(INPUT_POST, 'phone', FILTER_SANITIZE_SPECIAL_CHARS);
+
     $updatedCCEmails = filter_input(INPUT_POST, 'cc_emails', FILTER_SANITIZE_SPECIAL_CHARS);
+
+    // Allow trailing comma
+    if (substr($updatedCCEmails, -1) == ",") {
+        $updatedCCEmails = substr_replace($updatedCCEmails, '', -1, 1);
+    }
+
+    // Allow trailing comma
     $updatedBCCEmails = filter_input(INPUT_POST, 'bcc_emails', FILTER_SANITIZE_SPECIAL_CHARS);
+    if (substr($updatedBCCEmails, -1) == ",") {
+        $updatedBCCEmails = substr_replace($updatedBCCEmails, '', -1, 1);
+    }
+
     $updatedRequestType = trim(htmlspecialchars($_POST['request_type']));
     $updatedPriority = trim(htmlspecialchars($_POST['priority']));
     $updatedParentTicket = intval(trim(htmlspecialchars($_POST['parent_ticket'])));

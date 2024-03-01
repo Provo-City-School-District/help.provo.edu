@@ -20,9 +20,10 @@ $ticket_query = <<<QUERY
 SELECT DISTINCT tickets.* FROM tickets 
 LEFT JOIN notes ON tickets.id = notes.linked_id 
 LEFT JOIN ticket_logs ON tickets.id = ticket_logs.ticket_id
-WHERE notes.creator = '$username' OR ticket_logs.user_id = '$username'
-ORDER BY tickets.last_updated DESC
-LIMIT 100
+WHERE (notes.creator = '$username' OR ticket_logs.user_id = '$username')
+AND notes.created >= DATE_SUB(NOW(), INTERVAL 2 DAY) OR ticket_logs.created_at >= DATE_SUB(NOW(), INTERVAL 2 DAY)
+
+
 QUERY;
 
 

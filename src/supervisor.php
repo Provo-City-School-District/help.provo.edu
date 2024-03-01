@@ -11,8 +11,35 @@ if ($_SESSION['permissions']['is_supervisor'] != 1) {
 require_once('helpdbconnect.php');
 require("ticket_utils.php");
 $managed_location = $_SESSION['permissions']['location_manager_sitenumber'];
+
+function process_query_result($query_result, $label_field)
+{
+    $count = [];
+
+    while ($row = mysqli_fetch_assoc($query_result)) {
+        $label = $row[$label_field];
+        if ($label == null || $label == "")
+            $label = "unassigned";
+
+        if (!isset($count[$label]))
+            $count[$label] = 1;
+        else
+            $count[$label]++;
+    }
+
+    asort($count);
+
+    $processedData = [];
+    foreach ($count as $name => $count) {
+        $processedData[] = array("y" => $count, "label" => $name);
+    }
+
+    return $processedData;
+}
+
+
 // process the data for admin report charts
-function process_query_result($query_result, $label_field, $id_field)
+function process_query_result_wlinks($query_result, $label_field, $id_field, $url_field)
 {
     $count = [];
     $ids = [];
@@ -35,7 +62,7 @@ function process_query_result($query_result, $label_field, $id_field)
 
     $processedData = [];
     foreach ($count as $name => $count) {
-        $url = "/controllers/users/manage_user.php?id=" . urlencode($ids[$name]);
+        $url = $url_field . urlencode($ids[$name]);
         $processedData[] = array("y" => $count, "label" => $name, "url" => $url);
     }
 
@@ -62,7 +89,8 @@ $tech_query = <<<STR
     WHERE t.status NOT IN ('closed', 'resolved')
     STR;
 $tech_query_result = mysqli_query($database, $tech_query);
-$allTechs = process_query_result($tech_query_result, "employee", "id");
+$url_path_techs = "/controllers/users/manage_user.php?id=";
+$allTechs = process_query_result_wlinks($tech_query_result, "employee", "id", $url_path_techs);
 
 // Query open tickets based on location:
 $location_query = <<<STR
@@ -73,7 +101,7 @@ $location_query = <<<STR
 STR;
 
 $location_query_result = mysqli_query($database, $location_query);
-// $allLocations = process_query_result($location_query_result, "location_name");
+$allLocations = process_query_result($location_query_result, "location_name");
 
 // Query open tickets based on field tech:
 $field_tech_query = <<<STR
@@ -84,15 +112,15 @@ $field_tech_query = <<<STR
 STR;
 
 $field_tech_query_result = mysqli_query($database, $field_tech_query);
-// $fieldTechs = process_query_result($field_tech_query_result, "employee");
+$fieldTechs = process_query_result($field_tech_query_result, "employee");
 
 ?>
 <h1>Supervisor</h1>
 <h2>Reports</h2>
-<div class="grid3 canvasjsreport">
+<div class="grid2 canvasjsreport">
     <div id="techOpenTicket" style="height: 370px; width: 100%;"></div>
     <div id="byLocation" style="height: 370px; width: 100%;"></div>
-    <div id="fieldTechOpen" style="height: 370px; width: 100%;"></div>
+    <!-- <div id="fieldTechOpen" style="height: 370px; width: 100%;"></div> -->
 </div>
 
 

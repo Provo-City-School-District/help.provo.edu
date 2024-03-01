@@ -8,7 +8,8 @@ require("email_utils.php");
 require("template.php");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $forceEmailOnClientUpdate = false;
+    $old_client = null;
+    $old_assigned_email = null;
 
     // Retrieve updated values from the form
     $ticket_id = trim(htmlspecialchars($_POST['ticket_id']));
@@ -22,14 +23,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $updatedStatus = trim(htmlspecialchars($_POST['status']));
     $updatedby = trim(htmlspecialchars($_POST['madeby']));
     $updatedPhone = filter_input(INPUT_POST, 'phone', FILTER_SANITIZE_SPECIAL_CHARS);
+
     $updatedCCEmails = filter_input(INPUT_POST, 'cc_emails', FILTER_SANITIZE_SPECIAL_CHARS);
+
+    // Allow trailing comma
+    if (substr($updatedCCEmails, -1) == ",") {
+        $updatedCCEmails = substr_replace($updatedCCEmails, '', -1, 1);
+    }
+
+    // Allow trailing comma
     $updatedBCCEmails = filter_input(INPUT_POST, 'bcc_emails', FILTER_SANITIZE_SPECIAL_CHARS);
+    if (substr($updatedBCCEmails, -1) == ",") {
+        $updatedBCCEmails = substr_replace($updatedBCCEmails, '', -1, 1);
+    }
+
     $updatedRequestType = trim(htmlspecialchars($_POST['request_type']));
     $updatedPriority = trim(htmlspecialchars($_POST['priority']));
     $updatedParentTicket = intval(trim(htmlspecialchars($_POST['parent_ticket'])));
     $changesMessage = "";
     $created_at = trim(htmlspecialchars($_POST['ticket_create_date']));
-    $forceEmails = false;
 
     // Validate the emails in CC and BCC fields
     $valid_cc_emails = [];
@@ -142,11 +154,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         mysqli_stmt_execute($log_stmt);
         $changesMessage .= "<li>Changed Client from " . $old_ticket_data['client'] . " to " . $updatedClient . "</li>";
         $old_client = email_address_from_username($old_ticket_data['client']);
-        //add old client to cc emails array so that they get an email about the ticket getting client changed
-        array_push($valid_cc_emails, $old_client);
-
-        if ($forceEmailOnClientUpdate)
-            $forceEmails = true;
     }
 
     if (isset($old_ticket_data['employee'], $updatedEmployee) && $old_ticket_data['employee'] != $updatedEmployee) {
@@ -154,13 +161,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         mysqli_stmt_execute($log_stmt);
 
         if ($old_ticket_data['employee'] !== null && $old_ticket_data['employee'] !== 'unassigned') {
-            $old_assigned = email_address_from_username($old_ticket_data['employee']);
-            $valid_cc_emails[] = $old_assigned;
+            $old_assigned_email = email_address_from_username($old_ticket_data['employee']);
         } else {
             $old_ticket_data['employee'] = "unassigned";
         }
         $changesMessage .= "<li>Changed Employee from " . $old_ticket_data['employee'] . " to " . $updatedEmployee . "</li>";
-        $forceEmails = true;
     }
 
     if (isset($old_ticket_data['location'], $updatedLocation) && $old_ticket_data['location'] != $updatedLocation) {
@@ -239,9 +244,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Check if the ticket has an alert about not being updated in last 48 hours and clear it since the ticket was just updated.
     removeAlert($database, $alert48Message, $ticket_id);
     removeAlert($database, $alert7DayMessage, $ticket_id);
+    
+    $send_client_email = isset($_POST['send_emails']) && ($_POST['send_emails'] == "send_emails");
+    $send_cc_bcc_emails = isset($_POST['send_cc_bcc_emails']) && ($_POST['send_cc_bcc_emails'] == "send_cc_bcc_emails");
 
-    // Send emails if the user checked the send_emails checkbox
-    $sendEmails = isset($_POST['send_emails']) && ($_POST['send_emails'] == "send_emails");
+    // Force emails if status was resolved or pending
+    if ($updatedStatus == "pending" || $updatedStatus == "resolved") {
+        $send_client_email = true;
+        $send_cc_bcc_emails = true;
+    }
 
     // After successfully updating the ticket, set a success message;
     $msg = "Ticket updated successfully.";
@@ -262,34 +273,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $tech_cc_emails = [];
     $client_cc_emails = [];
-    foreach ($valid_cc_emails as $email) {
-        $email_username = username_from_email_address($email);
-        if (user_is_tech($email_username))
-            $tech_cc_emails[] = $email;
-        else
-            $client_cc_emails[] = $email;
-    }
-
     $tech_bcc_emails = [];
     $client_bcc_emails = [];
-    foreach ($valid_bcc_emails as $email) {
-        $email_username = username_from_email_address($email);
-        if (user_is_tech($email_username))
-            $tech_bcc_emails[] = $email;
-        else
-            $client_bcc_emails[] = $email;
+
+    // Only add all cc/bcc emails if we're sending them
+    if ($send_cc_bcc_emails) {
+        foreach ($valid_cc_emails as $email) {
+            $email_username = username_from_email_address($email);
+            if (user_is_tech($email_username))
+                $tech_cc_emails[] = $email;
+            else
+                $client_cc_emails[] = $email;
+        }
+
+
+        foreach ($valid_bcc_emails as $email) {
+            $email_username = username_from_email_address($email);
+            if (user_is_tech($email_username))
+                $tech_bcc_emails[] = $email;
+            else
+                $client_bcc_emails[] = $email;
+        }
     }
 
-    // Send emails if the user checked the send_emails checkbox
-    if ($sendEmails || $forceEmails || $updatedStatus == "pending" || $updatedStatus == "resolved") {
-        $subject_status = "Updated";
-        $template_path = "ticket_updated";
-        $msg = "Ticket updated successfully. An email was sent to the client, CC and BCC emails.";
 
+    // Send emails if the user checked the send_emails checkbox or if it's forced
+    if ($send_client_email || $send_cc_bcc_emails) {
+        log_app(LOG_INFO, "Sending email on ticket update");
         if ($updatedStatus == "resolved") {
             $subject_status = "Resolved";
             $template_path = "ticket_resolved";
             $msg = "Ticket resolved successfully. An email was sent to the client, CC and BCC emails.";
+        } else {
+            if ($send_client_email && !$send_cc_bcc_emails) {
+                $subject_status = "Updated";
+                $template_path = "ticket_updated";
+                $msg = "Ticket updated successfully. An email was sent to the client.";
+            } else if (!$send_client_email && $send_cc_bcc_emails) {
+                $subject_status = "Updated";
+                $template_path = "ticket_updated";
+                $msg = "Ticket updated successfully. An email was sent to the CC and BCC emails.";
+            } else {        
+                $subject_status = "Updated";
+                $template_path = "ticket_updated";
+                $msg = "Ticket updated successfully. An email was sent to the client, CC and BCC emails.";
+            }
         }
 
         // message for gui to display
@@ -331,18 +359,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
         $attachment_paths = explode(',', $result["attachment_path"]);
 
+        if (isset($old_assigned_email))
+            $tech_cc_emails[] = $old_assigned_email;
+
         $email_tech_res = send_email_and_add_to_ticket($ticket_id, $assigned_tech_email, $ticket_subject, $template_tech, $tech_cc_emails, $tech_bcc_emails, $attachment_paths);
+    
 
-        if ($client_email == $assigned_tech_email)
+        if (($client_email == $assigned_tech_email) || !$send_client_email) {
             $email_client_res = send_email_and_add_to_ticket($ticket_id, getenv("GMAIL_USER"), $ticket_subject, $template_client, $client_cc_emails, $client_bcc_emails, $attachment_paths);
-        else
+        } else {
             $email_client_res = send_email_and_add_to_ticket($ticket_id, $client_email, $ticket_subject, $template_client, $client_cc_emails, $client_bcc_emails, $attachment_paths);
+        }
 
-        if (!($email_tech_res && $email_client_res)) {
-            $error = 'Error sending email to assigned tech and CC/BCC';
-            $formData = http_build_query($_POST);
+        if (!$email_tech_res || !$email_client_res) {
+            if ($send_client_email && !$send_cc_bcc_emails) {
+                $subject_status = "Updated";
+                $template_path = "ticket_updated";
+                $error = "Error sending email to assigned tech and the client";
+            } else if (!$send_client_email && $send_cc_bcc_emails) {
+                $subject_status = "Updated";
+                $template_path = "ticket_updated";
+                $error = "Error sending email to assigned tech and CC/BCC emails ";
+            } else {        
+                $subject_status = "Updated";
+                $template_path = "ticket_updated";
+                $error = "Error sending email to assigned tech, client, and CC/BCC emails";
+            }
+
             $_SESSION['current_status'] = $error;
             $_SESSION['status_type'] = 'error';
+
+            $formData = http_build_query($_POST);
             log_app(LOG_ERR, "$error \n\n $formData");
             header("Location: edit_ticket.php?$formData&id=$ticket_id");
             exit;

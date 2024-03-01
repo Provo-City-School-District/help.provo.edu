@@ -137,7 +137,7 @@ $unassigned_ticket_query = <<<unassigned_tickets
 SELECT *
 FROM tickets
 WHERE status NOT IN ('closed', 'resolved') 
-AND (employee IS NULL OR employee = 'unassigned')
+AND (employee IS NULL OR employee = 'unassigned' OR employee = '')
 unassigned_tickets;
 
 

@@ -3,27 +3,37 @@ var table;
 
 // Initialize the data table library on the table with the class data-table
 $(document).ready(function () {
-  table = $(".data-table").DataTable({
-    paging: true, // Enable pagination
-    pageLength: 10, // Set the number of rows per page
-    stateSave: true, // Enable state saving
-    ordering: true, // Enable sorting
-    columns: [
-      { width: "5%" },
-      { width: "25%" },
-      { width: "25%" },
-      { width: "5%" },
-      { width: "5%" },
-      { width: "5%" },
-      { width: "5%" },
-      { width: "5%" },
-      { width: "5%" },
-      { width: "5%" },
-      { width: "5%" },
-      { width: "5%" },
-    ],
-    autoWidth: false, // Disable auto width calculation
-  });
+  if (window.location.pathname === "/controllers/tickets/recent_tickets.php") {
+    table = $(".data-table").DataTable({
+      order: [[9, "desc"]], // Sort by the second column in ascending order
+    });
+  } else if (window.location.pathname === "/tickets.php") {
+    table = $(".data-table").DataTable({
+      order: [[8, "asc"]], // Sort by the second column in ascending order
+    });
+  } else {
+    table = $(".data-table").DataTable({
+      paging: true, // Enable pagination
+      pageLength: 10, // Set the number of rows per page
+      stateSave: true, // Enable state saving
+      ordering: true, // Enable sorting
+      columns: [
+        { width: "5%" },
+        { width: "25%" },
+        { width: "25%" },
+        { width: "5%" },
+        { width: "5%" },
+        { width: "5%" },
+        { width: "5%" },
+        { width: "5%" },
+        { width: "5%" },
+        { width: "5%" },
+        { width: "5%" },
+        { width: "5%" },
+      ],
+      autoWidth: false, // Disable auto width calculation
+    });
+  }
 });
 $(document).ready(function () {
   table = $(".search-data-table").DataTable({
@@ -247,6 +257,11 @@ function setupInactivityModal() {
   function showTimeoutModal() {
     timeoutModal.style.display = "block";
   }
+}
+
+function dismiss_timeout_modal() {
+  const timeoutModal = document.getElementById("timeoutModal");
+  timeoutModal.style.display = "none";
 }
 
 // Call the function when the page loads

@@ -1,4 +1,4 @@
 /* Conditionally import the variables based on the system color scheme */
 
-@import "variables-light.css?v=00.01.18" screen and (prefers-color-scheme: light);
-@import "variables-dark.css?v=00.01.18" screen and (prefers-color-scheme: dark);
+@import "variables-light.css?v=00.01.20" screen and (prefers-color-scheme: light);
+@import "variables-dark.css?v=00.01.20" screen and (prefers-color-scheme: dark);

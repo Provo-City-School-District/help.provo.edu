@@ -249,5 +249,11 @@ function setupInactivityModal() {
   }
 }
 
+function dismiss_timeout_modal()
+{
+  const timeoutModal = document.getElementById("timeoutModal");
+  timeoutModal.style.display = "none";
+}
+
 // Call the function when the page loads
 window.addEventListener("load", setupInactivityModal);

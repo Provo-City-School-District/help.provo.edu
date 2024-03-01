@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         }
 
         if (!empty($search_id)) {
-            $ticket_query .= " AND id LIKE '" . mysqli_real_escape_string($database, $search_id) . "'";
+            $ticket_query .= " AND id LIKE '" . $search_id . "'";
         }
 
 
@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         }
         if (!empty($search_employee)) {
             if ($search_employee == 'Unassigned') {
-                $ticket_query .= " AND (employee IS NULL OR employee = 'unassigned')";
+                $ticket_query .= " AND (employee IS NULL OR employee = 'unassigned' OR employee = '')";
             } else {
                 $ticket_query .= " AND employee LIKE '%$search_employee%'";
             }

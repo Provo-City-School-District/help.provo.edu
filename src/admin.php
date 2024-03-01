@@ -38,7 +38,7 @@ if (isset($_SESSION['current_status'])) {
 //query for unassigned tickets
 $ticket_query = "SELECT *
 FROM tickets
-WHERE status NOT IN ('closed', 'resolved') AND (employee IS NULL OR employee = 'unassigned')
+WHERE status NOT IN ('closed', 'resolved') AND (employee IS NULL OR employee = 'unassigned' OR employee = '')
 ORDER BY id ASC";
 
 $ticket_result = mysqli_query($database, $ticket_query);

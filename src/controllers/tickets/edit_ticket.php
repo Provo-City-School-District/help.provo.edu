@@ -217,7 +217,12 @@ if (isset($ticket["client"])) {
     <form id="updateTicketForm" method="POST" action="update_ticket.php">
         <!-- Add a submit button to update the information -->
         <input id="green-button" type="submit" value="Update Ticket">
-        Send Emails on Update:<input type="checkbox" name="send_emails" value="send_emails" checked>
+        <div>
+            Send Client Email on Update:<input type="checkbox" name="send_emails" value="send_emails" checked>
+        </div>
+        <div>
+            Send CC/BCC Emails on Update:<input type="checkbox" name="send_cc_bcc_emails" value="send_cc_bcc_emails" checked>
+        </div>
         <div class="ticketGrid">
             <input type="hidden" name="ticket_create_date" value="<?= $ticket['created'] ?>">
             <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
@@ -1009,3 +1014,102 @@ if (isset($ticket["client"])) {
     </script>
 <?php endif; ?>
 <?php include("footer.php"); ?>
+<script>
+    function split(val) {
+        return val.split(/,\s*/);
+    }
+
+    function extractLast(term) {
+        return split(term).pop();
+    }
+
+    $("#cc_emails").on("input", function() {
+        const new_value = extractLast($(this).val());
+        $("#cc_emails").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "/user_matches_ldap.php",
+                    method: "GET",
+                    data: {email: new_value},
+                    success: function(data, textStatus, xhr) {
+                        let mappedResults = $.map(data, function (item) {
+                            let itemLocation = item.location ? item.location : "unknown";
+                            return $.extend(item, { label: item.firstName + ' ' + item.lastName + ' (' + itemLocation + ')', value: item.email });
+                        });
+                        response(mappedResults);
+                    },
+                    error: function() {
+                        alert("Error: Autocomplete AJAX call failed");
+                    }
+                });
+            },
+            minLength: 3,
+            search: function() {
+                const term = extractLast(this.value);
+                if (term.length < 1) {
+                    return false;
+                }
+            },
+            focus: function () {
+                // prevent value inserted on focus
+                return false;
+            },
+            select: function( event, ui ) {
+                let terms = split(this.value);
+
+                terms.pop();
+                terms.push(ui.item.value);
+                terms.push("");
+
+                this.value = terms.join(",");
+                return false;
+            }
+        });
+    });
+
+    $("#bcc_emails").on("input", function() {
+        const new_value = extractLast($(this).val());
+        console.log("running");
+        $("#bcc_emails").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "/user_matches_ldap.php",
+                    method: "GET",
+                    data: {email: new_value},
+                    success: function(data, textStatus, xhr) {
+                        let mappedResults = $.map(data, function (item) {
+                            let itemLocation = item.location ? item.location : "unknown";
+                            return $.extend(item, { label: item.firstName + ' ' + item.lastName + ' (' + itemLocation + ')', value: item.email });
+                        });
+                        response(mappedResults);
+                    },
+                    error: function() {
+                        alert("Error: Autocomplete AJAX call failed");
+                    }
+                });
+            },
+            minLength: 3,
+            search: function() {
+                const term = extractLast(this.value);
+                if (term.length < 1) {
+                    return false;
+                }
+            },
+            focus: function () {
+                // prevent value inserted on focus
+                return false;
+            },
+            select: function( event, ui ) {
+                let terms = split(this.value);
+
+                terms.pop();
+                terms.push(ui.item.value);
+                terms.push("");
+
+                this.value = terms.join(",");
+                return false;
+            }
+        });
+    });
+
+</script>

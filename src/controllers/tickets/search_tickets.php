@@ -4,7 +4,6 @@ include("header.php");
 require_once('helpdbconnect.php');
 require_once('swdbconnect.php');
 include("ticket_utils.php");
-
 // Query the locations table to get the location information
 $location_query = "SELECT sitenumber, location_name FROM locations ORDER BY location_name ASC";
 $location_result = mysqli_query($database, $location_query);
@@ -22,6 +21,7 @@ $dates_searched = [];
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
     if (!empty($_GET)) {
+
         // Get the search terms from the form
         $search_id = isset($_GET['search_id']) ? mysqli_real_escape_string($database, $_GET['search_id']) : '';
         $search_name = isset($_GET['search_name']) ? mysqli_real_escape_string($database, $_GET['search_name']) : '';
@@ -33,58 +33,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $search_start_date = isset($_GET['start_date']) ? mysqli_real_escape_string($database, $_GET['start_date']) : '';
         $search_end_date = isset($_GET['end_date']) ? mysqli_real_escape_string($database, $_GET['end_date']) : '';
         $dates_searched = isset($_GET['dates']) ? $_GET['dates'] : [];
+        $search_archived = isset($_GET['search_archived']) ? mysqli_real_escape_string($database, $_GET['search_archived']) : '';
 
-        // Construct the SQL query based on the selected search options
-        $ticket_query = "SELECT * FROM tickets WHERE 1=1 ";
-
-
-        if (!empty($search_name)) {
-            // Split the search terms into an array of words
-            $words = explode(" ", $search_name);
-            $wordCount = count($words);
-
-            $ticket_query .= "AND tickets.id IN (SELECT linked_id FROM notes WHERE ";
-            for ($i = 0; $i < $wordCount; $i++) {
-                $ticket_query .= "name LIKE '%" . mysqli_real_escape_string($database, $words[$i]) . "%' OR description LIKE '%" . mysqli_real_escape_string($database, $words[$i]) . "%' OR note LIKE '%" . mysqli_real_escape_string($database, $words[$i]) . "%'";
-                if ($i != $wordCount - 1) {
-                    $ticket_query .= " AND ";
-                }
-            }
-            $ticket_query .= ")";
-        }
-
-        if (!empty($search_id)) {
-            $ticket_query .= " AND id LIKE '" . $search_id . "'";
-        }
-
-
-        if (!empty($search_location)) {
-            $ticket_query .= " AND location LIKE '%$search_location%'";
-        }
-        if (!empty($search_employee)) {
-            if ($search_employee == 'Unassigned') {
-                $ticket_query .= " AND (employee IS NULL OR employee = 'unassigned' OR employee = '')";
-            } else {
-                $ticket_query .= " AND employee LIKE '%$search_employee%'";
-            }
-        }
-        if (!empty($search_priority)) {
-            $ticket_query .= " AND priority LIKE '$search_priority'";
-        }
-        if (!empty($search_client)) {
-            $ticket_query .= " AND client LIKE '%$search_client%'";
-        }
-        if (!empty($search_status)) {
-            $ticket_query .= " AND status LIKE '%$search_status%'";
-        }
-        if (!empty($search_start_date) && !empty($search_end_date) && !empty($dates_searched)) {
-
-            $date_conditions = array();
-            foreach ($dates_searched as $date) {
-                $date_conditions[] = "($date BETWEEN '$search_start_date' AND '$search_end_date')";
-            }
-            $ticket_query .= ' AND (' . implode(' OR ', $date_conditions) . ')';
-        }
 
         // Query the archived_location_id values for the given sitenumber
         $archived_location_ids = array();
@@ -95,116 +45,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                 $archived_location_ids[] = $arch_row['archived_location_id'];
             }
         }
-
-        // Construct the SQL query for the old ticket database
-        $old_ticket_query = "SELECT CONCAT('A-', JOB_TICKET_ID) AS a_id,PROBLEM_TYPE_ID,SUBJECT,QUESTION_TEXT,REPORT_DATE,LAST_UPDATED,JOB_TIME,ASSIGNED_TECH_ID,ROOM,LOCATION_ID,STATUS_TYPE_ID,CLOSE_DATE FROM whd.job_ticket";
-        if (!empty($search_id) || !empty($search_name) || !empty($search_location) || !empty($search_employee) || !empty($search_client) || !empty($search_status) || !empty($search_status) || !empty($search_priority) || !empty($dates_searched) || !empty($search_end_date) || !empty($search_start_date)) {
-            $old_ticket_query .= " WHERE 1=1";
-        } else {
-            $old_ticket_query .= " WHERE 1=0";
-        }
-
-        if (!empty($search_name)) {
-            // Split the search terms into an array of words
-            $words = explode(" ", $search_name);
-            $wordCount = count($words);
-
-            $old_ticket_query .= " AND JOB_TICKET_ID IN (SELECT JOB_TICKET_ID FROM tech_note WHERE ";
-            for ($i = 0; $i < $wordCount; $i++) {
-                $old_ticket_query .= "QUESTION_TEXT LIKE '%" . mysqli_real_escape_string($database, $words[$i]) . "%' OR SUBJECT LIKE '%" . mysqli_real_escape_string($database, $words[$i]) . "%' OR NOTE_TEXT LIKE '%" . mysqli_real_escape_string($database, $words[$i]) . "%'";
-                if ($i != $wordCount - 1) {
-                    $old_ticket_query .= " AND ";
-                }
-            }
-            $old_ticket_query .= ")";
-        }
-
-        if (!empty($search_id)) {
-            $search_id = intval($search_id);
-            $old_ticket_query .= " AND JOB_TICKET_ID LIKE '$search_id'";
-        }
-        $invalid_ids_legacy_system = [1897, 381];
-        if (!empty($search_location) && !in_array($search_location, $invalid_ids_legacy_system)) {
-            $old_ticket_query .= " AND LOCATION_ID IN (" . implode(",", $archived_location_ids) . ")";
-        }
-        if (!empty($search_employee)) {
-            if ($search_employee == 'Unassigned') {
-                $search_employee = "helpdesk";
-            }
-            // First, perform a query to get the CURRENT_DASHBOARD_ID for the given USERNAME
-            $employee_query = "SELECT CURRENT_DASHBOARD_ID FROM whd.tech WHERE USER_NAME = ?";
-            $employee_stmt = $swdb->prepare($employee_query);
-            $employee_stmt->bind_param('s', $search_employee);
-            $employee_stmt->execute();
-            $employee_result = $employee_stmt->get_result();
-            $employee_row = $employee_result->fetch_assoc();
-            $employee_id = $employee_row['CURRENT_DASHBOARD_ID'];
-
-            // Now, you can use $employee_id in your main query to get the tickets assigned to the given tech
-            $old_ticket_query .= " AND ASSIGNED_TECH_ID = $employee_id";
-        }
-        if (!empty($search_client)) {
-            $old_ticket_query .= " AND CLIENT_ID LIKE '%$search_client%'";
-        }
-        // map old system status ids to our current system
-        switch ($search_status) {
-            case 'open':
-                $search_status = 1;
-                break;
-            case 'closed':
-                $search_status = 3;
-                break;
-            case 'resolved':
-                $search_status = 5;
-                break;
-            case 'pending':
-                $search_status = 7;
-                break;
-            case 'maintenance':
-                $search_status = 11;
-                break;
-            case 'vendor':
-                $search_status = 12;
-                break;
-            default:
-                $search_status = null;
-        }
-        if (!empty($search_status)) {
-            $old_ticket_query .= " AND STATUS_TYPE_ID  LIKE '%$search_status%'";
-        }
-        if (!empty($search_start_date) && !empty($search_end_date) && !empty($dates_searched)) {
-
-            $date_conditions = array();
-            foreach ($dates_searched as $date) {
-                switch ($date) {
-                    case 'due_date':
-                        $date = 'CLOSE_DATE';
-                        break;
-                    case 'created':
-                        $date = 'REPORT_DATE';
-                        break;
-                    case 'last_updated':
-                        $date = 'LAST_UPDATED';
-                        break;
-                    default:
-                        $date = null;
-                }
-                $date_conditions[] = "($date BETWEEN '$search_start_date' AND '$search_end_date')";
-            }
-            $old_ticket_query .= ' AND (' . implode(' OR ', $date_conditions) . ')';
-        }
+        require_once('search_query_builder.php');
         // Execute the SQL query to search for matching tickets
         $ticket_result = mysqli_query($database, $ticket_query);
-        $old_ticket_result = mysqli_query($swdb, $old_ticket_query);
-
+        if ($search_archived == 1) {
+            //include archived tickets in search
+            require_once('search_archived_query_builder.php');
+            $old_ticket_result = mysqli_query($swdb, $old_ticket_query);
+        }
 
         // Combine the results from both queries into a single array
         $combined_results = array();
         while ($row = mysqli_fetch_assoc($ticket_result)) {
             $combined_results[] = $row;
         }
-        while ($row = mysqli_fetch_assoc($old_ticket_result)) {
-            $combined_results[] = $row;
+        //add in archived tickets if the checkbox is checked
+        if ($search_archived == 1) {
+            while ($row = mysqli_fetch_assoc($old_ticket_result)) {
+                $combined_results[] = $row;
+            }
         }
     }
 }
@@ -394,6 +253,10 @@ function sortByDate($x, $y)
             <input type="checkbox" name="dates[]" value="last_updated" <?php echo (isset($_GET['dates']) && in_array('last_updated', $_GET['dates'])) ? 'checked' : ''; ?>> Last Updated
             <input type="checkbox" name="dates[]" value="due_date" <?php echo (isset($_GET['dates']) && in_array('due_date', $_GET['dates'])) ? 'checked' : ''; ?>> Due Date
             <!-- Add more checkboxes as needed -->
+        </div>
+        <div>
+            <label for="search_name">Search Archived Tickets:</label>
+            <input type="checkbox" id="search_archived" name="search_archived" value="1" <?php echo ($_GET['search_archived'] == 1) ? 'checked' : ''; ?>>
         </div>
         <button type="submit" class="btn btn-primary">Search</button>
         <br><br>

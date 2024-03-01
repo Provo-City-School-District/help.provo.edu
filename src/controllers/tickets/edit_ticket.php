@@ -1025,7 +1025,6 @@ if (isset($ticket["client"])) {
 
     $("#cc_emails").on("input", function() {
         const new_value = extractLast($(this).val());
-        console.log("running");
         $("#cc_emails").autocomplete({
             source: function (request, response) {
                 $.ajax({
@@ -1033,8 +1032,11 @@ if (isset($ticket["client"])) {
                     method: "GET",
                     data: {email: new_value},
                     success: function(data, textStatus, xhr) {
-                        mapped_data = data.map( ({email}) => (email));
-                        response(mapped_data)
+                        let mappedResults = $.map(data, function (item) {
+                            let itemLocation = item.location ? item.location : "unknown";
+                            return $.extend(item, { label: item.firstName + ' ' + item.lastName + ' (' + itemLocation + ')', value: item.email });
+                        });
+                        response(mappedResults);
                     },
                     error: function() {
                         alert("Error: Autocomplete AJAX call failed");
@@ -1075,8 +1077,11 @@ if (isset($ticket["client"])) {
                     method: "GET",
                     data: {email: new_value},
                     success: function(data, textStatus, xhr) {
-                        mapped_data = data.map( ({email}) => (email));
-                        response(mapped_data)
+                        let mappedResults = $.map(data, function (item) {
+                            let itemLocation = item.location ? item.location : "unknown";
+                            return $.extend(item, { label: item.firstName + ' ' + item.lastName + ' (' + itemLocation + ')', value: item.email });
+                        });
+                        response(mappedResults);
                     },
                     error: function() {
                         alert("Error: Autocomplete AJAX call failed");

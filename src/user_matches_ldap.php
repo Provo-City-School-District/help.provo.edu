@@ -1,6 +1,8 @@
 <?php
+require("helpdbconnect.php");
 require("block_file.php");
 require("functions.php");
+require("ticket_utils.php");
 
 $email = isset($_GET['email']) ? $_GET['email'] : '';
 log_app(LOG_INFO, "email: ".$email);
@@ -27,10 +29,19 @@ $entries = ldap_get_entries($ldap_conn, $ldap_result);
 
 $results = [];
 for ($i = 0; $i < $entries['count']; $i++) {
-    $email = $entries[$i]['mail'][0];
-    $results[] = ['email' => $email];
+    $email = $entries[$i]['mail'][0] ?: null;
+    $firstname = $entries[$i]['givenname'][0] ?: null;
+    $lastname = $entries[$i]['sn'][0] ?: null;
+    $location_code = intval($entries[$i]["ou"][0] ?: 38);
+
+    // Hacky mapping for aux services, should be 1896 internally
+    if ($location_code == 1892)
+        $location_code = 1896;
+
+    $results[] = ['email' => $email, 'firstName' => $firstname, 'lastName' => $lastname, 'location' => location_name_from_id($location_code)];
 }
 
 header('Content-Type: application/json');
+log_app(LOG_INFO, json_encode($results));
 echo json_encode($results);
 ?>

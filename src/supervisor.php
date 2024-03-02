@@ -116,6 +116,18 @@ $fieldTechs = process_query_result($field_tech_query_result, "employee");
 
 ?>
 <h1>Supervisor</h1>
+<form>
+    <label for="refreshInterval">Select refresh interval:</label>
+    <select id="refreshInterval" name="refreshInterval">
+        <option value="0">No refresh</option>
+        <option value="10000">10 Second</option>
+        <option value="30000">30 Seconds</option>
+        <option value="60000">60 Seconds</option>
+        <option value="300000">5 Minutes</option>
+        <option value="600000">10 Minutes</option>
+        <option value="3600000">60 Minutes</option>
+    </select>
+</form>
 <h2>Reports</h2>
 <div class="grid2 canvasjsreport">
     <div id="techOpenTicket" style="height: 370px; width: 100%;"></div>
@@ -149,5 +161,35 @@ display_tickets_table($ticket_result, $database);
     let allTechs = <?php echo json_encode($allTechs, JSON_NUMERIC_CHECK); ?>;
     let byLocation = <?php echo json_encode($allLocations, JSON_NUMERIC_CHECK); ?>;
     // let fieldTechOpen = <?php echo json_encode($fieldTechs, JSON_NUMERIC_CHECK); ?>;
+</script>
+<script type="text/javascript">
+    // Function to reload the page at the specified interval
+    function autoRefresh(interval) {
+        clearInterval(window.refreshIntervalId);
+        if (interval > 0) {
+            window.refreshIntervalId = setInterval(function() {
+                location.reload();
+            }, interval);
+        }
+    }
+
+    // Event listener for change in the auto refresh dropdown
+    document.getElementById('refreshInterval').addEventListener('change', function() {
+        let interval = this.value;
+        // Store the selected interval in local storage
+        localStorage.setItem('refreshInterval', interval);
+        autoRefresh(interval);
+    });
+
+    // Event listener for DOMContentLoaded event to start the auto-refresh
+    document.addEventListener('DOMContentLoaded', function() {
+        // Retrieve the selected interval from local storage
+        let interval = localStorage.getItem('refreshInterval');
+        if (interval) {
+            // Set the dropdown to the stored value
+            document.getElementById('refreshInterval').value = interval;
+            autoRefresh(interval);
+        }
+    });
 </script>
 <?php include("footer.php"); ?>

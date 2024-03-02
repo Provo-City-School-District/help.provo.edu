@@ -11,7 +11,7 @@ if ($_SESSION['permissions']['is_supervisor'] != 1) {
 require_once('helpdbconnect.php');
 require("ticket_utils.php");
 $managed_location = $_SESSION['permissions']['location_manager_sitenumber'];
-// process the data for admin report charts
+
 function process_query_result($query_result, $label_field)
 {
     $count = [];
@@ -38,6 +38,38 @@ function process_query_result($query_result, $label_field)
 }
 
 
+// process the data for admin report charts
+function process_query_result_wlinks($query_result, $label_field, $id_field, $url_field)
+{
+    $count = [];
+    $ids = [];
+
+    while ($row = mysqli_fetch_assoc($query_result)) {
+        $label = $row[$label_field];
+        $id = $row[$id_field];
+        if ($label == null || $label == "")
+            $label = "unassigned";
+
+        if (!isset($count[$label])) {
+            $count[$label] = 1;
+            $ids[$label] = $id;
+        } else {
+            $count[$label]++;
+        }
+    }
+
+    asort($count);
+
+    $processedData = [];
+    foreach ($count as $name => $count) {
+        $url = $url_field . urlencode($ids[$name]);
+        $processedData[] = array("y" => $count, "label" => $name, "url" => $url);
+    }
+
+    return $processedData;
+}
+
+
 
 // Check if an error message is set
 if (isset($_SESSION['current_status'])) {
@@ -51,10 +83,14 @@ if (isset($_SESSION['current_status'])) {
 
 // Query open tickets based on tech
 $tech_query = <<<STR
-    SELECT employee FROM tickets WHERE status NOT IN ('closed', 'resolved')
+    SELECT t.employee, u.id 
+    FROM tickets t 
+    JOIN users u ON t.employee = u.username 
+    WHERE t.status NOT IN ('closed', 'resolved')
     STR;
 $tech_query_result = mysqli_query($database, $tech_query);
-$allTechs = process_query_result($tech_query_result, "employee");
+$url_path_techs = "/controllers/users/manage_user.php?id=";
+$allTechs = process_query_result_wlinks($tech_query_result, "employee", "id", $url_path_techs);
 
 // Query open tickets based on location:
 $location_query = <<<STR
@@ -81,10 +117,10 @@ $fieldTechs = process_query_result($field_tech_query_result, "employee");
 ?>
 <h1>Supervisor</h1>
 <h2>Reports</h2>
-<div class="grid3 canvasjsreport">
+<div class="grid2 canvasjsreport">
     <div id="techOpenTicket" style="height: 370px; width: 100%;"></div>
     <div id="byLocation" style="height: 370px; width: 100%;"></div>
-    <div id="fieldTechOpen" style="height: 370px; width: 100%;"></div>
+    <!-- <div id="fieldTechOpen" style="height: 370px; width: 100%;"></div> -->
 </div>
 
 
@@ -112,6 +148,6 @@ display_tickets_table($ticket_result, $database);
 <script>
     let allTechs = <?php echo json_encode($allTechs, JSON_NUMERIC_CHECK); ?>;
     let byLocation = <?php echo json_encode($allLocations, JSON_NUMERIC_CHECK); ?>;
-    let fieldTechOpen = <?php echo json_encode($fieldTechs, JSON_NUMERIC_CHECK); ?>;
+    // let fieldTechOpen = <?php echo json_encode($fieldTechs, JSON_NUMERIC_CHECK); ?>;
 </script>
 <?php include("footer.php"); ?>

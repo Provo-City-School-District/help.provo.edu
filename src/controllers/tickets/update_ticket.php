@@ -26,6 +26,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $updatedCCEmails = filter_input(INPUT_POST, 'cc_emails', FILTER_SANITIZE_SPECIAL_CHARS);
 
+
+    if ($updatedStatus == "resolved") {
+        $notes_query = "SELECT COUNT(*) as count FROM notes WHERE linked_id = '$ticket_id'";
+        $notes_result = mysqli_query($database, $notes_query);
+        $row = mysqli_fetch_assoc($notes_result);
+        if ($row['count'] == 0) {
+            // Stop the resolving process and display an error message
+            $noNote_error = "Cannot resolve ticket without adding a note";
+            $_SESSION['current_status'] = $noNote_error;
+            $_SESSION['status_type'] = 'error';
+            header("Location: edit_ticket.php?$formData&id=$ticket_id");
+            exit;
+        }
+    }
+
+
     // Allow trailing comma
     if (substr($updatedCCEmails, -1) == ",") {
         $updatedCCEmails = substr_replace($updatedCCEmails, '', -1, 1);
@@ -244,7 +260,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Check if the ticket has an alert about not being updated in last 48 hours and clear it since the ticket was just updated.
     removeAlert($database, $alert48Message, $ticket_id);
     removeAlert($database, $alert7DayMessage, $ticket_id);
-    
+
     $send_client_email = isset($_POST['send_emails']) && ($_POST['send_emails'] == "send_emails");
     $send_cc_bcc_emails = isset($_POST['send_cc_bcc_emails']) && ($_POST['send_cc_bcc_emails'] == "send_cc_bcc_emails");
 
@@ -313,7 +329,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $subject_status = "Updated";
                 $template_path = "ticket_updated";
                 $msg = "Ticket updated successfully. An email was sent to the CC and BCC emails.";
-            } else {        
+            } else {
                 $subject_status = "Updated";
                 $template_path = "ticket_updated";
                 $msg = "Ticket updated successfully. An email was sent to the client, CC and BCC emails.";
@@ -356,14 +372,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             log_app(LOG_ERR, "Failed to get old attachment_path");
         }
         mysqli_stmt_close($stmt);
-    
+
         $attachment_paths = explode(',', $result["attachment_path"]);
 
         if (isset($old_assigned_email))
             $tech_cc_emails[] = $old_assigned_email;
 
         $email_tech_res = send_email_and_add_to_ticket($ticket_id, $assigned_tech_email, $ticket_subject, $template_tech, $tech_cc_emails, $tech_bcc_emails, $attachment_paths);
-    
+
 
         if (($client_email == $assigned_tech_email) || !$send_client_email) {
             $email_client_res = send_email_and_add_to_ticket($ticket_id, getenv("GMAIL_USER"), $ticket_subject, $template_client, $client_cc_emails, $client_bcc_emails, $attachment_paths);
@@ -380,7 +396,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $subject_status = "Updated";
                 $template_path = "ticket_updated";
                 $error = "Error sending email to assigned tech and CC/BCC emails ";
-            } else {        
+            } else {
                 $subject_status = "Updated";
                 $template_path = "ticket_updated";
                 $error = "Error sending email to assigned tech, client, and CC/BCC emails";

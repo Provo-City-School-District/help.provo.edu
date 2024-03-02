@@ -219,8 +219,14 @@ function sortByDate($x, $y)
         </div>
         <div class="form-group">
             <label for="search_client">Client:</label>
-            <input type="text" class="form-control" id="search_client" name="search_client" value="<?php echo htmlspecialchars($search_client); ?>">
+            <!-- <input type="text" class="form-control" id="search_client" name="search_client" value="<?php echo htmlspecialchars($search_client); ?>"> -->
+            <select id="search_client" name="search_client">
+                <option value="" selected></option>
+                <?php foreach ($usernames as $username) : ?>
 
+                    <option value="<?= $username ?>" <?= $search_client === $username ? 'selected' : '' ?>><?= $username ?></option>
+                <?php endforeach; ?>
+            </select>
         </div>
         <div class="form-group">
             <label for="search_status">Status:</label>
@@ -487,48 +493,3 @@ function sortByDate($x, $y)
     } ?>
 </article>
 <?php include("footer.php"); ?>
-<script>
-    $("#search_client").on("input", function() {
-        const new_value = extractLast($(this).val());
-        $("#search_client").autocomplete({
-            source: function (request, response) {
-                $.ajax({
-                    url: "/client_search_ldap.php",
-                    method: "GET",
-                    data: {username: new_value},
-                    success: function(data, textStatus, xhr) {
-                        let mappedResults = $.map(data, function (item) {
-                            let itemLocation = item.location ? item.location : "unknown";
-                            return $.extend(item, { label: item.firstName + ' ' + item.lastName + ' (' + itemLocation + ')', value: item.username });
-                        });
-                        response(mappedResults);
-                    },
-                    error: function() {
-                        alert("Error: Autocomplete AJAX call failed");
-                    }
-                });
-            },
-            minLength: 3,
-            search: function() {
-                const term = extractLast(this.value);
-                if (term.length < 1) {
-                    return false;
-                }
-            },
-            focus: function () {
-                // prevent value inserted on focus
-                return false;
-            },
-            select: function( event, ui ) {
-                let terms = split(this.value);
-
-                terms.pop();
-                terms.push(ui.item.value);
-                terms.push("");
-
-                this.value = terms.join(",");
-                return false;
-            }
-        });
-    });
-</script>

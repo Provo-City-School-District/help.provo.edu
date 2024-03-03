@@ -19,10 +19,10 @@ if (isset($_SESSION['last_timestamp'])) {
     $time_difference = $current_time - strtotime($user_last_login);
 
     // Check if the user has been logged in for more than 2 hours
-    if ($time_difference > 60 * 60 * 2) {
+    if ($time_difference > 60 * 60 * 3) {
         // Unset all session variables
         $_SESSION = array();
-        log_app(LOG_INFO, $_SESSION['username'] . " Session killed for being older than 2 hours");
+        log_app(LOG_INFO, $_SESSION['username'] . " Session killed for being older than 3 hours");
         // Delete the session cookie
         session_unset();
         // Destroy the session

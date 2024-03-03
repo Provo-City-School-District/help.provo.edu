@@ -176,20 +176,20 @@ display_tickets_table($ticket_result, $database);
     // Event listener for change in the auto refresh dropdown
     document.getElementById('refreshInterval').addEventListener('change', function() {
         let interval = this.value;
-        // Store the selected interval in local storage
-        localStorage.setItem('refreshInterval', interval);
+        // Store the selected interval in session storage
+        sessionStorage.setItem('refreshInterval', interval);
         autoRefresh(interval);
     });
 
     // Event listener for DOMContentLoaded event to start the auto-refresh
     document.addEventListener('DOMContentLoaded', function() {
-        // Retrieve the selected interval from local storage
-        let interval = localStorage.getItem('refreshInterval');
+        // Retrieve the selected interval from session storage
+        let interval = sessionStorage.getItem('refreshInterval');
         if (interval) {
             // Set the dropdown to the stored value
             document.getElementById('refreshInterval').value = interval;
             autoRefresh(interval);
         }
-    });
+    })
 </script>
 <?php include("footer.php"); ?>

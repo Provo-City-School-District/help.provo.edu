@@ -208,3 +208,13 @@ function get_last_login_time($username)
     // Return the last login time
     return $last_login;
 }
+function calculateTimeSinceLastLogin()
+{
+    $user_last_login = $_SESSION['last_login'];
+    $current_time = time();
+
+    // Calculate the time difference in seconds
+    $time_difference = $current_time - strtotime($user_last_login);
+
+    return $time_difference;
+}

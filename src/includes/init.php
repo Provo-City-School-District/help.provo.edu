@@ -1,6 +1,17 @@
 <?php
-// Checks if Session exists, if not starts one.
-if (!session_id()) {
+// List of normal web browser user agent substrings
+$normal_browsers = ["Mozilla", "Chrome", "Safari", "Opera", "MSIE", "Edge", "Firefox"];
+
+// Get the user agent
+$user_agent = $_SERVER['HTTP_USER_AGENT'];
+
+// Check if the user agent is a normal web browser
+$is_normal_browser = array_filter($normal_browsers, function ($browser) use ($user_agent) {
+    return strpos($user_agent, $browser) !== false;
+});
+
+// Only start a session if the user agent is a normal web browser
+if ($is_normal_browser && !session_id()) {
     session_start();
 }
 include_once('functions.php');
@@ -12,14 +23,9 @@ $inactivity_time = 60 * 60; // 60 minutes
 
 // Check if the last_timestamp session variable is set
 if (isset($_SESSION['last_timestamp'])) {
-    // $user_last_login = get_last_login_time($_SESSION['username']);
-    $user_last_login = $_SESSION['last_login'];
-    $current_time = time();
+    $time_difference = calculateTimeSinceLastLogin();
 
-    // Calculate the time difference in seconds
-    $time_difference = $current_time - strtotime($user_last_login);
-
-    // Check if the user has been logged in for more than 2 hours
+    // Check if the user has been logged in for more than 3 hours
     if ($time_difference > 60 * 60 * 3) {
         // Unset all session variables
         $_SESSION = array();

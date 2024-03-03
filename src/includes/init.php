@@ -1,17 +1,9 @@
 <?php
-// // List of normal web browser user agent substrings
-// $normal_browsers = ["Mozilla", "Chrome", "Safari", "Opera", "MSIE", "Edge", "Firefox"];
+// Get the user agent
+$user_agent = $_SERVER['HTTP_USER_AGENT'];
 
-// // Get the user agent
-// $user_agent = $_SERVER['HTTP_USER_AGENT'];
-
-// // Check if the user agent is a normal web browser
-// $is_normal_browser = array_filter($normal_browsers, function ($browser) use ($user_agent) {
-//     return strpos($user_agent, $browser) !== false;
-// });
-
-// Only start a session if the user agent is a normal web browser
-if (!session_id()) {
+// Check if the user agent is from InterMapper
+if (strpos($user_agent, 'InterMapper') === false && !session_id()) {
     session_start();
 }
 include_once('functions.php');

@@ -31,7 +31,7 @@ if (isset($_SESSION['last_timestamp'])) {
         header('Location: /index.php');
         exit;
     }
-
+    $current_time = time();
     // Calculate the inactivity time
     $inactivity = $current_time - $_SESSION['last_timestamp'];
 

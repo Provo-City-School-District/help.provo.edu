@@ -11,7 +11,9 @@
         // Check if the user has been logged in for more than 2 hours and display the appropriate message about session likely broken
         if ($time_difference > 2 * 60 * 60) {
             echo "<p>Your session may have expired. It's recommended to log out and back in.</p>";
-            log_app(LOG_INFO, $_SESSION['username'] . " alerted of old session");
+            if (isset($_SESSION['username'])) {
+                log_app(LOG_INFO, $_SESSION['username'] . " alerted of old session");
+            }
         }
         ?>
         <button onclick="dismiss_timeout_modal()">Dismiss</button>

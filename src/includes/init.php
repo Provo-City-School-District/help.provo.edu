@@ -12,7 +12,8 @@ $inactivity_time = 60 * 60; // 60 minutes
 
 // Check if the last_timestamp session variable is set
 if (isset($_SESSION['last_timestamp'])) {
-    $user_last_login = get_last_login_time($_SESSION['username']);
+    // $user_last_login = get_last_login_time($_SESSION['username']);
+    $user_last_login = $_SESSION['last_login'];
     $current_time = time();
 
     // Calculate the time difference in seconds

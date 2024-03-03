@@ -7,6 +7,7 @@
         <h2>Inactivity Alert</h2>
         <p>You've been innactive for more than 30 minutes.</p>
         <?php
+        $time_difference = calculateTimeSinceLastLogin();
         // Check if the user has been logged in for more than 2 hours and display the appropriate message about session likely broken
         if ($time_difference > 2 * 60 * 60) {
             echo "<p>Your session may have expired. It's recommended to log out and back in.</p>";

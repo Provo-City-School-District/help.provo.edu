@@ -84,7 +84,7 @@ $current_page = $_SERVER['REQUEST_URI'];
     //load color scheme if set. loads light scheme if not set
     if (isset($_SESSION['color_scheme'])) {
     ?>
-        <link rel="stylesheet" type="text/css" href="/includes/css/variables-<?= $_SESSION['color_scheme'] ?>.css?v=0.1.19">
+        <link rel="stylesheet" type="text/css" href="/includes/css/variables-<?= $_SESSION['color_scheme'] ?>.css?v=0.1.20">
     <?php
     } else {
     ?>

@@ -18,7 +18,7 @@ https://alvarotrigo.com/blog/css-alerts/
   font-family: sans-serif;
   font-weight: 400;
 }
-  
+
 .ticket-status-notification .alertText {
   display: table;
   margin: 0 auto;
@@ -26,40 +26,31 @@ https://alvarotrigo.com/blog/css-alerts/
   font-size: 16px;
 }
 
-@media (prefers-color-scheme: dark) {
-  .ticket-status-notification .info {
-    background-color: #5f5f5f;
-  }
-  
-  .ticket-status-notification .error {
-    background-color: rgb(255, 49, 49);
-  }
-
-  .ticket-status-notification .success {
-    background-color: rgb(52, 205, 52);
-  }
+/* status colors */
+.ticket-status-notification .info {
+  /* background-color: #EEE; */
+  border: 1px solid #DDD;
+  /* color: #999; */
 }
 
-@media (prefers-color-scheme: light) {
-  .ticket-status-notification .info {
-    background-color: #EEE;
-    border: 1px solid #DDD;
-    color: #999;
-  }
-   
-  .ticket-status-notification .error {
-    background-color: #FEE;
-    border: 1px solid #EDD;
-    color: #A66;
-  }
-
-  .ticket-status-notification .success {
-    background-color: #EFE;
-    border: 1px solid #DED;
-    color: #9A9;
-  }
+.ticket-status-notification .error {
+  /* background-color: #FEE; */
+  border: 1px solid #EDD;
+  /* color: var(--crit-color); */
 }
-  /*
+
+.ticket-status-notification .success {
+  /* background-color: #EFE; */
+  border: 1px solid #DED;
+  /* color: #9A9; */
+}
+
+/* 
+@media (prefers-color-scheme: dark) {}
+
+@media (prefers-color-scheme: light) {} */
+
+/*
   .ticket-status-notification .notice {
     background-color: #EFF;
     border: 1px solid #DEE;

@@ -15,6 +15,7 @@
 	--crit-color: #8B0000;
 	--theme-note-invisible: #4b4b4b;
 	--theme-white: #e0e0e0;
+	--success-color: #4caf50;
 }
 
 input,
@@ -149,7 +150,21 @@ table a {
 		transform: translateY(0px);
 	}
 }
+
 /* jqueryUI */
-.ui-autocomplete  {
+.ui-autocomplete {
 	background-color: var(--page-background);
+}
+
+/* status colors */
+.ticket-status-notification .info {
+	background-color: #5f5f5f;
+}
+
+.ticket-status-notification .error {
+	background-color: var(--crit-color);
+}
+
+.ticket-status-notification .success {
+	background-color: var(--success-color);
 }

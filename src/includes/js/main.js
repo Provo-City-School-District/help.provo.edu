@@ -268,10 +268,14 @@ function setupInactivityModal() {
 
   window.addEventListener("click", resetTimeout);
   window.addEventListener("keydown", resetTimeout);
+  window.addEventListener("mousemove", resetTimeout);
+  window.addEventListener("scroll", resetTimeout);
 
   // Add same event listeners to the document inside the iframe
   iframe.contentWindow.document.addEventListener("click", resetTimeout);
   iframe.contentWindow.document.addEventListener("keydown", resetTimeout);
+  iframe.contentWindow.document.addEventListener("mousemove", resetTimeout);
+  iframe.contentWindow.document.addEventListener("scroll", resetTimeout);
 }
 
 function dismiss_timeout_modal() {

@@ -210,11 +210,16 @@ function get_last_login_time($username)
 }
 function calculateTimeSinceLastLogin()
 {
-    $user_last_login = $_SESSION['last_login'];
-    $current_time = time();
+    if (isset($_SESSION['last_login'])) {
+        $user_last_login = $_SESSION['last_login'];
+        $current_time = time();
 
-    // Calculate the time difference in seconds
-    $time_difference = $current_time - strtotime($user_last_login);
+        // Calculate the time difference in seconds
+        $time_difference = $current_time - strtotime($user_last_login);
 
-    return $time_difference;
+        return $time_difference;
+    }
+
+    // Return null if last_login is not set in the session
+    return null;
 }

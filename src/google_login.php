@@ -83,6 +83,8 @@ if (isset($_GET['code'])) {
         $update_stmt = $database->prepare("UPDATE users SET last_login = NOW(), gsso = ?, ldap_location = ? WHERE email = ?");
         $update_stmt->bind_param("sis", $user_ucode, $loc, $email);
         $update_stmt->execute();
+        // Store the last login time in the session
+        $_SESSION['last_login'] = date("Y-m-d H:i:s");
         if ($update_stmt === false) {
             $error_message = 'Prepare failed: (' . $database->errno . ') ' . $database->error;
             error_log($error_message, 0);

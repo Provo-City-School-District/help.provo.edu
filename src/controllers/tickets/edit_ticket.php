@@ -448,8 +448,7 @@ if (isset($ticket["client"])) {
                 <input type="text" id="phone" name="phone" value="<?= $ticket['phone'] ?>">
             </div>
 
-
-            <?php if ($_SESSION['permissions']['is_supervisor'] != 0 || $_SESSION['permissions']['is_admin'] != 0) : ?>
+            <?php if ($_SESSION['permissions']['is_supervisor'] != 0 || $_SESSION['permissions']['is_admin'] != 0 || $ticket['priority'] == 30 && $ticket['client'] == $ticket['employee']) : ?>
                 <div>
                     <label for="due_date">Modify Due Date:</label>
                     <input type="date" id="due_date" name="due_date" value="<?= $ticket['due_date'] ?>">

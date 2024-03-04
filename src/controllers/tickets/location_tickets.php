@@ -25,6 +25,7 @@ FROM alerts
 JOIN users ON alerts.employee = users.username
 JOIN tickets ON alerts.ticket_id = tickets.id
 WHERE tickets.location = $managed_location
+AND alerts.supervisor_alert IN (0, 1)
 alerts_query;
 
 $alerts_result = mysqli_query($database, $alerts_query);

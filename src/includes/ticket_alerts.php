@@ -1,4 +1,8 @@
 <?php
+
+// ALTER TABLE `alerts` ADD `supervisor_alert` TINYINT(1) NOT NULL AFTER `alert_level`;
+
+
 require_once('helpdbconnect.php');
 require_once('ticket_utils.php');
 
@@ -6,7 +10,7 @@ require_once('ticket_utils.php');
 $today = new DateTime();
 
 // insert an alert into the alerts table if it doesn't already exist
-function insertAlertIfNotExists($database, $ticket, $alertMessage, $alertLevel)
+function insertAlertIfNotExists($database, $ticket, $alertMessage, $alertLevel, $superVisorAlert)
 {
     // Prepare a SQL statement to select alerts with the same ticket_id, employee, and message
     $selectAlertsQuery = "SELECT 1 FROM alerts WHERE ticket_id = ? AND employee = ? AND message = ?";
@@ -21,9 +25,9 @@ function insertAlertIfNotExists($database, $ticket, $alertMessage, $alertLevel)
     if (!$selectAlertsStmt->fetch()) {
         $selectAlertsStmt->close();
 
-        $insertAlertQuery = "INSERT INTO alerts (ticket_id, employee, message, alert_level) VALUES (?, ?, ?, ?)";
+        $insertAlertQuery = "INSERT INTO alerts (ticket_id, employee, message, alert_level,supervisor_alert) VALUES (?, ?, ?, ?, ?)";
         $insertAlertStmt = $database->prepare($insertAlertQuery);
-        $insertAlertStmt->bind_param("isss", $ticket['id'], $ticket['employee'], $alertMessage, $alertLevel);
+        $insertAlertStmt->bind_param("isssi", $ticket['id'], $ticket['employee'], $alertMessage, $alertLevel, $superVisorAlert);
         $insertAlertStmt->execute();
         $insertAlertStmt->close();
     } else {
@@ -43,6 +47,8 @@ function getDaysUntilDueDate($dueDateStr)
 
 $hoursBack48 = 48;
 $hoursBack7Days = 168;
+$hoursBack15Days = 360;
+$hoursBack20Days = 480;
 function calculate_hours_back($hoursBack)
 {
     $date = new DateTime();
@@ -101,6 +107,8 @@ foreach ($oldTickets as $oldTicket) {
     $dueDate = $oldTicket['due_date'];
     $date48HoursBack = calculate_hours_back($hoursBack48);
     $date7DaysBack = calculate_hours_back($hoursBack7Days);
+    $date15DaysBack = calculate_hours_back($hoursBack15Days);
+    $date20DaysBack = calculate_hours_back($hoursBack20Days);
 
     // If the last_updated time is longer than 7 days ago, insert an alert for 7 days.
     if (
@@ -112,7 +120,7 @@ foreach ($oldTickets as $oldTicket) {
             ($oldTicket['priority'] == 30 && $oldTicket['client'] != $oldTicket['employee']) ||
             $oldTicket['priority'] == 60)
     ) {
-        insertAlertIfNotExists($database, $oldTicket, $alert7DayMessage, 'warn');
+        insertAlertIfNotExists($database, $oldTicket, $alert7DayMessage, 'warn', 0);
         //else if not updated in 48 hours
     } else {
         if (
@@ -124,8 +132,14 @@ foreach ($oldTickets as $oldTicket) {
                 ($oldTicket['priority'] != 30 && $oldTicket['client'] != $oldTicket['employee']) &&
                 $oldTicket['priority'] != 60)
         ) {
-            insertAlertIfNotExists($database, $oldTicket, $alert48Message, 'warn');
+            insertAlertIfNotExists($database, $oldTicket, $alert48Message, 'warn', 0);
         }
+    }
+    if ($lastUpdated < $date15DaysBack && $oldTicket['priority'] != 60) {
+        insertAlertIfNotExists($database, $oldTicket, $alert15DayMessage, 'warn', 1);
+    }
+    if ($lastUpdated < $date20DaysBack && $oldTicket['priority'] != 60) {
+        insertAlertIfNotExists($database, $oldTicket, $alert20DayMessage, 'warn', 1);
     }
 
 
@@ -146,7 +160,7 @@ foreach ($oldTickets as $oldTicket) {
     // If the ticket's priority is greater than the number of days until its due date, insert a new alert
     if ($daysTillDue->format('%R%a') < 0) {
 
-        insertAlertIfNotExists($database, $oldTicket, $pastDueMessage, 'crit');
+        insertAlertIfNotExists($database, $oldTicket, $pastDueMessage, 'crit', 0);
     }
 }
 

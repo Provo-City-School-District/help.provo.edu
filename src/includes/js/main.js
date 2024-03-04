@@ -6,10 +6,12 @@ $(document).ready(function () {
   if (window.location.pathname === "/controllers/tickets/recent_tickets.php") {
     table = $(".data-table").DataTable({
       order: [[9, "desc"]], // Sort by the second column in ascending order
+      stateSave: true, // Enable state saving
     });
   } else if (window.location.pathname === "/tickets.php") {
     table = $(".data-table").DataTable({
       order: [[8, "asc"]], // Sort by the second column in ascending order
+      stateSave: true, // Enable state saving
     });
   } else {
     table = $(".data-table").DataTable({

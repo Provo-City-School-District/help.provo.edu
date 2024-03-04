@@ -424,7 +424,9 @@ if (isset($ticket["client"])) {
                         <option value="5" <?= ($ticket['priority'] == '5') ? ' selected' : '' ?>>High</option>
                         <option value="10" <?= ($ticket['priority'] == '10') ? ' selected' : '' ?>>Standard</option>
                         <option value="15" <?= ($ticket['priority'] == '15') ? ' selected' : '' ?>>Client Response</option>
+                        <?php if ($_SESSION['permissions']['is_supervisor'] != 0 || $_SESSION['permissions']['is_admin'] != 0 || $ticket['client'] == $ticket['employee']) : ?>
                         <option value="30" <?= ($ticket['priority'] == '30') ? ' selected' : '' ?>>Project</option>
+                        <?php endif; ?>
                         <option value="60" <?= ($ticket['priority'] == '60') ? ' selected' : '' ?>>Meeting Support</option>
                     </select>
                 </div>
@@ -448,8 +450,7 @@ if (isset($ticket["client"])) {
                 <input type="text" id="phone" name="phone" value="<?= $ticket['phone'] ?>">
             </div>
 
-
-            <?php if ($_SESSION['permissions']['is_supervisor'] != 0 || $_SESSION['permissions']['is_admin'] != 0) : ?>
+            <?php if ($_SESSION['permissions']['is_supervisor'] != 0 || $_SESSION['permissions']['is_admin'] != 0 || $ticket['priority'] == 30 && $ticket['client'] == $ticket['employee']) : ?>
                 <div>
                     <label for="due_date">Modify Due Date:</label>
                     <input type="date" id="due_date" name="due_date" value="<?= $ticket['due_date'] ?>">

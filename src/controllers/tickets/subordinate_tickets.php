@@ -35,7 +35,8 @@ if ($_SESSION['permissions']['is_supervisor'] == 1) {
     SELECT alerts.* 
     FROM alerts 
     JOIN users ON alerts.employee = users.username
-    WHERE users.supervisor_username = '$username' 
+    WHERE users.supervisor_username = '$username'
+    AND alerts.supervisor_alert IN (0, 1)
     STR;
 
     $alerts_result = mysqli_query($database, $alerts_query);
@@ -45,5 +46,3 @@ if ($_SESSION['permissions']['is_supervisor'] == 1) {
     display_tickets_table($ticket_result, $database);
 }
 include("footer.php");
-
-?>

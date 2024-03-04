@@ -39,7 +39,7 @@ $client_ticket_query = <<<STR
 $client_ticket_result = mysqli_query($database, $client_ticket_query);
 $client_tickets = mysqli_fetch_all($client_ticket_result, MYSQLI_ASSOC);
 // Query the alerts for tech
-$alert_query = "SELECT * FROM alerts WHERE employee = '$username'";
+$alert_query = "SELECT * FROM alerts WHERE employee = '$username' AND supervisor_alert = 0";
 $alert_result = mysqli_query($database, $alert_query);
 $alerts = mysqli_fetch_all($alert_result, MYSQLI_ASSOC);
 

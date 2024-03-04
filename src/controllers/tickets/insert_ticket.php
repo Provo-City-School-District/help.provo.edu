@@ -102,10 +102,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = $_FILES['attachment']['error'][$i];
 
             if ($error === UPLOAD_ERR_OK) {
-                // Create uploads directory if it doesn't exist
-                if (!file_exists("../../uploads/")) {
-                    mkdir("../../uploads/", 0766, true);
-                }
+                // // Create uploads directory if it doesn't exist
+                // if (!file_exists("../../uploads/")) {
+                //     mkdir("../../uploads/", 0766, true);
+                // }
 
                 // Generate a unique filename using the current timestamp and the original filename
                 $uniqueFilename = date('Ymd_Hi') . '_' . $filename;
@@ -152,6 +152,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     $uploadPath = [];
     foreach ($uploadPaths as $attachmentPath) {
+        // Replace '../../uploads/' with '/uploads/' in the attachment path if it exists
+        $attachmentPath = str_replace('../../uploads/', '/uploads/', $attachmentPath);
         $uploadPath[] = $attachmentPath;
     }
     $attachmentPath = implode(',', $uploadPath);

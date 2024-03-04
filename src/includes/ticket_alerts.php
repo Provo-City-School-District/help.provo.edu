@@ -74,18 +74,18 @@ function calculate_hours_back($hoursBack)
 
 
 // Prepare a SQL statement to select tickets
-$selectTicketsQuery = "SELECT id, employee, priority, due_date,last_updated,status FROM tickets WHERE status NOT IN ('closed', 'resolved')";
+$selectTicketsQuery = "SELECT id, employee, priority, due_date,last_updated,status,client FROM tickets WHERE status NOT IN ('closed', 'resolved')";
 $selectTicketsStmt = $database->prepare($selectTicketsQuery);
 $selectTicketsStmt->execute();
 
 // Bind result variables
-$selectTicketsStmt->bind_result($ticketId, $ticketEmployee, $ticketPriority, $ticketDueDate, $ticketLastUpdated, $ticketStatus);
+$selectTicketsStmt->bind_result($ticketId, $ticketEmployee, $ticketPriority, $ticketDueDate, $ticketLastUpdated, $ticketStatus, $ticketClient);
 
 // Fetch all tickets and store them in an array
 $oldTickets = [];
 while ($selectTicketsStmt->fetch()) {
     if ($ticketEmployee !== 'unassigned' && !is_null($ticketEmployee)) {
-        $oldTickets[] = ['id' => $ticketId, 'employee' => $ticketEmployee, 'priority' => $ticketPriority, 'due_date' => $ticketDueDate, 'last_updated' => $ticketLastUpdated, 'status' => $ticketStatus];
+        $oldTickets[] = ['id' => $ticketId, 'employee' => $ticketEmployee, 'priority' => $ticketPriority, 'due_date' => $ticketDueDate, 'last_updated' => $ticketLastUpdated, 'status' => $ticketStatus, 'client' => $ticketClient];
     }
 }
 $selectTicketsStmt->close();
@@ -109,19 +109,20 @@ foreach ($oldTickets as $oldTicket) {
             $oldTicket['status'] == 'maintenance' ||
             $oldTicket['status'] == 'pending' ||
             $oldTicket['priority'] == 15 ||
-            $oldTicket['priority'] == 30 ||
+            ($oldTicket['priority'] == 30 && $oldTicket['client'] != $oldTicket['employee']) ||
             $oldTicket['priority'] == 60)
     ) {
         insertAlertIfNotExists($database, $oldTicket, $alert7DayMessage, 'warn');
         //else if not updated in 48 hours
     } else {
         if (
-            $lastUpdated < $date48HoursBack && $oldTicket['status'] != 'vendor' &&
-            $oldTicket['status'] != 'maintenance' &&
-            $oldTicket['status'] != 'pending' &&
-            $oldTicket['priority'] != 15 &&
-            $oldTicket['priority'] != 30 &&
-            $oldTicket['priority'] != 60
+            $lastUpdated < $date48HoursBack &&
+            ($oldTicket['status'] != 'vendor' &&
+                $oldTicket['status'] != 'maintenance' &&
+                $oldTicket['status'] != 'pending' &&
+                $oldTicket['priority'] != 15 &&
+                ($oldTicket['priority'] != 30 && $oldTicket['client'] != $oldTicket['employee']) &&
+                $oldTicket['priority'] != 60)
         ) {
             insertAlertIfNotExists($database, $oldTicket, $alert48Message, 'warn');
         }

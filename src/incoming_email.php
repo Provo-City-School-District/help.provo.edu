@@ -40,6 +40,7 @@ function format_html($str)
     return $str;
 }
 
+// Thanks https://stackoverflow.com/a/40419584
 function mail_is_auto_submitted($mailbox, $msg_id)
 {
     $header = imap_fetchheader($mailbox, $msg_id);

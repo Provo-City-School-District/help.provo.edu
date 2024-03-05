@@ -252,11 +252,10 @@ function sortByDate($x, $y)
             <input type="checkbox" name="dates[]" value="created" <?php echo (isset($_GET['dates']) && in_array('created', $_GET['dates'])) ? 'checked' : ''; ?>> Created Date
             <input type="checkbox" name="dates[]" value="last_updated" <?php echo (isset($_GET['dates']) && in_array('last_updated', $_GET['dates'])) ? 'checked' : ''; ?>> Last Updated
             <input type="checkbox" name="dates[]" value="due_date" <?php echo (isset($_GET['dates']) && in_array('due_date', $_GET['dates'])) ? 'checked' : ''; ?>> Due Date
-            <!-- Add more checkboxes as needed -->
         </div>
         <div>
             <label for="search_name">Search Archived Tickets:</label>
-            <input type="checkbox" id="search_archived" name="search_archived" value="1" <?php echo ($_GET['search_archived'] == 1) ? 'checked' : ''; ?>>
+            <input type="checkbox" id="search_archived" name="search_archived" value="1" <?php echo (isset($_GET['search_archived']) == 1) ? 'checked' : ''; ?>>
         </div>
         <button type="submit" class="btn btn-primary">Search</button>
         <br><br>

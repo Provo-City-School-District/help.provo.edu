@@ -40,6 +40,20 @@ function format_html($str)
     return $str;
 }
 
+function mail_is_auto_submitted($mailbox, $msg_id)
+{
+    $header = imap_fetchheader($mailbox, $msg_id);
+    $header_identifiers = array('Auto-Submitted:([\s]*)auto-([replied|notified|generated])');
+
+    for ($x = 0; $x < count($header_identifiers); $x++) {
+        if (preg_match('/'.$header_identifiers[$x].'/is', $header)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 // iterate through the messages in inbox
 
 for ($i = 1; $i <= $msg_count; $i++) {
@@ -61,6 +75,14 @@ for ($i = 1; $i <= $msg_count; $i++) {
         // These can be safely moved as we don't care about them
         $succeeded_uids[] = imap_uid($mbox, $i);
         continue;
+    }
+
+    // Ignore auto-reply emails
+    if (mail_is_auto_submitted($mbox, $i)) {
+        log_app(LOG_INFO, "Ignoring email from $sender_email as it is an auto-reply..");
+        // These can be safely moved as we don't care about them
+        $succeeded_uids[] = imap_uid($mbox, $i);
+        continue; 
     }
 
     // Ignore non district emails

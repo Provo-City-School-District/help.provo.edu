@@ -431,7 +431,7 @@ if (isset($ticket["client"])) {
                         <option value="10" <?= ($ticket['priority'] == '10') ? ' selected' : '' ?>>Standard</option>
                         <option value="15" <?= ($ticket['priority'] == '15') ? ' selected' : '' ?>>Client Response</option>
                         <?php if ($_SESSION['permissions']['is_supervisor'] != 0 || $_SESSION['permissions']['is_admin'] != 0 || $ticket['client'] == $ticket['employee']) : ?>
-                        <option value="30" <?= ($ticket['priority'] == '30') ? ' selected' : '' ?>>Project</option>
+                            <option value="30" <?= ($ticket['priority'] == '30') ? ' selected' : '' ?>>Project</option>
                         <?php endif; ?>
                         <option value="60" <?= ($ticket['priority'] == '60') ? ' selected' : '' ?>>Meeting Support</option>
                     </select>
@@ -870,14 +870,18 @@ if (isset($ticket["client"])) {
                             <td data-cell="Created by"><?= $log_row['user_id'] ?></td>
                             <td class="ticket_note" data-cell="Change Made">
                                 <?php
-                                if ($log_row['field_name'] != 'note') {
-                                    echo formatFieldName($log_row['field_name']) . ' From: ' . html_entity_decode($log_row['old_value']) . ' To: ' . html_entity_decode($log_row['new_value']);
-                                } else {
+                                if ($log_row['field_name'] == 'Attachment') {
+                                    echo 'Attachment Added: ' . html_entity_decode($log_row['new_value']);
+                                }
+                                if ($log_row['field_name'] == 'note') {
                                     if ($log_row['old_value'] != null) {
                                         echo 'Note Updated: ' . html_entity_decode($log_row['old_value']) . ' To: ' . html_entity_decode($log_row['new_value']);
                                     } else {
                                         echo 'Note Created: ' . html_entity_decode($log_row['new_value']);
                                     }
+                                }
+                                if ($log_row['field_name'] != 'note' && $log_row['field_name'] != 'Attachment') {
+                                    echo formatFieldName($log_row['field_name']) . ' From: ' . html_entity_decode($log_row['old_value']) . ' To: ' . html_entity_decode($log_row['new_value']);
                                 }
                                 ?>
                             </td>
@@ -1033,15 +1037,20 @@ if (isset($ticket["client"])) {
     $("#cc_emails").on("input", function() {
         const new_value = extractLast($(this).val());
         $("#cc_emails").autocomplete({
-            source: function (request, response) {
+            source: function(request, response) {
                 $.ajax({
                     url: "/email_matches_ldap.php",
                     method: "GET",
-                    data: {email: new_value},
+                    data: {
+                        email: new_value
+                    },
                     success: function(data, textStatus, xhr) {
-                        let mappedResults = $.map(data, function (item) {
+                        let mappedResults = $.map(data, function(item) {
                             let itemLocation = item.location ? item.location : "unknown";
-                            return $.extend(item, { label: item.firstName + ' ' + item.lastName + ' (' + itemLocation + ')', value: item.email });
+                            return $.extend(item, {
+                                label: item.firstName + ' ' + item.lastName + ' (' + itemLocation + ')',
+                                value: item.email
+                            });
                         });
                         response(mappedResults);
                     },
@@ -1057,11 +1066,11 @@ if (isset($ticket["client"])) {
                     return false;
                 }
             },
-            focus: function () {
+            focus: function() {
                 // prevent value inserted on focus
                 return false;
             },
-            select: function( event, ui ) {
+            select: function(event, ui) {
                 let terms = split(this.value);
 
                 terms.pop();
@@ -1078,15 +1087,20 @@ if (isset($ticket["client"])) {
         const new_value = extractLast($(this).val());
         console.log("running");
         $("#bcc_emails").autocomplete({
-            source: function (request, response) {
+            source: function(request, response) {
                 $.ajax({
                     url: "/email_matches_ldap.php",
                     method: "GET",
-                    data: {email: new_value},
+                    data: {
+                        email: new_value
+                    },
                     success: function(data, textStatus, xhr) {
-                        let mappedResults = $.map(data, function (item) {
+                        let mappedResults = $.map(data, function(item) {
                             let itemLocation = item.location ? item.location : "unknown";
-                            return $.extend(item, { label: item.firstName + ' ' + item.lastName + ' (' + itemLocation + ')', value: item.email });
+                            return $.extend(item, {
+                                label: item.firstName + ' ' + item.lastName + ' (' + itemLocation + ')',
+                                value: item.email
+                            });
                         });
                         response(mappedResults);
                     },
@@ -1102,11 +1116,11 @@ if (isset($ticket["client"])) {
                     return false;
                 }
             },
-            focus: function () {
+            focus: function() {
                 // prevent value inserted on focus
                 return false;
             },
-            select: function( event, ui ) {
+            select: function(event, ui) {
                 let terms = split(this.value);
 
                 terms.pop();
@@ -1118,5 +1132,4 @@ if (isset($ticket["client"])) {
             }
         });
     });
-
 </script>

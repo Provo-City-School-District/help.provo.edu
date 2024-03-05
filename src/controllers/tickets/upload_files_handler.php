@@ -166,6 +166,14 @@ if (isset($_FILES['attachment'])) {
     }
 }
 
+$field_name = 'Attachment';
+// Log the ticket changes
+$log_query = "INSERT INTO ticket_logs (ticket_id, user_id, field_name, new_value, created_at) VALUES (?, ?, ?, ?, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'))";
+$log_stmt = mysqli_prepare($database, $log_query);
+mysqli_stmt_bind_param($log_stmt, "isss", $ticket_id, $username, $field_name, $fileName);
+mysqli_stmt_execute($log_stmt);
+
+
 $failed_files_count = count($failed_files);
 if ($failed_files_count != 0) {
     $error_str = 'Failed to upload file(s): ';

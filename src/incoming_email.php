@@ -185,7 +185,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
 
     // Add any attachments on operating_ticket
     if ($operating_ticket != -1) {
-        find_and_upload_attachments($operating_ticket, $mbox, $i);
+        find_and_upload_attachments($operating_ticket, $mbox, $i, $sender_username, $filename);
     }
     if (in_array($i, $failed_email_ids)) {
         log_app(LOG_INFO, "Failed to parse email from $sender_email");
@@ -215,7 +215,7 @@ foreach ($succeeded_uids as $uid) {
 imap_expunge($mbox);
 imap_close($mbox);
 
-function find_and_upload_attachments(int $ticket_id, IMAP\Connection $mbox, int $msg_num)
+function find_and_upload_attachments(int $ticket_id, IMAP\Connection $mbox, int $msg_num, $sender_username)
 {
     global $database;
 
@@ -288,6 +288,7 @@ function find_and_upload_attachments(int $ticket_id, IMAP\Connection $mbox, int 
     }
 
     /* iterate through each attachment and save it */
+    $wrote_filenames = [];
     foreach ($attachments as $attachment) {
         if ($attachment['is_attachment'] == 1) {
             $filename = null;
@@ -302,6 +303,7 @@ function find_and_upload_attachments(int $ticket_id, IMAP\Connection $mbox, int 
             fwrite($fp, $attachment['attachment']);
             fclose($fp);
             $uploadPaths[] = $uploadPath;
+            $wrote_filenames[] = $filename;
         }
     }
     $attachmentPath = implode(',', $uploadPaths);
@@ -311,6 +313,18 @@ function find_and_upload_attachments(int $ticket_id, IMAP\Connection $mbox, int 
     mysqli_stmt_bind_param($stmt, "si", $attachmentPath, $ticket_id);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
+
+    $field_name = 'Attachment';
+    // Log the ticket changes
+    $log_query = "INSERT INTO ticket_logs (ticket_id, user_id, field_name, new_value, created_at) VALUES (?, ?, ?, ?, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'))";
+    $log_stmt = mysqli_prepare($database, $log_query);
+
+    $changed_string = "";
+    foreach ($wrote_filenames as $filename) {
+        $changed_string .= $filename . ", ";
+    }
+    mysqli_stmt_bind_param($log_stmt, "isss", $ticket_id, $sender_username, $field_name, $changed_string);
+    mysqli_stmt_execute($log_stmt);
 }
 ?>
 Successfully parsed <?= $parsed_emails ?> emails, and moved <?= $moved_emails ?> emails. (These should be the same)<br>

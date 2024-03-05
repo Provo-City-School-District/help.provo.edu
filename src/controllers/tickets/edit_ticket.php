@@ -298,7 +298,13 @@ if (isset($ticket["client"])) {
                     <select id="employee" name="employee">
                         <option value="unassigned">Unassigned</option>
                         <?php foreach ($techusernames as $username) : ?>
-                            <option value="<?= $username ?>" <?= $ticket['employee'] === $username ? 'selected' : '' ?>><?= $username ?></option>
+                            <?php
+                                $name = get_local_name_for_user($username);
+                                $firstname = ucwords(strtolower($name["firstname"]));
+                                $lastname = ucwords(strtolower($name["lastname"]));
+                                $display_string = $firstname." ".$lastname." - ".location_name_from_id(get_fast_client_location($username) ?: "");
+                            ?>
+                            <option value="<?= $username ?>" <?= $ticket['employee'] === $username ? 'selected' : '' ?>><?= $display_string?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>

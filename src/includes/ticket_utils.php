@@ -336,6 +336,9 @@ function displayTotalTime($total_hours, $total_minutes)
 }
 function location_name_from_id(string $site_id)
 {
+    if ($site_id == "")
+        return "Unknown";
+
     global $database;
 
     $location_query = "SELECT location_name FROM help.locations WHERE sitenumber = '$site_id'";
@@ -346,7 +349,8 @@ function location_name_from_id(string $site_id)
 
     $location_data = mysqli_fetch_assoc($location_result);
     if (!isset($location_data)) {
-        log_app(LOG_ERR, "[location_name_from_id] Failed to get location data");
+        log_app(LOG_ERR, "[location_name_from_id] Failed to get location data for id $site_id");
+        return "Site ".$site_id;
     }
 
     return $location_data["location_name"];

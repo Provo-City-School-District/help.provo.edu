@@ -492,7 +492,7 @@ function sortByDate($x, $y)
         $("#search_client").autocomplete({
             source: function (request, response) {
                 $.ajax({
-                    url: "/client_search_ldap.php",
+                    url: "/username_search_ldap.php",
                     method: "GET",
                     data: {username: new_value},
                     success: function(data, textStatus, xhr) {

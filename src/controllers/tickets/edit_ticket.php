@@ -1029,7 +1029,7 @@ if (isset($ticket["client"])) {
         $("#cc_emails").autocomplete({
             source: function (request, response) {
                 $.ajax({
-                    url: "/user_matches_ldap.php",
+                    url: "/email_matches_ldap.php",
                     method: "GET",
                     data: {email: new_value},
                     success: function(data, textStatus, xhr) {
@@ -1074,7 +1074,7 @@ if (isset($ticket["client"])) {
         $("#bcc_emails").autocomplete({
             source: function (request, response) {
                 $.ajax({
-                    url: "/user_matches_ldap.php",
+                    url: "/email_matches_ldap.php",
                     method: "GET",
                     data: {email: new_value},
                     success: function(data, textStatus, xhr) {

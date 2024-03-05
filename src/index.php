@@ -1,6 +1,8 @@
 <?php
 require_once("status_popup.php");
 
+require_once("init.php");
+
 // Check if user is already logged in
 if (isset($_SESSION['username'])) {
     header('Location: tickets.php');

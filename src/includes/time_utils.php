@@ -32,7 +32,6 @@ function get_note_time_for_days(string $user, array $days)
     STR;
 
     $query_result = mysqli_query($database, $query);
-    log_app(LOG_INFO, "Parsing note time for '$user_sanitized'");
     while ($row = mysqli_fetch_assoc($query_result)) {
         $created = $row["created"];
         $date_override = $row["date_override"];

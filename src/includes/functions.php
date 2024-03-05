@@ -147,6 +147,25 @@ function find_clients(string $name)
     return $results;
 }
 
+function get_local_name_for_user(string $username)
+{
+    global $database;
+
+    $name_query = "SELECT firstname, lastname FROM help.users WHERE username = '$username'";
+    $name_result = mysqli_query($database, $name_query);
+    if (!isset($name_result)) {
+        log_app(LOG_ERR, "[get_local_name_for_user] Failed to get name result");
+        return null;
+    }
+
+    $name_data = mysqli_fetch_assoc($name_result);
+    if (!isset($name_data)) {
+        log_app(LOG_ERR, "[get_local_name_for_user] Failed to get name data for $username");
+        return null;
+    }
+
+    return ["firstname" => $name_data["firstname"], "lastname" => $name_data["lastname"]];
+}
 
 function get_fast_client_location(string $name)
 {

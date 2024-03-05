@@ -36,9 +36,9 @@ if (isset($_SESSION['last_timestamp'])) {
     $inactivity = $current_time - $_SESSION['last_timestamp'];
 
     // Print the current time, the last timestamp, and the inactivity time
-    log_app(LOG_INFO, 'Current time: ' . time());
-    log_app(LOG_INFO, 'Last timestamp: ' . $_SESSION['last_timestamp']);
-    log_app(LOG_INFO, 'Inactivity time: ' . $inactivity);
+    // log_app(LOG_INFO, 'Current time: ' . time());
+    // log_app(LOG_INFO, 'Last timestamp: ' . $_SESSION['last_timestamp']);
+    // log_app(LOG_INFO, 'Inactivity time: ' . $inactivity);
 
     // Check if the user has been inactive for too long
     if ($inactivity > $inactivity_time) {
@@ -47,7 +47,7 @@ if (isset($_SESSION['last_timestamp'])) {
         log_app(LOG_INFO, 'Current time: ' . time());
         log_app(LOG_INFO, 'Last timestamp: ' . $_SESSION['last_timestamp']);
         log_app(LOG_INFO, 'Inactivity time: ' . $inactivity);
-        log_app(LOG_INFO, 'User has been inactive for too long');
+        log_app(LOG_INFO, $_SESSION['username'] . 'User has been inactive for too long');
 
         // Unset all session variables
         $_SESSION = array();

@@ -488,7 +488,6 @@ function sortByDate($x, $y)
 <script>
     $("#search_client").on("input", function() {
         const new_value = $(this).val();
-        console.log("searching");
         $("#search_client").autocomplete({
             source: function (request, response) {
                 $.ajax({

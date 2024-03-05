@@ -42,6 +42,5 @@ for ($i = 0; $i < $entries['count']; $i++) {
 }
 
 header('Content-Type: application/json');
-log_app(LOG_INFO, json_encode($results));
 echo json_encode($results);
 ?>

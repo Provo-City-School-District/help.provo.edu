@@ -182,6 +182,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $old_ticket_data['employee'] = "unassigned";
         }
         $changesMessage .= "<li>Changed Employee from " . $old_ticket_data['employee'] . " to " . $updatedEmployee . "</li>";
+        removeAlert($database, $pastDueMessage, $ticket_id);
+        removeAlert($database, $alert48Message, $ticket_id);
+        removeAlert($database, $alert7DayMessage, $ticket_id);
     }
 
     if (isset($old_ticket_data['location'], $updatedLocation) && $old_ticket_data['location'] != $updatedLocation) {

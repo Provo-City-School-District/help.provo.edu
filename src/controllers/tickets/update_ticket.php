@@ -185,6 +185,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         removeAlert($database, $pastDueMessage, $ticket_id);
         removeAlert($database, $alert48Message, $ticket_id);
         removeAlert($database, $alert7DayMessage, $ticket_id);
+        removeAlert($database, $alert15DayMessage, $ticket_id);
+        removeAlert($database, $alert20DayMessage, $ticket_id);
     }
 
     if (isset($old_ticket_data['location'], $updatedLocation) && $old_ticket_data['location'] != $updatedLocation) {

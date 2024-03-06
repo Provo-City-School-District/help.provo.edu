@@ -22,7 +22,7 @@ if ($note['work_hours'] === null && $note['work_minutes'] === null && $note['tra
     $note['work_minutes'] = 0;
     $note['travel_hours'] = 0;
     $note['travel_minutes'] = 0;
-}  
+}
 
 // Check if the note belongs to the current user
 if ($note['creator'] !== $_SESSION['username']) {
@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $work_minutes = trim(htmlspecialchars($_POST['work_minutes']));
     $travel_hours = trim(htmlspecialchars($_POST['travel_hours']));
     $travel_minutes = trim(htmlspecialchars($_POST['travel_minutes']));
-    
+
 
 
 
@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['current_status'] = $error;
         $_SESSION['status_type'] = "error";
         $formData = http_build_query($_POST);
-        
+
         exit;
     }
 
@@ -98,14 +98,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <?php include("header.php"); ?>
 <h2>Edit Note</h2>
-<form method="post" id="note-submit" >
+<form method="post" id="note-submit">
     <input type="hidden" name="note_id" value="<?= $note_id ?>">
     <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
     <label for="note">Note:</label>
     <textarea id="note" name="note" class="tinyMCEtextarea"><?= $note['note'] ?></textarea><br>
 
-    <?php if (session_is_tech()): ?>
-        <h4>Work Time</h4>  
+    <?php if (session_is_tech()) : ?>
+        <h4>Work Time</h4>
         <div>
             <label for="work_hours">Hours:</label>
             <input id="work_hours" name="work_hours" type="number" value="<?= $note['work_hours'] ?>" required>
@@ -128,18 +128,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
         <label for="visible_to_client">Visible to Client:</label>
         <input type="checkbox" id="visible_to_client" name="visible_to_client" <?php
-            if ($note['visible_to_client'] == 1) {
-                echo "checked=\"checked\"";
-            }
-        ?> value="true"><br>
-            <label for="date_override_enable">Date Override:</label>
-            <input <?php 
-                if ($note['date_override'] != null) 
+                                                                                if ($note['visible_to_client'] == 1) {
+                                                                                    echo "checked=\"checked\"";
+                                                                                }
+                                                                                ?> value="true"><br>
+        <label for="date_override_enable">Date Override:</label>
+        <input <?php
+                if ($note['date_override'] != null)
                     echo "checked=\"checked\""; ?> type="checkbox" id="date_override_enable" name="date_override_enable">
-            <input <?php 
-                if ($note['date_override'] == null) 
-                    echo "style=\"display:none;\""; ?> id="date_override_input" type="datetime-local" name="date_override" value="<?= $note['date_override']?>"><br>
-    <?php else: ?>
+        <input <?php
+                if ($note['date_override'] == null)
+                    echo "style=\"display:none;\""; ?> id="date_override_input" type="datetime-local" name="date_override" value="<?= $note['date_override'] ?>"><br>
+    <?php else : ?>
         <input type="hidden" id="visible_to_client" name="visible_to_client" value="1">
         <input id="total_time" name="total_time" type="hidden" value="0">
         <input id="travel_minutes" name="travel_minutes" type="hidden" value="0" required>
@@ -153,44 +153,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
                 Although non admins maybe shouldn't be able to edit notes anyway?
             -->
-    <input type="submit" value="Save Note">
+    <input type="submit" value="Save Note" class="button">
+    <button onclick="window.location.href='edit_ticket.php?id=<?= $ticket_id ?>'" class="button">Cancel</button>
+
+</form>
+<form method="post" action="delete_note.php" id="delete-note-form">
+    <input type="hidden" name="note_id" value="<?php echo $note_id; ?>">
+    <input type="hidden" name="ticket_id" value="<?php echo $ticket_id; ?>">
+    <input type="submit" value="Delete Note" id="delete-note" class="button">
 </form>
 <script src="/includes/js/jquery-3.7.1.min.js"></script>
-<?php if (session_is_tech()): ?>
-<script>
-    $('input[name=date_override_enable]').on('change', function() {
-        if (!this.checked) {
-            $('#date_override_input').hide();
-        } else {
-            $('#date_override_input').show();
-        }
-    });
-
-    document.querySelectorAll('#work_hours, #work_minutes, #travel_hours, #travel_minutes').forEach(function(el) {
-        el.addEventListener('input', function() {
-            var workHours = parseInt(document.getElementById('work_hours').value) || 0;
-            var workMinutes = parseInt(document.getElementById('work_minutes').value) || 0;
-            var travelHours = parseInt(document.getElementById('travel_hours').value) || 0;
-            var travelMinutes = parseInt(document.getElementById('travel_minutes').value) || 0;
-
-            var totalTime = (workHours + travelHours) * 60 + workMinutes + travelMinutes;
-
-            document.getElementById('total_time').value = totalTime;
-        });
-    });
-
-     // add alert if no time is entered
-     document.getElementById('note-submit').addEventListener('submit', function(e) {
-        var fields = ['work_hours', 'work_minutes', 'travel_hours', 'travel_minutes'];
-        var allZero = fields.every(function(field) {
-            return parseInt(document.getElementById(field).value, 10) === 0;
+<?php if (session_is_tech()) : ?>
+    <script>
+        $('input[name=date_override_enable]').on('change', function() {
+            if (!this.checked) {
+                $('#date_override_input').hide();
+            } else {
+                $('#date_override_input').show();
+            }
         });
 
-        if (allZero) {
-            alert('Please enter a value greater than 0 for at least one of the time fields.');
-            e.preventDefault(); // Prevent the form submission
-        }
-    });
-</script>
+        document.querySelectorAll('#work_hours, #work_minutes, #travel_hours, #travel_minutes').forEach(function(el) {
+            el.addEventListener('input', function() {
+                var workHours = parseInt(document.getElementById('work_hours').value) || 0;
+                var workMinutes = parseInt(document.getElementById('work_minutes').value) || 0;
+                var travelHours = parseInt(document.getElementById('travel_hours').value) || 0;
+                var travelMinutes = parseInt(document.getElementById('travel_minutes').value) || 0;
+
+                var totalTime = (workHours + travelHours) * 60 + workMinutes + travelMinutes;
+
+                document.getElementById('total_time').value = totalTime;
+            });
+        });
+
+        // add alert if no time is entered
+        document.getElementById('note-submit').addEventListener('submit', function(e) {
+            var fields = ['work_hours', 'work_minutes', 'travel_hours', 'travel_minutes'];
+            var allZero = fields.every(function(field) {
+                return parseInt(document.getElementById(field).value, 10) === 0;
+            });
+
+            if (allZero) {
+                alert('Please enter a value greater than 0 for at least one of the time fields.');
+                e.preventDefault(); // Prevent the form submission
+            }
+        });
+    </script>
+    <script>
+        // Add a click event listener to the delete button
+        $('#delete-note').on('click', function(e) {
+            if (!confirm('Are you sure you want to delete this note?')) {
+                e.preventDefault(); // Prevent the navigation
+            }
+        });
+    </script>
 <?php endif; ?>
 <?php include("footer.php"); ?>

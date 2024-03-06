@@ -1,8 +1,4 @@
 <?php
-
-// ALTER TABLE `alerts` ADD `supervisor_alert` TINYINT(1) NOT NULL AFTER `alert_level`;
-
-
 require_once('helpdbconnect.php');
 require_once('ticket_utils.php');
 

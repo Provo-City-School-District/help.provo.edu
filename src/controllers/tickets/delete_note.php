@@ -7,6 +7,7 @@ require_once('helpdbconnect.php');
 $ticket_id = filter_input(INPUT_POST, 'ticket_id', FILTER_SANITIZE_NUMBER_INT);
 $note_id = filter_input(INPUT_POST, 'note_id', FILTER_SANITIZE_NUMBER_INT);
 
+$active_user = $_SESSION['username'];
 
 // Prepare a SQL statement to get the ticket
 $notestmt = $database->prepare("SELECT * FROM notes WHERE note_id = ?");
@@ -28,13 +29,26 @@ $note = $noteresult->fetch_assoc();
 $notestmt->close();
 
 // Check if the note belongs to the current user
-if ($note['creator'] !== $_SESSION['username']) {
+if ($note['creator'] !== $active_user) {
     $_SESSION['current_status'] = 'You can only delete your own notes';
     $_SESSION['status_type'] = "error";
     // Redirect to the edit ticket page if the note does not belong to the current user
     header("Location: edit_ticket.php?id=$ticket_id");
     exit();
 }
+
+
+//create log entry of note information prior to deletion
+$field_name = 'notedeleted';
+$new_value = 'NA';
+$old_value = $note['note'];
+
+$log_query = "INSERT INTO ticket_logs (ticket_id, user_id, field_name,old_value, new_value, created_at) VALUES (?, ?, ?, ?, ?, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'))";
+$log_stmt = mysqli_prepare($database, $log_query);
+mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $active_user, $field_name, $old_value, $new_value);
+mysqli_stmt_execute($log_stmt);
+
+
 
 // // Check if the note_id is set
 if (isset($note_id)) {

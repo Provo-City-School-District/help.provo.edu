@@ -870,18 +870,23 @@ if (isset($ticket["client"])) {
                             <td data-cell="Created by"><?= $log_row['user_id'] ?></td>
                             <td class="ticket_note" data-cell="Change Made">
                                 <?php
-                                if ($log_row['field_name'] == 'Attachment') {
+                                switch ($log_row['field_name']) {
+                                    case 'Attachment':
                                     echo 'Attachment Added: ' . html_entity_decode($log_row['new_value']);
-                                }
-                                if ($log_row['field_name'] == 'note') {
+                                        break;
+                                    case 'note':
                                     if ($log_row['old_value'] != null) {
                                         echo 'Note Updated: ' . html_entity_decode($log_row['old_value']) . ' To: ' . html_entity_decode($log_row['new_value']);
                                     } else {
                                         echo 'Note Created: ' . html_entity_decode($log_row['new_value']);
                                     }
-                                }
-                                if ($log_row['field_name'] != 'note' && $log_row['field_name'] != 'Attachment') {
+                                        break;
+                                    case 'notedeleted':
+                                        echo 'Note Delete: ' . html_entity_decode($log_row['old_value']);
+                                        break;
+                                    default:
                                     echo formatFieldName($log_row['field_name']) . ' From: ' . html_entity_decode($log_row['old_value']) . ' To: ' . html_entity_decode($log_row['new_value']);
+                                        break;
                                 }
                                 ?>
                             </td>

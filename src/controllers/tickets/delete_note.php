@@ -7,6 +7,7 @@ require_once('helpdbconnect.php');
 $ticket_id = filter_input(INPUT_POST, 'ticket_id', FILTER_SANITIZE_NUMBER_INT);
 $note_id = filter_input(INPUT_POST, 'note_id', FILTER_SANITIZE_NUMBER_INT);
 
+$active_user = $_SESSION['username'];
 
 // Prepare a SQL statement to get the ticket
 $notestmt = $database->prepare("SELECT * FROM notes WHERE note_id = ?");
@@ -28,7 +29,7 @@ $note = $noteresult->fetch_assoc();
 $notestmt->close();
 
 // Check if the note belongs to the current user
-if ($note['creator'] !== $_SESSION['username']) {
+if ($note['creator'] !== $active_user) {
     $_SESSION['current_status'] = 'You can only delete your own notes';
     $_SESSION['status_type'] = "error";
     // Redirect to the edit ticket page if the note does not belong to the current user

@@ -37,6 +37,19 @@ if ($note['creator'] !== $active_user) {
     exit();
 }
 
+
+//create log entry of note information prior to deletion
+$field_name = 'notedeleted';
+$new_value = 'NA';
+$old_value = $note['note'];
+
+$log_query = "INSERT INTO ticket_logs (ticket_id, user_id, field_name,old_value, new_value, created_at) VALUES (?, ?, ?, ?, ?, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'))";
+$log_stmt = mysqli_prepare($database, $log_query);
+mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $active_user, $field_name, $old_value, $new_value);
+mysqli_stmt_execute($log_stmt);
+
+
+
 // // Check if the note_id is set
 if (isset($note_id)) {
     // Prepare a SQL statement to delete the note

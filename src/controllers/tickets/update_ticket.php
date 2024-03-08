@@ -173,15 +173,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (isset($old_ticket_data['employee'], $updatedEmployee) && $old_ticket_data['employee'] != $updatedEmployee) {
-        mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $employeeColumn, $old_ticket_data['employee'], $updatedEmployee);
-        mysqli_stmt_execute($log_stmt);
-
+        // Handle the case where the employee is unassigned
         if ($old_ticket_data['employee'] !== null && $old_ticket_data['employee'] !== 'unassigned') {
             $old_assigned_email = email_address_from_username($old_ticket_data['employee']);
         } else {
             $old_ticket_data['employee'] = "unassigned";
         }
         $changesMessage .= "<li>Changed Employee from " . $old_ticket_data['employee'] . " to " . $updatedEmployee . "</li>";
+        // If the ticket was re-assigned, remove the alert
         removeAlert($database, $pastDueMessage, $ticket_id);
         removeAlert($database, $alert48Message, $ticket_id);
         removeAlert($database, $alert7DayMessage, $ticket_id);

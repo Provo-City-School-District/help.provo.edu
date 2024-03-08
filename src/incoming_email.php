@@ -69,6 +69,13 @@ for ($i = 1; $i <= $msg_count; $i++) {
     $sender_email = strtolower($sender_username . '@' . $from_host);
     $subject = isset($header->subject) ? $header->subject : "";
 
+    // Get incoming cc emails from email
+    $incoming_cc_emails = [];
+    foreach ($header->cc as $cc_email) {
+        $incoming_cc_emails[] = $cc_email->mailbox.'@'.$cc_email->host;
+    }
+
+
     // Ignore blacklisted emails
     if (in_array($sender_email, $blacklisted_emails)) {
         log_app(LOG_INFO, "Received email from $sender_email but it is on the blacklist. Ignoring...");
@@ -198,6 +205,11 @@ for ($i = 1; $i <= $msg_count; $i++) {
                     log_app(LOG_ERR, "Failed to send email to $sender_email");
                 }
                 $operating_ticket = $receipt_ticket_id;
+
+
+                $incoming_cc_emails_str = mysqli_real_escape_string($database, implode(',', $incoming_cc_emails));
+                $update_cc_query = "UPDATE help.tickets SET cc_emails = '$incoming_cc_emails_str' WHERE id = '$receipt_ticket_id'";
+                $res = mysqli_query($database, $update_cc_query);
             }
         } else {
             $operating_ticket = $subject_ticket_id;

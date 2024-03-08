@@ -373,6 +373,7 @@ function assigned_tech_for_ticket(int $ticket_id)
 
     return $assigned_data["employee"];
 }
+
 function logTicketChange($database, $ticket_id, $updatedby, $field_name, $old_value, $new_value)
 {
     $log_query = "INSERT INTO ticket_logs (ticket_id, user_id, field_name, old_value, new_value, created_at) VALUES (?, ?, ?, ?, ?, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'))";

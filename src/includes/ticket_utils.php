@@ -373,3 +373,10 @@ function assigned_tech_for_ticket(int $ticket_id)
 
     return $assigned_data["employee"];
 }
+function logTicketChange($database, $ticket_id, $updatedby, $field_name, $old_value, $new_value)
+{
+    $log_query = "INSERT INTO ticket_logs (ticket_id, user_id, field_name, old_value, new_value, created_at) VALUES (?, ?, ?, ?, ?, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'))";
+    $log_stmt = mysqli_prepare($database, $log_query);
+    mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $field_name, $old_value, $new_value);
+    mysqli_stmt_execute($log_stmt);
+}

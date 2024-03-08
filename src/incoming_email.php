@@ -47,7 +47,7 @@ function mail_is_auto_submitted($mailbox, $msg_id)
     $header_identifiers = array('Auto-Submitted:([\s]*)auto-([replied|notified|generated])');
 
     for ($x = 0; $x < count($header_identifiers); $x++) {
-        if (preg_match('/'.$header_identifiers[$x].'/is', $header)) {
+        if (preg_match('/' . $header_identifiers[$x] . '/is', $header)) {
             return true;
         }
     }
@@ -83,7 +83,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
         log_app(LOG_INFO, "Ignoring email from $sender_email as it is an auto-reply..");
         // These can be safely moved as we don't care about them
         $succeeded_uids[] = imap_uid($mbox, $i);
-        continue; 
+        continue;
     }
 
     // Ignore non district emails
@@ -338,16 +338,18 @@ function find_and_upload_attachments(int $ticket_id, IMAP\Connection $mbox, int 
     mysqli_stmt_close($stmt);
 
     $field_name = 'Attachment';
+    $old_value = 'NA';
     // Log the ticket changes
-    $log_query = "INSERT INTO ticket_logs (ticket_id, user_id, field_name, new_value, created_at) VALUES (?, ?, ?, ?, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'))";
-    $log_stmt = mysqli_prepare($database, $log_query);
+    // $log_query = "INSERT INTO ticket_logs (ticket_id, user_id, field_name, new_value, created_at) VALUES (?, ?, ?, ?, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'))";
+    // $log_stmt = mysqli_prepare($database, $log_query);
 
     $changed_string = "";
     foreach ($wrote_filenames as $filename) {
         $changed_string .= $filename . ", ";
     }
-    mysqli_stmt_bind_param($log_stmt, "isss", $ticket_id, $sender_username, $field_name, $changed_string);
-    mysqli_stmt_execute($log_stmt);
+    logTicketChange($database, $ticket_id, $sender_username, $field_name, $old_value, $changed_string);
+    // mysqli_stmt_bind_param($log_stmt, "isss", $ticket_id, $sender_username, $field_name, $changed_string);
+    // mysqli_stmt_execute($log_stmt);
 }
 ?>
 Successfully parsed <?= $parsed_emails ?> emails, and moved <?= $moved_emails ?> emails. (These should be the same)<br>

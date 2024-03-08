@@ -84,10 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Log the note update in the ticket_logs table
     $noteColumn = "note";
-    $log_query = "INSERT INTO ticket_logs (ticket_id, user_id, field_name, old_value, new_value, created_at) VALUES (?, ?, ?, ?, ?, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'))";
-    $log_stmt = mysqli_prepare($database, $log_query);
-    mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $_SESSION['username'],  $noteColumn, $note['note'], $updated_note);
-    mysqli_stmt_execute($log_stmt);
+    logTicketChange($database, $ticket_id, $_SESSION['username'], $noteColumn, $note['note'], $updated_note);
 
     // Redirect back to the edit ticket page
     $_SESSION['current_status'] = "Note edited successfully";

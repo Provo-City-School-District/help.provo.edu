@@ -208,8 +208,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
 
 
                 $incoming_cc_emails_str = mysqli_real_escape_string($database, implode(',', $incoming_cc_emails));
-                $update_cc_query = "UPDATE help.tickets SET cc_emails = '$incoming_cc_emails_str' WHERE id = '$receipt_ticket_id'";
-                $res = mysqli_query($database, $update_cc_query);
+                $res = $database->execute_query("UPDATE help.tickets SET cc_emails = ? WHERE id = ?", [$incoming_cc_emails_str, $receipt_ticket_id]);
             }
         } else {
             $operating_ticket = $subject_ticket_id;

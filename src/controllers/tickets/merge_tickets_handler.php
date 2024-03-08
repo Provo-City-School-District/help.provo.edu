@@ -18,7 +18,7 @@ function return_to_ticket_with_status(string $status, string $status_type, int $
     else
         header("Location: /controllers/tickets/edit_ticket.php?id=$ticket&nr=1");
 
-    exit();    
+    exit();
 }
 
 $ticket_id_host = trim(htmlspecialchars($_POST["ticket_id_host"]));
@@ -38,7 +38,7 @@ $source_has_merged_result = mysqli_query($database, $source_has_merged_query);
 $source_merged = mysqli_fetch_assoc($source_has_merged_result);
 
 if ($source_merged["merged_into_id"] != null) {
-    $str = "Ticket ".$ticket_id_source." has already been merged into ticket ".$source_merged["merged_into_id"]." and cannot be merged again";
+    $str = "Ticket " . $ticket_id_source . " has already been merged into ticket " . $source_merged["merged_into_id"] . " and cannot be merged again";
     return_to_ticket_with_status($str, "error", $ticket_id_source);
 }
 
@@ -49,7 +49,7 @@ $host_has_merged_result = mysqli_query($database, $host_has_merged_query);
 $host_merged = mysqli_fetch_assoc($host_has_merged_result);
 
 if ($host_merged["merged_into_id"] != null) {
-    $str = "Ticket ".$ticket_id_host." has already merged into ".$host_merged["merged_into_id"].".";
+    $str = "Ticket " . $ticket_id_host . " has already merged into " . $host_merged["merged_into_id"] . ".";
     return_to_ticket_with_status($str, "error", $ticket_id_source);
 }
 
@@ -69,26 +69,18 @@ if (!$result) {
 }
 
 // Log the creation of merged ticket in the ticket_logs table for the host ticket
-$log_query = "INSERT INTO ticket_logs (ticket_id, user_id, field_name, old_value, new_value, created_at) 
-    VALUES (?, ?, ?, ?, ?, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'))";
-$log_stmt = mysqli_prepare($database, $log_query);
-
 $field_name = "Ticket merged ";
-mysqli_stmt_bind_param($log_stmt, "issii", $ticket_id_host, $username, $field_name, $ticket_id_source, $ticket_id_host);
-$result = mysqli_stmt_execute($log_stmt);
+logTicketChange($database, $ticket_id_host, $username, $field_name, $ticket_id_source, $ticket_id_host);
+
 if (!$result) {
     return_to_ticket_with_status("failed to update host ticket merge status", "error", $ticket_id_source);
 }
 
 
 // Log the creation of merged ticket in the ticket_logs table for the source ticket
-$log_query = "INSERT INTO ticket_logs (ticket_id, user_id, field_name, old_value, new_value, created_at) 
-    VALUES (?, ?, ?, ?, ?, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'))";
-$log_stmt = mysqli_prepare($database, $log_query);
-
 $field_name = "Ticket merged ";
-mysqli_stmt_bind_param($log_stmt, "issii", $ticket_id_source, $username, $field_name, $ticket_id_source, $ticket_id_host);
-$result = mysqli_stmt_execute($log_stmt);
+logTicketChange($database, $ticket_id_source, $username, $field_name, $ticket_id_source, $ticket_id_host);
+
 if (!$result) {
     return_to_ticket_with_status("failed to update source ticket merge status", "error", $ticket_id_source);
 }
@@ -125,7 +117,7 @@ $data_host = mysqli_fetch_assoc(mysqli_stmt_get_result($attachment_host_stmt));
 $attachment_path_source = $data_source["attachment_path"];
 $attachment_path_host = $data_host["attachment_path"];
 
-$attachment_path_total = explode(',', $attachment_path_source.$attachment_path_host);
+$attachment_path_total = explode(',', $attachment_path_source . $attachment_path_host);
 $attachment_path_new = implode(',', $attachment_path_total);
 
 

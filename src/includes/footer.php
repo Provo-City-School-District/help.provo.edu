@@ -4,22 +4,11 @@
 </footer>
 <div id="timeoutModal">
     <div>
-        <h2>Inactivity Alert</h2>
-        <p>You've been inactive for more than 30 minutes.</p>
-        <?php
-        $time_difference = calculateTimeSinceLastLogin();
-        // Check if the user has been logged in for more than 2 hours and display the appropriate message about session likely broken
-        if ($time_difference > 2 * 60 * 60) {
-            echo "<p>Your session may have expired. It's recommended to log out and back in.</p>";
-            if (isset($_SESSION['username'])) {
-                log_app(LOG_INFO, $_SESSION['username'] . " alerted of old session");
-            }
-        }
-        ?>
+        <h2 id="modalTitle">Alert</h2>
+        <p id="modalMessage"></p>
+        <button id="modalButton"></button>
         <button onclick="dismiss_timeout_modal()">Dismiss</button>
-        <button onclick="location.reload()">Reload Page</button>
     </div>
-</div>
 </div>
 <script src="/includes/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 <script src="/includes/js/jquery-ui.min.js" type="text/javascript"></script>
@@ -28,6 +17,7 @@
 <script src="/vendor/tinymce/tinymce/tinymce.min.js" referrerpolicy="origin"></script>
 <script>
     var userPref = '<?php echo isset($_SESSION['color_scheme']) ? $_SESSION['color_scheme'] : 'light'; ?>';
+    var loginTimeFromPHP = "<?php echo $_SESSION['last_login']; ?>";
 </script>
 <?php if (basename($_SERVER['PHP_SELF']) != 'index.php') : ?>
     <script src="/includes/js/inactiveModal.js?v=0.1.0" type="text/javascript"></script>

@@ -3,6 +3,7 @@ require_once("block_file.php");
 // Start the session
 require_once('init.php');
 require_once('helpdbconnect.php');
+require_once('ticket_utils.php');
 // Check if the user is logged in
 if (!isset($_SESSION['username'])) {
     // User is not logged in, redirect to login page
@@ -166,12 +167,11 @@ if (isset($_FILES['attachment'])) {
     }
 }
 
-$field_name = 'Attachment';
+
 // Log the ticket changes
-$log_query = "INSERT INTO ticket_logs (ticket_id, user_id, field_name, new_value, created_at) VALUES (?, ?, ?, ?, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'))";
-$log_stmt = mysqli_prepare($database, $log_query);
-mysqli_stmt_bind_param($log_stmt, "isss", $ticket_id, $username, $field_name, $fileName);
-mysqli_stmt_execute($log_stmt);
+$field_name = 'Attachment';
+$oldValue = 'NA';
+logTicketChange($database, $ticket_id, $username, $field_name, $oldValue, $fileName);
 
 
 $failed_files_count = count($failed_files);

@@ -47,7 +47,7 @@ function mail_is_auto_submitted($mailbox, $msg_id)
     $header_identifiers = array('Auto-Submitted:([\s]*)auto-([replied|notified|generated])');
 
     for ($x = 0; $x < count($header_identifiers); $x++) {
-        if (preg_match('/'.$header_identifiers[$x].'/is', $header)) {
+        if (preg_match('/' . $header_identifiers[$x] . '/is', $header)) {
             return true;
         }
     }
@@ -69,6 +69,13 @@ for ($i = 1; $i <= $msg_count; $i++) {
     $sender_email = strtolower($sender_username . '@' . $from_host);
     $subject = isset($header->subject) ? $header->subject : "";
 
+    // Get incoming cc emails from email
+    $incoming_cc_emails = [];
+    foreach ($header->cc as $cc_email) {
+        $incoming_cc_emails[] = $cc_email->mailbox.'@'.$cc_email->host;
+    }
+
+
     // Ignore blacklisted emails
     if (in_array($sender_email, $blacklisted_emails)) {
         log_app(LOG_INFO, "Received email from $sender_email but it is on the blacklist. Ignoring...");
@@ -83,7 +90,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
         log_app(LOG_INFO, "Ignoring email from $sender_email as it is an auto-reply..");
         // These can be safely moved as we don't care about them
         $succeeded_uids[] = imap_uid($mbox, $i);
-        continue; 
+        continue;
     }
 
     // Ignore non district emails
@@ -198,6 +205,10 @@ for ($i = 1; $i <= $msg_count; $i++) {
                     log_app(LOG_ERR, "Failed to send email to $sender_email");
                 }
                 $operating_ticket = $receipt_ticket_id;
+
+
+                $incoming_cc_emails_str = mysqli_real_escape_string($database, implode(',', $incoming_cc_emails));
+                $res = $database->execute_query("UPDATE help.tickets SET cc_emails = ? WHERE id = ?", [$incoming_cc_emails_str, $receipt_ticket_id]);
             }
         } else {
             $operating_ticket = $subject_ticket_id;
@@ -338,16 +349,12 @@ function find_and_upload_attachments(int $ticket_id, IMAP\Connection $mbox, int 
     mysqli_stmt_close($stmt);
 
     $field_name = 'Attachment';
-    // Log the ticket changes
-    $log_query = "INSERT INTO ticket_logs (ticket_id, user_id, field_name, new_value, created_at) VALUES (?, ?, ?, ?, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'))";
-    $log_stmt = mysqli_prepare($database, $log_query);
-
+    $old_value = 'NA';
     $changed_string = "";
     foreach ($wrote_filenames as $filename) {
         $changed_string .= $filename . ", ";
     }
-    mysqli_stmt_bind_param($log_stmt, "isss", $ticket_id, $sender_username, $field_name, $changed_string);
-    mysqli_stmt_execute($log_stmt);
+    logTicketChange($database, $ticket_id, $sender_username, $field_name, $old_value, $changed_string);
 }
 ?>
 Successfully parsed <?= $parsed_emails ?> emails, and moved <?= $moved_emails ?> emails. (These should be the same)<br>

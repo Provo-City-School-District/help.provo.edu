@@ -2,6 +2,7 @@
 require_once("block_file.php");
 require_once('init.php');
 require_once('helpdbconnect.php');
+require_once('ticket_utils.php');
 
 // Get the note ID and ticket ID from the query string
 $ticket_id = filter_input(INPUT_POST, 'ticket_id', FILTER_SANITIZE_NUMBER_INT);
@@ -42,12 +43,7 @@ if ($note['creator'] !== $active_user) {
 $field_name = 'notedeleted';
 $new_value = 'NA';
 $old_value = $note['note'];
-
-$log_query = "INSERT INTO ticket_logs (ticket_id, user_id, field_name,old_value, new_value, created_at) VALUES (?, ?, ?, ?, ?, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'))";
-$log_stmt = mysqli_prepare($database, $log_query);
-mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $active_user, $field_name, $old_value, $new_value);
-mysqli_stmt_execute($log_stmt);
-
+logTicketChange($database, $ticket_id, $active_user, $field_name, $old_value, $new_value);
 
 
 // // Check if the note_id is set

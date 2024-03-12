@@ -5,7 +5,6 @@ require_once('init.php');
 require_once('helpdbconnect.php');
 
 $id = $_GET['id'];
-$query = "DELETE FROM alerts WHERE id = $id";
-mysqli_query($database, $query);
+$database->execute_query("DELETE FROM alerts WHERE id = ?", [$id]);
 header('Location: ' . $_SERVER['HTTP_REFERER']);
 exit;

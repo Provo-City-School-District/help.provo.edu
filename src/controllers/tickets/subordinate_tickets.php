@@ -23,23 +23,23 @@ if ($_SESSION['permissions']['is_supervisor'] == 1) {
     SELECT tickets.* 
     FROM tickets 
     JOIN users ON tickets.employee = users.username 
-    WHERE users.supervisor_username = '$username' 
+    WHERE users.supervisor_username = ?
     AND tickets.status NOT IN ('closed', 'resolved') 
     ORDER BY tickets.last_updated DESC
     STR;
 
-    $ticket_result = mysqli_query($database, $ticket_query);
+    $ticket_result = $database->execute_query($ticket_query, [$username]);
 
     //Alerts query
     $alerts_query = <<<STR
     SELECT alerts.* 
     FROM alerts 
     JOIN users ON alerts.employee = users.username
-    WHERE users.supervisor_username = '$username'
+    WHERE users.supervisor_username = ?
     AND alerts.supervisor_alert IN (0, 1)
     STR;
 
-    $alerts_result = mysqli_query($database, $alerts_query);
+    $alerts_result = $database->execute_query($alerts_query, [$username]);
 
     echo ' <h1>Subordinate Tickets</h1>';
     display_ticket_alerts($alerts_result);

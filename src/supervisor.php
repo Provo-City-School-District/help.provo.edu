@@ -88,7 +88,7 @@ $tech_query = <<<STR
     JOIN users u ON t.employee = u.username 
     WHERE t.status NOT IN ('closed', 'resolved')
     STR;
-$tech_query_result = mysqli_query($database, $tech_query);
+$tech_query_result = $database->execute_query($tech_query);
 $url_path_techs = "/controllers/users/manage_user.php?id=";
 $allTechs = process_query_result_wlinks($tech_query_result, "employee", "id", $url_path_techs);
 
@@ -100,7 +100,7 @@ $location_query = <<<STR
     WHERE tickets.status NOT IN ('closed', 'resolved')
 STR;
 
-$location_query_result = mysqli_query($database, $location_query);
+$location_query_result = $database->execute_query($location_query);
 $allLocations = process_query_result($location_query_result, "location_name");
 
 // Query open tickets based on field tech:
@@ -111,7 +111,7 @@ $field_tech_query = <<<STR
     WHERE tickets.status NOT IN ('closed', 'resolved') AND users.is_tech = 1
 STR;
 
-$field_tech_query_result = mysqli_query($database, $field_tech_query);
+$field_tech_query_result = $database->execute_query($field_tech_query);
 $fieldTechs = process_query_result($field_tech_query_result, "employee");
 
 ?>
@@ -153,7 +153,7 @@ AND (employee IS NULL OR employee = 'unassigned' OR employee = '')
 unassigned_tickets;
 
 
-$ticket_result = mysqli_query($database, $unassigned_ticket_query);
+$ticket_result = $database->execute_query($unassigned_ticket_query);
 display_tickets_table($ticket_result, $database);
 ?>
 <script src="/includes/js/charts.js?v=0.1.0" type="text/javascript"></script>

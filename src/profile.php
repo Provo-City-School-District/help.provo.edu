@@ -4,8 +4,8 @@ require_once("helpdbconnect.php");
 require_once("status_popup.php");
 
 $user = $_SESSION["username"];
-$user_query = "SELECT * FROM users WHERE username = '" . $user . "'";
-$user_result = mysqli_query($database, $user_query);
+$user_query = "SELECT * FROM users WHERE username = ?";
+$user_result = $database->execute_query($user_query, [$user]);
 // Check if the query was successful
 if (!$user_result) {
     die("Query failed: " . mysqli_error($conn));

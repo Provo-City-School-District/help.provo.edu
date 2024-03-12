@@ -54,8 +54,7 @@ if (isset($_GET['code'])) {
             create_user_in_local_db($username);
         }
         // Query Local user information
-        $local_user_query = "SELECT * FROM users WHERE username = '" . $_SESSION['username'] . "'";
-        $local_query_results = mysqli_query($database, $local_user_query);
+        $local_query_results = $database->execute_query("SELECT * FROM users WHERE username = ?", [$_SESSION["username"]]);
         $local_query_data = mysqli_fetch_assoc($local_query_results);
 
         // Retrieve user's permissions from the users table

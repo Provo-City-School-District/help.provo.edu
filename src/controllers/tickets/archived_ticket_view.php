@@ -18,8 +18,7 @@ function get_client_name_from_id(string $client_sw_id)
 {
     global $swdb;
 
-    $client_name_query = "SELECT FIRST_NAME, LAST_NAME FROM client WHERE CLIENT_ID = '$client_sw_id'";
-    $client_name_result = mysqli_query($swdb, $client_name_query);
+    $client_name_result = $swdb->execute_query("SELECT FIRST_NAME, LAST_NAME FROM client WHERE CLIENT_ID = ?", [$client_sw_id]);
     $client_name_data = mysqli_fetch_assoc($client_name_result);
     $client_name = trim($client_name_data["FIRST_NAME"])." ".trim($client_name_data["LAST_NAME"]);
 
@@ -31,8 +30,7 @@ function get_tech_name_from_id(string $tech_sw_id)
 {
     global $swdb;
 
-    $tech_name_query = "SELECT FIRST_NAME, LAST_NAME FROM tech WHERE CLIENT_ID = '$tech_sw_id'";
-    $tech_name_result = mysqli_query($swdb, $tech_name_query);
+    $tech_name_result = $swdb->execute_query("SELECT FIRST_NAME, LAST_NAME FROM tech WHERE CLIENT_ID = ?", [$tech_sw_id]);
     $tech_name_data = mysqli_fetch_assoc($tech_name_result);
     $tech_name = trim($tech_name_data["FIRST_NAME"])." ".trim($tech_name_data["LAST_NAME"]);
 
@@ -43,8 +41,8 @@ function get_tech_name_from_id(string $tech_sw_id)
 function get_location_name_from_id(string $location_sw_id)
 {
     global $swdb;
-    $location_name_query = "SELECT LOCATION_NAME FROM location WHERE LOCATION_ID = '$location_sw_id'";
-    $location_name_result = mysqli_query($swdb, $location_name_query);
+
+    $location_name_result = $swdb->execute_query("SELECT LOCATION_NAME FROM location WHERE LOCATION_ID = ?", [$location_sw_id]);
     $location_name_data = mysqli_fetch_assoc($location_name_result);
     $location_name = trim($location_name_data["LOCATION_NAME"]);
 

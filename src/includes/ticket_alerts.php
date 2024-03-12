@@ -45,6 +45,8 @@ $hoursBack48 = 48;
 $hoursBack7Days = 168;
 $hoursBack15Days = 360;
 $hoursBack20Days = 480;
+
+
 function calculate_hours_back($hoursBack)
 {
     $date = new DateTime();
@@ -53,24 +55,28 @@ function calculate_hours_back($hoursBack)
         $date->modify('-1 hour');
         $dayOfWeek = $date->format('w');
 
-        // If the day of the week is not a weekend, and the date is not an excluded date, subtract an hour
-        // 0 = Sunday, 6 = Saturday
-        if ($dayOfWeek > 0 && $dayOfWeek < 6) {
-            $startDate = clone $date;
-            $startDate->modify('-1 hour');
-            $endDate = clone $date;
-
-            // Format the dates as 'Y-m-d'
-            $startDateFormatted = $startDate->format('Y-m-d');
-            $endDateFormatted = $endDate->format('Y-m-d');
-
-            // Check if the date is an excluded date
-            if (hasExcludedDate($startDateFormatted, $endDateFormatted) == 0) {
-                $hoursBack--;
-            }
+        // If the day of the week is a weekend, subtract 24 hours and continue to the next iteration
+        if ($dayOfWeek == 0 || $dayOfWeek == 6) {
+            $date->modify('-24 hour');
+            continue;
         }
-    }
 
+        $startDate = clone $date;
+        $startDate->modify('-1 hour');
+        $endDate = clone $date;
+
+        // Format the dates as 'Y-m-d'
+        $startDateFormatted = $startDate->format('Y-m-d');
+        $endDateFormatted = $endDate->format('Y-m-d');
+
+        // Check if the date is an excluded date
+        if (hasExcludedDate($startDateFormatted, $endDateFormatted) != 0) {
+            $date->modify('-24 hour');
+            continue;
+        }
+
+        $hoursBack--;
+    }
     return $date;
 }
 

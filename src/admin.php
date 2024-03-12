@@ -12,8 +12,7 @@ require_once('helpdbconnect.php');
 
 
 // Execute the SELECT query to retrieve all users from the users table
-$users_query = "SELECT * FROM users ORDER BY username ASC";
-$user_result = mysqli_query($database, $users_query);
+$user_result = $database->execute_query("SELECT * FROM users ORDER BY username ASC");
 // Check if the query was successful
 if (!$user_result) {
     die("Query failed: " . mysqli_error($conn));
@@ -36,12 +35,14 @@ if (isset($_SESSION['current_status'])) {
 
 <?php
 //query for unassigned tickets
-$ticket_query = "SELECT *
+$ticket_query = <<<STR
+SELECT *
 FROM tickets
 WHERE status NOT IN ('closed', 'resolved') AND (employee IS NULL OR employee = 'unassigned' OR employee = '')
-ORDER BY id ASC";
+ORDER BY id ASC
+STR;
 
-$ticket_result = mysqli_query($database, $ticket_query);
+$ticket_result = $database->execute_query($ticket_query);
 display_tickets_table($ticket_result, $database);
 ?>
 
@@ -96,9 +97,7 @@ display_tickets_table($ticket_result, $database);
 <h1>Exclude Days</h1>
 <?php
 // Fetch the exclude days from the database. only displaying current and future exclude days
-$exclude_query = "SELECT * FROM exclude_days WHERE exclude_day >= CURDATE() ORDER BY exclude_day";
-
-$exclude_result = mysqli_query($database, $exclude_query);
+$exclude_result = $database->execute_query("SELECT * FROM exclude_days WHERE exclude_day >= CURDATE() ORDER BY exclude_day");
 ?>
 <table class="exclude_days search-data-table">
     <thead>

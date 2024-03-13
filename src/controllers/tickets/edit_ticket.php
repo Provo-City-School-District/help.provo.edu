@@ -844,7 +844,7 @@ if (isset($ticket["client"])) {
         </div>
         <?php
         // Fetch the ticket logs for the current ticket
-        $log_query = "SELECT field_name,user_id, old_value, new_value, created_at FROM ticket_logs WHERE ticket_id = ? ORDER BY created_at DESC";
+        $log_query = "SELECT * FROM ticket_logs WHERE ticket_id = ? ORDER BY created_at DESC";
         $log_stmt = mysqli_prepare($database, $log_query);
         mysqli_stmt_bind_param($log_stmt, "i", $ticket_id);
         mysqli_stmt_execute($log_stmt);
@@ -864,6 +864,7 @@ if (isset($ticket["client"])) {
                     </tr>
                     <?php
                     while ($log_row = mysqli_fetch_assoc($log_result)) {
+                        $uniqueNoteId = $log_row['id'];
                     ?>
                         <tr>
                             <td data-cell="Date"><?= $log_row['created_at'] ?></td>
@@ -872,16 +873,16 @@ if (isset($ticket["client"])) {
                                 <?php
                                 switch ($log_row['field_name']) {
                                     case 'Attachment':
-                                        echo generateUpdateHTML('Attachment', null, $log_row['new_value'], 'Added');
+                                        echo generateUpdateHTML('Attachment', null, $log_row['new_value'], 'Added', $uniqueNoteId);
                                         break;
                                     case 'notedeleted':
-                                        echo generateUpdateHTML('Note', $log_row['old_value'], null, 'Deleted');
+                                        echo generateUpdateHTML('Note', $log_row['old_value'], null, 'Deleted', $uniqueNoteId);
                                         break;
                                     case 'note':
-                                        echo generateUpdateHTML('Note', $log_row['old_value'], $log_row['new_value'], $log_row['old_value'] != null ? 'Updated' : 'Created');
+                                        echo generateUpdateHTML('Note', $log_row['old_value'], $log_row['new_value'], $log_row['old_value'] != null ? 'Updated' : 'Created', $uniqueNoteId);
                                         break;
                                     case 'description':
-                                        echo generateUpdateHTML('Description', $log_row['old_value'], $log_row['new_value'], $log_row['old_value'] != null ? 'Updated' : 'Created');
+                                        echo generateUpdateHTML('Description', $log_row['old_value'], $log_row['new_value'], $log_row['old_value'] != null ? 'Updated' : 'Created', $uniqueNoteId);
                                         break;
                                     default:
                                         echo formatFieldName($log_row['field_name']) . ' From: ' . html_entity_decode($log_row['old_value']) . ' To: ' . html_entity_decode($log_row['new_value']);

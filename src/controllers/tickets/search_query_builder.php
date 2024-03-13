@@ -11,7 +11,7 @@ if (!empty($search_name)) {
 
     $ticket_query .= "AND tickets.id IN (SELECT linked_id FROM notes WHERE ";
     for ($i = 0; $i < $wordCount; $i++) {
-        $ticket_query .= "name LIKE '%" . mysqli_real_escape_string($database, $words[$i]) . "%' OR description LIKE '%" . mysqli_real_escape_string($database, $words[$i]) . "%' OR note LIKE '%" . mysqli_real_escape_string($database, $words[$i]) . "%'";
+        $ticket_query .= "(name LIKE '%" . mysqli_real_escape_string($database, $words[$i]) . "%' OR description LIKE '%" . mysqli_real_escape_string($database, $words[$i]) . "%' OR note LIKE '%" . mysqli_real_escape_string($database, $words[$i]) . "%')";
         if ($i != $wordCount - 1) {
             $ticket_query .= " AND ";
         }

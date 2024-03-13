@@ -299,12 +299,12 @@ if (isset($ticket["client"])) {
                         <option value="unassigned">Unassigned</option>
                         <?php foreach ($techusernames as $username) : ?>
                             <?php
-                                $name = get_local_name_for_user($username);
-                                $firstname = ucwords(strtolower($name["firstname"]));
-                                $lastname = ucwords(strtolower($name["lastname"]));
-                                $display_string = $firstname." ".$lastname." - ".location_name_from_id(get_fast_client_location($username) ?: "");
+                            $name = get_local_name_for_user($username);
+                            $firstname = ucwords(strtolower($name["firstname"]));
+                            $lastname = ucwords(strtolower($name["lastname"]));
+                            $display_string = $firstname . " " . $lastname . " - " . location_name_from_id(get_fast_client_location($username) ?: "");
                             ?>
-                            <option value="<?= $username ?>" <?= $ticket['employee'] === $username ? 'selected' : '' ?>><?= $display_string?></option>
+                            <option value="<?= $username ?>" <?= $ticket['employee'] === $username ? 'selected' : '' ?>><?= $display_string ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -872,20 +872,19 @@ if (isset($ticket["client"])) {
                                 <?php
                                 switch ($log_row['field_name']) {
                                     case 'Attachment':
-                                    echo 'Attachment Added: ' . html_entity_decode($log_row['new_value']);
-                                        break;
-                                    case 'note':
-                                    if ($log_row['old_value'] != null) {
-                                        echo 'Note Updated: ' . html_entity_decode($log_row['old_value']) . ' To: ' . html_entity_decode($log_row['new_value']);
-                                    } else {
-                                        echo 'Note Created: ' . html_entity_decode($log_row['new_value']);
-                                    }
+                                        echo generateUpdateHTML('Attachment', null, $log_row['new_value'], 'Added');
                                         break;
                                     case 'notedeleted':
-                                        echo 'Note Delete: ' . html_entity_decode($log_row['old_value']);
+                                        echo generateUpdateHTML('Note', $log_row['old_value'], null, 'Deleted');
+                                        break;
+                                    case 'note':
+                                        echo generateUpdateHTML('Note', $log_row['old_value'], $log_row['new_value'], $log_row['old_value'] != null ? 'Updated' : 'Created');
+                                        break;
+                                    case 'description':
+                                        echo generateUpdateHTML('Description', $log_row['old_value'], $log_row['new_value'], $log_row['old_value'] != null ? 'Updated' : 'Created');
                                         break;
                                     default:
-                                    echo formatFieldName($log_row['field_name']) . ' From: ' . html_entity_decode($log_row['old_value']) . ' To: ' . html_entity_decode($log_row['new_value']);
+                                        echo formatFieldName($log_row['field_name']) . ' From: ' . html_entity_decode($log_row['old_value']) . ' To: ' . html_entity_decode($log_row['new_value']);
                                         break;
                                 }
                                 ?>

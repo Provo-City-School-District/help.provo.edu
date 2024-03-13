@@ -418,6 +418,34 @@ select {
 	width: 200px;
 }
 
+
+/* =============================== Tickets Log =============================== */
+.ticket_log .note-container {
+	overflow: hidden;
+	height: 20px;
+}
+
+.ticket_log .note-container:hover {
+	overflow: visible;
+	height: auto;
+}
+
+.ticket_log .note {
+	background-color: #f9f9f9;
+	border: 1px solid #ccc;
+	padding: 10px;
+	display: none;
+}
+
+.ticket_log .note-container:hover .note {
+	display: block;
+}
+
+
+
+
+
+
 /* =============================== User Management Screen =============================== */
 .userPermissions div {
 	display: grid;

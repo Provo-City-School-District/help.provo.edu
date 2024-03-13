@@ -44,6 +44,7 @@ if (!empty($search_status)) {
     $ticket_query .= " AND status LIKE '%$search_status%'";
 }
 if (!empty($search_start_date) && !empty($search_end_date) && !empty($dates_searched)) {
+    $search_end_date = date('Y-m-d', strtotime($search_end_date . ' +1 day'));
 
     $date_conditions = array();
     foreach ($dates_searched as $date) {

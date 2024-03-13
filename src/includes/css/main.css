@@ -450,6 +450,10 @@ select {
 	opacity: 1;
 }
 
+.ticket_log tr {
+	height: 45px;
+}
+
 /* =============================== User Management Screen =============================== */
 .userPermissions div {
 	display: grid;

@@ -375,3 +375,11 @@ function logTicketChange($database, $ticket_id, $updatedby, $field_name, $old_va
     mysqli_stmt_bind_param($log_stmt, "issss", $ticket_id, $updatedby, $field_name, $old_value, $new_value);
     mysqli_stmt_execute($log_stmt);
 }
+
+function generateUpdateHTML($type, $old_value, $new_value, $action, $id)
+{
+    $old_value = $old_value != null ? html_entity_decode($old_value) . ' To: ' : '';
+    $new_value = $new_value != null ? html_entity_decode($new_value) : '';
+
+    return '<div class="note-container" id="note-container-' . $id . '">' . $type . ' ' . $action . ': <span class="note" id="note-' . $id . '">' . $old_value . $new_value . '</span></div>';
+}

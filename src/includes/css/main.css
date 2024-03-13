@@ -418,6 +418,42 @@ select {
 	width: 200px;
 }
 
+
+/* =============================== Tickets Log =============================== */
+.ticket_log .note-container {
+	overflow: hidden;
+	height: 20px;
+	position: relative;
+}
+
+.ticket_log .note-container:hover {
+	overflow: visible;
+	height: auto;
+}
+
+.ticket_log .note {
+	background-color: #f9f9f9;
+	border: 1px solid #ccc;
+	padding: 10px;
+	display: none;
+	position: absolute;
+	z-index: 1000;
+	bottom: 0;
+	visibility: hidden;
+	opacity: 0;
+	transition: visibility 0s, opacity 0.5s linear;
+}
+
+.ticket_log .note-container:hover .note {
+	display: block;
+	visibility: visible;
+	opacity: 1;
+}
+
+.ticket_log tr {
+	height: 45px;
+}
+
 /* =============================== User Management Screen =============================== */
 .userPermissions div {
 	display: grid;

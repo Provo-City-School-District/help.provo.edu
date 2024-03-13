@@ -299,12 +299,12 @@ if (isset($ticket["client"])) {
                         <option value="unassigned">Unassigned</option>
                         <?php foreach ($techusernames as $username) : ?>
                             <?php
-                                $name = get_local_name_for_user($username);
-                                $firstname = ucwords(strtolower($name["firstname"]));
-                                $lastname = ucwords(strtolower($name["lastname"]));
-                                $display_string = $firstname." ".$lastname." - ".location_name_from_id(get_fast_client_location($username) ?: "");
+                            $name = get_local_name_for_user($username);
+                            $firstname = ucwords(strtolower($name["firstname"]));
+                            $lastname = ucwords(strtolower($name["lastname"]));
+                            $display_string = $firstname . " " . $lastname . " - " . location_name_from_id(get_fast_client_location($username) ?: "");
                             ?>
-                            <option value="<?= $username ?>" <?= $ticket['employee'] === $username ? 'selected' : '' ?>><?= $display_string?></option>
+                            <option value="<?= $username ?>" <?= $ticket['employee'] === $username ? 'selected' : '' ?>><?= $display_string ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -844,7 +844,7 @@ if (isset($ticket["client"])) {
         </div>
         <?php
         // Fetch the ticket logs for the current ticket
-        $log_query = "SELECT field_name,user_id, old_value, new_value, created_at FROM ticket_logs WHERE ticket_id = ? ORDER BY created_at DESC";
+        $log_query = "SELECT * FROM ticket_logs WHERE ticket_id = ? ORDER BY created_at DESC";
         $log_stmt = mysqli_prepare($database, $log_query);
         mysqli_stmt_bind_param($log_stmt, "i", $ticket_id);
         mysqli_stmt_execute($log_stmt);
@@ -864,6 +864,7 @@ if (isset($ticket["client"])) {
                     </tr>
                     <?php
                     while ($log_row = mysqli_fetch_assoc($log_result)) {
+                        $uniqueNoteId = $log_row['id'];
                     ?>
                         <tr>
                             <td data-cell="Date"><?= $log_row['created_at'] ?></td>
@@ -872,20 +873,19 @@ if (isset($ticket["client"])) {
                                 <?php
                                 switch ($log_row['field_name']) {
                                     case 'Attachment':
-                                    echo 'Attachment Added: ' . html_entity_decode($log_row['new_value']);
-                                        break;
-                                    case 'note':
-                                    if ($log_row['old_value'] != null) {
-                                        echo 'Note Updated: ' . html_entity_decode($log_row['old_value']) . ' To: ' . html_entity_decode($log_row['new_value']);
-                                    } else {
-                                        echo 'Note Created: ' . html_entity_decode($log_row['new_value']);
-                                    }
+                                        echo generateUpdateHTML('Attachment', null, $log_row['new_value'], 'Added', $uniqueNoteId);
                                         break;
                                     case 'notedeleted':
-                                        echo 'Note Delete: ' . html_entity_decode($log_row['old_value']);
+                                        echo generateUpdateHTML('Note', $log_row['old_value'], null, 'Deleted', $uniqueNoteId);
+                                        break;
+                                    case 'note':
+                                        echo generateUpdateHTML('Note', $log_row['old_value'], $log_row['new_value'], $log_row['old_value'] != null ? 'Updated' : 'Created', $uniqueNoteId);
+                                        break;
+                                    case 'description':
+                                        echo generateUpdateHTML('Description', $log_row['old_value'], $log_row['new_value'], $log_row['old_value'] != null ? 'Updated' : 'Created', $uniqueNoteId);
                                         break;
                                     default:
-                                    echo formatFieldName($log_row['field_name']) . ' From: ' . html_entity_decode($log_row['old_value']) . ' To: ' . html_entity_decode($log_row['new_value']);
+                                        echo formatFieldName($log_row['field_name']) . ' From: ' . html_entity_decode($log_row['old_value']) . ' To: ' . html_entity_decode($log_row['new_value']);
                                         break;
                                 }
                                 ?>

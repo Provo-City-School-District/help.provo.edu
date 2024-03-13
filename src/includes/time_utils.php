@@ -14,7 +14,6 @@ function get_note_time_for_days(string $user, array $days)
     for ($i = 0; $i < count($days); $i++)
         $times[$i] = 0;
 
-    $user_sanitized = mysqli_real_escape_string($database, $user);
 
     // Hasn't been fully battle tested but should work fine
     $query =
@@ -22,7 +21,7 @@ function get_note_time_for_days(string $user, array $days)
     SELECT 
         created, date_override, work_hours, work_minutes, travel_hours, travel_minutes FROM notes
     WHERE 
-        creator = '$user_sanitized' AND
+        creator = ? AND
         (
             CASE WHEN date_override IS NULL THEN
                 created >= DATE_SUB(curdate(), INTERVAL 1 WEEK) ELSE
@@ -31,7 +30,7 @@ function get_note_time_for_days(string $user, array $days)
         )   
     STR;
 
-    $query_result = mysqli_query($database, $query);
+    $query_result = $database->execute_query($query, [$user]);
     while ($row = mysqli_fetch_assoc($query_result)) {
         $created = $row["created"];
         $date_override = $row["date_override"];

@@ -19,8 +19,7 @@ require_once("tickets_template.php");
 // Retrieve the user with the corresponding ID
 $user_id = $_GET['id'];
 // User is an admin
-$query = "SELECT * FROM users WHERE id = $user_id";
-$result = mysqli_query($database, $query);
+$result = $database->execute_query("SELECT * FROM users WHERE id = ?", [$user_id]);
 // Check if the query was successful
 if (!$result) {
     die("Query failed: " . mysqli_error($conn));
@@ -68,8 +67,7 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
 if ($_SESSION['permissions']['is_admin'] == 1) {
 
     // Query to get all supervisors
-    $supervisors_query = "SELECT firstname, lastname, username FROM users WHERE is_supervisor = 1";
-    $supervisors_result = mysqli_query($database, $supervisors_query);
+    $supervisors_result = $database->execute_query("SELECT firstname, lastname, username FROM users WHERE is_supervisor = 1");
 
     // Check if the query was successful
     if (!$supervisors_result) {
@@ -134,8 +132,7 @@ if ($_SESSION['permissions']['is_admin'] == 1) {
                 <option value="" selected></option>
                 <?php
                 // Query the locations table to get the departments
-                $department_query = "SELECT * FROM locations WHERE is_department = TRUE ORDER BY location_name ASC";
-                $department_result = mysqli_query($database, $department_query);
+                $department_result = $database->execute_query("SELECT * FROM locations WHERE is_department = TRUE ORDER BY location_name ASC");
 
                 // Create a "Department" optgroup and create an option for each department
                 echo '<optgroup label="Department">';
@@ -149,8 +146,7 @@ if ($_SESSION['permissions']['is_admin'] == 1) {
                 echo '</optgroup>';
 
                 // Query the locations table to get the locations
-                $location_query = "SELECT * FROM locations WHERE is_department = FALSE ORDER BY location_name ASC";
-                $location_result = mysqli_query($database, $location_query);
+                $location_result = $database->execute_query("SELECT * FROM locations WHERE is_department = FALSE ORDER BY location_name ASC");
 
                 // Create a "Location" optgroup and create an option for each location
                 echo '<optgroup label="Location">';
@@ -209,11 +205,11 @@ $ticket_query = <<<STR
 SELECT *
 FROM tickets
 WHERE status NOT IN ('Closed', 'Resolved')
-AND employee = '$username'
+AND employee = ?
 ORDER BY id ASC
 STR;
 
-$ticket_result = mysqli_query($database, $ticket_query);
+$ticket_result = $database->execute_query($ticket_query, [$username]);
 $client_tickets = mysqli_fetch_all($ticket_result, MYSQLI_ASSOC);
 
 ?>

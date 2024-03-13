@@ -5,8 +5,8 @@ function user_exists_locally(string $username)
 {
     global $database;
 
-    $check_query = "SELECT * FROM users WHERE username = '$username'";
-    $result = mysqli_query($database, $check_query);
+    $check_query = "SELECT * FROM users WHERE username = ?";
+    $result = $database->execute_query($check_query, [$username]);
 
     // If a row is returned, the user exists
     return mysqli_num_rows($result) > 0;
@@ -77,9 +77,9 @@ function create_user_in_local_db($username)
     if (user_exists_locally($username))
         return CreateLocalUserStatus::UserAlreadyExists;
 
-    $insert_query = "INSERT INTO users (username, email, lastname, firstname, ifasid) VALUES ('" . $username . "', '" . $email . "', '" . $lastname . "', '" . $firstname . "', '" . $employee_id . "')";
+    $insert_query = "INSERT INTO users (username, email, lastname, firstname, ifasid) VALUES (?, ?, ?, ?, ?)";
+    $insert_result = $database->execute_query($insert_query, [$username, $email, $lastname, $firstname, $employee_id]);
 
-    $insert_result = mysqli_query($database, $insert_query);
     if (!$insert_result) {
         $current_mysqli_error = mysqli_error($database);
         log_app(LOG_ERR, "Insert query error: $current_mysqli_error");

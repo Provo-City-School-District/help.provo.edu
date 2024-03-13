@@ -22,25 +22,26 @@ $tech_ticket_query = <<<STR
     SELECT *
     FROM tickets
     WHERE status NOT IN ('Closed', 'Resolved')
-    AND employee = '$username'
+    AND employee = ?
     ORDER BY id ASC
     STR;
-$tech_ticket_result = mysqli_query($database, $tech_ticket_query);
+$tech_ticket_result = $database->execute_query($tech_ticket_query, [$username]);
 $tech_tickets = mysqli_fetch_all($tech_ticket_result, MYSQLI_ASSOC);
+
 // SQL query for client Tickets
 $client_ticket_query = <<<STR
     SELECT *
     FROM tickets
     WHERE status NOT IN ('Closed', 'Resolved')
-    AND client = '$username'
-    AND employee != '$username'
+    AND client = ?
+    AND employee != ?
     ORDER BY id ASC
     STR;
-$client_ticket_result = mysqli_query($database, $client_ticket_query);
+$client_ticket_result = $database->execute_query($client_ticket_query, [$username, $username]);
 $client_tickets = mysqli_fetch_all($client_ticket_result, MYSQLI_ASSOC);
+
 // Query the alerts for tech
-$alert_query = "SELECT * FROM alerts WHERE employee = '$username' AND supervisor_alert = 0";
-$alert_result = mysqli_query($database, $alert_query);
+$alert_result = $database->execute_query("SELECT * FROM alerts WHERE employee = ? AND supervisor_alert = 0", [$username]);
 $alerts = mysqli_fetch_all($alert_result, MYSQLI_ASSOC);
 
 

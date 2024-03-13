@@ -24,8 +24,7 @@ if (isset($_SESSION['current_status'])) {
     unset($_SESSION['status_type']);
 }
 
-$usernamesQuery = "SELECT username,is_tech FROM users WHERE is_tech = 1 ORDER BY username ASC";
-$usernamesResult = mysqli_query($database, $usernamesQuery);
+$usernamesResult = $database->execute_query("SELECT username,is_tech FROM users WHERE is_tech = 1 ORDER BY username ASC");
 
 if (!$usernamesResult) {
     die('Error fetching usernames: ' . mysqli_error($database));
@@ -52,8 +51,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                     <option value=""></option>
                     <?php
                     // Query the locations table to get the departments
-                    $department_query = "SELECT * FROM locations WHERE is_department = TRUE ORDER BY location_name ASC";
-                    $department_result = mysqli_query($database, $department_query);
+                    $department_result = $database->execute_query("SELECT * FROM locations WHERE is_department = TRUE ORDER BY location_name ASC");
 
                     // Create a "Department" optgroup and create an option for each department
                     echo '<optgroup label="Department">';
@@ -72,8 +70,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
                     echo '</optgroup>';
 
                     // Query the locations table to get the locations
-                    $location_query = "SELECT * FROM locations WHERE is_department = FALSE ORDER BY location_name ASC";
-                    $location_result = mysqli_query($database, $location_query);
+                    $location_result = $database->execute_query("SELECT * FROM locations WHERE is_department = FALSE ORDER BY location_name ASC");
 
                     // Create a "Location" optgroup and create an option for each location
                     echo '<optgroup label="Location">';

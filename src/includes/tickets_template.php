@@ -43,8 +43,7 @@ function display_tickets_table($tickets, $database)
         if ($ticket['request_type_id'] === '0') {
             $request_type_name = "Other";
         } else {
-            $request_type_query = "SELECT request_name FROM request_type WHERE request_id = " . $ticket['request_type_id'];
-            $request_type_query_result = mysqli_query($database, $request_type_query);
+            $request_type_query_result = $database->execute_query("SELECT request_name FROM request_type WHERE request_id = ?", [$ticket['request_type_id']]);
             $request_type_name = mysqli_fetch_assoc($request_type_query_result)['request_name'];
         }
 

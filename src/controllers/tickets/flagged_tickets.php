@@ -20,11 +20,11 @@ $ticket_query = <<<STR
             WHERE
                 tickets.id in (
                     SELECT flagged_tickets.ticket_id from flagged_tickets WHERE flagged_tickets.user_id in (
-                        SELECT users.id FROM users WHERE users.username = '$username'
+                        SELECT users.id FROM users WHERE users.username = ?
                     )
                 )
         STR;
-$ticket_result = mysqli_query($database, $ticket_query);
+$ticket_result = $database->execute_query($ticket_query, [$username]);
 
 ?>
 

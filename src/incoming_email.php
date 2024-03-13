@@ -71,8 +71,10 @@ for ($i = 1; $i <= $msg_count; $i++) {
 
     // Get incoming cc emails from email
     $incoming_cc_emails = [];
-    foreach ($header->cc as $cc_email) {
-        $incoming_cc_emails[] = $cc_email->mailbox.'@'.$cc_email->host;
+    if (isset($header->cc)) {
+        foreach ($header->cc as $cc_email) {
+            $incoming_cc_emails[] = $cc_email->mailbox.'@'.$cc_email->host;
+        }
     }
 
 
@@ -155,9 +157,9 @@ for ($i = 1; $i <= $msg_count; $i++) {
         SELECT tickets.id
             FROM tickets
             JOIN ticket_email_ids ON ticket_email_ids.ticket_id = tickets.id
-            WHERE ticket_email_ids.email_id = '$email_ancestor_id'
+            WHERE ticket_email_ids.email_id = ?
         STR;
-        $email_exists_result = mysqli_query($database, $email_exists_query);
+        $email_exists_result = $database->execute_query($email_exists_query, [$email_ancestor_id]);
         $email_exists_data = mysqli_fetch_assoc($email_exists_result);
 
         if (isset($email_exists_data["id"])) {
@@ -166,8 +168,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
             // add note on existing ticket
             add_note_with_filters($existing_ticket_id, $sender_username, $message, 0, 0, 0, 0, true, null, $email_msg_id);
         } else {
-            $ancestor_exists_query = "SELECT linked_id FROM notes WHERE email_msg_id = '$email_ancestor_id'";
-            $ticket_exists_result = mysqli_query($database, $ancestor_exists_query);
+            $ticket_exists_result = $database->execute_query("SELECT linked_id FROM notes WHERE email_msg_id = ?", [$email_ancestor_id]);
             $ticket_exists_data = mysqli_fetch_assoc($ticket_exists_result);
 
             if (isset($ticket_exists_data["linked_id"])) {

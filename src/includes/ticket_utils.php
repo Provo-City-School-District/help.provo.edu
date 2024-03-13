@@ -11,9 +11,7 @@ function user_is_tech(string $username)
 {
     global $database;
 
-    $username_clean = mysqli_real_escape_string($database, $username);
-    $userPermissionsQuery = "SELECT is_tech FROM users WHERE username = '$username_clean'";
-    $userPermissionsResult = mysqli_query($database, $userPermissionsQuery);
+    $userPermissionsResult = $database->execute_query("SELECT is_tech FROM users WHERE username = ?", [$username]);
     $userPermissionsData = mysqli_fetch_assoc($userPermissionsResult);
     if (isset($userPermissionsResult) && isset($userPermissionsData))
         return $userPermissionsData["is_tech"];
@@ -58,8 +56,7 @@ function split_email_string_to_arr(string $email_str)
 function hasExcludedDate($start_date, $end_date)
 {
     global $database;
-    $exclude_query = "SELECT COUNT(*) FROM exclude_days WHERE exclude_day BETWEEN '{$start_date}' AND '{$end_date}'";
-    $exclude_result = mysqli_query($database, $exclude_query);
+    $exclude_result = $database->execute_query("SELECT COUNT(*) FROM exclude_days WHERE exclude_day BETWEEN ? AND ?", [$start_date, $end_date]);
     $count = mysqli_fetch_array($exclude_result)[0];
     return $count;
 }
@@ -157,8 +154,7 @@ function add_note_with_filters(
     mysqli_stmt_close($log_stmt);
 
     if (!isset($_SESSION) || !session_is_tech()) {
-        $update_query = "UPDATE tickets SET tickets.status = 'open' WHERE tickets.id = '$ticket_id_clean'";
-        $result = mysqli_query($database, $update_query);
+        $result = $database->execute_query("UPDATE tickets SET tickets.status = 'open' WHERE tickets.id = ?", [$ticket_id_clean]);
         if (!$result) {
             log_app(LOG_ERR, "Failed to update ticket status for id=$operating_ticket");
         }
@@ -171,7 +167,7 @@ function add_note_with_filters(
         $assigned_tech = assigned_tech_for_ticket($ticket_id_clean);
 
         send_email_and_add_to_ticket($ticket_id_clean, email_address_from_username($assigned_tech), $email_subject, $email_msg);
-*/
+    */
     }
     return true;
 }
@@ -341,8 +337,7 @@ function location_name_from_id(string $site_id)
 
     global $database;
 
-    $location_query = "SELECT location_name FROM help.locations WHERE sitenumber = '$site_id'";
-    $location_result = mysqli_query($database, $location_query);
+    $location_result = $database->execute_query("SELECT location_name FROM help.locations WHERE sitenumber = ?", [$site_id]);
     if (!isset($location_result)) {
         log_app(LOG_ERR, "[location_name_from_id] Failed to get location query result");
     }
@@ -360,8 +355,7 @@ function assigned_tech_for_ticket(int $ticket_id)
 {
     global $database;
 
-    $assigned_query = "SELECT tech FROM help.tickets WHERE tickets.id = '$ticket_id'";
-    $assigned_result = mysqli_query($database, $assigned_query);
+    $assigned_result = $database->execute_query("SELECT tech FROM help.tickets WHERE tickets.id = ?", [$ticket_id]);
     if (!isset($assigned_result)) {
         log_app(LOG_ERR, "[assigned_tech_for_ticket] Failed to get location query result");
     }

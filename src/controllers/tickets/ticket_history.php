@@ -6,14 +6,16 @@ require_once('helpdbconnect.php');
 include("ticket_utils.php");
 
 //page query
-$ticket_query = "(SELECT * FROM tickets WHERE client = '" . $_SESSION['username'] . "')
+$ticket_query = "(SELECT * FROM tickets WHERE client = ?)
         UNION
         (SELECT tickets.* FROM tickets 
         JOIN notes ON tickets.id = notes.linked_id 
-        WHERE notes.creator = '" . $_SESSION['username'] . "')
+        WHERE notes.creator = ?)
         ORDER BY last_updated DESC";
 
-$ticket_result = mysqli_query($database, $ticket_query);
+$username = $_SESSION["username"];
+$ticket_result = $database->execute_query($ticket_query, [$username, $username]);
+
 ?>
 <h1>Ticket History</h1>
 

@@ -28,8 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     if ($updatedStatus == "resolved") {
-        $notes_query = "SELECT COUNT(*) as count FROM notes WHERE linked_id = '$ticket_id'";
-        $notes_result = mysqli_query($database, $notes_query);
+        $notes_result = $database->execute_query("SELECT COUNT(*) as count FROM notes WHERE linked_id = ?", [$ticket_id]);
         $row = mysqli_fetch_assoc($notes_result);
         if ($row['count'] == 0) {
             // Stop the resolving process and display an error message
@@ -109,26 +108,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     // Perform SQL UPDATE queries to update the ticket information
-    $updateTicketQuery = "UPDATE tickets SET
-        client = '$updatedClient',
-        employee = '$updatedEmployee',
-        location = '$updatedLocation',
-        room = '$updatedRoom',
-        name = '$updatedName',
-        description = '$updatedDescription',
-        due_date = '$updatedDueDate',
-        status = '$updatedStatus',
-        phone = '$updatedPhone',
-        cc_emails = '$updatedCCEmails',
-        bcc_emails = '$updatedBCCEmails',
-        priority = '$updatedPriority',
-        request_type_id = '$updatedRequestType',
-        parent_ticket = '$updatedParentTicket',
+    $update_ticket_query = "UPDATE tickets SET
+        client = ?,
+        employee = ?,
+        location = ?,
+        room = ?,
+        name = ?,
+        description = ?,
+        due_date = ?,
+        status = ?,
+        phone = ?,
+        cc_emails = ?,
+        bcc_emails = ?,
+        priority = ?,
+        request_type_id = ?,
+        parent_ticket = ?,
         last_updated = NOW()
-        WHERE id = '$ticket_id'";
+        WHERE id = ?";
+
+    $update_ticket_query_vars = [$updatedClient, $updatedEmployee, $updatedLocation, $updatedRoom, $updatedName,
+        $updatedDescription, $updatedDueDate, $updatedStatus, $updatedPhone, $updatedCCEmails,
+        $updatedBCCEmails, $updatedPriority, $updatedRequestType, $updatedParentTicket, $ticket_id];
 
     // Execute the update queries
-    $updateTicketResult = mysqli_query($database, $updateTicketQuery);
+    $updateTicketResult = $database->execute_query($update_ticket_query, $update_ticket_query_vars);
 
     if (!$updateTicketResult) {
         die('Error updating ticket: ' . mysqli_error($database));

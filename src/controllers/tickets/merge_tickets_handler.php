@@ -32,9 +32,7 @@ if ($ticket_id_host == $ticket_id_source) {
     return_to_ticket_with_status("Tickets cannot be merged into themselves", "error", $ticket_id_source);
 }
 
-$source_has_merged_query = "SELECT merged_into_id FROM tickets WHERE id = '$ticket_id_source'";
-$source_has_merged_result = mysqli_query($database, $source_has_merged_query);
-
+$source_has_merged_result = $database->execute_query("SELECT merged_into_id FROM tickets WHERE id = ?", [$ticket_id_source]);
 $source_merged = mysqli_fetch_assoc($source_has_merged_result);
 
 if ($source_merged["merged_into_id"] != null) {
@@ -44,8 +42,7 @@ if ($source_merged["merged_into_id"] != null) {
 
 // disallow merging a ticket into a ticket that the other ticket merged into (loop)
 
-$host_has_merged_query = "SELECT merged_into_id FROM tickets WHERE id = '$ticket_id_host'";
-$host_has_merged_result = mysqli_query($database, $host_has_merged_query);
+$host_has_merged_result = $database->execute_query("SELECT merged_into_id FROM tickets WHERE id = ?", [$ticket_id_host]);
 $host_merged = mysqli_fetch_assoc($host_has_merged_result);
 
 if ($host_merged["merged_into_id"] != null) {
@@ -59,11 +56,11 @@ $username = trim(htmlspecialchars($_POST['username']));
 // Deep copy all source ticket's notes
 $query = <<<STR
     INSERT INTO notes (linked_id, created, creator, note, time, idx, visible_to_client, date_override, email_msg_id, work_hours, work_minutes, travel_hours, travel_minutes)
-        (SELECT '$ticket_id_host', created, creator, note, time, idx, visible_to_client, date_override, email_msg_id, work_hours, work_minutes, travel_hours, travel_minutes FROM notes 
-            WHERE linked_id = '$ticket_id_source')
+        (SELECT ?, created, creator, note, time, idx, visible_to_client, date_override, email_msg_id, work_hours, work_minutes, travel_hours, travel_minutes FROM notes 
+            WHERE linked_id = ?)
 STR;
 
-$result = mysqli_query($database, $query);
+$result = $database->execute_query($query, [$ticket_id_host, $ticket_id_source]);
 if (!$result) {
     return_to_ticket_with_status("failed to update notes", "error", $ticket_id_source);
 }

@@ -24,23 +24,23 @@ SELECT alerts.*
 FROM alerts 
 JOIN users ON alerts.employee = users.username
 JOIN tickets ON alerts.ticket_id = tickets.id
-WHERE tickets.location = $managed_location
+WHERE tickets.location = ?
 AND alerts.supervisor_alert IN (0, 1)
 alerts_query;
 
-$alerts_result = mysqli_query($database, $alerts_query);
+$alerts_result = $database->execute_query($alerts_query, [$managed_location]);
 
 
 //location tickets query
 $location_tickets_query = <<<location_tickets
 SELECT * 
 FROM tickets 
-WHERE location = $managed_location
+WHERE location = ?
 AND tickets.status NOT IN ('closed', 'resolved')
 AND (employee IS NOT NULL AND employee != 'unassigned')
 location_tickets;
 
-$location_ticket_result = mysqli_query($database, $location_tickets_query);
+$location_ticket_result = $database->execute_query($location_tickets_query, [$managed_location]);
 
 //query for unassigned tickets for location
 $unassigned_ticket_query = <<<unassigned_tickets
@@ -48,10 +48,10 @@ SELECT *
 FROM tickets
 WHERE status NOT IN ('closed', 'resolved') 
 AND (employee IS NULL OR employee = 'unassigned')
-AND location = $managed_location
+AND location = ?
 unassigned_tickets;
 
-$unassigned_ticket_result = mysqli_query($database, $unassigned_ticket_query);
+$unassigned_ticket_result = $database->execute_query($unassigned_ticket_query, [$managed_location]);
 
 ?>
 <!-- Display Front End -->

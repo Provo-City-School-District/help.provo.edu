@@ -118,8 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     if (isset($assigned_tech)) {
-        $usernamesQuery = "SELECT username,is_tech FROM users WHERE is_tech = 1";
-        $usernamesResult = mysqli_query($database, $usernamesQuery);
+        $usernamesResult = $database->execute_query("SELECT username,is_tech FROM users WHERE is_tech = 1");
 
         if (!$usernamesResult) {
             die('Error fetching usernames: ' . mysqli_error($database));

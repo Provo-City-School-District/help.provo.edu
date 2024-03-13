@@ -151,8 +151,7 @@ function get_local_name_for_user(string $username)
 {
     global $database;
 
-    $name_query = "SELECT firstname, lastname FROM help.users WHERE username = '$username'";
-    $name_result = mysqli_query($database, $name_query);
+    $name_result = $database->execute_query("SELECT firstname, lastname FROM help.users WHERE username = ?", [$username]);
     if (!isset($name_result)) {
         log_app(LOG_ERR, "[get_local_name_for_user] Failed to get name result");
         return null;
@@ -171,8 +170,7 @@ function get_fast_client_location(string $name)
 {
     global $database;
 
-    $location_query = "SELECT ldap_location FROM help.users WHERE username = '$name'";
-    $location_result = mysqli_query($database, $location_query);
+    $location_result = $database->execute_query("SELECT ldap_location FROM help.users WHERE username = ?", [$name]);
     if (!isset($location_result)) {
         log_app(LOG_ERR, "[get_fast_client_location] Failed to get location query result");
         return null;

@@ -4,7 +4,7 @@ require_once('init.php');
 require_once('helpdbconnect.php');
 
 require("ticket_utils.php");
-require("email_utils.php");
+require_once("email_utils.php");
 require("template.php");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -275,6 +275,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $notesMessageClient .= "<tr><th>Date</th><th>Creator</th><th>Note</th></tr>";
         $notesMessageTech .= "<tr><th>Date</th><th>Creator</th><th>Note</th></tr>";
     }
+
     foreach ($notes as $note) {
         $dateOverride = $note['date_override'];
         $effectiveDate = $dateOverride;
@@ -284,9 +285,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $dateStr = date_format(date_create($effectiveDate), "F jS\, Y h:i:s A");
         $noteCreator = $note['creator'];
         $decodedNote = htmlspecialchars_decode($note['note']);
-        $notesMessageTech .= "<tr><td>$dateStr</td><td>$noteCreator</td><td>$decodedNote</td></tr>";
+
+        $note_theme = "";
+        if (!user_is_tech($noteCreator)) {
+            $note_theme = "nonTech";
+        } else if ($note['visible_to_client'] == 0) {
+            $note_theme = "notClientVisible";
+        } else {
+            $note_theme = "clientVisible";
+        }
+
+        $notesMessageTech .= "<tr><td>$dateStr</td><td>$noteCreator</td><td class=\"$note_theme\">$decodedNote</td></tr>";
         if ($note['visible_to_client']) {
-            $notesMessageClient .= "<tr><td>$dateStr</td><td>$noteCreator</td><td>$decodedNote</td></tr>";
+            $notesMessageClient .= "<tr><td>$dateStr</td><td>$noteCreator</td><td class=\"$note_theme\">$decodedNote</td></tr>";
         }
     }
 

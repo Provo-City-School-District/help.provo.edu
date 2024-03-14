@@ -295,9 +295,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $note_theme = "clientVisible";
         }
 
-        $notesMessageTech .= "<tr><td>$dateStr</td><td>$noteCreator</td><td class=\"$note_theme\">$decodedNote</td></tr>";
+        $notesMessageTech .= "<tr><td>$dateStr</td><td>$noteCreator</td><td><span class=\"$note_theme\">$decodedNote</span></td></tr>";
         if ($note['visible_to_client']) {
-            $notesMessageClient .= "<tr><td>$dateStr</td><td>$noteCreator</td><td class=\"$note_theme\">$decodedNote</td></tr>";
+            $notesMessageClient .= "<tr><td>$dateStr</td><td>$noteCreator</td><td><span class=\"$note_theme\">$decodedNote</span></td></tr>";
         }
     }
 

@@ -1,20 +1,27 @@
-<style>
-table, th, td {
-    border: 1px solid black;
-    border-collapse: collapse;
-}
-</style>
-Ticket <?= $this->ticket_id ?> has been updated
-<p><strong>Client:</strong> <?= $this->client ?><p>
-<p><strong>Location:</strong> <?= $this->location ?><p>
-<p><strong>Request Detail:</strong></p>
-<div><?= $this->description ?></div>
-<p><strong>Recent Notes:</strong></p>
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        </style>
+    </head>
+    <body>
+        Ticket <?= $this->ticket_id ?> has been updated
+        <p><strong>Client:</strong> <?= $this->client ?><p>
+        <p><strong>Location:</strong> <?= $this->location ?><p>
+        <p><strong>Request Detail:</strong></p>
+        <div><?= $this->description ?></div>
+        <p><strong>Recent Notes:</strong></p>
 
-<table>
-    <tr>
-        <th>Date</th>
-        <th>Creator</th>
-        <th>Note</th>
-    </tr><?= $this->notes_message?> </table>
-<p><a href="<?= $this->site_url ?>/controllers/tickets/edit_ticket.php?id=<?= $this->ticket_id ?>">View ticket <?= $this->ticket_id ?></a></p>
+        <table>
+            <tr>
+                <th>Date</th>
+                <th>Creator</th>
+                <th>Note</th>
+            </tr><?= $this->notes_message?> </table>
+        <p><a href="<?= $this->site_url ?>/controllers/tickets/edit_ticket.php?id=<?= $this->ticket_id ?>">View ticket <?= $this->ticket_id ?></a></p>
+    </body>
+</html>

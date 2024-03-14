@@ -4,5 +4,5 @@ Ticket <?= $this->ticket_id ?> has been updated
 <p><strong>Request Detail:</strong></p>
 <div><?= $this->description ?></div>
 <p><strong>Recent Notes:</strong></p>
-<ul><?= $this->notes_message?> </ul>
+<table><?= $this->notes_message?> </table>
 <p><a href="<?= $this->site_url ?>/controllers/tickets/edit_ticket.php?id=<?= $this->ticket_id ?>">View ticket <?= $this->ticket_id ?></a></p>

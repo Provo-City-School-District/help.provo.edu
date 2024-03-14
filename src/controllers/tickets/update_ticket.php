@@ -280,10 +280,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $dateStr = date_format(date_create($effectiveDate), "F jS\, Y\: h:i:s A");
         $noteCreator = $note['creator'];
-        $decodedNote = $noteCreator . " ($dateStr): " . htmlspecialchars_decode($note['note']);
-        $notesMessageTech .= "<li>" . $decodedNote . "</li>";
+        $decodedNote = htmlspecialchars_decode($note['note']);
+        $notesMessageTech .= "<tr><td>$dateStr</td><td>$noteCreator</td><td>$decodedNote</td></tr>";
         if ($note['visible_to_client']) {
-            $notesMessageClient .= "<li>" . $decodedNote . "</li>";
+            $notesMessageClient .= "<tr><td>$dateStr</td><td>$noteCreator</td><td>$decodedNote</td></tr>";
         }
     }
 

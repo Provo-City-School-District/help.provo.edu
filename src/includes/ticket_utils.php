@@ -154,8 +154,8 @@ function add_note_with_filters(
     mysqli_stmt_execute($log_stmt);
     mysqli_stmt_close($log_stmt);
 
-    log_app(LOG_INFO, client_for_ticket($ticket_id_clean).assigned_tech_for_ticket($ticket_id_clean));
-    if (!isset($_SESSION) || client_for_ticket($ticket_id_clean) != assigned_tech_for_ticket($ticket_id_clean)) {
+    // Send email to assigned tech on update if the client isn't the assigned tech
+    if (client_for_ticket($ticket_id_clean) != assigned_tech_for_ticket($ticket_id_clean)) {
         $result = $database->execute_query("UPDATE tickets SET tickets.status = 'open' WHERE tickets.id = ?", [$ticket_id_clean]);
         if (!$result) {
             log_app(LOG_ERR, "Failed to update ticket status for id=$operating_ticket");

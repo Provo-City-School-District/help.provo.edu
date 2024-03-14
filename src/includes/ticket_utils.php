@@ -1,5 +1,6 @@
 <?php
 require_once("ticket_utils.php");
+require_once("email_utils.php");
 // DB connection can fail if not included first, TODO fix maybe
 
 function session_is_tech()

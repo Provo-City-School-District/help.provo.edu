@@ -429,7 +429,14 @@ if (isset($ticket["client"])) {
                         <option value="5" <?= ($ticket['priority'] == '5') ? ' selected' : '' ?>>High</option>
                         <option value="10" <?= ($ticket['priority'] == '10') ? ' selected' : '' ?>>Standard</option>
                         <option value="15" <?= ($ticket['priority'] == '15') ? ' selected' : '' ?>>Client Response</option>
-                        <?php if ($_SESSION['permissions']['is_supervisor'] != 0 || $_SESSION['permissions']['is_admin'] != 0 || $ticket['client'] == $ticket['employee']) : ?>
+                        <?php
+                        if (
+                            $_SESSION['permissions']['is_supervisor'] != 0 ||
+                            $_SESSION['permissions']['is_admin'] != 0 ||
+                            $ticket['client'] == $ticket['employee'] ||
+                            $ticket['priority'] == '30'
+                        ) :
+                        ?>
                             <option value="30" <?= ($ticket['priority'] == '30') ? ' selected' : '' ?>>Project</option>
                         <?php endif; ?>
                         <option value="60" <?= ($ticket['priority'] == '60') ? ' selected' : '' ?>>Meeting Support</option>

@@ -158,8 +158,6 @@ function add_note_with_filters(
         if (!$result) {
             log_app(LOG_ERR, "Failed to update ticket status for id=$operating_ticket");
         }
-        /*
-        Needs testing
 
         // Email tech if client has updated ticket
         $email_subject = "Ticket $ticket_id_clean (Updated)";
@@ -167,7 +165,6 @@ function add_note_with_filters(
         $assigned_tech = assigned_tech_for_ticket($ticket_id_clean);
 
         send_email_and_add_to_ticket($ticket_id_clean, email_address_from_username($assigned_tech), $email_subject, $email_msg);
-    */
     }
     return true;
 }

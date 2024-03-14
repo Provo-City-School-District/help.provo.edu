@@ -956,7 +956,9 @@ if (isset($ticket["client"])) {
         }
     });
 </script>
+
 <?php if ($_SESSION['permissions']['is_tech']) : ?>
+    <script src="/includes/js/note_time.js" type="text/javascript"></script>
     <script>
         function updateTimeSinceLastNote() {
             // Loop over each element with the class 'created_date'
@@ -998,7 +1000,7 @@ if (isset($ticket["client"])) {
     </script>
 <?php endif; ?>
 <?php include("footer.php"); ?>
-<script src="/includes/js/note_time.js" type="text/javascript"></script>
+
 <script>
     function split(val) {
         return val.split(/,\s*/);

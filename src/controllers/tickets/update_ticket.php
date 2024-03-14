@@ -277,7 +277,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($dateOverride == null)
             $effectiveDate = $note['created'];
 
-
         $dateStr = date_format(date_create($effectiveDate), "F jS\, Y\: h:i:s A");
         $noteCreator = $note['creator'];
         $decodedNote = htmlspecialchars_decode($note['note']);

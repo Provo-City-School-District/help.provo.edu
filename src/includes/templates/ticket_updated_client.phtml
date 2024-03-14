@@ -1,9 +1,16 @@
+<style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+</style>
 Ticket <?= $this->ticket_id ?> has been updated
 <p><strong>Client:</strong> <?= $this->client ?><p>
 <p><strong>Location:</strong> <?= $this->location ?><p>
 <p><strong>Request Detail:</strong></p>
 <div><?= $this->description ?></div>
 <p><strong>Recent Notes:</strong></p>
+
 <table>
     <tr>
         <th>Date</th>

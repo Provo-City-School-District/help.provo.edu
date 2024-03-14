@@ -1,3 +1,9 @@
+<style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+</style>
 Ticket <?= $this->ticket_id ?> has been updated
 <p><strong>Client:</strong> <?= $this->client ?><p>
 <p><strong>Location:</strong> <?= $this->location ?><p>
@@ -12,7 +18,7 @@ if ($this->changes_message) {
 }
 ?>
 <p><strong>Recent Notes:</strong></p>
-<table>
+<table style="border: 1px solid black;">
     <tr>
         <th>Date</th>
         <th>Creator</th>

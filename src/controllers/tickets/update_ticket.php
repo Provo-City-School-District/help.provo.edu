@@ -272,8 +272,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $notesMessageTech = "";
 
     foreach ($notes as $note) {
+        $dateOverride = $note['date_override'];
+        $effectiveDate = $dateOverride;
+        if ($dateOverride == null)
+            $effectiveDate = $note['created'];
+
+
+        $dateStr = date_format(date_create($effectiveDate), "F jS\, Y\: h:i:s A");
         $noteCreator = $note['creator'];
-        $decodedNote = $noteCreator . ": " . htmlspecialchars_decode($note['note']);
+        $decodedNote = $noteCreator . " ($dateStr): " . htmlspecialchars_decode($note['note']);
         $notesMessageTech .= "<li>" . $decodedNote . "</li>";
         if ($note['visible_to_client']) {
             $notesMessageClient .= "<li>" . $decodedNote . "</li>";

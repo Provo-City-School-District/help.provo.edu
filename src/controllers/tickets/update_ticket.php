@@ -271,6 +271,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $notesMessageClient = "";
     $notesMessageTech = "";
 
+    if (count($notes) > 0) {
+        $notesMessageClient .= "<tr><th>Date</th><th>Creator</th><th>Note</th></tr>";
+        $notesMessageTech .= "<tr><th>Date</th><th>Creator</th><th>Note</th></tr>";
+    }
     foreach ($notes as $note) {
         $dateOverride = $note['date_override'];
         $effectiveDate = $dateOverride;

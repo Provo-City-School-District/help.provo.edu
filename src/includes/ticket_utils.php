@@ -153,7 +153,8 @@ function add_note_with_filters(
     mysqli_stmt_execute($log_stmt);
     mysqli_stmt_close($log_stmt);
 
-    if (!isset($_SESSION) || !session_is_tech()) {
+    log_app(LOG_INFO, client_for_ticket($ticket_id_clean).assigned_tech_for_ticket($ticket_id_clean));
+    if (!isset($_SESSION) || client_for_ticket($ticket_id_clean) != assigned_tech_for_ticket($ticket_id_clean)) {
         $result = $database->execute_query("UPDATE tickets SET tickets.status = 'open' WHERE tickets.id = ?", [$ticket_id_clean]);
         if (!$result) {
             log_app(LOG_ERR, "Failed to update ticket status for id=$operating_ticket");
@@ -352,7 +353,7 @@ function assigned_tech_for_ticket(int $ticket_id)
 {
     global $database;
 
-    $assigned_result = $database->execute_query("SELECT tech FROM help.tickets WHERE tickets.id = ?", [$ticket_id]);
+    $assigned_result = $database->execute_query("SELECT employee FROM help.tickets WHERE tickets.id = ?", [$ticket_id]);
     if (!isset($assigned_result)) {
         log_app(LOG_ERR, "[assigned_tech_for_ticket] Failed to get location query result");
     }
@@ -363,6 +364,23 @@ function assigned_tech_for_ticket(int $ticket_id)
     }
 
     return $assigned_data["employee"];
+}
+
+function client_for_ticket(int $ticket_id)
+{
+    global $database;
+
+    $client_result = $database->execute_query("SELECT client FROM help.tickets WHERE tickets.id = ?", [$ticket_id]);
+    if (!isset($client_result)) {
+        log_app(LOG_ERR, "[client_for_ticket] Failed to get location query result");
+    }
+
+    $client_data = mysqli_fetch_assoc($client_result);
+    if (!isset($client_data)) {
+        log_app(LOG_ERR, "[client_for_ticket] Failed to get location data");
+    }
+
+    return $client_data["client"];
 }
 
 function logTicketChange($database, $ticket_id, $updatedby, $field_name, $old_value, $new_value)

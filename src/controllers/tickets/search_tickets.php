@@ -6,7 +6,7 @@ require_once('swdbconnect.php');
 include("ticket_utils.php");
 // Query the locations table to get the location information
 $location_query = "SELECT sitenumber, location_name FROM locations ORDER BY location_name ASC";
-$location_result = mysqli_query($database, $location_query);
+$location_result = $database->execute_query($location_query);
 $search_id = '';
 $search_name = '';
 $search_location = '';
@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
 // Fetch the list of usernames from the users table
 $usernamesQuery = "SELECT username,is_tech FROM users ORDER BY username ASC";
-$usernamesResult = mysqli_query($database, $usernamesQuery);
+$usernamesResult = $database->execute_query($usernamesQuery);
 
 if (!$usernamesResult) {
     die('Error fetching usernames: ' . mysqli_error($database));
@@ -95,10 +95,9 @@ function get_client_name_from_id(string $client_sw_id)
 {
     global $swdb;
 
-    $client_name_query = "SELECT FIRST_NAME, LAST_NAME FROM client WHERE CLIENT_ID = '$client_sw_id'";
-    $client_name_result = mysqli_query($swdb, $client_name_query);
+    $client_name_result = $swdb->execute_query("SELECT FIRST_NAME, LAST_NAME FROM client WHERE CLIENT_ID = ?", [$client_sw_id]);
     $client_name_data = mysqli_fetch_assoc($client_name_result);
-    $client_name = trim($client_name_data["FIRST_NAME"]) . " " . trim($client_name_data["LAST_NAME"]);
+    $client_name = trim($client_name_data["FIRST_NAME"])." ".trim($client_name_data["LAST_NAME"]);
 
     return $client_name;
 }
@@ -108,10 +107,9 @@ function get_tech_name_from_id(string $tech_sw_id)
 {
     global $swdb;
 
-    $tech_name_query = "SELECT FIRST_NAME, LAST_NAME FROM tech WHERE CLIENT_ID = '$tech_sw_id'";
-    $tech_name_result = mysqli_query($swdb, $tech_name_query);
+    $tech_name_result = $swdb->execute_query("SELECT FIRST_NAME, LAST_NAME FROM tech WHERE CLIENT_ID = ?", [$tech_sw_id]);
     $tech_name_data = mysqli_fetch_assoc($tech_name_result);
-    $tech_name = trim($tech_name_data["FIRST_NAME"]) . " " . trim($tech_name_data["LAST_NAME"]);
+    $tech_name = trim($tech_name_data["FIRST_NAME"])." ".trim($tech_name_data["LAST_NAME"]);
 
     return $tech_name;
 }
@@ -121,12 +119,13 @@ function get_location_name_from_id(int $location_sw_id, $archived)
 {
     global $database;
     $location_name = "";
+
     if ($archived) {
-        $location_name_query = "SELECT location_name FROM locations WHERE archived_location_id = '$location_sw_id'";
+        $location_name_result = $database->execute_query("SELECT location_name FROM locations WHERE archived_location_id = ?", [$location_sw_id]);
     } else {
-        $location_name_query = "SELECT location_name FROM locations WHERE sitenumber = '$location_sw_id'";
+        $location_name_result = $database->execute_query("SELECT location_name FROM locations WHERE sitenumber = ?", [$location_sw_id]);
     }
-    $location_name_result = mysqli_query($database, $location_name_query);
+
     $location_name_data = mysqli_fetch_assoc($location_name_result);
     if (is_array($location_name_data) && isset($location_name_data["location_name"])) {
         $location_name = trim($location_name_data["location_name"]);
@@ -175,7 +174,7 @@ function sortByDate($x, $y)
                 <?php
                 // Query the locations table to get the departments
                 $department_query = "SELECT * FROM locations WHERE is_department = TRUE ORDER BY location_name ASC";
-                $department_result = mysqli_query($database, $department_query);
+                $department_result = $database->execute_query($department_query);
 
                 // Create a "Department" optgroup and create an option for each department
                 echo '<optgroup label="Department">';
@@ -190,7 +189,7 @@ function sortByDate($x, $y)
 
                 // Query the locations table to get the locations
                 $location_query = "SELECT * FROM locations WHERE is_department = FALSE ORDER BY location_name ASC";
-                $location_result = mysqli_query($database, $location_query);
+                $location_result = $database->execute_query($location_query);
 
                 // Create a "Location" optgroup and create an option for each location
                 echo '<optgroup label="Location">';
@@ -329,8 +328,9 @@ function sortByDate($x, $y)
                                 if ($row['request_type_id'] === '0') {
                                     echo "Other";
                                 } else {
-                                    $request_type_query = "SELECT request_name FROM request_type WHERE request_id = " . $row['request_type_id'];
-                                    $request_type_query_result = mysqli_query($database, $request_type_query);
+                                    $request_type_id = $row['request_type_id'];
+                                    $request_type_query = "SELECT request_name FROM request_type WHERE request_id = ?";
+                                    $request_type_query_result = $database->execute_query($request_type_query, [$request_type_id]);
                                     $request_type_name = mysqli_fetch_assoc($request_type_query_result)['request_name'];
                                     echo $request_type_name;
                                 }

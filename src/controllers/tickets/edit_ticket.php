@@ -35,13 +35,13 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         INSERT INTO flagged_tickets
         VALUES (
             (
-                SELECT users.id FROM users WHERE users.username = '$username'
+                SELECT users.id FROM users WHERE users.username = ?
             ),
-            $ticket_id
+            ?
         )
         STR;
 
-        $insert_flagged_ticket_result = mysqli_query($database, $query);
+        $insert_flagged_ticket_result = $database->execute_query($query, [$username, $ticket_id]);
         if (!$insert_flagged_ticket_result) {
             die('Error inserting ticket flag status: ' . mysqli_error($database));
         }
@@ -49,11 +49,11 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $query = <<<STR
         DELETE FROM flagged_tickets
         WHERE
-            flagged_tickets.user_id in (SELECT users.id FROM users WHERE users.username = '$username') AND
-            flagged_tickets.ticket_id = $ticket_id
+            flagged_tickets.user_id in (SELECT users.id FROM users WHERE users.username = ?) AND
+            flagged_tickets.ticket_id = ?
         STR;
 
-        $insert_flagged_ticket_result = mysqli_query($database, $query);
+        $insert_flagged_ticket_result = $database->execute_query($query, [$username, $ticket_id]);
         if (!$insert_flagged_ticket_result) {
             die('Error inserting ticket flag status: ' . mysqli_error($database));
         }
@@ -73,11 +73,11 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 $ticket_flagged_query = <<<STR
 SELECT user_id, ticket_id FROM flagged_tickets
     WHERE
-        ticket_id = $ticket_id AND
-        user_id in (SELECT users.id FROM users WHERE users.username = '$username')
+        ticket_id = ? AND
+        user_id in (SELECT users.id FROM users WHERE users.username = ?)
 STR;
 
-$insert_flagged_ticket_result = mysqli_query($database, $ticket_flagged_query);
+$insert_flagged_ticket_result = $database->execute_query($ticket_flagged_query, [$ticket_id, $username]);
 if (!$insert_flagged_ticket_result) {
     die('Error getting ticket flag status: ' . mysqli_error($database));
 }
@@ -118,7 +118,6 @@ JSON_ARRAYAGG(
         'work_minutes', notes.work_minutes,
         'travel_hours', notes.travel_hours,
         'travel_minutes', notes.travel_minutes,
-
         'visible_to_client', notes.visible_to_client,
         'date_override', notes.date_override
     )
@@ -136,11 +135,11 @@ notes
 ON
 tickets.id = notes.linked_id
 WHERE
-tickets.id = $ticket_id
+tickets.id = ?
 GROUP BY
 tickets.id
 ";
-$result = mysqli_query($database, $query);
+$result = $database->execute_query($query, [$ticket_id]);
 
 // Check if the query was successful
 if (!$result) {
@@ -159,8 +158,8 @@ if ($ticket_merged_id != null && $should_redirect) {
 ob_end_flush();
 
 // Fetch the list of usernames from the users table
-$usernamesQuery = "SELECT username,is_tech FROM users WHERE is_tech = 1 ORDER BY username ASC";
-$usernamesResult = mysqli_query($database, $usernamesQuery);
+$usernamesQuery = "SELECT username, is_tech FROM users WHERE is_tech = 1 ORDER BY username ASC";
+$usernamesResult = $database->execute_query($usernamesQuery);
 
 if (!$usernamesResult) {
     die('Error fetching usernames: ' . mysqli_error($database));
@@ -314,7 +313,7 @@ if (isset($ticket["client"])) {
                         <?php
                         // Query the locations table to get the departments
                         $department_query = "SELECT sitenumber, location_name FROM locations WHERE is_department = TRUE ORDER BY location_name ASC";
-                        $department_result = mysqli_query($database, $department_query);
+                        $department_result = $database->execute_query($department_query);
 
                         // Create a "Department" optgroup and create an option for each department
                         echo '<optgroup label="Department">';
@@ -329,7 +328,7 @@ if (isset($ticket["client"])) {
 
                         // Query the locations table to get the locations
                         $location_query = "SELECT sitenumber, location_name FROM locations WHERE is_department = FALSE ORDER BY location_name ASC";
-                        $location_result = mysqli_query($database, $location_query);
+                        $location_result = $database->execute_query($location_query);
 
                         // Create a "Location" optgroup and create an option for each location
                         echo '<optgroup label="Location">';
@@ -430,7 +429,14 @@ if (isset($ticket["client"])) {
                         <option value="5" <?= ($ticket['priority'] == '5') ? ' selected' : '' ?>>High</option>
                         <option value="10" <?= ($ticket['priority'] == '10') ? ' selected' : '' ?>>Standard</option>
                         <option value="15" <?= ($ticket['priority'] == '15') ? ' selected' : '' ?>>Client Response</option>
-                        <?php if ($_SESSION['permissions']['is_supervisor'] != 0 || $_SESSION['permissions']['is_admin'] != 0 || $ticket['client'] == $ticket['employee']) : ?>
+                        <?php
+                        if (
+                            $_SESSION['permissions']['is_supervisor'] != 0 ||
+                            $_SESSION['permissions']['is_admin'] != 0 ||
+                            $ticket['client'] == $ticket['employee'] ||
+                            $ticket['priority'] == '30'
+                        ) :
+                        ?>
                             <option value="30" <?= ($ticket['priority'] == '30') ? ' selected' : '' ?>>Project</option>
                         <?php endif; ?>
                         <option value="60" <?= ($ticket['priority'] == '60') ? ' selected' : '' ?>>Meeting Support</option>

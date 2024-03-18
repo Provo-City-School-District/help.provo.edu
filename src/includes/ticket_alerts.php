@@ -137,10 +137,10 @@ foreach ($oldTickets as $oldTicket) {
             insertAlertIfNotExists($database, $oldTicket, $alert48Message, 'warn', 0);
         }
     }
-    if ($lastUpdated < $date15DaysBack && $oldTicket['priority'] != 60) {
+    if ($lastUpdated < $date15DaysBack && intval($oldTicket['priority']) != 60 && intval($oldTicket['priority']) != 30) {
         insertAlertIfNotExists($database, $oldTicket, $alert15DayMessage, 'warn', 1);
     }
-    if ($lastUpdated < $date20DaysBack && $oldTicket['priority'] != 60) {
+    if ($lastUpdated < $date20DaysBack && intval($oldTicket['priority']) != 60 && intval($oldTicket['priority']) != 30) {
         insertAlertIfNotExists($database, $oldTicket, $alert20DayMessage, 'warn', 1);
     }
 

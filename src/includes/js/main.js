@@ -21,8 +21,9 @@ $(document).ready(function () {
       ordering: true, // Enable sorting
       columns: [
         { width: "5%" },
-        { width: "25%" },
-        { width: "25%" },
+        { width: "5%" },
+        { width: "20%" },
+        { width: "10%" },
         { width: "5%" },
         { width: "5%" },
         { width: "5%" },

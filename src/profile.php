@@ -63,9 +63,11 @@ if ($_SESSION['permissions']['is_tech'] == 1) {
     <li>Employee ID: <?= $user_data['ifasid'] ?></li>
 </ul>
 <h2>My Settings</h2>
-<form action="controllers/users/update_user_settings.php" method="post">
+<form action="controllers/users/update_user_settings.php" method="post" class="singleColForm">
+    <!-- Controller Variables -->
     <input type="hidden" name="id" value="<?= $user_id ?>">
     <input type="hidden" name="referer" value="profile.php">
+    <!-- User Options -->
     <label for="color_scheme">Color Scheme:</label>
     <select id="color_scheme" name="color_scheme">
         <option value="system" <?= $current_color_scheme == 'system' ? 'selected' : '' ?>>System Select</option>

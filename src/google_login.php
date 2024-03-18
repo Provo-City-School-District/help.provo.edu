@@ -18,7 +18,7 @@ $client->setRedirectUri($redirectUri);
 $client->addScope('email');
 $client->addScope('profile');
 
-if (isset($_GET['code']) && isset($_SESSION['login_email']) && strpos($_SESSION['login_email'], '@provo.edu') !== false) {
+if (isset($_GET['code'])) {
     // Get Token
     $token = $client->fetchAccessTokenWithAuthCode($_GET['code']);
 
@@ -49,6 +49,24 @@ if (isset($_GET['code']) && isset($_SESSION['login_email']) && strpos($_SESSION[
 
         $_SESSION['username'] = $username;
         $_SESSION['last_timestamp'] = time();
+
+        // Check if the user is authorized to use the helpdesk by checking if they are using a provo.edu email address
+        if (!isset($email) || strpos($email, '@provo.edu') === false) {
+            // print_r($_SESSION);
+            $msg = "Error: Invalid email address or Google SSO code not found.";
+            // unset session variables
+            session_unset();
+            session_destroy();
+            $_SESSION = array();
+            session_start();
+            session_regenerate_id(true);
+            // Set error message
+            $_SESSION['current_status'] = $msg;
+            $_SESSION['status_type'] = "error";
+            // push back to login page
+            header('Location: index.php');
+            exit;
+        }
 
         if (!user_exists_locally($username)) {
             create_user_in_local_db($username);
@@ -107,13 +125,8 @@ if (isset($_GET['code']) && isset($_SESSION['login_email']) && strpos($_SESSION[
         }
         exit;
     }
-} else {
-    $msg = "Error: Invalid email address or Google SSO code not found.";
-    $_SESSION['current_status'] = $msg;
-    $_SESSION['status_type'] = "error";
-    header('Location: index.php');
-    exit;
 }
+
 $authUrl = $client->createAuthUrl();
 header('Location: ' . filter_var($authUrl, FILTER_SANITIZE_URL));
 exit;

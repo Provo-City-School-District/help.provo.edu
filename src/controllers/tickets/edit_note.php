@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <input type="hidden" name="note_id" value="<?= $note_id ?>">
     <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
     <label for="note">Note:</label>
-    <textarea id="note" name="note" class="tinyMCEtextarea"><?= $note['note'] ?></textarea><br>
+    <textarea id="note" name="note" class="tinyMCEtextarea"><?= html_entity_decode($note['note']) ?></textarea><br>
 
     <?php if (session_is_tech()) : ?>
         <h4>Work Time</h4>

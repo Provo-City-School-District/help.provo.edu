@@ -63,18 +63,27 @@ if ($_SESSION['permissions']['is_tech'] == 1) {
     <li>Employee ID: <?= $user_data['ifasid'] ?></li>
 </ul>
 <h2>My Settings</h2>
-<form action="controllers/users/update_user_settings.php" method="post">
+<form action="controllers/users/update_user_settings.php" method="post" class="singleColForm">
+    <!-- Controller Variables -->
     <input type="hidden" name="id" value="<?= $user_id ?>">
     <input type="hidden" name="referer" value="profile.php">
-    <label for="color_scheme">Color Scheme:</label>
-    <select id="color_scheme" name="color_scheme">
-        <option value="system" <?= $current_color_scheme == 'system' ? 'selected' : '' ?>>System Select</option>
-        <option value="dark" <?= $current_color_scheme == 'dark' ? 'selected' : '' ?>>Dark Mode</option>
-        <option value="light" <?= $current_color_scheme == 'light' ? 'selected' : '' ?>>Light Mode</option>
-    </select>
+    <!-- User Options -->
+    <div>
+        <label for="color_scheme">Color Scheme:</label>
+        <select id="color_scheme" name="color_scheme">
+            <option value="system" <?= $current_color_scheme == 'system' ? 'selected' : '' ?>>System Select</option>
+            <option value="dark" <?= $current_color_scheme == 'dark' ? 'selected' : '' ?>>Dark Mode</option>
+            <option value="light" <?= $current_color_scheme == 'light' ? 'selected' : '' ?>>Light Mode</option>
+        </select>
+    </div>
+    <div>
+        <label for="note_order">Ticket Note Order:</label>
+        <select id="note_order" name="note_order">
+            <option value="ASC" <?= $user_data['note_order'] == 'ASC' ? 'selected' : '' ?>>Ascending</option>
+            <option value="DESC" <?= $user_data['note_order'] == 'DESC' ? 'selected' : '' ?>>Descending</option>
+        </select>
+    </div>
 
-
-    <br>
     <input type="submit" value="Update">
 </form>
 

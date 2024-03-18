@@ -69,6 +69,7 @@ input[type=submit] {
 	padding: 1em;
 	border-radius: 4px;
 	cursor: pointer;
+	display: block;
 
 }
 

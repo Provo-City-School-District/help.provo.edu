@@ -108,7 +108,7 @@ if (isset($_GET['code'])) {
         );
         // Set color scheme
         $_SESSION['color_scheme'] = $local_query_data['color_scheme'];
-
+        $_SESSION['note_order'] = $local_query_data['note_order'];
         // Store user's permissions in the session
         $_SESSION['permissions'] = $permissions;
 

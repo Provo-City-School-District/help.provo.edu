@@ -166,7 +166,10 @@ function add_note_with_filters(
         $email_msg = "Ticket $ticket_id_clean has been updated by the client.\n<a href=\"//help.provo.edu/controllers/tickets/edit_ticket.php?id=$ticket_id_clean\">View ticket here</a>";
         $assigned_tech = assigned_tech_for_ticket($ticket_id_clean);
 
+        //Skips email to Tech is still unassigned.
+        if ($assigned_tech !== null) {
         send_email_and_add_to_ticket($ticket_id_clean, email_address_from_username($assigned_tech), $email_subject, $email_msg);
+        }
     }
     return true;
 }

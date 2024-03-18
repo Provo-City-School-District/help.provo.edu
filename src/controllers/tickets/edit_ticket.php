@@ -87,6 +87,9 @@ if (mysqli_num_rows($insert_flagged_ticket_result) > 0) {
     $is_ticket_flagged = true;
 }
 
+// Note Order
+$note_order = isset($_SESSION['note_order']) ? $_SESSION['note_order'] : "ASC";
+
 // Query the ticket by ID and all notes for that ID
 $query = "SELECT
 tickets.id,
@@ -126,7 +129,7 @@ JSON_ARRAYAGG(
             notes.created ELSE
             notes.date_override
         END
-    )
+    ) $note_order
 ) AS notes
 FROM
 tickets

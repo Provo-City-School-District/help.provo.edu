@@ -13,6 +13,13 @@ $(document).ready(function () {
       order: [[8, "asc"]], // Sort by the second column in ascending order
       stateSave: true, // Enable state saving
     });
+  } else if (
+    window.location.pathname === "/controllers/tickets/ticket_history.php"
+  ) {
+    table = $(".data-table").DataTable({
+      order: [[9, "asc"]], // Sort by the second column in ascending order
+      stateSave: true, // Enable state saving
+    });
   } else {
     table = $(".data-table").DataTable({
       paging: true, // Enable pagination

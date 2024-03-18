@@ -19,6 +19,7 @@ function display_tickets_table($tickets, $database)
                 <th class="tDate">Last Updated</th>
                 <th class="date">Due</th>
                 <th class="">Assigned</th>
+                <th class="alertLevel">Alert</th>
             </tr>
         </thead>
         <tbody>';
@@ -93,6 +94,7 @@ function display_tickets_table($tickets, $database)
             <td data-cell="Last Updated">' . $ticket["last_updated"] . '</td>
             <td data-cell="Due">' . $ticket["due_date"] . '</td>
             <td data-cell="Assigned">' . $ticket["employee"] . '</td>
+            <td data-cell="Alert Levels">' . (isset($ticket["alert_levels"]) ? $ticket["alert_levels"] : '') . '</td>
         </tr>';
     }
 

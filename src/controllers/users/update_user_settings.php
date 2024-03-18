@@ -11,21 +11,23 @@ if ($_POST['referer'] == 'profile.php') {
 
     // Retrieve the color_scheme from the form submission
     $color_scheme = $_POST['color_scheme'] ?? 'system';
+    $note_order = $_POST['note_order'] ?? 'desc';
 
     // update color scheme with the new one. takes effect immediately
     $_SESSION['color_scheme'] = $color_scheme;
+    $_SESSION['note_order'] = $note_order;
 
     // Update the color_scheme in the database
-    $query = "UPDATE users SET color_scheme = ? WHERE id = ?";
-    $stmt = mysqli_prepare($database, $query);
-    mysqli_stmt_bind_param($stmt, "ss", $color_scheme, $user_id);
+    $update_user_query = "UPDATE users SET color_scheme = ?, note_order = ? WHERE id = ?";
+    $update_user_stmt = mysqli_prepare($database, $update_user_query);
+    mysqli_stmt_bind_param($update_user_stmt, "ssi", $color_scheme, $note_order, $user_id);
 
-    $res = mysqli_stmt_execute($stmt);
+    $res = mysqli_stmt_execute($update_user_stmt);
     if ($res) {
         $_SESSION['current_status'] = "User updated successfully";
         $_SESSION['status_type'] = 'success';
     } else {
-        $_SESSION['current_status'] = "Failed to update user: ".mysqli_error();
+        $_SESSION['current_status'] = "Failed to update user: " . mysqli_error();
         $_SESSION['status_type'] = 'error';
     }
     header('Location: /profile.php');

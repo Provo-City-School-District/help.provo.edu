@@ -72,7 +72,8 @@ if ($_SESSION['permissions']['is_tech'] == 1) {
         <option value="dark" <?= $current_color_scheme == 'dark' ? 'selected' : '' ?>>Dark Mode</option>
         <option value="light" <?= $current_color_scheme == 'light' ? 'selected' : '' ?>>Light Mode</option>
     </select>
-
+    <label for="note_order">Ticket Note Order:</label>
+    <input type="checkbox" id="note_order" name="note_order" <?= $user_data['note_order'] == 1 ? 'checked' : '' ?>>
 
 
     <input type="submit" value="Update">

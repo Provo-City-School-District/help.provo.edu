@@ -126,9 +126,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         last_updated = NOW()
         WHERE id = ?";
 
-    $update_ticket_query_vars = [$updatedClient, $updatedEmployee, $updatedLocation, $updatedRoom, $updatedName,
+    $update_ticket_query_vars = [
+        $updatedClient, $updatedEmployee, $updatedLocation, $updatedRoom, $updatedName,
         $updatedDescription, $updatedDueDate, $updatedStatus, $updatedPhone, $updatedCCEmails,
-        $updatedBCCEmails, $updatedPriority, $updatedRequestType, $updatedParentTicket, $ticket_id];
+        $updatedBCCEmails, $updatedPriority, $updatedRequestType, $updatedParentTicket, $ticket_id
+    ];
 
     // Execute the update queries
     $updateTicketResult = $database->execute_query($update_ticket_query, $update_ticket_query_vars);
@@ -253,6 +255,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Check if the ticket has an alert about not being updated in last 48 hours and clear it since the ticket was just updated.
     removeAlert($database, $alert48Message, $ticket_id);
     removeAlert($database, $alert7DayMessage, $ticket_id);
+    removeAlert($database, $alert15DayMessage, $ticket_id);
+    removeAlert($database, $alert20DayMessage, $ticket_id);
 
     $send_client_email = isset($_POST['send_emails']) && ($_POST['send_emails'] == "send_emails");
     $send_cc_bcc_emails = isset($_POST['send_cc_bcc_emails']) && ($_POST['send_cc_bcc_emails'] == "send_cc_bcc_emails");
@@ -448,10 +452,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $sent_client_email_log_msg .= "$client_bcc_email, ";
         }
 
-        logTicketChange($database, $ticket_id, $_SESSION["username"], "sent_emails", "N/A", $sent_tech_email_log_msg." ".$sent_client_email_log_msg);
+        logTicketChange($database, $ticket_id, $_SESSION["username"], "sent_emails", "N/A", $sent_tech_email_log_msg . " " . $sent_client_email_log_msg);
     }
 
-    
+
     $_SESSION['current_status'] = $msg;
     $_SESSION['status_type'] = "success";
 

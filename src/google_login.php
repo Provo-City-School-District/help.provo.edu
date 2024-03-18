@@ -52,7 +52,6 @@ if (isset($_GET['code'])) {
 
         // Check if the user is authorized to use the helpdesk by checking if they are using a provo.edu email address
         if (!isset($email) || strpos($email, '@provo.edu') === false) {
-            // print_r($_SESSION);
             $msg = "Error: Invalid email address or Google SSO code not found.";
             // unset session variables
             session_unset();
@@ -74,6 +73,24 @@ if (isset($_GET['code'])) {
         // Query Local user information
         $local_query_results = $database->execute_query("SELECT * FROM users WHERE username = ?", [$_SESSION["username"]]);
         $local_query_data = mysqli_fetch_assoc($local_query_results);
+
+        // if user is still not found, LDAP failed to insert user into local database
+        if ($local_query_data == null) {
+            // print_r($_SESSION);
+            $msg = "Error: User not found in local database.";
+            // unset session variables
+            session_unset();
+            session_destroy();
+            $_SESSION = array();
+            session_start();
+            session_regenerate_id(true);
+            // Set error message
+            $_SESSION['current_status'] = $msg;
+            $_SESSION['status_type'] = "error";
+            // push back to login page
+            header('Location: index.php');
+            exit;
+        }
 
         // Retrieve user's permissions from the users table
         $permissions = array(

@@ -74,7 +74,7 @@ if ($_SESSION['permissions']['is_tech'] == 1) {
     </select>
 
 
-    <br>
+
     <input type="submit" value="Update">
 </form>
 

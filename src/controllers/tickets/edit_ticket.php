@@ -261,7 +261,33 @@ if (isset($ticket["client"])) {
             <?php
             // If the user is not a tech, display read only form fields if is client
             if ($readonly) {
+                // Switch Priority ID to String
+                switch ($ticket['priority']) {
+                    case 1:
+                        $ticket['priority'] = "Critical";
+                        break;
+                    case 3:
+                        $ticket['priority'] = "Urgent";
+                        break;
+                    case 5:
+                        $ticket['priority'] = "High";
+                        break;
+                    case 10:
+                        $ticket['priority'] = "Standard";
+                        break;
+                    case 15:
+                        $ticket['priority'] = "Client Response";
+                        break;
+                    case 30:
+                        $$ticket['priority'] = "Project";
+                        break;
+                    case 60:
+                        $ticket['priority'] = "Meeting Support";
+                        break;
+                }
+                // Display Fields that client can see
             ?>
+
                 <div>
                     <span>Assigned Tech:</span> <?= $ticket['employee'] ?>
                 </div>

@@ -68,15 +68,21 @@ if ($_SESSION['permissions']['is_tech'] == 1) {
     <input type="hidden" name="id" value="<?= $user_id ?>">
     <input type="hidden" name="referer" value="profile.php">
     <!-- User Options -->
-    <label for="color_scheme">Color Scheme:</label>
-    <select id="color_scheme" name="color_scheme">
-        <option value="system" <?= $current_color_scheme == 'system' ? 'selected' : '' ?>>System Select</option>
-        <option value="dark" <?= $current_color_scheme == 'dark' ? 'selected' : '' ?>>Dark Mode</option>
-        <option value="light" <?= $current_color_scheme == 'light' ? 'selected' : '' ?>>Light Mode</option>
-    </select>
-    <label for="note_order">Ticket Note Order:</label>
-    <input type="checkbox" id="note_order" name="note_order" <?= $user_data['note_order'] == 1 ? 'checked' : '' ?>>
-
+    <div>
+        <label for="color_scheme">Color Scheme:</label>
+        <select id="color_scheme" name="color_scheme">
+            <option value="system" <?= $current_color_scheme == 'system' ? 'selected' : '' ?>>System Select</option>
+            <option value="dark" <?= $current_color_scheme == 'dark' ? 'selected' : '' ?>>Dark Mode</option>
+            <option value="light" <?= $current_color_scheme == 'light' ? 'selected' : '' ?>>Light Mode</option>
+        </select>
+    </div>
+    <div>
+        <label for="note_order">Ticket Note Order:</label>
+        <select id="note_order" name="note_order">
+            <option value="ASC" <?= $user_data['note_order'] == 'ASC' ? 'selected' : '' ?>>Ascending</option>
+            <option value="DESC" <?= $user_data['note_order'] == 'DESC' ? 'selected' : '' ?>>Descending</option>
+        </select>
+    </div>
 
     <input type="submit" value="Update">
 </form>

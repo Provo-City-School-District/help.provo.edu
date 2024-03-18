@@ -18,7 +18,7 @@ $client->setRedirectUri($redirectUri);
 $client->addScope('email');
 $client->addScope('profile');
 
-if (isset($_GET['code'])) {
+if (isset($_GET['code']) && isset($_SESSION['login_email']) && strpos($_SESSION['login_email'], '@provo.edu') !== false) {
     // Get Token
     $token = $client->fetchAccessTokenWithAuthCode($_GET['code']);
 
@@ -107,6 +107,12 @@ if (isset($_GET['code'])) {
         }
         exit;
     }
+} else {
+    $msg = "Error: Invalid email address or Google SSO code not found.";
+    $_SESSION['current_status'] = $msg;
+    $_SESSION['status_type'] = "error";
+    header('Location: index.php');
+    exit;
 }
 $authUrl = $client->createAuthUrl();
 header('Location: ' . filter_var($authUrl, FILTER_SANITIZE_URL));

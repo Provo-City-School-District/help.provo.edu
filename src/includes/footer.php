@@ -33,7 +33,7 @@
     <script src="/includes/js/inactiveModal.js?v=0.1.0" type="text/javascript"></script>
 <?php endif; ?>
 
-<script src="/includes/js/main.js?v=0.1.22" type="text/javascript"></script>
+<script src="/includes/js/main.js?v=0.1.23" type="text/javascript"></script>
 </body>
 
 </html>

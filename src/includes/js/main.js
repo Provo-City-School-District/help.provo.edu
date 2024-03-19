@@ -113,6 +113,13 @@ window.onclick = function (event) {
     newNoteModalBackground.style.display = "none";
     newNoteForm.style.display = "none";
   }
+  const newTaskModalBackground = document.getElementById("new-task-form-background");
+  const newTaskForm = document.getElementById("new-task-form");
+
+  if (event.target == newTaskModalBackground) {
+    newTaskModalBackground.style.display = "none";
+    newTaskForm.style.display = "none";
+  }
 };
 
 let newNoteModalCloseButton = document.getElementById("new-note-form-close");
@@ -124,6 +131,37 @@ if (newNoteModalCloseButton) {
     }
   };
 }
+
+const newTaskButton = document.getElementById("new-task-button");
+
+if (newTaskButton) {
+  newTaskButton.addEventListener("click", function () {
+    const newTaskForm = document.getElementById("new-task-form");
+    const newTaskModalBackground = document.getElementById("new-task-form-background");
+    if (newTaskForm) {
+      if (newTaskForm.style.display === "none") {
+        newTaskForm.style.display = "block";
+        newTaskModalBackground.style.display = "block";
+        newNoteEditor.scrollIntoView({ behavior: "smooth" }); // Scroll the view to the new note editor
+      } else {
+        newTaskForm.style.display = "none";
+      }
+    }
+  });
+}
+
+const newTaskModalCloseButton = document.getElementById("new-task-form-close");
+if (newTaskModalCloseButton) {
+  newTaskModalCloseButton.onclick = function (event) {
+    const newTaskModalBackground = document.getElementById("new-task-form-background");
+    const newTaskForm = document.getElementById("new-task-form");
+    if (event.target == newTaskModalCloseButton) {
+      newTaskModalBackground.style.display = "none";
+      newTaskForm.style.display = "none";
+    }
+  };
+}
+
 // Check if the toggle-file-upload-form and file-upload-form elements exist before adding the event listener
 var toggleFileUploadForm = document.getElementById("toggle-file-upload-form");
 var fileUploadForm = document.getElementById("file-upload-form");

@@ -6,13 +6,17 @@ require("template.php");
 
 // Todays date
 $today = new DateTime();
-
+$template_path = "ticket_response_required";
 try {
     $client_response_tickets_query = "SELECT * FROM tickets WHERE priority = 15";
     $client_response_tickets_results = $database->execute_query($client_response_tickets_query);
     $client_response_tickets = $client_response_tickets_results->fetch_all(MYSQLI_ASSOC);
 
     foreach ($client_response_tickets as $ticket) {
+        // Set Ticket Variables
+        $ticket_assigned = email_address_from_username($ticket['employee']);
+        $ticket_client = email_address_from_username($ticket['client']);
+
         // Get Notes  - reused from update_ticket.php
         $notes = get_ticket_notes($ticket['id'], 3);
         $notesMessageClient = "";

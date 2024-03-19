@@ -169,7 +169,7 @@ function add_note_with_filters(
 
         //Skips email to Tech is still unassigned.
         if ($assigned_tech !== null) {
-        send_email_and_add_to_ticket($ticket_id_clean, email_address_from_username($assigned_tech), $email_subject, $email_msg);
+            send_email_and_add_to_ticket($ticket_id_clean, email_address_from_username($assigned_tech), $email_subject, $email_msg);
         }
     }
     return true;

@@ -15,6 +15,7 @@ try {
     foreach ($client_response_tickets as $ticket) {
         // can be used in debugging log mode later
         // log_app(LOG_INFO, "Processing Tickets with priority 15 to Send Reminder Email. Ticket ID: " . $ticket['id'] . " Name: " . $ticket['name']);
+
         // Set Ticket Variables
         $ticket_assigned = email_address_from_username($ticket['employee']);
         $ticket_client = email_address_from_username($ticket['client']);
@@ -53,6 +54,33 @@ try {
             }
         }
 
+
+
+
+        // Array (
+        //         [id] => 127425
+        //         [created] => 2024-03-15 06:52:03
+        //         [due_date] => 2024-04-10
+        //         [last_updated] => 2024-03-15 13:51:48
+        //         [name] => Door Sensor Monitors
+        //         [description] => &lt;p&gt;We are going to switch email reports to weekly instead of daily&lt;/p&gt;
+        //         [location] => 1896
+        //         [room] => 
+        //         [employee] => joshe
+        //         [client] => CharityW
+        //         [status] => open
+        //         [attachment_path] => 
+        //         [phone] => 
+        //         [request_type_id] => 143
+        //         [cc_emails] => chadd@provo.edu
+        //         [bcc_emails] => 
+        //         [priority] => 15
+        //         [merged_into_id] => 
+        //         [parent_ticket] => 0
+        //         [email_msg_id] => 
+        //     )
+
+
         // Build Email Template
         $template_client = new Template(__DIR__ . "/templates/{$template_path}_client.phtml");
 
@@ -63,11 +91,16 @@ try {
         $template_client->notes_message = $notesMessageClient;
         $template_client->site_url = getenv('ROOTDOMAIN');
         $template_client->description = html_entity_decode($ticket['description']);
+
+        // print_r($template_client);
+        $ticket['client'] = 'joshe@provo.edu';
         // omitting the email CC,BCC,Attachments on client reminder
         $ticket['cc_emails'] = array();
         $ticket['bcc_emails'] = array();
         $ticket['attachment_path'] = array();
         // log_app(LOG_INFO, "Sending email to Tickets with priority 15. Ticket ID: " . $ticket['id'] . " Title: " . $ticket['name']);
+        send_email_and_add_to_ticket($ticket['id'], $ticket['client'], $ticket['name'], $template_client, $ticket['cc_emails'], $ticket['bcc_emails'], $ticket['attachment_path']);
+        // echo $ticket['id'] . ", " . $ticket['name'] . "\n";
     }
 } catch (Exception $e) {
     echo 'Caught exception: ',  $e->getMessage(), "\n";

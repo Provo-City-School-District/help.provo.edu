@@ -1,6 +1,8 @@
 <?php
 require_once('helpdbconnect.php');
 require_once('ticket_utils.php');
+require_once("email_utils.php");
+require("template.php");
 
 // Todays date
 $today = new DateTime();

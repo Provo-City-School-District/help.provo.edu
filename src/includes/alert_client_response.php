@@ -70,7 +70,7 @@ try {
         $ticket['bcc_emails'] = array();
         $ticket['attachment_path'] = array();
 
-        $ticket_subject = "Response Required For: " . $ticket['id'] . " - " . $ticket['name'];
+        $ticket_subject = "Response Required For: Ticket: " . $ticket['id'] . " - " . $ticket['name'];
 
         // Send Email
         // can be used in debugging log mode later

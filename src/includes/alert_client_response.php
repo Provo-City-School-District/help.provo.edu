@@ -18,6 +18,7 @@ try {
         // Set Ticket Variables
         $ticket_assigned = email_address_from_username($ticket['employee']);
         $ticket_client = email_address_from_username($ticket['client']);
+        $notesMessageTech = "";
 
         // Get Notes  - reused from update_ticket.php
         $notes = get_ticket_notes($ticket['id'], 3);

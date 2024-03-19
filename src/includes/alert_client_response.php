@@ -26,6 +26,7 @@ try {
         if (count($notes) > 0) {
             $notesMessageClient .= "<tr><th>Date</th><th>Creator</th><th>Note</th></tr>";
         }
+
         // Build Notes for Email - reused from update_ticket.php
         foreach ($notes as $note) {
             $dateOverride = $note['date_override'];

@@ -1,4 +1,5 @@
 Ticket <?= $this->ticket_id ?> Response Required
+<p>You have 10 days to respond to this ticket otherwise the ticket will be closed from lack of response.</p>
 
 <p><strong>Client:</strong> <?= $this->client ?><p>
 <p><strong>Location:</strong> <?= $this->location ?><p>
@@ -7,6 +8,5 @@ Ticket <?= $this->ticket_id ?> Response Required
 <p><strong>Recent Notes:</strong></p>
 <ul><?= $this->notes_message ?> </ul>
 
-<p>You have 10 days to respond to this ticket otherwise the ticket will be closed from lack of response.</p>
 
 <p><a href="<?= $this->site_url ?>/controllers/tickets/edit_ticket.php?id=<?= $this->ticket_id ?>">View ticket <?= $this->ticket_id ?></a></p>

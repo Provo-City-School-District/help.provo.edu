@@ -75,8 +75,6 @@ try {
         log_app(LOG_INFO, "Sending client reminder email for Ticket ID: " . $ticket['id'] . " Title: " . $ticket['name']);
         send_email_and_add_to_ticket($ticket['id'], $ticket_client, $ticket_subject, $template_client, $ticket['cc_emails'], $ticket['bcc_emails'], $ticket['attachment_path']);
         logTicketChange($database, $ticket['id'], "system", "sent_emails", "N/A", "Client Reminder Email Sent to " . $ticket['client'] . " ");
-
-        break;
     }
 } catch (Exception $e) {
     echo 'Caught exception: ',  $e->getMessage(), "\n";

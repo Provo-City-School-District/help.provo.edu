@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            table, th, td {
+                border: 1px solid black;
+                border-collapse: collapse;
+                padding: 1em;
+            }
+
+            .notClientVisible {
+                background-color: #ebebeb !important;
+                display: block;
+                padding: 1em;
+                border-radius: 3px;
+                margin-bottom: 1em;
+            }
+
+            .clientVisible {
+                background-color: rgb(206, 238, 249);
+                display: block;
+                padding: 1em;
+                border-radius: 3px;
+                margin-bottom: 1em;
+            }
+
+            .nonTech {
+                background-color: rgb(253, 255, 154);
+                display: block;
+                padding: 1em;
+                border-radius: 3px;
+                margin-bottom: 1em;
+            }
+        </style>
+    </head>
+    <body>
+
+Ticket <?= $this->ticket_id ?> Response Required
+<p>The assigned technician needs more information to proceed with ticket <?= $this->ticket_id ?>. Failure to respond within 10 days may result in the ticket being closed due to lack of information.</p>
+
+<p><strong>Client:</strong> <?= $this->client ?><p>
+<p><strong>Location:</strong> <?= $this->location ?><p>
+<p><strong>Request Detail:</strong></p>
+<div><?= $this->description ?></div>
+<p><strong>Recent Notes:</strong></p>
+<table><?= $this->notes_message?> </table>
+
+
+<p><a href="<?= $this->site_url ?>/controllers/tickets/edit_ticket.php?id=<?= $this->ticket_id ?>">View ticket <?= $this->ticket_id ?></a></p>
+
+</body>
+</html>

@@ -13,6 +13,8 @@ try {
     $client_response_tickets = $client_response_tickets_results->fetch_all(MYSQLI_ASSOC);
 
     foreach ($client_response_tickets as $ticket) {
+        // can be used in debugging log mode later
+        // log_app(LOG_INFO, "Processing Tickets with priority 15 to Send Reminder Email. Ticket ID: " . $ticket['id'] . " Name: " . $ticket['name']);
         // Set Ticket Variables
         $ticket_assigned = email_address_from_username($ticket['employee']);
         $ticket_client = email_address_from_username($ticket['client']);
@@ -58,6 +60,7 @@ try {
         $template_client->notes_message = $notesMessageClient;
         $template_client->site_url = getenv('ROOTDOMAIN');
         $template_client->description = html_entity_decode($ticket['description']);
+        // log_app(LOG_INFO, "Sending email to Tickets with priority 15. Ticket ID: " . $ticket['id'] . " Title: " . $ticket['name']);
     }
 } catch (Exception $e) {
     echo 'Caught exception: ',  $e->getMessage(), "\n";

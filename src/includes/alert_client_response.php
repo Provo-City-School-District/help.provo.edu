@@ -42,6 +42,16 @@ try {
             }
         }
 
+        // Build Email Template
+        $template_client = new Template(__DIR__ . "/templates/{$template_path}_client.phtml");
+
+        $client_name = get_local_name_for_user($ticket['client']);
+        $template_client->client = $client_name["firstname"] . " " . $client_name["lastname"];
+        $template_client->location = $ticket['location'];
+        $template_client->ticket_id = $ticket['id'];
+        $template_client->notes_message = $notesMessageClient;
+        $template_client->site_url = getenv('ROOTDOMAIN');
+        $template_client->description = html_entity_decode($ticket['description']);
     }
 } catch (Exception $e) {
     echo 'Caught exception: ',  $e->getMessage(), "\n";

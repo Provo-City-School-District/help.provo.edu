@@ -72,7 +72,7 @@ RUN chmod +x /root/run_email_check.sh
 COPY run_close_resolved.sh /root/run_close_resolved.sh
 RUN chmod +x /root/run_close_resolved.sh
 
-COPY run_close_resolved.sh /root/run_client_response.sh
+COPY run_client_response.sh /root/run_client_response.sh
 RUN chmod +x /root/run_client_response.sh
 
 # Create the uploads directory and set permissions

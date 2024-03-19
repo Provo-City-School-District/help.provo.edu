@@ -6,16 +6,14 @@ require_once('ticket_utils.php');
 $today = new DateTime();
 
 try {
-    $stmt = $database->prepare("SELECT * FROM tickets WHERE priority = 15");
-    $stmt->execute();
+    $client_response_tickets_query = "SELECT * FROM tickets WHERE priority = 15";
+    $client_response_tickets_results = $database->execute_query($client_response_tickets_query);
+    $client_response_tickets = $client_response_tickets_results->fetch_all(MYSQLI_ASSOC);
 
-    $result = $stmt->get_result();
-    $tickets = $result->fetch_all(MYSQLI_ASSOC);
-
-    foreach ($tickets as $ticket) {
+    foreach ($client_response_tickets as $ticket) {
         // process each ticket
         echo $ticket['id'] . ", " . $ticket['name'] . "\n";
     }
-} catch (PDOException $e) {
-    echo "Error: " . $e->getMessage();
+} catch (Exception $e) {
+    echo 'Caught exception: ',  $e->getMessage(), "\n";
 }

@@ -62,6 +62,10 @@ try {
         $template_client->notes_message = $notesMessageClient;
         $template_client->site_url = getenv('ROOTDOMAIN');
         $template_client->description = html_entity_decode($ticket['description']);
+        // omitting the email CC,BCC,Attachments on client reminder
+        $ticket['cc_emails'] = array();
+        $ticket['bcc_emails'] = array();
+        $ticket['attachment_path'] = array();
         // log_app(LOG_INFO, "Sending email to Tickets with priority 15. Ticket ID: " . $ticket['id'] . " Title: " . $ticket['name']);
     }
 } catch (Exception $e) {

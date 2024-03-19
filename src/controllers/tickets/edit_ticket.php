@@ -919,6 +919,9 @@ if (isset($ticket["client"])) {
                                     case 'description':
                                         echo generateUpdateHTML('Description', $log_row['old_value'], $log_row['new_value'], $log_row['old_value'] != null ? 'Updated' : 'Created', $uniqueNoteId);
                                         break;
+                                    case 'sent_emails':
+                                        echo $log_row['new_value'];
+                                        break;
                                     default:
                                         echo formatFieldName($log_row['field_name']) . ' From: ' . html_entity_decode($log_row['old_value']) . ' To: ' . html_entity_decode($log_row['new_value']);
                                         break;

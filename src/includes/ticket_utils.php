@@ -15,9 +15,9 @@ function user_is_tech(string $username)
     $userPermissionsResult = $database->execute_query("SELECT is_tech FROM users WHERE username = ?", [$username]);
     $userPermissionsData = mysqli_fetch_assoc($userPermissionsResult);
     if (isset($userPermissionsResult) && isset($userPermissionsData))
-        return $userPermissionsData["is_tech"];
+        return $userPermissionsData["is_tech"] != 0;
     else
-        return "0";
+        return false;
 }
 
 function email_if_valid(string $email)
@@ -154,8 +154,9 @@ function add_note_with_filters(
     mysqli_stmt_execute($log_stmt);
     mysqli_stmt_close($log_stmt);
 
-    // Send email to assigned tech on update if the client isn't the assigned tech
-    if (client_for_ticket($ticket_id_clean) != assigned_tech_for_ticket($ticket_id_clean)) {
+    // Send email to assigned tech on update if the client updates ticket
+    $client = client_for_ticket($ticket_id_clean);
+    if (!user_is_tech($username) && ($username == $client)) {
         $result = $database->execute_query("UPDATE tickets SET tickets.status = 'open' WHERE tickets.id = ?", [$ticket_id_clean]);
         if (!$result) {
             log_app(LOG_ERR, "Failed to update ticket status for id=$operating_ticket");
@@ -163,12 +164,13 @@ function add_note_with_filters(
 
         // Email tech if client has updated ticket
         $email_subject = "Ticket $ticket_id_clean (Updated)";
-        $email_msg = "Ticket $ticket_id_clean has been updated by the client.\n<a href=\"//help.provo.edu/controllers/tickets/edit_ticket.php?id=$ticket_id_clean\">View ticket here</a>";
+        $email_msg = "Ticket $ticket_id_clean has been updated by the client.\n<a href=\"https://help.provo.edu/controllers/tickets/edit_ticket.php?id=$ticket_id_clean\">View ticket here</a>";
         $assigned_tech = assigned_tech_for_ticket($ticket_id_clean);
 
         //Skips email to Tech is still unassigned.
         if ($assigned_tech !== null) {
-        send_email_and_add_to_ticket($ticket_id_clean, email_address_from_username($assigned_tech), $email_subject, $email_msg);
+            log_app(LOG_INFO, "Emailing assigned tech $assigned_tech that client is updating ticket");
+            send_email_and_add_to_ticket($ticket_id_clean, email_address_from_username($assigned_tech), $email_subject, $email_msg);
         }
     }
     return true;

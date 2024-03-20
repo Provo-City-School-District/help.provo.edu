@@ -5,7 +5,7 @@ require_once("email_utils.php");
 require("template.php");
 
 try {
-    $client_response_tickets_query = "SELECT * FROM tickets WHERE priority = 15";
+    $client_response_tickets_query = "SELECT * FROM tickets WHERE priority = 15 AND (status = 'pending' OR status = 'open')";
     $client_response_tickets_results = $database->execute_query($client_response_tickets_query);
     $client_response_tickets = $client_response_tickets_results->fetch_all(MYSQLI_ASSOC);
 

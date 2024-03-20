@@ -6,7 +6,6 @@ function display_tickets_table($tickets, $database)
     $alert_col_row = '';
     if (user_is_tech($_SESSION['username'])) {
         $alert_col_head = '<th class="alertLevel">Alert</th>';
-        $alert_col_row = '<td data-cell="Alert Levels">' . (isset($ticket["alert_levels"]) ? $ticket["alert_levels"] : '') . '</td>';
     }
     //map priority types
     $priorityTypes = [1 => "Critical", 3 => "Urgent", 5 => "High", 10 => "Standard", 15 => "Client Response", 30 => "Project", 60 => "Meeting Support"];
@@ -38,6 +37,9 @@ function display_tickets_table($tickets, $database)
             foreach ($alert_levels as $alert_level) {
                 $row_color .= trim($alert_level) . ' ';
             }
+        }
+        if (user_is_tech($_SESSION['username'])) {
+            $alert_col_row = '<td data-cell="Alert Levels">' . (isset($ticket["alert_levels"]) ? $ticket["alert_levels"] : '') . '</td>';
         }
 
         // Query the sites table to get the location name

@@ -20,11 +20,13 @@ $username = $_SESSION['username'];
 if ($_SESSION['permissions']['is_supervisor'] == 1) {
     //Tickets query
     $ticket_query = <<<STR
-    SELECT tickets.* 
-    FROM tickets 
-    JOIN users ON tickets.employee = users.username 
+    SELECT tickets.*, GROUP_CONCAT(DISTINCT alerts.alert_level) AS alert_levels
+    FROM tickets
+    JOIN users ON tickets.employee = users.username
+    LEFT JOIN alerts ON tickets.id = alerts.ticket_id
     WHERE users.supervisor_username = ?
-    AND tickets.status NOT IN ('closed', 'resolved') 
+    AND tickets.status NOT IN ('closed', 'resolved')
+    GROUP BY tickets.id
     ORDER BY tickets.last_updated DESC
     STR;
 

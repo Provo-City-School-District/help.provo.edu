@@ -25,6 +25,15 @@ function display_tickets_table($tickets, $database)
         <tbody>';
 
     foreach ($tickets as $ticket) {
+        // Set the row color
+        $row_color = '';
+        if (isset($ticket["alert_levels"])) {
+            $alert_levels = explode(',', $ticket["alert_levels"]);
+            foreach ($alert_levels as $alert_level) {
+                $row_color .= trim($alert_level) . ' ';
+            }
+        }
+
         // Query the sites table to get the location name
         $location_query = "SELECT location_name FROM locations WHERE sitenumber = ?";
         $loc_stmt = mysqli_prepare($database, $location_query);
@@ -78,7 +87,7 @@ function display_tickets_table($tickets, $database)
         if (!isset($ticket['location']) || $ticket['location'] == null) {
             $location_name = "N/A";
         }
-        echo '<tr>
+        echo '<tr class="' . $row_color . '">
             <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id=' . $ticket["id"] . '">' . $ticket["id"] . '</a></td>
             <td class="details" data-cell="Request Detail"><a href="/controllers/tickets/edit_ticket.php?id=' . $ticket["id"] . '">' . $ticket["name"] . ':</a>' . limitChars($descriptionWithoutLinks, 100) . '</td>
             <td data-cell="Latest Note:">' . limitChars($latest_note_str, 150) . '</td>

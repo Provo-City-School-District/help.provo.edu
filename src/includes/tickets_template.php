@@ -2,6 +2,12 @@
 
 function display_tickets_table($tickets, $database)
 {
+    $alert_col_head = '';
+    $alert_col_row = '';
+    if (user_is_tech($_SESSION['username'])) {
+        $alert_col_head = '<th class="alertLevel">Alert</th>';
+        $alert_col_row = '<td data-cell="Alert Levels">' . (isset($ticket["alert_levels"]) ? $ticket["alert_levels"] : '') . '</td>';
+    }
     //map priority types
     $priorityTypes = [1 => "Critical", 3 => "Urgent", 5 => "High", 10 => "Standard", 15 => "Client Response", 30 => "Project", 60 => "Meeting Support"];
     echo '<table class="ticketsTable data-table">
@@ -19,7 +25,7 @@ function display_tickets_table($tickets, $database)
                 <th class="tDate">Last Updated</th>
                 <th class="date">Due</th>
                 <th class="">Assigned</th>
-                <th class="alertLevel">Alert</th>
+                ' . $alert_col_head . '
             </tr>
         </thead>
         <tbody>';
@@ -87,6 +93,7 @@ function display_tickets_table($tickets, $database)
         if (!isset($ticket['location']) || $ticket['location'] == null) {
             $location_name = "N/A";
         }
+
         echo '<tr class="' . $row_color . '">
             <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id=' . $ticket["id"] . '">' . $ticket["id"] . '</a></td>
             <td class="details" data-cell="Request Detail"><a href="/controllers/tickets/edit_ticket.php?id=' . $ticket["id"] . '">' . $ticket["name"] . ':</a>' . limitChars($descriptionWithoutLinks, 100) . '</td>
@@ -103,7 +110,7 @@ function display_tickets_table($tickets, $database)
             <td data-cell="Last Updated">' . $ticket["last_updated"] . '</td>
             <td data-cell="Due">' . $ticket["due_date"] . '</td>
             <td data-cell="Assigned">' . $ticket["employee"] . '</td>
-            <td data-cell="Alert Levels">' . (isset($ticket["alert_levels"]) ? $ticket["alert_levels"] : '') . '</td>
+            ' . $alert_col_row . '
         </tr>';
     }
 

@@ -97,7 +97,7 @@ function get_client_name_from_id(string $client_sw_id)
 
     $client_name_result = $swdb->execute_query("SELECT FIRST_NAME, LAST_NAME FROM client WHERE CLIENT_ID = ?", [$client_sw_id]);
     $client_name_data = mysqli_fetch_assoc($client_name_result);
-    $client_name = trim($client_name_data["FIRST_NAME"])." ".trim($client_name_data["LAST_NAME"]);
+    $client_name = trim($client_name_data["FIRST_NAME"]) . " " . trim($client_name_data["LAST_NAME"]);
 
     return $client_name;
 }
@@ -109,7 +109,7 @@ function get_tech_name_from_id(string $tech_sw_id)
 
     $tech_name_result = $swdb->execute_query("SELECT FIRST_NAME, LAST_NAME FROM tech WHERE CLIENT_ID = ?", [$tech_sw_id]);
     $tech_name_data = mysqli_fetch_assoc($tech_name_result);
-    $tech_name = trim($tech_name_data["FIRST_NAME"])." ".trim($tech_name_data["LAST_NAME"]);
+    $tech_name = trim($tech_name_data["FIRST_NAME"]) . " " . trim($tech_name_data["LAST_NAME"]);
 
     return $tech_name;
 }
@@ -470,15 +470,20 @@ function sortByDate($x, $y)
     $("#search_client").on("input", function() {
         const new_value = $(this).val();
         $("#search_client").autocomplete({
-            source: function (request, response) {
+            source: function(request, response) {
                 $.ajax({
                     url: "/username_search_ldap.php",
                     method: "GET",
-                    data: {username: new_value},
+                    data: {
+                        username: new_value
+                    },
                     success: function(data, textStatus, xhr) {
-                        let mappedResults = $.map(data, function (item) {
+                        let mappedResults = $.map(data, function(item) {
                             let itemLocation = item.location ? item.location : "unknown";
-                            return $.extend(item, { label: item.firstName + ' ' + item.lastName + ' (' + itemLocation + ')', value: item.username });
+                            return $.extend(item, {
+                                label: item.firstName + ' ' + item.lastName + ' (' + itemLocation + ')',
+                                value: item.username
+                            });
                         });
                         response(mappedResults);
                     },
@@ -488,7 +493,7 @@ function sortByDate($x, $y)
                 });
             },
             minLength: 2,
-            focus: function () {
+            focus: function() {
                 // prevent value inserted on focus
                 return false;
             }

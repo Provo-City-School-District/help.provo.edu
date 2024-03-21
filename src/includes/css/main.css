@@ -147,6 +147,7 @@ input[type=submit] {
 
 }
 
+/*
 .new-note-button {
 	margin-bottom: 1em;
 	margin-top: 1em;
@@ -155,7 +156,7 @@ input[type=submit] {
 .right .new-note-button {
 	margin-top: unset;
 }
-
+*/
 /* =============================== Header Styles =============================== */
 #mainHeader {
 	background: linear-gradient(to bottom, var(--header-grad-start), var(--header-grad-end) 50%, var(--header-grad-end) 55%, var(--header-grad-start));

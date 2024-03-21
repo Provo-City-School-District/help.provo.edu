@@ -215,7 +215,13 @@ if (isset($ticket["client"])) {
     </div>
     <!-- Form for updating ticket information -->
     <div class="right">
-        <button class="new-note-button button">New Note</button>
+        <div style="display: flex; gap: 1em;">
+            <!-- Remove false for close ticket from readonly client view -->
+            <?php if (false || $readonly): ?>
+                <button id="close-ticket-button" class="button">Close Ticket</button>
+            <?php endif; ?>
+            <button class="new-note-button button">New Note</button>
+        </div>
     </div>
     <form id="updateTicketForm" method="POST" action="update_ticket.php">
         <!-- Add a submit button to update the information -->
@@ -859,7 +865,7 @@ if (isset($ticket["client"])) {
             </tr>
             </table>
         </div>
-        <button class="new-note-button" id="new-note-button">New Note</button>
+        <button class="new-note-button" id="new-note-button" style="margin-top: 10px;">New Note</button>
         <div id="new-note-form-background">
             <div id="new-note-form" style="display: none;">
                 <div id="new-note-form-header"><span id="new-note-form-close">&times;</span></div>
@@ -1091,6 +1097,12 @@ if (isset($ticket["client"])) {
 
         // Then run the function every 60 seconds
         setInterval(updateTimeSinceLastNote, 60000); // 60000 milliseconds
+
+        $(document).ready(function() {
+            $('#close-ticket-button').click(function() {
+                alert("Not yet implemented.");
+            });
+        });
     </script>
 <?php endif; ?>
 

@@ -56,7 +56,7 @@ function send_email(
         $mailer->isHTML(true); // Set to true for HTML emails
 
         // Set the actual content of the email
-        $mailer->Subject = $subject;
+        $mailer->Subject = html_entity_decode($subject);
 
         // Make sure line is 70 chars max and uses \r\n (RFC 2822)
         $email_body = wordwrap($message, 70, "\r\n");

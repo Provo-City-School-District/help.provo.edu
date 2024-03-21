@@ -651,6 +651,55 @@ if (isset($ticket["client"])) {
     <?php
     }
     ?>
+    <?php /*
+    <h2>Tasks</h2>
+    <?php
+    // Show existing tasks on ticket
+    $tasks_res = $database->execute_query("SELECT description, completed FROM help.ticket_tasks WHERE ticket_id = ?", [$ticket_id]);
+    $task_rows = $tasks_res->fetch_all(MYSQLI_ASSOC);
+
+    if (count($task_rows) > 0) {
+    ?>
+        <table style="max-width: 500px;">
+            <tr>
+                <th>Task Description</th>
+                <th>Status</th>
+            </tr>
+            <?php
+            foreach ($task_rows as $row) {
+            ?>
+                <tr>
+                    <td data-cell="Task Description"><?= htmlspecialchars($row['description']); ?></td>
+                    <td data-cell="Status"><?= $row['completed'] ? "Complete" : "Incomplete" ?></td>
+                </tr>
+            <?php
+            }
+            ?>
+        </table><br>
+    <?php
+    }
+    ?>
+
+
+    <button id="new-task-button">Add Task</button><br>
+    <div id="new-task-form-background" class="modal-form-background">
+        <div id="new-task-form" class="modal-form" style="display: none;">
+            <div class="modal-form-header"><span id="new-task-form-close">&times;</span></div>
+            <h3>Add Task</h3>
+            <form id="task-submit" method="post" action="add_task_handler.php">
+                <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
+                <input type="hidden" name="username" value="<?= $_SESSION['username'] ?>">
+                <div>
+                    <label for="task-description">Task description: </label>
+                    <input type="text" name="task_description"></input><br>
+                    <label for="task-description">Completed: </label>
+                    <input type="checkbox" name="task_complete"></input>
+                </div>
+                <input style="margin-top: 20px;" type="submit" value="Submit Note">
+            </form>
+        </div>
+    </div>
+    */ ?>
     <!-- Loop through the notes and display them -->
     <?php if ($ticket['notes'] !== null) : ?>
 
@@ -700,7 +749,7 @@ if (isset($ticket["client"])) {
                             $asset_tag_pattern = "/BC#\\d{6}/";
                             $note_data = $note['note'];
                             if ($note_data !== null) {
-                                $note_data = html_entity_decode($note_data);
+                                $note_data = htmlspecialchars(strip_tags(html_entity_decode($note_data)));
 
                                 $ticket_matches = [];
                                 $ticket_match_result = preg_match_all($ticket_pattern, $note_data, $ticket_matches, PREG_OFFSET_CAPTURE);
@@ -906,26 +955,28 @@ if (isset($ticket["client"])) {
                             <td data-cell="Created by"><?= $log_row['user_id'] ?></td>
                             <td class="ticket_note" data-cell="Change Made">
                                 <?php
+                                $str = "";
                                 switch ($log_row['field_name']) {
                                     case 'Attachment':
-                                        echo generateUpdateHTML('Attachment', null, $log_row['new_value'], 'Added', $uniqueNoteId);
+                                        $str = generateUpdateHTML('Attachment', null, $log_row['new_value'], 'Added', $uniqueNoteId);
                                         break;
                                     case 'notedeleted':
-                                        echo generateUpdateHTML('Note', $log_row['old_value'], null, 'Deleted', $uniqueNoteId);
+                                        $str = generateUpdateHTML('Note', $log_row['old_value'], null, 'Deleted', $uniqueNoteId);
                                         break;
                                     case 'note':
-                                        echo generateUpdateHTML('Note', $log_row['old_value'], $log_row['new_value'], $log_row['old_value'] != null ? 'Updated' : 'Created', $uniqueNoteId);
+                                        $str = generateUpdateHTML('Note', $log_row['old_value'], $log_row['new_value'], $log_row['old_value'] != null ? 'Updated' : 'Created', $uniqueNoteId);
                                         break;
                                     case 'description':
-                                        echo generateUpdateHTML('Description', $log_row['old_value'], $log_row['new_value'], $log_row['old_value'] != null ? 'Updated' : 'Created', $uniqueNoteId);
+                                        $str = generateUpdateHTML('Description', $log_row['old_value'], $log_row['new_value'], $log_row['old_value'] != null ? 'Updated' : 'Created', $uniqueNoteId);
                                         break;
                                     case 'sent_emails':
-                                        echo $log_row['new_value'];
+                                        $str = $log_row['new_value'];
                                         break;
                                     default:
-                                        echo formatFieldName($log_row['field_name']) . ' From: ' . html_entity_decode($log_row['old_value']) . ' To: ' . html_entity_decode($log_row['new_value']);
+                                        $str = formatFieldName($log_row['field_name']) . ' From: ' . html_entity_decode($log_row['old_value']) . ' To: ' . html_entity_decode($log_row['new_value']);
                                         break;
                                 }
+                                echo htmlspecialchars($str);
                                 ?>
                             </td>
                         </tr>
@@ -1146,4 +1197,23 @@ if (isset($ticket["client"])) {
             }
         });
     });
+</script>
+<script>
+    var updateTicketForm = document.querySelector("#updateTicketForm");
+    if (updateTicketForm) {
+        updateTicketForm.addEventListener("submit", function(e) {
+            var statusField = document.querySelector("#status");
+            var employeeField = document.querySelector("#employee");
+
+            if (
+                (statusField.value === "resolved" || statusField.value === "closed") &&
+                (employeeField.value === "" || employeeField.value === "unassigned")
+            ) {
+                e.preventDefault();
+                alert(
+                    "You cannot resolve/close a ticket if ticket is not assigned to an employee. Please assign the ticket to an employee first."
+                );
+            }
+        });
+    }
 </script>

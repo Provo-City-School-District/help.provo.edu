@@ -146,10 +146,12 @@ $fieldTechs = process_query_result($field_tech_query_result, "employee");
 
 //query for unassigned tickets for location
 $unassigned_ticket_query = <<<unassigned_tickets
-SELECT *
+SELECT tickets.*, GROUP_CONCAT(DISTINCT alerts.alert_level) AS alert_levels
 FROM tickets
+LEFT JOIN alerts ON tickets.id = alerts.ticket_id
 WHERE status NOT IN ('closed', 'resolved') 
-AND (employee IS NULL OR employee = 'unassigned' OR employee = '')
+AND (tickets.employee IS NULL OR tickets.employee = 'unassigned' OR tickets.employee = '')
+GROUP BY tickets.id
 unassigned_tickets;
 
 

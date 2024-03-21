@@ -1,90 +1,3 @@
-// Define the table variable
-var table;
-
-// Initialize the data table library on the table with the class data-table
-$(document).ready(function () {
-  if (window.location.pathname === "/controllers/tickets/recent_tickets.php") {
-    table = $(".data-table").DataTable({
-      order: [[9, "desc"]], // Sort by the second column in ascending order
-      stateSave: true, // Enable state saving
-    });
-  } else if (window.location.pathname === "/tickets.php") {
-    table = $(".data-table").DataTable({
-      order: [[8, "asc"]], // Sort by the second column in ascending order
-      stateSave: true, // Enable state saving
-    });
-  } else {
-    table = $(".data-table").DataTable({
-      paging: true, // Enable pagination
-      pageLength: 10, // Set the number of rows per page
-      stateSave: true, // Enable state saving
-      ordering: true, // Enable sorting
-      columns: [
-        { width: "5%" },
-        { width: "25%" },
-        { width: "25%" },
-        { width: "5%" },
-        { width: "5%" },
-        { width: "5%" },
-        { width: "5%" },
-        { width: "5%" },
-        { width: "5%" },
-        { width: "5%" },
-        { width: "5%" },
-        { width: "5%" },
-      ],
-      autoWidth: false, // Disable auto width calculation
-    });
-  }
-});
-$(document).ready(function () {
-  table = $(".search-data-table").DataTable({
-    paging: true, // Enable pagination
-    pageLength: 10, // Set the number of rows per page
-    stateSave: true, // Enable state saving
-    ordering: true, // Enable sorting
-    autoWidth: false, // Disable auto width calculation
-  });
-});
-
-//initialize tinyMCE for for textarea with class tinyMCEtextarea
-// var userPref = ''; // Replace this with your actual code to get the user preference
-
-var skin, content_css;
-
-if (userPref === "dark") {
-  skin = "oxide-dark";
-  content_css = "dark";
-} else {
-  skin = "oxide";
-  content_css = "default";
-}
-
-tinymce.init({
-  selector: ".tinyMCEtextarea",
-  toolbar:
-    "undo redo restoredraft | bold italic strikethrough | blockquote | paste pastetext removeformat | numlist bullist | code | link unlink | emoticons",
-  menubar: false,
-  paste_as_text: true,
-  browser_spellcheck: true,
-  contextmenu: false,
-  plugins: [
-    "autosave",
-    "lists",
-    "code",
-    "link",
-    "autolink",
-    "wordcount",
-    "emoticons",
-  ],
-  skin: skin,
-  paste_data_images: false,
-  content_css: content_css,
-  link_default_target: "_blank",
-  text_patterns: false,
-  autosave_interval: "10s",
-});
-
 // display/hide new note form
 var newNoteButtons = document.getElementsByClassName("new-note-button");
 var newNoteModalBackground = document.getElementById(
@@ -113,6 +26,15 @@ window.onclick = function (event) {
     newNoteModalBackground.style.display = "none";
     newNoteForm.style.display = "none";
   }
+  const newTaskModalBackground = document.getElementById(
+    "new-task-form-background"
+  );
+  const newTaskForm = document.getElementById("new-task-form");
+
+  if (event.target == newTaskModalBackground) {
+    newTaskModalBackground.style.display = "none";
+    newTaskForm.style.display = "none";
+  }
 };
 
 let newNoteModalCloseButton = document.getElementById("new-note-form-close");
@@ -124,6 +46,41 @@ if (newNoteModalCloseButton) {
     }
   };
 }
+
+const newTaskButton = document.getElementById("new-task-button");
+
+if (newTaskButton) {
+  newTaskButton.addEventListener("click", function () {
+    const newTaskForm = document.getElementById("new-task-form");
+    const newTaskModalBackground = document.getElementById(
+      "new-task-form-background"
+    );
+    if (newTaskForm) {
+      if (newTaskForm.style.display === "none") {
+        newTaskForm.style.display = "block";
+        newTaskModalBackground.style.display = "block";
+        newNoteEditor.scrollIntoView({ behavior: "smooth" }); // Scroll the view to the new note editor
+      } else {
+        newTaskForm.style.display = "none";
+      }
+    }
+  });
+}
+
+const newTaskModalCloseButton = document.getElementById("new-task-form-close");
+if (newTaskModalCloseButton) {
+  newTaskModalCloseButton.onclick = function (event) {
+    const newTaskModalBackground = document.getElementById(
+      "new-task-form-background"
+    );
+    const newTaskForm = document.getElementById("new-task-form");
+    if (event.target == newTaskModalCloseButton) {
+      newTaskModalBackground.style.display = "none";
+      newTaskForm.style.display = "none";
+    }
+  };
+}
+
 // Check if the toggle-file-upload-form and file-upload-form elements exist before adding the event listener
 var toggleFileUploadForm = document.getElementById("toggle-file-upload-form");
 var fileUploadForm = document.getElementById("file-upload-form");
@@ -153,98 +110,11 @@ if (descriptionDiv && editDescriptionButton && editDescriptionForm) {
   });
 }
 
-// reset search form
+// reset form Button
 var resetBtn = document.getElementById("resetBtn");
 if (resetBtn) {
   resetBtn.addEventListener("click", function () {
     document.getElementById("searchForm").reset();
     window.location.href = "search_tickets.php";
-  });
-}
-
-//================================= Ticket - Client Search =================================
-// Show the search-for-client div when the currentClient link is clicked
-var currentClient = document.querySelector(".currentClient");
-if (currentClient) {
-  currentClient.addEventListener("click", function (event) {
-    event.preventDefault(); // Prevent the default action
-    document.querySelector("#search-for-client").style.display = "grid"; // Show the div
-  });
-}
-//sends info to client_search.php then returns results
-var searchForm = document.getElementById("search-form");
-if (searchForm) {
-  searchForm.addEventListener("submit", function (event) {
-    event.preventDefault(); // Prevent the form from being submitted normally
-
-    var firstname = document.getElementById("firstname").value;
-    var lastname = document.getElementById("lastname").value;
-
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "../../includes/client_search.php", true);
-    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    xhr.onload = function () {
-      if (this.status == 200) {
-        // The request was successful
-        var results = JSON.parse(this.responseText);
-        var resultsHTML = "<h3>Search Results</h3>";
-        for (var i = 0; i < results.length; i++) {
-          resultsHTML +=
-            '<p><a href="#" class="username-link" data-username="' +
-            results[i].username +
-            '">' +
-            results[i].firstname +
-            " " +
-            results[i].lastname +
-            " (" +
-            results[i].username +
-            ")</a></p>";
-        }
-        document.getElementById("search-results").innerHTML = resultsHTML;
-      } else {
-        // There was an error
-        console.error("An error occurred: " + this.status);
-      }
-    };
-    xhr.send(
-      "firstname=" +
-        encodeURIComponent(firstname) +
-        "&lastname=" +
-        encodeURIComponent(lastname)
-    );
-  });
-}
-//update the value based on selection
-var searchResults = document.getElementById("search-results");
-if (searchResults) {
-  searchResults.addEventListener("click", function (event) {
-    // console.log('Clicked inside search results'); // Debug line
-    if (event.target.classList.contains("username-link")) {
-      event.preventDefault(); // Prevent the link from being followed
-
-      var username = event.target.getAttribute("data-username");
-      // console.log('Clicked username: ' + username); // Debug line
-      document.getElementById("client").value = username;
-      document.getElementById("client-display").textContent =
-        "Changing Client to: " + username + " on next save";
-    }
-  });
-}
-
-var updateTicketForm = document.querySelector("#updateTicketForm");
-if (updateTicketForm) {
-  updateTicketForm.addEventListener("submit", function (e) {
-    var statusField = document.querySelector("#status");
-    var employeeField = document.querySelector("#employee");
-
-    if (
-      (statusField.value === "resolved" || statusField.value === "closed") &&
-      (employeeField.value === "" || employeeField.value === "unassigned")
-    ) {
-      e.preventDefault();
-      alert(
-        "You cannot resolve/close a ticket if ticket is not assigned to an employee. Please assign the ticket to an employee first."
-      );
-    }
   });
 }

@@ -1,5 +1,6 @@
 <?php
 include("header.php");
+require_once(__DIR__ . "/includes/ticket_utils.php");
 require_once(from_root("/includes/tickets_template.php"));
 require("status_popup.php");
 if ($_SESSION['permissions']['is_admin'] != 1) {

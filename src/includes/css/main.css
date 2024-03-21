@@ -215,8 +215,12 @@ th {
 	vertical-align: middle;
 }
 
-tr {
+tr:nth-of-type(odd) {
 	background-color: var(--odd-color);
+}
+
+tr:nth-of-type(even) {
+	background-color: var(--even-color);
 }
 
 .data-table tr:nth-of-type(odd) {

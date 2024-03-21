@@ -1,5 +1,6 @@
 <?php
 require_once("block_file.php");
+require_once("sanitization_utils.php");
 
 ob_start();
 include("ticket_utils.php");
@@ -520,7 +521,7 @@ if (isset($ticket["client"])) {
                 $ticket_pattern = "/WO#\\d{1,6}/";
                 $archived_ticket_pattern = "/WO#A-\\d{1,6}/";
                 $asset_tag_pattern = "/BC#\\d{6}/";
-                $request_detail = $ticket['description'];
+                $request_detail = sanitize_html($ticket['description']);
                 $ticket_matches = [];
                 $ticket_match_result = preg_match_all($ticket_pattern, $request_detail, $ticket_matches, PREG_OFFSET_CAPTURE);
 
@@ -747,9 +748,9 @@ if (isset($ticket["client"])) {
                             $ticket_pattern = "/WO#\\d{1,6}/";
                             $archived_ticket_pattern = "/WO#A-\\d{1,6}/";
                             $asset_tag_pattern = "/BC#\\d{6}/";
-                            $note_data = $note['note'];
+                            $note_data = sanitize_html($note['note']);
                             if ($note_data !== null) {
-                                $note_data = htmlspecialchars(strip_tags(html_entity_decode($note_data)));
+                                //$note_data = htmlspecialchars(strip_tags(html_entity_decode($note_data)));
 
                                 $ticket_matches = [];
                                 $ticket_match_result = preg_match_all($ticket_pattern, $note_data, $ticket_matches, PREG_OFFSET_CAPTURE);

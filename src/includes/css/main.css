@@ -215,55 +215,41 @@ th {
 	vertical-align: middle;
 }
 
-tr:nth-of-type(odd) {
+.data-table tr:nth-of-type(odd),
+.nst tr:nth-of-type(odd) {
 	background-color: var(--odd-color);
 }
 
-tr:nth-of-type(even) {
+.data-table tr:nth-of-type(even),
+.nst tr:nth-of-type(even) {
 	background-color: var(--even-color);
 }
 
-.data-table tr:nth-of-type(odd) {
-	background-color: var(--odd-color);
+.data-table tr.warn,
+.data-table tr.crit {
+	color: var(--theme-white);
 }
 
-.data-table tr:nth-of-type(even) {
-	background-color: var(--even-color);
+.data-table tr.warn a,
+.data-table tr.crit a {
+	color: var(--theme-black);
 }
-
-
 
 .data-table tr.warn {
 	background-color: var(--warn-color);
-	color: var(--theme-white);
-
-}
-
-.data-table tr.warn a {
-	color: var(--theme-black);
 }
 
 .data-table tr.warn a:hover {
 	color: var(--crit-color);
 }
 
-
 .data-table tr.crit {
 	background-color: var(--crit-color);
-	color: var(--theme-white=);
-
 }
-
-.data-table tr.crit a {
-	color: var(--theme-black);
-}
-
 
 .data-table tr.crit a:hover {
 	color: var(--warn-color);
 }
-
-
 
 th {
 	display: none;
@@ -514,10 +500,6 @@ select {
 .userPermissions input {
 	grid-area: input;
 }
-
-
-
-
 
 /* =============================== Responsive Styles =============================== */
 @media(min-width: 800px) {

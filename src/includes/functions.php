@@ -240,3 +240,16 @@ function calculateTimeSinceLastLogin()
     // Return null if last_login is not set in the session
     return null;
 }
+
+
+function user_is_tech(string $username)
+{
+    global $database;
+
+    $userPermissionsResult = $database->execute_query("SELECT is_tech FROM users WHERE username = ?", [$username]);
+    $userPermissionsData = mysqli_fetch_assoc($userPermissionsResult);
+    if (isset($userPermissionsResult) && isset($userPermissionsData))
+        return $userPermissionsData["is_tech"] != 0;
+    else
+        return false;
+}

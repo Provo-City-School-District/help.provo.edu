@@ -279,6 +279,10 @@ table.dataTable .details a {
 	margin-bottom: 1em;
 }
 
+table.dataTable .latestNote {
+	word-break: break-all;
+	overflow-wrap: break-word;
+}
 
 /* =============================== Sub Menu Styles =============================== */
 #subMenu {

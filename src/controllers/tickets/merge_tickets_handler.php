@@ -56,7 +56,7 @@ $username = trim(htmlspecialchars($_POST['username']));
 // Deep copy all source ticket's notes
 $query = <<<STR
     INSERT INTO notes (linked_id, created, creator, note, time, idx, visible_to_client, date_override, email_msg_id, work_hours, work_minutes, travel_hours, travel_minutes)
-        (SELECT ?, created, creator, note, time, idx, visible_to_client, date_override, email_msg_id, work_hours, work_minutes, travel_hours, travel_minutes FROM notes 
+        (SELECT ?, created, creator, note, time, idx, visible_to_client, date_override, email_msg_id, NULL, NULL, NULL, NULL FROM notes 
             WHERE linked_id = ?)
 STR;
 

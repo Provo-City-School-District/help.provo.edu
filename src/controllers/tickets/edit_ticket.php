@@ -651,6 +651,7 @@ if (isset($ticket["client"])) {
     <?php
     }
     ?>
+    <?php /*
     <h2>Tasks</h2>
     <?php
     // Show existing tasks on ticket
@@ -678,6 +679,8 @@ if (isset($ticket["client"])) {
     <?php
     }
     ?>
+
+
     <button id="new-task-button">Add Task</button><br>
     <div id="new-task-form-background" class="modal-form-background">
         <div id="new-task-form" class="modal-form" style="display: none;">
@@ -696,6 +699,7 @@ if (isset($ticket["client"])) {
             </form>
         </div>
     </div>
+    */ ?>
     <!-- Loop through the notes and display them -->
     <?php if ($ticket['notes'] !== null) : ?>
 

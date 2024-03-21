@@ -20,10 +20,18 @@ $(document).ready(function () {
       order: [[9, "asc"]], // Sort by the second column in ascending order
       stateSave: true, // Enable state saving
     });
+  } else if (
+    window.location.pathname === "/controllers/tickets/subordinate_tickets.php"
+  ) {
+    table = $(".data-table").DataTable({
+      order: [[11, "asc"]], // Sort by the second column in ascending order
+      // pageLength: 50, // Set the number of rows per page
+      stateSave: true, // Enable state saving
+    });
   } else {
     table = $(".data-table").DataTable({
       paging: true, // Enable pagination
-      pageLength: 10, // Set the number of rows per page
+      // pageLength: 10, // Set the number of rows per page
       stateSave: true, // Enable state saving
       ordering: true, // Enable sorting
       columns: [
@@ -41,7 +49,7 @@ $(document).ready(function () {
         { width: "5%" },
         { width: "5%" },
       ],
-      autoWidth: false, // Disable auto width calculation
+      // autoWidth: false, // Disable auto width calculation
     });
   }
 });

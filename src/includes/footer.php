@@ -30,10 +30,11 @@
     var userPref = '<?php echo isset($_SESSION['color_scheme']) ? $_SESSION['color_scheme'] : 'light'; ?>';
 </script>
 <?php if (basename($_SERVER['PHP_SELF']) != 'index.php') : ?>
-    <script src="/includes/js/inactiveModal.js?v=0.1.0" type="text/javascript"></script>
+    <script src="/includes/js/inactiveModal.js?v=1.0.0" type="text/javascript"></script>
 <?php endif; ?>
-<script src="/includes/js/dataTables-conf.js?v=0.1.1" type="text/javascript"></script>
-<script src="/includes/js/main.js?v=0.1.23" type="text/javascript"></script>
+<script src="/includes/js/dataTables-conf.js?v=1.0.0" type="text/javascript"></script>
+<script src="/includes/js/dataTables-conf.js?v=1.0.0" type="text/javascript"></script>
+<script src="/includes/js/main.js?v=1.0.23" type="text/javascript"></script>
 </body>
 
 </html>

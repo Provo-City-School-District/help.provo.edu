@@ -184,16 +184,16 @@ function get_fast_client_location(string $name)
 
     return $location_data["ldap_location"];
 }
-function isUserATech($usernameToCheck, $databaseConnection)
-{
-    $sqlQuery = $databaseConnection->prepare("SELECT is_tech FROM users WHERE username = ?");
-    $sqlQuery->bind_param("s", $usernameToCheck);
-    $sqlQuery->execute();
-    $queryResult = $sqlQuery->get_result();
-    $userData = $queryResult->fetch_assoc();
+// function isUserATech($usernameToCheck, $databaseConnection)
+// {
+//     $sqlQuery = $databaseConnection->prepare("SELECT is_tech FROM users WHERE username = ?");
+//     $sqlQuery->bind_param("s", $usernameToCheck);
+//     $sqlQuery->execute();
+//     $queryResult = $sqlQuery->get_result();
+//     $userData = $queryResult->fetch_assoc();
 
-    return $userData['is_tech'] == 1;
-}
+//     return $userData['is_tech'] == 1;
+// }
 
 function log_app(int $priority, string $message)
 {

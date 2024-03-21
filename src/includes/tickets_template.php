@@ -84,7 +84,7 @@ function display_tickets_table($tickets, $database)
         }
         $latest_note_str = "";
         if ($creator != null && $note_data != null)
-            $latest_note_str = $creator . ": " . strip_tags(html_entity_decode($note_data));
+            $latest_note_str = $creator . ":<br> " . strip_tags(html_entity_decode($note_data));
 
         $descriptionWithoutLinks = strip_tags(html_entity_decode($ticket["description"]));
         if (isset($ticket["client"])) {

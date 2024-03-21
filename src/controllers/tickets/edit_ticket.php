@@ -521,7 +521,9 @@ if (isset($ticket["client"])) {
                 $ticket_pattern = "/WO#\\d{1,6}/";
                 $archived_ticket_pattern = "/WO#A-\\d{1,6}/";
                 $asset_tag_pattern = "/BC#\\d{6}/";
-                $request_detail = sanitize_html($ticket['description']);
+                if ($ticket['description'] !== null) {
+                    $request_detail = sanitize_html($ticket['description']);
+                }
                 $ticket_matches = [];
                 $ticket_match_result = preg_match_all($ticket_pattern, $request_detail, $ticket_matches, PREG_OFFSET_CAPTURE);
 
@@ -748,7 +750,9 @@ if (isset($ticket["client"])) {
                             $ticket_pattern = "/WO#\\d{1,6}/";
                             $archived_ticket_pattern = "/WO#A-\\d{1,6}/";
                             $asset_tag_pattern = "/BC#\\d{6}/";
-                            $note_data = sanitize_html($note['note']);
+                            if ($note['note'] !== null) {
+                                $note_data = sanitize_html($note['note']);
+                            }
                             if ($note_data !== null) {
                                 //$note_data = htmlspecialchars(strip_tags(html_entity_decode($note_data)));
 

@@ -215,11 +215,13 @@ th {
 	vertical-align: middle;
 }
 
-.data-table tr:nth-of-type(odd) {
+.data-table tr:nth-of-type(odd),
+.nst tr:nth-of-type(odd) {
 	background-color: var(--odd-color);
 }
 
-.data-table tr:nth-of-type(even) {
+.data-table tr:nth-of-type(even),
+.nst tr:nth-of-type(even) {
 	background-color: var(--even-color);
 }
 
@@ -235,7 +237,6 @@ th {
 
 .data-table tr.warn {
 	background-color: var(--warn-color);
-
 }
 
 .data-table tr.warn a:hover {
@@ -499,10 +500,6 @@ select {
 .userPermissions input {
 	grid-area: input;
 }
-
-
-
-
 
 /* =============================== Responsive Styles =============================== */
 @media(min-width: 800px) {

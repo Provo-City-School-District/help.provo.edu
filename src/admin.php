@@ -51,7 +51,7 @@ display_tickets_table($ticket_result, $database);
 ?>
 
 <h2>All Users</h2>
-<table class="allUsers search-data-table">
+<table class="allUsers nst">
     <thead>
         <tr>
             <th>Username</th>
@@ -103,7 +103,7 @@ display_tickets_table($ticket_result, $database);
 // Fetch the exclude days from the database. only displaying current and future exclude days
 $exclude_result = $database->execute_query("SELECT * FROM exclude_days WHERE exclude_day >= CURDATE() ORDER BY exclude_day");
 ?>
-<table class="exclude_days search-data-table">
+<table class="exclude_days nst">
     <thead>
         <tr>
             <th>Exclude Day</th>

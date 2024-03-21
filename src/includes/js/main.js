@@ -130,7 +130,9 @@ window.onclick = function (event) {
     newNoteModalBackground.style.display = "none";
     newNoteForm.style.display = "none";
   }
-  const newTaskModalBackground = document.getElementById("new-task-form-background");
+  const newTaskModalBackground = document.getElementById(
+    "new-task-form-background"
+  );
   const newTaskForm = document.getElementById("new-task-form");
 
   if (event.target == newTaskModalBackground) {
@@ -154,7 +156,9 @@ const newTaskButton = document.getElementById("new-task-button");
 if (newTaskButton) {
   newTaskButton.addEventListener("click", function () {
     const newTaskForm = document.getElementById("new-task-form");
-    const newTaskModalBackground = document.getElementById("new-task-form-background");
+    const newTaskModalBackground = document.getElementById(
+      "new-task-form-background"
+    );
     if (newTaskForm) {
       if (newTaskForm.style.display === "none") {
         newTaskForm.style.display = "block";
@@ -170,7 +174,9 @@ if (newTaskButton) {
 const newTaskModalCloseButton = document.getElementById("new-task-form-close");
 if (newTaskModalCloseButton) {
   newTaskModalCloseButton.onclick = function (event) {
-    const newTaskModalBackground = document.getElementById("new-task-form-background");
+    const newTaskModalBackground = document.getElementById(
+      "new-task-form-background"
+    );
     const newTaskForm = document.getElementById("new-task-form");
     if (event.target == newTaskModalCloseButton) {
       newTaskModalBackground.style.display = "none";

@@ -218,13 +218,47 @@ tr {
 	background-color: var(--odd-color);
 }
 
-tr:nth-of-type(odd) {
-	background-color: var(--odd-color) !important;
+.data-table tr:nth-of-type(odd) {
+	background-color: var(--odd-color);
 }
 
-tr:nth-of-type(even) {
-	background-color: var(--even-color) !important;
+.data-table tr:nth-of-type(even) {
+	background-color: var(--even-color);
 }
+
+
+
+.data-table tr.warn {
+	background-color: var(--warn-color);
+	color: var(--theme-white);
+
+}
+
+.data-table tr.warn a {
+	color: var(--theme-black);
+}
+
+.data-table tr.warn a:hover {
+	color: var(--crit-color);
+}
+
+
+.data-table tr.crit {
+	background-color: var(--crit-color);
+	color: var(--theme-white=);
+
+}
+
+.data-table tr.crit a {
+	color: var(--theme-black);
+}
+
+
+.data-table tr.crit a:hover {
+	color: var(--warn-color);
+}
+
+
 
 th {
 	display: none;
@@ -245,39 +279,9 @@ table.dataTable .details a {
 	margin-bottom: 1em;
 }
 
-/* =============================== Alerts Styles =============================== */
-.alerts_wrapper {
-	margin: 0 auto;
-}
-
-.alerts_wrapper p {
-	padding: .5em 1em;
-	margin: 0 0 2px 0;
-
-}
-
-.alerts_wrapper p a:first-of-type {
-	color: var(--theme-white);
-}
-
-.alerts_wrapper p a:hover {
-	color: var(--theme-url-color);
-
-}
-
-.alerts_wrapper .close-alert {
-	text-decoration: none;
-	color: var(--theme-white);
-	float: right;
-	font-weight: bold;
-}
-
-.alerts_wrapper .crit {
-	background-color: var(--crit-color);
-}
-
-.alerts_wrapper .warn {
-	background-color: var(--warn-color);
+table.dataTable .latestNote {
+	word-break: break-all;
+	overflow-wrap: break-word;
 }
 
 /* =============================== Sub Menu Styles =============================== */
@@ -419,6 +423,40 @@ select {
 	width: 200px;
 }
 
+/* =============================== Alerts Styles =============================== */
+.alerts_wrapper {
+	margin: 0 auto;
+}
+
+.alerts_wrapper p {
+	padding: .5em 1em;
+	margin: 0 0 2px 0;
+
+}
+
+.alerts_wrapper p a:first-of-type {
+	color: var(--theme-white);
+}
+
+.alerts_wrapper p a:hover {
+	color: var(--theme-url-color);
+
+}
+
+.alerts_wrapper .close-alert {
+	text-decoration: none;
+	color: var(--theme-white);
+	float: right;
+	font-weight: bold;
+}
+
+.alerts_wrapper .crit {
+	background-color: var(--crit-color);
+}
+
+.alerts_wrapper .warn {
+	background-color: var(--warn-color);
+}
 
 /* =============================== Tickets Log =============================== */
 .ticket_log .note-container {

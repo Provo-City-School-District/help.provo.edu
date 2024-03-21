@@ -17,11 +17,14 @@ include("ticket_utils.php");
 $username = $_SESSION['username'];
 
 $ticket_query = <<<QUERY
-SELECT DISTINCT tickets.* FROM tickets 
+SELECT tickets.*, GROUP_CONCAT(DISTINCT alerts.alert_level) AS alert_levels
+FROM tickets
 LEFT JOIN notes ON tickets.id = notes.linked_id 
 LEFT JOIN ticket_logs ON tickets.id = ticket_logs.ticket_id
+LEFT JOIN alerts ON tickets.id = alerts.ticket_id
 WHERE ((notes.creator = ? AND notes.created >= DATE_SUB(NOW(), INTERVAL 2 DAY)) 
 OR (ticket_logs.user_id = ? AND ticket_logs.created_at >= DATE_SUB(NOW(), INTERVAL 2 DAY)))
+GROUP BY tickets.id
 QUERY;
 
 

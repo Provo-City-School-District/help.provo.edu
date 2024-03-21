@@ -1,5 +1,6 @@
 <?php
 include("header.php");
+require_once(__DIR__ . "/includes/ticket_utils.php");
 require_once(from_root("/includes/tickets_template.php"));
 require("status_popup.php");
 if ($_SESSION['permissions']['is_admin'] != 1) {
@@ -36,10 +37,13 @@ if (isset($_SESSION['current_status'])) {
 <?php
 //query for unassigned tickets
 $ticket_query = <<<STR
-SELECT *
+SELECT tickets.*, GROUP_CONCAT(DISTINCT alerts.alert_level) AS alert_levels
 FROM tickets
-WHERE status NOT IN ('closed', 'resolved') AND (employee IS NULL OR employee = 'unassigned' OR employee = '')
-ORDER BY id ASC
+LEFT JOIN alerts ON tickets.id = alerts.ticket_id
+WHERE status NOT IN ('closed', 'resolved') 
+AND (tickets.employee IS NULL OR tickets.employee = 'unassigned' OR tickets.employee = '')
+GROUP BY tickets.id
+ORDER BY tickets.id ASC
 STR;
 
 $ticket_result = $database->execute_query($ticket_query);

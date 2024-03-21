@@ -19,11 +19,13 @@ $username = $_SESSION['username'];
 
 // SQL query for tech tickets 
 $tech_ticket_query = <<<STR
-    SELECT *
+    SELECT tickets.*, GROUP_CONCAT(DISTINCT CASE WHEN alerts.supervisor_alert = 0 THEN alerts.alert_level END) AS alert_levels
     FROM tickets
-    WHERE status NOT IN ('Closed', 'Resolved')
-    AND employee = ?
-    ORDER BY id ASC
+    LEFT JOIN alerts ON tickets.id = alerts.ticket_id
+    WHERE tickets.status NOT IN ('Closed', 'Resolved')
+    AND tickets.employee = ?
+    GROUP BY tickets.id
+    ORDER BY tickets.id ASC
     STR;
 $tech_ticket_result = $database->execute_query($tech_ticket_query, [$username]);
 $tech_tickets = mysqli_fetch_all($tech_ticket_result, MYSQLI_ASSOC);

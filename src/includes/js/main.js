@@ -110,29 +110,11 @@ if (descriptionDiv && editDescriptionButton && editDescriptionForm) {
   });
 }
 
-// reset search form
+// reset form Button
 var resetBtn = document.getElementById("resetBtn");
 if (resetBtn) {
   resetBtn.addEventListener("click", function () {
     document.getElementById("searchForm").reset();
     window.location.href = "search_tickets.php";
-  });
-}
-
-var updateTicketForm = document.querySelector("#updateTicketForm");
-if (updateTicketForm) {
-  updateTicketForm.addEventListener("submit", function (e) {
-    var statusField = document.querySelector("#status");
-    var employeeField = document.querySelector("#employee");
-
-    if (
-      (statusField.value === "resolved" || statusField.value === "closed") &&
-      (employeeField.value === "" || employeeField.value === "unassigned")
-    ) {
-      e.preventDefault();
-      alert(
-        "You cannot resolve/close a ticket if ticket is not assigned to an employee. Please assign the ticket to an employee first."
-      );
-    }
   });
 }

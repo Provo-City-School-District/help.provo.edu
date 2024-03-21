@@ -659,22 +659,22 @@ if (isset($ticket["client"])) {
 
     if (count($task_rows) > 0) {
     ?>
-    <table style="max-width: 500px;">
-        <tr>
-            <th>Task Description</th>
-            <th>Status</th>
-        </tr>
-        <?php
-        foreach ($task_rows as $row) {
-        ?>
+        <table style="max-width: 500px;">
             <tr>
-                <td data-cell="Task Description"><?= htmlspecialchars($row['description']); ?></td>
-                <td data-cell="Status"><?= $row['completed'] ? "Complete" : "Incomplete" ?></td>
+                <th>Task Description</th>
+                <th>Status</th>
             </tr>
-        <?php
-        }
-        ?>
-     </table><br>
+            <?php
+            foreach ($task_rows as $row) {
+            ?>
+                <tr>
+                    <td data-cell="Task Description"><?= htmlspecialchars($row['description']); ?></td>
+                    <td data-cell="Status"><?= $row['completed'] ? "Complete" : "Incomplete" ?></td>
+                </tr>
+            <?php
+            }
+            ?>
+        </table><br>
     <?php
     }
     ?>
@@ -1193,4 +1193,23 @@ if (isset($ticket["client"])) {
             }
         });
     });
+</script>
+<script>
+    var updateTicketForm = document.querySelector("#updateTicketForm");
+    if (updateTicketForm) {
+        updateTicketForm.addEventListener("submit", function(e) {
+            var statusField = document.querySelector("#status");
+            var employeeField = document.querySelector("#employee");
+
+            if (
+                (statusField.value === "resolved" || statusField.value === "closed") &&
+                (employeeField.value === "" || employeeField.value === "unassigned")
+            ) {
+                e.preventDefault();
+                alert(
+                    "You cannot resolve/close a ticket if ticket is not assigned to an employee. Please assign the ticket to an employee first."
+                );
+            }
+        });
+    }
 </script>

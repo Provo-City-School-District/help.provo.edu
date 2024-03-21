@@ -16,13 +16,19 @@ include("ticket_utils.php");
 //page query
 $username = $_SESSION['username'];
 $ticket_query = <<<STR
-            SELECT * FROM tickets 
-            WHERE
-                tickets.id in (
-                    SELECT flagged_tickets.ticket_id from flagged_tickets WHERE flagged_tickets.user_id in (
-                        SELECT users.id FROM users WHERE users.username = ?
-                    )
-                )
+        SELECT tickets.*, GROUP_CONCAT(DISTINCT alerts.alert_level) AS alert_levels
+        FROM tickets
+        LEFT JOIN alerts ON tickets.id = alerts.ticket_id
+        WHERE tickets.id IN (
+            SELECT flagged_tickets.ticket_id 
+            FROM flagged_tickets 
+            WHERE flagged_tickets.user_id IN (
+                SELECT users.id 
+                FROM users 
+                WHERE users.username = ?
+            )
+        )
+        GROUP BY tickets.id
         STR;
 $ticket_result = $database->execute_query($ticket_query, [$username]);
 

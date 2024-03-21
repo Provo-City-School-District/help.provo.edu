@@ -138,10 +138,11 @@ input[type=submit] {
 	cursor: pointer;
 	grid-column: span 2;
 	font-size: 1em;
+	margin: 1em 0;
 }
 
 #delete-note {
-	margin-top: 1em;
+	margin-top: unset;
 	display: inline-block;
 
 }

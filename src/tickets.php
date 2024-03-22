@@ -49,7 +49,9 @@ $alerts = mysqli_fetch_all($alert_result, MYSQLI_ASSOC);
 
 if ($_SESSION['permissions']['is_tech'] == 1) {
     // Display the alerts
-    display_ticket_alerts($alerts);
+    if ($_SESSION['hide_alerts'] == 0) {
+        display_ticket_alerts($alerts);
+    }
 
     //display tickets assigned to user
     echo '<h1>My Assigned Tickets</h1>';

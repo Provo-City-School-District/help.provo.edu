@@ -1,3 +1,12 @@
+// reset form Button
+var resetBtn = document.getElementById("resetBtn");
+if (resetBtn) {
+  resetBtn.addEventListener("click", function () {
+    document.getElementById("searchForm").reset();
+    window.location.href = "search_tickets.php";
+  });
+}
+
 //================================= Ticket - Client Search =================================
 // Show the search-for-client div when the currentClient link is clicked
 var currentClient = document.querySelector(".currentClient");
@@ -66,3 +75,31 @@ if (searchResults) {
     }
   });
 }
+
+$("#search_client").on("input", function() {
+    const new_value = $(this).val();
+    $("#search_client").autocomplete({
+        source: function (request, response) {
+            $.ajax({
+                url: "/username_search_ldap.php",
+                method: "GET",
+                data: {username: new_value},
+                success: function(data, textStatus, xhr) {
+                    let mappedResults = $.map(data, function (item) {
+                        let itemLocation = item.location ? item.location : "unknown";
+                        return $.extend(item, { label: item.firstName + ' ' + item.lastName + ' (' + itemLocation + ')', value: item.username });
+                    });
+                    response(mappedResults);
+                },
+                error: function() {
+                    alert("Error: Autocomplete AJAX call failed");
+                }
+            });
+        },
+        minLength: 2,
+        focus: function () {
+            // prevent value inserted on focus
+            return false;
+        }
+    });
+});

@@ -485,32 +485,4 @@ function sortByDate($x, $y)
     } ?>
 </article>
 <?php include("footer.php"); ?>
-<script>
-    $("#search_client").on("input", function() {
-        const new_value = $(this).val();
-        $("#search_client").autocomplete({
-            source: function (request, response) {
-                $.ajax({
-                    url: "/username_search_ldap.php",
-                    method: "GET",
-                    data: {username: new_value},
-                    success: function(data, textStatus, xhr) {
-                        let mappedResults = $.map(data, function (item) {
-                            let itemLocation = item.location ? item.location : "unknown";
-                            return $.extend(item, { label: item.firstName + ' ' + item.lastName + ' (' + itemLocation + ')', value: item.username });
-                        });
-                        response(mappedResults);
-                    },
-                    error: function() {
-                        alert("Error: Autocomplete AJAX call failed");
-                    }
-                });
-            },
-            minLength: 2,
-            focus: function () {
-                // prevent value inserted on focus
-                return false;
-            }
-        });
-    });
-</script>
+<script src="/includes/js/pages/search_tickets.js?v=1.0.0" type="text/javascript"></script>

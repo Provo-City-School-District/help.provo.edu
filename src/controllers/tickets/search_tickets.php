@@ -97,7 +97,7 @@ function get_client_name_from_id(string $client_sw_id)
 
     $client_name_result = $swdb->execute_query("SELECT FIRST_NAME, LAST_NAME FROM client WHERE CLIENT_ID = ?", [$client_sw_id]);
     $client_name_data = mysqli_fetch_assoc($client_name_result);
-    $client_name = trim($client_name_data["FIRST_NAME"])." ".trim($client_name_data["LAST_NAME"]);
+    $client_name = trim($client_name_data["FIRST_NAME"]) . " " . trim($client_name_data["LAST_NAME"]);
 
     return $client_name;
 }
@@ -109,7 +109,7 @@ function get_tech_name_from_id(string $tech_sw_id)
 
     $tech_name_result = $swdb->execute_query("SELECT FIRST_NAME, LAST_NAME FROM tech WHERE CLIENT_ID = ?", [$tech_sw_id]);
     $tech_name_data = mysqli_fetch_assoc($tech_name_result);
-    $tech_name = trim($tech_name_data["FIRST_NAME"])." ".trim($tech_name_data["LAST_NAME"]);
+    $tech_name = trim($tech_name_data["FIRST_NAME"]) . " " . trim($tech_name_data["LAST_NAME"]);
 
     return $tech_name;
 }
@@ -338,29 +338,10 @@ function sortByDate($x, $y)
                             </td>
                             <td data-cell="Assigned Employee"><?= $row['employee'] ?></td>
                             <td data-cell="Current Status"><?= $row['status'] ?></td>
-                            <td data-cell="Priority"><?= $row['priority'] ?></td>
+                            <td data-cell="Priority"><?= $priorityTypes[$row['priority']] . $row['priority'] ?></td>
                             <td data-cell="Created"><?= $row['created'] ?></td>
                             <td data-cell="Last Updated"><?= $row['last_updated'] ?></td>
-                            <?php
-                            // Get the priority value from the ticket row
-                            $priority = $row['priority'];
-                            // Calculate the due date by adding the priority days to the created date
-                            $created_date = new DateTime($row['created']);
-                            $due_date = clone $created_date;
-                            $due_date->modify("+{$priority} weekdays");
-
-                            // Check if the due date falls on a weekend or excluded date
-                            while (isWeekend($due_date)) {
-                                $due_date->modify("+1 day");
-                            }
-                            $count = hasExcludedDate($created_date->format('Y-m-d'), $due_date->format('Y-m-d'));
-                            if ($count > 0) {
-                                $due_date->modify("{$count} day");
-                            }
-                            // Format the due date as a string
-                            $due_date = $due_date->format('Y-m-d');
-                            ?>
-                            <td data-cell="Due"><?= $due_date ?></td>
+                            <td data-cell="Due"><?= $row['due_date'] ?></td>
                         <?php
                         } elseif (isset($row['a_id'])) {
                         ?>

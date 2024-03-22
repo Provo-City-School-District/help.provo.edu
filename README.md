@@ -79,3 +79,4 @@ If you're setting up a fresh development instance the database should initialize
 - TinyMCE: https://www.tiny.cloud/docs/tinymce/6/
 - CanvasJS: https://canvasjs.com/php-charts/
 - PHPMailer: https://github.com/PHPMailer/PHPMailer
+- Composer: https://getcomposer.org/

@@ -83,6 +83,10 @@ if ($_SESSION['permissions']['is_tech'] == 1) {
             <option value="DESC" <?= $user_data['note_order'] == 'DESC' ? 'selected' : '' ?>>Descending</option>
         </select>
     </div>
+    <div>
+        <label for="hide_alerts">Hide Alerts Banner on "My Tickets" Page:</label>
+        <input type="checkbox" id="hide_alerts" name="hide_alerts" <?= $user_data['hide_alerts'] == 1 ? 'checked' : '' ?>>
+    </div>
 
     <input type="submit" value="Update">
 </form>

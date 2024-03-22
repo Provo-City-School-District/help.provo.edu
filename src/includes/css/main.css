@@ -217,12 +217,14 @@ th {
 }
 
 .data-table tr:nth-of-type(odd),
-.nst tr:nth-of-type(odd) {
+.nst tr:nth-of-type(odd),
+#note-table tr:nth-of-type(odd) {
 	background-color: var(--odd-color);
 }
 
 .data-table tr:nth-of-type(even),
-.nst tr:nth-of-type(even) {
+.nst tr:nth-of-type(even),
+#note-table tr:nth-of-type(even)) {
 	background-color: var(--even-color);
 }
 

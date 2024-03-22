@@ -961,8 +961,8 @@ if (isset($ticket["client"])) {
                             <td class="ticket_note" data-cell="Change Made">
                                 <?php
                                 $note_str = "";
-                                $old_value = test_input($log_row['old_value']);
-                                $new_value = test_input($log_row['new_value']);
+                                $old_value = sanitize_html(html_entity_decode(test_input($log_row['old_value'])));
+                                $new_value = sanitize_html(html_entity_decode(test_input($log_row['new_value'])));
                                 switch ($log_row['field_name']) {
                                     case 'Attachment':
                                         $note_str = generateUpdateHTML('Attachment', null, $old_value, 'Added', $uniqueNoteId);

@@ -338,7 +338,7 @@ function sortByDate($x, $y)
                             </td>
                             <td data-cell="Assigned Employee"><?= $row['employee'] ?></td>
                             <td data-cell="Current Status"><?= $row['status'] ?></td>
-                            <td data-cell="Priority"><?= $priorityTypes[$row['priority']] . $row['priority'] ?></td>
+                            <td data-cell="Priority"><?= $priorityTypes[$row['priority']] ?></td>
                             <td data-cell="Created"><?= $row['created'] ?></td>
                             <td data-cell="Last Updated"><?= $row['last_updated'] ?></td>
                             <td data-cell="Due"><?= $row['due_date'] ?></td>

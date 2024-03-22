@@ -16,6 +16,7 @@
 	--theme-note-invisible: #4b4b4b;
 	--theme-white: #e0e0e0;
 	--success-color: #4caf50;
+	--tech-only-note: #fff;
 }
 
 input,
@@ -59,12 +60,17 @@ table a {
 }
 
 .notClientVisible {
-	background-color: var(--theme-note-invisible) !important;
-	color: var(--theme-white);
+	background-color: var(--tech-only-note) !important;
+	/* color: #000; */
 	display: block;
 	padding: 1em;
 	border-radius: 3px;
 	margin-bottom: 1em;
+
+}
+
+.notClientVisible * {
+	color: #000;
 }
 
 .clientVisible {

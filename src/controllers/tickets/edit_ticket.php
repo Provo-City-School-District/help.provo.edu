@@ -215,7 +215,13 @@ if (isset($ticket["client"])) {
     </div>
     <!-- Form for updating ticket information -->
     <div class="right">
-        <button class="new-note-button button">New Note</button>
+        <div style="display: flex; gap: 1em;">
+            <!-- Remove false for close ticket from readonly client view -->
+            <?php if (false || $readonly): ?>
+                <button id="close-ticket-button" class="button">Close Ticket</button>
+            <?php endif; ?>
+            <button class="new-note-button button">New Note</button>
+        </div>
     </div>
     <form id="updateTicketForm" method="POST" action="update_ticket.php">
         <!-- Add a submit button to update the information -->
@@ -859,7 +865,7 @@ if (isset($ticket["client"])) {
             </tr>
             </table>
         </div>
-        <button class="new-note-button" id="new-note-button">New Note</button>
+        <button class="new-note-button" id="new-note-button" style="margin-top: 10px;">New Note</button>
         <div id="new-note-form-background">
             <div id="new-note-form" style="display: none;">
                 <div id="new-note-form-header"><span id="new-note-form-close">&times;</span></div>
@@ -960,28 +966,30 @@ if (isset($ticket["client"])) {
                             <td data-cell="Created by"><?= $log_row['user_id'] ?></td>
                             <td class="ticket_note" data-cell="Change Made">
                                 <?php
-                                $str = "";
+                                $note_str = "";
+                                $old_value = sanitize_html(html_entity_decode(test_input($log_row['old_value'])));
+                                $new_value = sanitize_html(html_entity_decode(test_input($log_row['new_value'])));
                                 switch ($log_row['field_name']) {
                                     case 'Attachment':
-                                        $str = generateUpdateHTML('Attachment', null, $log_row['new_value'], 'Added', $uniqueNoteId);
+                                        $note_str = generateUpdateHTML('Attachment', null, $old_value, 'Added', $uniqueNoteId);
                                         break;
                                     case 'notedeleted':
-                                        $str = generateUpdateHTML('Note', $log_row['old_value'], null, 'Deleted', $uniqueNoteId);
+                                        $note_str = generateUpdateHTML('Note', $old_value, null, 'Deleted', $uniqueNoteId);
                                         break;
                                     case 'note':
-                                        $str = generateUpdateHTML('Note', $log_row['old_value'], $log_row['new_value'], $log_row['old_value'] != null ? 'Updated' : 'Created', $uniqueNoteId);
+                                        $note_str = generateUpdateHTML('Note', $old_value, $new_value, $old_value != null ? 'Updated' : 'Created', $uniqueNoteId);
                                         break;
                                     case 'description':
-                                        $str = generateUpdateHTML('Description', $log_row['old_value'], $log_row['new_value'], $log_row['old_value'] != null ? 'Updated' : 'Created', $uniqueNoteId);
+                                        $note_str = generateUpdateHTML('Description', $old_value, $new_value, $old_value != null ? 'Updated' : 'Created', $uniqueNoteId);
                                         break;
                                     case 'sent_emails':
-                                        $str = $log_row['new_value'];
+                                        $note_str = $new_value;
                                         break;
                                     default:
-                                        $str = formatFieldName($log_row['field_name']) . ' From: ' . html_entity_decode($log_row['old_value']) . ' To: ' . html_entity_decode($log_row['new_value']);
+                                        $note_str = formatFieldName($log_row['field_name']) . ' From: ' . html_entity_decode($old_value) . ' To: ' . html_entity_decode($new_value);
                                         break;
                                 }
-                                echo htmlspecialchars($str);
+                                echo $note_str;
                                 ?>
                             </td>
                         </tr>
@@ -1091,134 +1099,14 @@ if (isset($ticket["client"])) {
 
         // Then run the function every 60 seconds
         setInterval(updateTimeSinceLastNote, 60000); // 60000 milliseconds
+
+        $(document).ready(function() {
+            $('#close-ticket-button').click(function() {
+                alert("Not yet implemented.");
+            });
+        });
     </script>
 <?php endif; ?>
+
+<script src="/includes/js/pages/edit_ticket.js?v=1.0.0" type="text/javascript"></script>
 <?php include("footer.php"); ?>
-
-<script>
-    function split(val) {
-        return val.split(/,\s*/);
-    }
-
-    function extractLast(term) {
-        return split(term).pop();
-    }
-
-    $("#cc_emails").on("input", function() {
-        const new_value = extractLast($(this).val());
-        $("#cc_emails").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "/email_matches_ldap.php",
-                    method: "GET",
-                    data: {
-                        email: new_value
-                    },
-                    success: function(data, textStatus, xhr) {
-                        let mappedResults = $.map(data, function(item) {
-                            let itemLocation = item.location ? item.location : "unknown";
-                            return $.extend(item, {
-                                label: item.firstName + ' ' + item.lastName + ' (' + itemLocation + ')',
-                                value: item.email
-                            });
-                        });
-                        response(mappedResults);
-                    },
-                    error: function() {
-                        alert("Error: Autocomplete AJAX call failed");
-                    }
-                });
-            },
-            minLength: 3,
-            search: function() {
-                const term = extractLast(this.value);
-                if (term.length < 1) {
-                    return false;
-                }
-            },
-            focus: function() {
-                // prevent value inserted on focus
-                return false;
-            },
-            select: function(event, ui) {
-                let terms = split(this.value);
-
-                terms.pop();
-                terms.push(ui.item.value);
-                terms.push("");
-
-                this.value = terms.join(",");
-                return false;
-            }
-        });
-    });
-
-    $("#bcc_emails").on("input", function() {
-        const new_value = extractLast($(this).val());
-        console.log("running");
-        $("#bcc_emails").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "/email_matches_ldap.php",
-                    method: "GET",
-                    data: {
-                        email: new_value
-                    },
-                    success: function(data, textStatus, xhr) {
-                        let mappedResults = $.map(data, function(item) {
-                            let itemLocation = item.location ? item.location : "unknown";
-                            return $.extend(item, {
-                                label: item.firstName + ' ' + item.lastName + ' (' + itemLocation + ')',
-                                value: item.email
-                            });
-                        });
-                        response(mappedResults);
-                    },
-                    error: function() {
-                        alert("Error: Autocomplete AJAX call failed");
-                    }
-                });
-            },
-            minLength: 3,
-            search: function() {
-                const term = extractLast(this.value);
-                if (term.length < 1) {
-                    return false;
-                }
-            },
-            focus: function() {
-                // prevent value inserted on focus
-                return false;
-            },
-            select: function(event, ui) {
-                let terms = split(this.value);
-
-                terms.pop();
-                terms.push(ui.item.value);
-                terms.push("");
-
-                this.value = terms.join(",");
-                return false;
-            }
-        });
-    });
-</script>
-<script>
-    var updateTicketForm = document.querySelector("#updateTicketForm");
-    if (updateTicketForm) {
-        updateTicketForm.addEventListener("submit", function(e) {
-            var statusField = document.querySelector("#status");
-            var employeeField = document.querySelector("#employee");
-
-            if (
-                (statusField.value === "resolved" || statusField.value === "closed") &&
-                (employeeField.value === "" || employeeField.value === "unassigned")
-            ) {
-                e.preventDefault();
-                alert(
-                    "You cannot resolve/close a ticket if ticket is not assigned to an employee. Please assign the ticket to an employee first."
-                );
-            }
-        });
-    }
-</script>

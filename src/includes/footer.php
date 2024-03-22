@@ -35,7 +35,7 @@
 <script src="/includes/js/clientSearch.js?v=1.0.0" type="text/javascript"></script>
 <script src="/includes/js/tinyMCE-conf.js?v=1.0.0" type="text/javascript"></script>
 <script src="/includes/js/dataTables-conf.js?v=1.0.0" type="text/javascript"></script>
-<script src="/includes/js/main.js?v=1.0.24" type="text/javascript"></script>
+<script src="/includes/js/global.js?v=1" type="text/javascript"></script>
 </body>
 
 </html>

@@ -15,12 +15,14 @@
 	--crit-color: #f44336;
 	--theme-white: #ebebeb;
 	--success-color: #4caf50;
+	--tech-only-note: ##fff;
 }
 
 .notClientVisible {
-	background-color: var(--theme-white) !important;
+	background-color: var(--tech-only-note) !important;
 	color: var(--theme-black);
 	display: block;
+	border: 1px solid var(--theme-primary);
 	padding: 1em;
 	border-radius: 3px;
 	margin-bottom: 1em;

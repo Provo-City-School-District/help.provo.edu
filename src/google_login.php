@@ -104,11 +104,11 @@ if (isset($_GET['code'])) {
             'supervisor_username' => $local_query_data['supervisor_username'],
             'is_location_manager' => $local_query_data['is_location_manager'],
             'location_manager_sitenumber' => $local_query_data['location_manager_sitenumber'],
-
         );
         // Set color scheme
         $_SESSION['color_scheme'] = $local_query_data['color_scheme'];
         $_SESSION['note_order'] = $local_query_data['note_order'];
+        $_SESSION['hide_alerts'] = $local_query_data['hide_alerts'];
         // Store user's permissions in the session
         $_SESSION['permissions'] = $permissions;
 

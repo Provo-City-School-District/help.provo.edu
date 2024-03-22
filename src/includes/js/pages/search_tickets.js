@@ -81,7 +81,7 @@ $("#search_client").on("input", function() {
     $("#search_client").autocomplete({
         source: function (request, response) {
             $.ajax({
-                url: "/username_search_ldap.php",
+                url: "/ajax/username_search_ldap.php",
                 method: "GET",
                 data: {username: new_value},
                 success: function(data, textStatus, xhr) {

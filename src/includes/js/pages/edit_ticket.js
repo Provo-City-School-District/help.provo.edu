@@ -11,7 +11,7 @@ $("#cc_emails").on("input", function () {
   $("#cc_emails").autocomplete({
     source: function (request, response) {
       $.ajax({
-        url: "/email_matches_ldap.php",
+        url: "/ajax/email_matches_ldap.php",
         method: "GET",
         data: {
           email: new_value,
@@ -67,7 +67,7 @@ $("#bcc_emails").on("input", function () {
   $("#bcc_emails").autocomplete({
     source: function (request, response) {
       $.ajax({
-        url: "/email_matches_ldap.php",
+        url: "/ajax/email_matches_ldap.php",
         method: "GET",
         data: {
           email: new_value,

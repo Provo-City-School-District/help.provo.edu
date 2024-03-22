@@ -966,28 +966,30 @@ if (isset($ticket["client"])) {
                             <td data-cell="Created by"><?= $log_row['user_id'] ?></td>
                             <td class="ticket_note" data-cell="Change Made">
                                 <?php
-                                $str = "";
+                                $note_str = "";
+                                $old_value = sanitize_html(html_entity_decode(test_input($log_row['old_value'])));
+                                $new_value = sanitize_html(html_entity_decode(test_input($log_row['new_value'])));
                                 switch ($log_row['field_name']) {
                                     case 'Attachment':
-                                        $str = generateUpdateHTML('Attachment', null, $log_row['new_value'], 'Added', $uniqueNoteId);
+                                        $note_str = generateUpdateHTML('Attachment', null, $old_value, 'Added', $uniqueNoteId);
                                         break;
                                     case 'notedeleted':
-                                        $str = generateUpdateHTML('Note', $log_row['old_value'], null, 'Deleted', $uniqueNoteId);
+                                        $note_str = generateUpdateHTML('Note', $old_value, null, 'Deleted', $uniqueNoteId);
                                         break;
                                     case 'note':
-                                        $str = generateUpdateHTML('Note', $log_row['old_value'], $log_row['new_value'], $log_row['old_value'] != null ? 'Updated' : 'Created', $uniqueNoteId);
+                                        $note_str = generateUpdateHTML('Note', $old_value, $new_value, $old_value != null ? 'Updated' : 'Created', $uniqueNoteId);
                                         break;
                                     case 'description':
-                                        $str = generateUpdateHTML('Description', $log_row['old_value'], $log_row['new_value'], $log_row['old_value'] != null ? 'Updated' : 'Created', $uniqueNoteId);
+                                        $note_str = generateUpdateHTML('Description', $old_value, $new_value, $old_value != null ? 'Updated' : 'Created', $uniqueNoteId);
                                         break;
                                     case 'sent_emails':
-                                        $str = $log_row['new_value'];
+                                        $note_str = $new_value;
                                         break;
                                     default:
-                                        $str = formatFieldName($log_row['field_name']) . ' From: ' . html_entity_decode($log_row['old_value']) . ' To: ' . html_entity_decode($log_row['new_value']);
+                                        $note_str = formatFieldName($log_row['field_name']) . ' From: ' . html_entity_decode($old_value) . ' To: ' . html_entity_decode($new_value);
                                         break;
                                 }
-                                echo htmlspecialchars($str);
+                                echo $note_str;
                                 ?>
                             </td>
                         </tr>

@@ -1,0 +1,18 @@
+.tabNav {
+    overflow: hidden;
+    display: flex;
+    gap: 1em;
+}
+
+/* Change background color of buttons on hover, or active */
+.tabNav button:hover,
+.tabNav button.active {
+    background-color: var(--odd-color);
+    color: var(--theme-black);
+}
+
+/* Style the tab content */
+.tabcontent {
+    display: none;
+    margin-top: 1em;
+}

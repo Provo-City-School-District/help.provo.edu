@@ -97,6 +97,12 @@ $current_page = $_SERVER['REQUEST_URI'];
         <link rel="stylesheet" type="text/css" href="/includes/css/login-styles.css?v=0.1.18">
     <?php
     }
+    //load search page styles
+    if ($_SERVER['REQUEST_URI'] === '/index.php' || $_SERVER['REQUEST_URI'] === '/controllers/tickets/search_tickets.php') {
+    ?>
+        <link rel="stylesheet" type="text/css" href="/includes/css/search-styles.css?v=1.0.0">
+    <?php
+    }
     ?>
 </head>
 

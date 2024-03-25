@@ -217,7 +217,7 @@ if (isset($ticket["client"])) {
     <div class="right">
         <div style="display: flex; gap: 1em;">
             <!-- Remove false for close ticket from readonly client view -->
-            <?php if (false || $readonly): ?>
+            <?php if (false || $readonly) : ?>
                 <button id="close-ticket-button" class="button">Close Ticket</button>
             <?php endif; ?>
             <button class="new-note-button button">New Note</button>
@@ -1108,5 +1108,5 @@ if (isset($ticket["client"])) {
     </script>
 <?php endif; ?>
 
-<script src="/includes/js/pages/edit_ticket.js?v=1.0.0" type="text/javascript"></script>
+<script src="/includes/js/pages/edit_ticket.js?v=1.0.01" type="text/javascript"></script>
 <?php include("footer.php"); ?>

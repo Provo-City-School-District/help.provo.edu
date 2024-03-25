@@ -114,6 +114,10 @@ input[type=submit] {
 	display: none;
 }
 
+.sort-value {
+	display: none;
+}
+
 .center {
 	text-align: center;
 	margin: 0 auto;

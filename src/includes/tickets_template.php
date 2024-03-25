@@ -107,7 +107,7 @@ function display_tickets_table($tickets, $database)
             '</td>' .
             '<td data-cell="Request Category">' .  $request_type_name . '</td>
             <td data-cell="Current Status">' . $ticket["status"] . '</td>
-            <td data-cell="Priority">' . $priorityTypes[$ticket["priority"]] . '</td>
+            <td data-cell="Priority">' . '<span class="sort-value">' . $ticket['priority'] . '</span>' . $priorityTypes[$ticket["priority"]] . '</td>
             <td data-cell="Created">' . $ticket["created"] . '</td>
             <td data-cell="Last Updated">' . $ticket["last_updated"] . '</td>
             <td data-cell="Due">' . $ticket["due_date"] . '</td>

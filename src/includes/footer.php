@@ -32,7 +32,7 @@
 <?php if (basename($_SERVER['PHP_SELF']) != 'index.php') : ?>
     <script src="/includes/js/inactiveModal.js?v=1.0.0" type="text/javascript"></script>
 <?php endif; ?>
-<script src="/includes/js/clientSearch.js?v=1.0.0" type="text/javascript"></script>
+<!-- <script src="/includes/js/clientSearch.js?v=1.0.0" type="text/javascript"></script> -->
 <script src="/includes/js/tinyMCE-conf.js?v=1.0.0" type="text/javascript"></script>
 <script src="/includes/js/dataTables-conf.js?v=1.0.0" type="text/javascript"></script>
 <script src="/includes/js/global.js?v=1" type="text/javascript"></script>

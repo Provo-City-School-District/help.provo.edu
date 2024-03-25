@@ -218,8 +218,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($old_ticket_data['status'], $updatedStatus) && $old_ticket_data['status'] != $updatedStatus) {
         logTicketChange($database, $ticket_id, $updatedby, $statusColumn, $old_ticket_data['status'], $updatedStatus);
         $changesMessage .= "<li>Changed Status from " . $old_ticket_data['status'] . " to " . $updatedStatus . "</li>";
-        if ($updatedStatus == "resolved") {
-            removeAlert($database, $pastDueMessage, $ticket_id);
+        if ($updatedPriority == "pending" || $updatedPriority == "resolved" || $updatedPriority == "closed") {
+            // Check if the ticket has an alert about not being updated in last 48 hours and clear it since the ticket was just updated.
+            removeAlert($database, $alert48Message, $ticket_id);
+            removeAlert($database, $alert7DayMessage, $ticket_id);
+            removeAlert($database, $alert15DayMessage, $ticket_id);
+            removeAlert($database, $alert20DayMessage, $ticket_id);
         }
     }
 

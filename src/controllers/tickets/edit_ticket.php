@@ -198,9 +198,16 @@ if (isset($ticket["client"])) {
     <div id="ticket-title-container">
         <h1 id="ticket-title">Ticket #<?= $ticket['id'] ?></h1>
     </div>
-    <br>
-    <br>
+    <?php
+    if (isset($ticket['parent_ticket']) && $ticket['parent_ticket'] != null) {
 
+    ?>
+        <div class="parentTicket">
+            <p>Parent Ticket: <a href="edit_ticket.php?id=<?= $ticket['parent_ticket'] ?>"><?= $ticket['parent_ticket'] ?></a></p>
+        </div>
+    <?php
+    }
+    ?>
     <div id="search-for-client">
         <h2>Client Search:</h2>
         <form id="search-form" method="post">

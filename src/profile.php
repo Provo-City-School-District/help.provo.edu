@@ -87,6 +87,15 @@ if ($_SESSION['permissions']['is_tech'] == 1) {
         <label for="hide_alerts">Hide Alerts Banner on "My Tickets" Page:</label>
         <input type="checkbox" id="hide_alerts" name="hide_alerts" <?= $user_data['hide_alerts'] == 1 ? 'checked' : '' ?>>
     </div>
+    <div>
+        <label for="ticket_limit">Default Entries Per Page:</label>
+        <select id="ticket_limit" name="ticket_limit">
+            <option value="10" <?= $user_data['ticket_limit'] == 10 ? 'selected' : '' ?>>10</option>
+            <option value="25" <?= $user_data['ticket_limit'] == 25 ? 'selected' : '' ?>>25</option>
+            <option value="50" <?= $user_data['ticket_limit'] == 50 ? 'selected' : '' ?>>50</option>
+            <option value="100" <?= $user_data['ticket_limit'] == 100 ? 'selected' : '' ?>>100</option>
+        </select>
+    </div>
 
     <input type="submit" value="Update">
 </form>

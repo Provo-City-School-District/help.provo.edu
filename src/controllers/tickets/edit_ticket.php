@@ -1105,26 +1105,28 @@ if (isset($ticket["client"])) {
 
         // Then run the function every 60 seconds
         setInterval(updateTimeSinceLastNote, 60000); // 60000 milliseconds
-
-        $(document).ready(function() {
-            $('#close-ticket-button').click(function() {
-                $.ajax({
-                    url: "/ajax/close_ticket.php",
-                    method: "POST",
-                    data: {
-                        ticket_id: <?= $ticket_id ?>,
-                    },
-                    success: function (data, textStatus, xhr) {
-                        console.log("Ticket closed successfully");
-                    },
-                    error: function () {
-                        alert("Error: Autocomplete AJAX call failed");
-                    },
-                });
-            });
-        });
     </script>
 <?php endif; ?>
 
 <script src="/includes/js/pages/edit_ticket.js?v=1.0.01" type="text/javascript"></script>
 <?php include("footer.php"); ?>
+<script>
+$(document).ready(function() {
+	$('#close-ticket-button').click(function() {
+		$.ajax({
+			url: "/ajax/close_ticket.php",
+			method: "POST",
+			data: {
+				ticket_id: <?= $ticket_id ?>,
+			},
+			success: function (data, textStatus, xhr) {
+				console.log("Ticket closed successfully");
+				location.reload();
+			},
+			error: function () {
+				alert("Error: Autocomplete AJAX call failed");
+			},
+		});
+	});
+});
+</script>

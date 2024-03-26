@@ -1115,7 +1115,7 @@ if (isset($ticket["client"])) {
                         ticket_id: <?= $ticket_id ?>,
                     },
                     success: function (data, textStatus, xhr) {
-                        alert("based");
+                        console.log("Ticket closed successfully");
                     },
                     error: function () {
                         alert("Error: Autocomplete AJAX call failed");

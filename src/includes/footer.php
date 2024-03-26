@@ -28,6 +28,7 @@
 <script src="/vendor/tinymce/tinymce/tinymce.min.js" referrerpolicy="origin"></script>
 <script>
     var userPref = '<?php echo isset($_SESSION['color_scheme']) ? $_SESSION['color_scheme'] : 'light'; ?>';
+    var ticketLimit = '<?php echo isset($_SESSION['ticket_limit']) ? $_SESSION['ticket_limit'] : 10; ?>';
 </script>
 <?php if (basename($_SERVER['PHP_SELF']) != 'index.php') : ?>
     <script src="/includes/js/inactiveModal.js?v=1.0.0" type="text/javascript"></script>

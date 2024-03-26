@@ -53,7 +53,7 @@ $(document).ready(function () {
 $(document).ready(function () {
   table = $(".search-data-table").DataTable({
     paging: true, // Enable pagination
-    pageLength: 10, // Set the number of rows per page
+    pageLength: 50, // Set the number of rows per page
     stateSave: true, // Enable state saving
     ordering: true, // Enable sorting
     autoWidth: false, // Disable auto width calculation

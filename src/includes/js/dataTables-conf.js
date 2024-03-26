@@ -5,7 +5,8 @@ var table;
 $(document).ready(function () {
   // Define general properties
   var options = {
-    paging: true, // Enable pagination
+    paging: true,
+    pageLength: ticketLimit, // Enable pagination
     stateSave: true, // Enable state saving
     ordering: true, // Enable sorting
     columns: [

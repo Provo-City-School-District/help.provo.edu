@@ -223,8 +223,7 @@ if (isset($ticket["client"])) {
     <!-- Form for updating ticket information -->
     <div class="right">
         <div style="display: flex; gap: 1em;">
-            <!-- Remove false for close ticket from readonly client view -->
-            <?php if (false || $readonly) : ?>
+            <?php if ($readonly) : ?>
                 <button id="close-ticket-button" class="button">Close Ticket</button>
             <?php endif; ?>
             <button class="new-note-button button">New Note</button>
@@ -1109,7 +1108,19 @@ if (isset($ticket["client"])) {
 
         $(document).ready(function() {
             $('#close-ticket-button').click(function() {
-                alert("Not yet implemented.");
+                $.ajax({
+                    url: "/ajax/close_ticket.php",
+                    method: "POST",
+                    data: {
+                        ticket_id: <?= $ticket_id ?>,
+                    },
+                    success: function (data, textStatus, xhr) {
+                        alert("based");
+                    },
+                    error: function () {
+                        alert("Error: Autocomplete AJAX call failed");
+                    },
+                });
             });
         });
     </script>

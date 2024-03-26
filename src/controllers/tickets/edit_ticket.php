@@ -223,8 +223,7 @@ if (isset($ticket["client"])) {
     <!-- Form for updating ticket information -->
     <div class="right">
         <div style="display: flex; gap: 1em;">
-            <!-- Remove false for close ticket from readonly client view -->
-            <?php if (false || $readonly) : ?>
+            <?php if ($readonly) : ?>
                 <button id="close-ticket-button" class="button">Close Ticket</button>
             <?php endif; ?>
             <button class="new-note-button button">New Note</button>
@@ -459,7 +458,7 @@ if (isset($ticket["client"])) {
                         <option value="open" <?= ($ticket['status'] == 'open') ? ' selected' : '' ?>>Open</option>
                         <option value="closed" <?= ($ticket['status'] == 'closed') ? ' selected' : '' ?>>Closed</option>
                         <option value="resolved" <?= ($ticket['status'] == 'resolved') ? ' selected' : '' ?>>Resolved</option>
-                        <option value="pending" <?= ($ticket['status'] == 'pending') ? ' selected' : '' ?>>Pending</option>
+                        <!-- <option value="pending" <?= ($ticket['status'] == 'pending') ? ' selected' : '' ?>>Pending</option> -->
                         <option value="vendor" <?= ($ticket['status'] == 'vendor') ? ' selected' : '' ?>>Vendor</option>
                         <option value="maintenance" <?= ($ticket['status'] == 'maintenance') ? ' selected' : '' ?>>Maintenance</option>
                     </select>
@@ -1106,14 +1105,28 @@ if (isset($ticket["client"])) {
 
         // Then run the function every 60 seconds
         setInterval(updateTimeSinceLastNote, 60000); // 60000 milliseconds
-
-        $(document).ready(function() {
-            $('#close-ticket-button').click(function() {
-                alert("Not yet implemented.");
-            });
-        });
     </script>
 <?php endif; ?>
 
 <script src="/includes/js/pages/edit_ticket.js?v=1.0.01" type="text/javascript"></script>
 <?php include("footer.php"); ?>
+<script>
+$(document).ready(function() {
+	$('#close-ticket-button').click(function() {
+		$.ajax({
+			url: "/ajax/close_ticket.php",
+			method: "POST",
+			data: {
+				ticket_id: <?= $ticket_id ?>,
+			},
+			success: function (data, textStatus, xhr) {
+				console.log("Ticket closed successfully");
+				location.reload();
+			},
+			error: function () {
+				alert("Error: Autocomplete AJAX call failed");
+			},
+		});
+	});
+});
+</script>

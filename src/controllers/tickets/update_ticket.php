@@ -218,7 +218,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($old_ticket_data['status'], $updatedStatus) && $old_ticket_data['status'] != $updatedStatus) {
         logTicketChange($database, $ticket_id, $updatedby, $statusColumn, $old_ticket_data['status'], $updatedStatus);
         $changesMessage .= "<li>Changed Status from " . $old_ticket_data['status'] . " to " . $updatedStatus . "</li>";
-        if ($updatedPriority == "pending" || $updatedPriority == "resolved" || $updatedPriority == "closed") {
+        if ($updatedPriority == "resolved" || $updatedPriority == "closed") {
             // Check if the ticket has an alert about not being updated in last 48 hours and clear it since the ticket was just updated.
             removeAlert($database, $alert48Message, $ticket_id);
             removeAlert($database, $alert7DayMessage, $ticket_id);
@@ -265,8 +265,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $send_client_email = isset($_POST['send_emails']) && ($_POST['send_emails'] == "send_emails");
     $send_cc_bcc_emails = isset($_POST['send_cc_bcc_emails']) && ($_POST['send_cc_bcc_emails'] == "send_cc_bcc_emails");
 
-    // Force emails if status was resolved or pending
-    if ($updatedStatus == "pending" || $updatedStatus == "resolved") {
+    // Force emails if status was resolved
+    if ($updatedStatus == "resolved") {
         $send_client_email = true;
         $send_cc_bcc_emails = true;
     }

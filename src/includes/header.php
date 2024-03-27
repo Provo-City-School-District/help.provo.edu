@@ -229,7 +229,7 @@ $current_page = $_SERVER['REQUEST_URI'];
                         }
                         ?>
                         <li><a href="/controllers/tickets/recent_tickets.php">Recent Tickets</a></li>
-                        <li><a href="/controllers/tickets/search_tickets.php">Search Tickets</a></li>
+
                     <?php
                     } else {
                     ?>
@@ -238,7 +238,7 @@ $current_page = $_SERVER['REQUEST_URI'];
                     <?php
                     }
                     ?>
-
+                    <li><a href="/controllers/tickets/search_tickets.php">Search Tickets</a></li>
 
                 </ul>
             <?php

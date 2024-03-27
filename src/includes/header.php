@@ -22,7 +22,7 @@ if (isset($_SESSION['username'])) {
 }
 
 
-
+$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $subord_query = "SELECT count(supervisor_username) as supervisor_username FROM users WHERE supervisor_username = ?";
 $subord_stmt = $database->prepare($subord_query);
 $subord_stmt->bind_param("s", $userId);
@@ -98,7 +98,7 @@ $current_page = $_SERVER['REQUEST_URI'];
     <?php
     }
     //load search page styles
-    if ($_SERVER['REQUEST_URI'] === '/index.php' || $_SERVER['REQUEST_URI'] === '/controllers/tickets/search_tickets.php') {
+    if ($path === '/controllers/tickets/search_tickets.php') {
     ?>
         <link rel="stylesheet" type="text/css" href="/includes/css/search-styles.css?v=1.0.0">
     <?php

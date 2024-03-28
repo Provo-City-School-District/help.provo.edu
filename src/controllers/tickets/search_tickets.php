@@ -66,32 +66,37 @@ else {
 
     // Handle Search Form Submission
     function handleSubmit(formId, urlPath) {
-        document.getElementById(formId).addEventListener("submit", function(e) {
-            e.preventDefault();
-            console.log(formId);
-            console.log(urlPath);
-            var url = new URL(urlPath, window.location.origin);
-            var formData = new FormData(this);
-            var params = new URLSearchParams(formData);
+        var form = document.getElementById(formId);
+        if (form) {
+            form.addEventListener("submit", function(e) {
+                e.preventDefault();
+                console.log(formId);
+                console.log(urlPath);
+                var url = new URL(urlPath, window.location.origin);
+                var formData = new FormData(this);
+                var params = new URLSearchParams(formData);
 
-            url.search = params;
+                url.search = params;
 
-            fetch(url, {
-                    method: "GET",
-                })
-                .then((response) => response.text())
-                .then((data) => {
-                    // Display the data in your page
-                    document.getElementById("results").innerHTML = data;
-                })
-                .catch((error) => {
-                    console.error("Error:", error);
-                });
-        });
+                fetch(url, {
+                        method: "GET",
+                    })
+                    .then((response) => response.text())
+                    .then((data) => {
+                        // Display the data in your page
+                        document.getElementById("results").innerHTML = data;
+                    })
+                    .catch((error) => {
+                        console.error("Error:", error);
+                    });
+            });
+        } else {
+            console.log('Form with ID ' + formId + ' does not exist.');
+        }
     }
+    handleSubmit("searchClient", "includes/search_tickets_client_query_builder.php");
     handleSubmit("searchTickets", "includes/search_tickets_tech_query_builder.php");
     handleSubmit("searchNotes", "includes/search_notes_query_builder.php");
-    handleSubmit("searchClient", "includes/search_tickets_client_query_builder.php");
 </script>
 
 

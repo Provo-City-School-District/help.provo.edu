@@ -147,6 +147,7 @@ function add_note_with_filters(
         $result = $database->execute_query("UPDATE tickets SET tickets.status = 'open' WHERE tickets.id = ?", [$ticket_id_clean]);
         if (!$result) {
             log_app(LOG_ERR, "Failed to update ticket status for id=$operating_ticket");
+			return false;
         }
 
         // Email tech if client has updated ticket

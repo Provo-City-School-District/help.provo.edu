@@ -246,19 +246,21 @@ if (isset($ticket["client"])) {
 			<div class="currentClient">
 				<div>
 					<div class="fake-h3">Client Info </div>
-					<?= $clientFirstName . " " . $clientLastName . " (" . $ticket['client'] . ")" ?><br><br>
-					<?php
-						$result = get_ldap_info($ticket['client'], LDAP_EMPLOYEE_ID | LDAP_EMPLOYEE_LOCATION | LDAP_EMPLOYEE_JOB_TITLE);
+						<div id="client-display">
+						<?= $clientFirstName . " " . $clientLastName . " (" . $ticket['client'] . ")" ?><br><br>
+						<?php
+							$result = get_ldap_info($ticket['client'], LDAP_EMPLOYEE_ID | LDAP_EMPLOYEE_LOCATION | LDAP_EMPLOYEE_JOB_TITLE);
 
-						$employee_id = $result["employeeid"];
-						$employee_location = $result["location"];
-						$job_title = $result["job_title"];
-					?>
-					<?php if (!$readonly): ?>
-					ID: <?= $employee_id ?><br>
-					<?php endif; ?>
-					Location: <?= location_name_from_id($employee_location) ?><br>
-					Job Title: <?= $job_title ?>
+							$employee_id = $result["employeeid"];
+							$employee_location = $result["location"];
+							$job_title = $result["job_title"];
+						?>
+						<?php if (!$readonly): ?>
+						ID: <?= $employee_id ?><br>
+						<?php endif; ?>
+						Location: <?= location_name_from_id($employee_location) ?><br>
+						Job Title: <?= $job_title ?>
+						</div>
 				</div>
 				<?php if (!$readonly): ?>
 				<div class="right">

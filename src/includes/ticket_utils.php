@@ -144,7 +144,8 @@ function add_note_with_filters(
     // Send email to assigned tech on update if the client updates ticket
     $client = client_for_ticket($ticket_id_clean);
     if (!user_is_tech($username) && ($username == $client)) {
-        $result = $database->execute_query("UPDATE tickets SET tickets.status = 'open' WHERE tickets.id = ?", [$ticket_id_clean]);
+		// set priority to standard
+        $result = $database->execute_query("UPDATE tickets SET tickets.status = 'open', tickets.priority = 10 WHERE tickets.id = ?", [$ticket_id_clean]);
         if (!$result) {
             log_app(LOG_ERR, "Failed to update ticket status for id=$operating_ticket");
 			return false;

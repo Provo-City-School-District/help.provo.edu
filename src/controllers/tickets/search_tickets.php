@@ -36,10 +36,11 @@ if (user_is_tech($_SESSION['username'])) {
 
 </div>
 
+
+<?php include("footer.php"); ?>
 <script src="/includes/js/pages/search_tickets.js?v=1.0.0" type="text/javascript"></script>
 <script>
     handleSubmit("searchClient", "includes/search_tickets_client_query_builder.php");
     handleSubmit("searchTickets", "includes/search_tickets_tech_query_builder.php");
     handleSubmit("searchNotes", "includes/search_notes_query_builder.php");
 </script>
-<?php include("footer.php"); ?>

@@ -76,30 +76,92 @@ if (searchResults) {
   });
 }
 
-$("#search_client").on("input", function() {
-    const new_value = $(this).val();
-    $("#search_client").autocomplete({
-        source: function (request, response) {
-            $.ajax({
-                url: "/ajax/username_search_ldap.php",
-                method: "GET",
-                data: {username: new_value},
-                success: function(data, textStatus, xhr) {
-                    let mappedResults = $.map(data, function (item) {
-                        let itemLocation = item.location ? item.location : "unknown";
-                        return $.extend(item, { label: item.firstName + ' ' + item.lastName + ' (' + itemLocation + ')', value: item.username });
-                    });
-                    response(mappedResults);
-                },
-                error: function() {
-                    alert("Error: Autocomplete AJAX call failed");
-                }
+$("#search_client").on("input", function () {
+  const new_value = $(this).val();
+  $("#search_client").autocomplete({
+    source: function (request, response) {
+      $.ajax({
+        url: "/ajax/username_search_ldap.php",
+        method: "GET",
+        data: { username: new_value },
+        success: function (data, textStatus, xhr) {
+          let mappedResults = $.map(data, function (item) {
+            let itemLocation = item.location ? item.location : "unknown";
+            return $.extend(item, {
+              label:
+                item.firstName +
+                " " +
+                item.lastName +
+                " (" +
+                itemLocation +
+                ")",
+              value: item.username,
             });
+          });
+          response(mappedResults);
         },
-        minLength: 2,
-        focus: function () {
-            // prevent value inserted on focus
-            return false;
-        }
-    });
+        error: function () {
+          alert("Error: Autocomplete AJAX call failed");
+        },
+      });
+    },
+    minLength: 2,
+    focus: function () {
+      // prevent value inserted on focus
+      return false;
+    },
+  });
 });
+
+function openTab(evt, tabName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    if (tabcontent[i]) {
+      tabcontent[i].style.display = "none";
+    }
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    if (tablinks[i]) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+  }
+  var tab = document.getElementById(tabName);
+  if (tab) {
+    tab.style.display = "block";
+  }
+  if (evt.currentTarget) {
+    evt.currentTarget.className += " active";
+  }
+}
+// Handle Search Form Submission
+function handleSubmit(formId, urlPath) {
+  var form = document.getElementById(formId);
+  if (form) {
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      // console.log(formId);
+      // console.log(urlPath);
+      var url = new URL(urlPath, window.location.origin);
+      var formData = new FormData(this);
+      var params = new URLSearchParams(formData);
+
+      url.search = params;
+
+      fetch(url, {
+        method: "GET",
+      })
+        .then((response) => response.text())
+        .then((data) => {
+          // Display the data in your page
+          document.getElementById("results").innerHTML = data;
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    });
+  } else {
+    // console.log("Form with ID " + formId + " does not exist.");
+  }
+}

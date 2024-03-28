@@ -1,2 +1,2 @@
 <?php
-echo "Submitted for Notes Properly";
+echo "Submitted for archived Tickets Properly";

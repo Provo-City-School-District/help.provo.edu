@@ -243,24 +243,29 @@ if (isset($ticket["client"])) {
             <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
             <input type="hidden" name="madeby" value="<?= $_SESSION['username'] ?>">
             <input type="hidden" id="client" name="client" value="<?= $ticket['client'] ?>">
-            <?php
-            // If the user is not a tech, display read only form fields if is client
-            if ($readonly) {
-            ?>
-                <div class="readonlyClient">
-                    <span>Client: </span> <span id="client-display"><?= $clientFirstName . " " . $clientLastName . " (" . $ticket['client'] . ")" ?></span>
-                </div>
-            <?php
+			<div class="currentClient">
+				<div>
+					<div class="fake-h3">Client Info </div>
+					<?= $clientFirstName . " " . $clientLastName . " (" . $ticket['client'] . ")" ?><br><br>
+					<?php
+						$result = get_ldap_info($ticket['client'], LDAP_EMPLOYEE_ID | LDAP_EMPLOYEE_LOCATION | LDAP_EMPLOYEE_JOB_TITLE);
 
-            } else {
-            ?>
-                <div class="currentClient">
-                    <span>Client: </span> <span id="client-display"><?= $clientFirstName . " " . $clientLastName . " (" . $ticket['client'] . ")" ?></span> <a>Change Client</a>
-                </div>
-            <?php
-            }
-            ?>
-
+						$employee_id = $result["employeeid"];
+						$employee_location = $result["location"];
+						$job_title = $result["job_title"];
+					?>
+					<?php if (!$readonly): ?>
+					ID: <?= $employee_id ?><br>
+					<?php endif; ?>
+					Location: <?= location_name_from_id($employee_location) ?><br>
+					Job Title: <?= $job_title ?>
+				</div>
+				<?php if (!$readonly): ?>
+				<div class="right">
+					<a>Change Client</a>
+				</div>
+				<?php endif; ?>
+			</div>
             <div>
                 <span>Created:</span> <?= $ticket['created'] ?>
             </div>
@@ -1108,7 +1113,7 @@ if (isset($ticket["client"])) {
     </script>
 <?php endif; ?>
 
-<script src="/includes/js/pages/edit_ticket.js?v=1.0.01" type="text/javascript"></script>
+<script src="/includes/js/pages/edit_ticket.js?v=1.0.02" type="text/javascript"></script>
 <?php include("footer.php"); ?>
 <script>
 $(document).ready(function() {

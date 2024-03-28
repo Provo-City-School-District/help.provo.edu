@@ -9,7 +9,10 @@ body {
 	font-family: "Campton-Medium";
 	background-color: var(--page-background);
 }
-
+.fake-h3 {
+	font-size: 26px;
+	font-weight: bold;
+}
 a {
 	color: var(--theme-url-color);
 	text-decoration: none;
@@ -607,13 +610,14 @@ select {
 		}
 
 		.currentClient {
+			padding: 0.5em;
 			display: grid;
-			grid-template-columns: minmax(min-content, 160px) 1fr 1fr;
+			grid-template-columns: minmax(min-content, 540px) 1fr;
 		}
 
 		.readonlyClient {
 			display: grid;
-			grid-template-columns: minmax(min-content, 160px) 1fr;
+			grid-template-columns: minmax(min-content, 540px) 1fr;
 		}
 
 		.currentClient,

@@ -378,7 +378,7 @@ function client_for_ticket(int $ticket_id)
         log_app(LOG_ERR, "[client_for_ticket] Failed to get location data");
     }
 
-    return $client_data["client"];
+    return strtolower($client_data["client"]);
 }
 
 function logTicketChange($database, $ticket_id, $updatedby, $field_name, $old_value, $new_value)

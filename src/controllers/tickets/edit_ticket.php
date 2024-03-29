@@ -31,9 +31,7 @@ if (!$is_ticket_shared_res) {
 }
 
 if ($is_ticket_shared_res->num_rows > 0) {
-	
-	$is_ticket_shared_data = $is_ticket_shared_res->fetch_assoc();
-	foreach ($is_ticket_shared_data as $row) {
+	while ($row = mysql_fetch_array($is_ticket_shared_res, MYSQL_ASSOC)) {
 		$tmp_username = $is_ticket_shared_data["username"];
 		log_app(LOG_INFO, "is_ticket_shared fetched username: $tmp_username ");
 		if ($tmp_username != $username)

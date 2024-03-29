@@ -1,6 +1,7 @@
 <?php
 require_once("block_file.php");
 require_once("sanitization_utils.php");
+require_once("email_utils.php");
 
 ob_start();
 include("ticket_utils.php");
@@ -247,7 +248,7 @@ if (isset($ticket["client"])) {
 				<div>
 					<div class="fake-h3">Client Info </div>
 						<div id="client-display">
-						<?= $clientFirstName . " " . $clientLastName . " (" . $ticket['client'] . ")" ?><br><br>
+						<?= $clientFirstName . " " . $clientLastName . " — " . email_address_from_username(strtolower(($ticket['client']))) ?><br><br>
 						<?php
 							$result = get_ldap_info($ticket['client'], LDAP_EMPLOYEE_ID | LDAP_EMPLOYEE_LOCATION | LDAP_EMPLOYEE_JOB_TITLE);
 
@@ -264,7 +265,7 @@ if (isset($ticket["client"])) {
 				</div>
 				<?php if (!$readonly): ?>
 				<div class="right">
-					<a>Change Client</a>
+					<a id="search-client-button">Change Client</a>
 				</div>
 				<?php endif; ?>
 			</div>
@@ -1115,7 +1116,7 @@ if (isset($ticket["client"])) {
     </script>
 <?php endif; ?>
 
-<script src="/includes/js/pages/edit_ticket.js?v=1.0.02" type="text/javascript"></script>
+<script src="/includes/js/pages/edit_ticket.js?v=1.0.03" type="text/javascript"></script>
 <?php include("footer.php"); ?>
 <script>
 $(document).ready(function() {

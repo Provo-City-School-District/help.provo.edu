@@ -75,7 +75,7 @@ RUN chmod +x /root/run_close_resolved.sh
 COPY run_client_response.sh /root/run_client_response.sh
 RUN chmod +x /root/run_client_response.sh
 
-COPY run_client_response.sh /root/run_active_ticket_clear.sh
+COPY run_active_ticket_clear.sh /root/run_active_ticket_clear.sh
 RUN chmod +x /root/run_active_ticket_clear.sh
 
 # Create the uploads directory and set permissions

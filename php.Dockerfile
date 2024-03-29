@@ -75,9 +75,12 @@ RUN chmod +x /root/run_close_resolved.sh
 COPY run_client_response.sh /root/run_client_response.sh
 RUN chmod +x /root/run_client_response.sh
 
+COPY run_active_ticket_clear.sh /root/run_active_ticket_clear.sh
+RUN chmod +x /root/run_active_ticket_clear.sh
+
 # Create the uploads directory and set permissions
 RUN mkdir -p /var/www/html/uploads && chown -R www-data:www-data /var/www/html/uploads && chmod -R 775 /var/www/html/uploads
 RUN mkdir -p /var/php/sessions && chown -R www-data:www-data /var/php/sessions && chmod -R 770 /var/www/html/uploads
 
 # CMD cron && docker-php-entrypoint apache2-foreground
-CMD service cron start && chown -R www-data:www-data /var/www/html/uploads && chown -R www-data:www-data /var/php/sessions && composer install --no-interaction --no-ansi --no-scripts --no-progress --prefer-dist && docker-php-entrypoint apache2-foreground
+CMD service cron start && chown -R www-data:www-data /var/www/html && chown -R www-data:www-data /var/php/sessions && composer install --no-interaction --no-ansi --no-scripts --no-progress --prefer-dist && docker-php-entrypoint apache2-foreground

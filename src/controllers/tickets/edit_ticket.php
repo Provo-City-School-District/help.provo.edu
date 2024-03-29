@@ -20,6 +20,41 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
 require_once('helpdbconnect.php');
 require_once("status_popup.php");
 
+
+$username = $_SESSION['username'];
+
+$is_ticket_shared = false;
+$ticket_shared_usernames = [];
+
+$is_ticket_shared_res = $database->execute_query("SELECT username FROM help.users WHERE active_ticket = ?", [$ticket_id]);
+if (!$is_ticket_shared_res) {
+	log_app(LOG_ERR, "Failed to get active_ticket status for ticket $ticket_id");
+}
+
+if ($is_ticket_shared_res->num_rows > 0) {
+	$is_ticket_shared = true;
+	
+	$is_ticket_shared_data = $is_ticket_shared_res->fetch_assoc();
+	foreach ($is_ticket_shared_data as $row) {
+		$tmp_username = $is_ticket_shared_data["username"];
+		if ($tmp_username != $username)
+			$ticket_shared_usernames[] = $tmp_username;
+	}
+}
+
+
+// Update active ticket for user
+$active_ticket_res = $database->execute_query("UPDATE help.users SET active_ticket = ?, active_ticket_updated = NOW() WHERE username = ?", [$ticket_id, $username]);
+if (!$active_ticket_res) {
+	log_app(LOG_ERR, "Failed to update active_ticket for user $username on ticket $ticket_id");
+}
+
+if ($is_ticket_shared && count($ticket_shared_usernames) > 0) {
+	$shared_ticket_username = $ticket_shared_usernames[0];
+	$_SESSION["current_status"] = "This ticket is currently being edited by {$shared_ticket_username}";
+	$_SESSION["status_type"] = "info";
+}
+
 // Check if an error message is set
 if (isset($_SESSION['current_status'])) {
     $status_popup = new StatusPopup($_SESSION["current_status"], StatusPopupType::fromString($_SESSION["status_type"]));
@@ -28,8 +63,6 @@ if (isset($_SESSION['current_status'])) {
     unset($_SESSION['current_status']);
     unset($_SESSION['status_type']);
 }
-
-$username = $_SESSION['username'];
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
     if (isset($_POST['flag_ticket'])) {

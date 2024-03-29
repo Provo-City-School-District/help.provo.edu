@@ -148,11 +148,19 @@ function add_note_with_filters(
 
     if ($username == $client) {
 		// set priority to standard
-        $result = $database->execute_query("UPDATE tickets SET tickets.status = 'open', tickets.priority = 10 WHERE tickets.id = ?", [$ticket_id_clean]);
+        $result = $database->execute_query("UPDATE tickets SET tickets.priority = 10 WHERE tickets.id = ?", [$ticket_id_clean]);
         if (!$result) {
-            log_app(LOG_ERR, "Failed to update ticket status for id=$operating_ticket");
+            log_app(LOG_ERR, "Failed to update ticket priority for id=$operating_ticket");
 			return false;
         }
+
+		if (status_for_ticket($ticket_id_clean) == "resolved") {
+			$result = $database->execute_query("UPDATE tickets SET tickets.status = 'open' WHERE tickets.id = ?", [$ticket_id_clean]);
+			if (!$result) {
+				log_app(LOG_ERR, "Failed to update ticket status for id=$operating_ticket");
+				return false;
+			}
+		}
 
         // Email tech if client has updated ticket
         $email_subject = "Ticket $ticket_id_clean (Updated)";
@@ -379,6 +387,23 @@ function client_for_ticket(int $ticket_id)
     }
 
     return strtolower($client_data["client"]);
+}
+
+function status_for_ticket(int $ticket_id)
+{
+	global $database;
+
+    $status_result = $database->execute_query("SELECT status FROM help.tickets WHERE tickets.id = ?", [$ticket_id]);
+    if (!isset($status_result)) {
+        log_app(LOG_ERR, "[status_for_ticket] Failed to get status query result");
+    }
+
+    $status_data = mysqli_fetch_assoc($status_result);
+    if (!isset($status_data)) {
+        log_app(LOG_ERR, "[status_for_ticket] Failed to get status data");
+    }
+
+    return $status_data["status"];
 }
 
 function logTicketChange($database, $ticket_id, $updatedby, $field_name, $old_value, $new_value)

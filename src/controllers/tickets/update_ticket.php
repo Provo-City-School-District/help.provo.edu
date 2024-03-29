@@ -98,11 +98,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Recalculate the due date if the priority has changed
     if (isset($old_ticket_data['priority'], $updatedPriority) && $old_ticket_data['priority'] != $updatedPriority) {
         $today = new DateTime($created_at);
+        // echo "Created Date is: " . $today->format('Y-m-d') . "<br>";
         $new_due_date = clone $today;
-        $new_due_date->modify("+{$updatedPriority} weekdays");
-        $has_excludes = hasExcludedDate($today->format('Y-m-d'), $new_due_date->format('Y-m-d'));
-        $new_due_date->modify("+{$has_excludes} days");
-        $updatedDueDate = $new_due_date->format('y-m-d');
+
+        // Add the priority days to the due date, skipping weekends
+        $days_to_add = $updatedPriority;
+        // echo "Days to add: " . $days_to_add . "<br>";
+        while ($days_to_add > 0) {
+            $new_due_date->modify('+1 day');
+            // If the day is a weekday, decrement $days_to_add
+            if ($new_due_date->format('N') < 6 && !isExcludedDate($new_due_date->format('Y-m-d'))) {
+                $days_to_add--;
+            }
+        }
+        // echo "New Due Date is: " . $new_due_date->format('Y-m-d') . "<br>";
+        $updatedDueDate = $new_due_date->format('Y-m-d');
     }
 
 

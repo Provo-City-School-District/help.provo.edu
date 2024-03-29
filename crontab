@@ -7,5 +7,5 @@
 # Run Email Client Response Tickets at 6am
 0 6 * * 1-5 /root/run_client_response.sh >> /var/log/cron.log 2>&1
 
-# Clear active_ticket every 30 minutes
-*/30 * * * * /root/run_active_ticket_clear.sh >> /var/log/cron.log 2>&1
+# Check active_ticket for clearing every minute
+* * * * * /root/run_active_ticket_clear.sh >> /var/log/cron.log 2>&1

@@ -54,7 +54,18 @@ function isWeekend($date)
     $dayOfWeek = $date->format('N');
     return ($dayOfWeek == 6 || $dayOfWeek == 7);
 }
+function isExcludedDate($date)
+{
+    global $database;
+    $exclude_result = $database->query("SELECT COUNT(*) as count FROM exclude_days WHERE exclude_day = '$date'");
+    $row = $exclude_result->fetch_assoc();
 
+    if ($row['count'] > 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 // Function to sanitize numeric
 function sanitize_numeric_input($input)

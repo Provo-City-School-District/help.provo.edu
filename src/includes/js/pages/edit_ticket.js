@@ -280,10 +280,7 @@ if (searchForm) {
             '">' +
             results[i].firstname +
             " " +
-            results[i].lastname +
-            " (" +
-            results[i].username +
-            ")</a></p>";
+            results[i].lastname + " — " + results[i].location_name + " (" + results[i].title + ")" + "</a></p>";
         }
         document.getElementById("search-results").innerHTML = resultsHTML;
       } else {

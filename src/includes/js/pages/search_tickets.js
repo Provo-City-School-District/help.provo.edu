@@ -119,6 +119,16 @@ function openTab(evt, tabName) {
   for (i = 0; i < tabcontent.length; i++) {
     if (tabcontent[i]) {
       tabcontent[i].style.display = "none";
+      // Clear the results area and form for the previous tab
+      var resultsArea = document.getElementById("results");
+      if (resultsArea) {
+        console.log("Clearing results area");
+        resultsArea.innerHTML = "";
+      }
+      var form = tabcontent[i].querySelector("form");
+      if (form) {
+        form.reset();
+      }
     }
   }
   tablinks = document.getElementsByClassName("tablinks");

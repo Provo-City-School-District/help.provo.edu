@@ -143,6 +143,9 @@ function add_note_with_filters(
 
     // Send email to assigned tech on update if the client updates ticket
     $client = client_for_ticket($ticket_id_clean);
+
+	log_app(LOG_INFO, "username: $username, client: $client");
+
     if ($username == $client) {
 		// set priority to standard
         $result = $database->execute_query("UPDATE tickets SET tickets.status = 'open', tickets.priority = 10 WHERE tickets.id = ?", [$ticket_id_clean]);

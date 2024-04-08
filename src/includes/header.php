@@ -84,11 +84,11 @@ $current_page = $_SERVER['REQUEST_URI'];
     //load color scheme if set. loads light scheme if not set
     if (isset($_SESSION['color_scheme'])) {
     ?>
-        <link rel="stylesheet" type="text/css" href="/includes/css/variables-<?= $_SESSION['color_scheme'] ?>.css?v=0.1.23">
+        <link rel="stylesheet" type="text/css" href="/includes/css/variables-<?= $_SESSION['color_scheme'] ?>.css?v=0.1.21">
     <?php
     } else {
     ?>
-        <link rel="stylesheet" type="text/css" href="/includes/css/variables-light.css?v=0.1.23">
+        <link rel="stylesheet" type="text/css" href="/includes/css/variables-light.css?v=0.1.21">
     <?php
     }
     //load login page styles

@@ -11,6 +11,7 @@
 	--odd-color: #dbe1e7;
 	--theme-url-highlight: #eee;
 	--theme-table-border-color: var(--theme-primary);
+	--theme-note-invisible: #fff;
 	--warn-color: #ff9800;
 	--crit-color: #f44336;
 	--theme-white: #ebebeb;
@@ -19,13 +20,17 @@
 }
 
 .notClientVisible {
-	background-color: var(--tech-only-note) !important;
+	background-color: var(--theme-note-invisible) !important;
 	color: var(--theme-black);
 	display: block;
 	border: 1px solid var(--theme-primary);
 	padding: 1em;
 	border-radius: 3px;
 	margin-bottom: 1em;
+}
+
+.notClientVisible * {
+	color: var(--theme-black);
 }
 
 .clientVisible {

@@ -45,7 +45,7 @@ if (!empty($search_priority)) {
     $ticket_query .= " AND priority LIKE '$search_priority'";
 }
 if (!empty($search_client)) {
-    $ticket_query .= " AND client LIKE '%$search_client%'";
+    $ticket_query .= " AND client LIKE '$search_client'";
 }
 if (!empty($search_status)) {
     $ticket_query .= " AND status LIKE '%$search_status%'";

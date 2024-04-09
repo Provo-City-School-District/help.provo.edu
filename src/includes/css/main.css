@@ -231,7 +231,7 @@ th {
 
 .data-table tr:nth-of-type(even),
 .nst tr:nth-of-type(even),
-#note-table tr:nth-of-type(even)) {
+#note-table tr:nth-of-type(even) {
 	background-color: var(--even-color);
 }
 

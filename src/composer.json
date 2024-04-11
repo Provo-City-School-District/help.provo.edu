@@ -1,8 +1,9 @@
 {
   "require": {
-    "tinymce/tinymce": "^6.8.3",
     "phpmailer/phpmailer": "^6.9.1",
     "google/apiclient": "^2.15.3",
-    "ezyang/htmlpurifier": "^4.17"
+    "ezyang/htmlpurifier": "^4.17",
+    "tinymce/tinymce": "^7.0.0",
+    "twig/twig": "^3.0"
   }
 }

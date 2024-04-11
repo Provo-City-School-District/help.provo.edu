@@ -5,7 +5,8 @@ var table;
 $(document).ready(function () {
   // Define general properties
   var options = {
-    paging: true, // Enable pagination
+    paging: true,
+    pageLength: ticketLimit, // Enable pagination
     stateSave: true, // Enable state saving
     ordering: true, // Enable sorting
     columns: [
@@ -52,7 +53,7 @@ $(document).ready(function () {
 $(document).ready(function () {
   table = $(".search-data-table").DataTable({
     paging: true, // Enable pagination
-    pageLength: 10, // Set the number of rows per page
+    pageLength: 50, // Set the number of rows per page
     stateSave: true, // Enable state saving
     ordering: true, // Enable sorting
     autoWidth: false, // Disable auto width calculation

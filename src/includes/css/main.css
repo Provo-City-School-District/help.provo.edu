@@ -9,7 +9,10 @@ body {
 	font-family: "Campton-Medium";
 	background-color: var(--page-background);
 }
-
+.fake-h3 {
+	font-size: 26px;
+	font-weight: bold;
+}
 a {
 	color: var(--theme-url-color);
 	text-decoration: none;
@@ -21,7 +24,7 @@ a:hover {
 }
 
 #green-button {
-	background-color: #33a206;
+	background-color: #3aa410;
 }
 
 strong {
@@ -80,6 +83,15 @@ input[type=submit] {
 #wrapper {
 	width: 100%;
 	/* padding:1em; */
+}
+
+.horizontalContainer {
+	display: table;
+}
+
+.horizontalContainerCell {
+	display: table-cell;
+	padding: 5px;
 }
 
 /* =============================== Utility Styles =============================== */
@@ -228,7 +240,7 @@ th {
 
 .data-table tr:nth-of-type(even),
 .nst tr:nth-of-type(even),
-#note-table tr:nth-of-type(even)) {
+#note-table tr:nth-of-type(even) {
 	background-color: var(--even-color);
 }
 
@@ -607,13 +619,14 @@ select {
 		}
 
 		.currentClient {
+			padding: 0.5em;
 			display: grid;
-			grid-template-columns: minmax(min-content, 160px) 1fr 1fr;
+			grid-template-columns: minmax(min-content, 540px) 1fr;
 		}
 
 		.readonlyClient {
 			display: grid;
-			grid-template-columns: minmax(min-content, 160px) 1fr;
+			grid-template-columns: minmax(min-content, 540px) 1fr;
 		}
 
 		.currentClient,

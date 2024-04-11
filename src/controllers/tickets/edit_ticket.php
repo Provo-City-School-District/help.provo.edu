@@ -1,6 +1,7 @@
 <?php
 require_once("block_file.php");
 require_once("sanitization_utils.php");
+require_once("email_utils.php");
 
 ob_start();
 include("ticket_utils.php");
@@ -19,6 +20,39 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
 require_once('helpdbconnect.php');
 require_once("status_popup.php");
 
+
+$username = $_SESSION['username'];
+
+$ticket_shared_usernames = [];
+
+$is_ticket_shared_res = $database->execute_query("SELECT username FROM help.users WHERE active_ticket = ?", [$ticket_id]);
+if (!$is_ticket_shared_res) {
+	log_app(LOG_ERR, "Failed to get active_ticket status for ticket $ticket_id");
+}
+
+if ($is_ticket_shared_res->num_rows > 0) {
+	
+	while ($row = $is_ticket_shared_res->fetch_assoc()) {
+		$tmp_username = $row["username"];
+		log_app(LOG_INFO, "is_ticket_shared fetched username: $tmp_username ");
+		if ($tmp_username != $username)
+			$ticket_shared_usernames[] = $tmp_username;
+	}
+}
+
+
+// Update active ticket for user
+$active_ticket_res = $database->execute_query("UPDATE help.users SET active_ticket = ?, active_ticket_updated = NOW() WHERE username = ?", [$ticket_id, $username]);
+if (!$active_ticket_res) {
+	log_app(LOG_ERR, "Failed to update active_ticket for user $username on ticket $ticket_id");
+}
+
+if (count($ticket_shared_usernames) > 0) {
+	$shared_ticket_username = $ticket_shared_usernames[0];
+	$_SESSION["current_status"] = "This ticket is currently being edited by {$shared_ticket_username}";
+	$_SESSION["status_type"] = "info";
+}
+
 // Check if an error message is set
 if (isset($_SESSION['current_status'])) {
     $status_popup = new StatusPopup($_SESSION["current_status"], StatusPopupType::fromString($_SESSION["status_type"]));
@@ -27,8 +61,6 @@ if (isset($_SESSION['current_status'])) {
     unset($_SESSION['current_status']);
     unset($_SESSION['status_type']);
 }
-
-$username = $_SESSION['username'];
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
     if (isset($_POST['flag_ticket'])) {
@@ -111,6 +143,10 @@ tickets.bcc_emails,
 tickets.priority,
 tickets.request_type_id,
 tickets.merged_into_id,
+tickets.send_client_email,
+tickets.send_tech_email,
+tickets.send_cc_emails,
+tickets.send_bcc_emails,
 tickets.parent_ticket,
 JSON_ARRAYAGG(
     JSON_OBJECT(
@@ -223,8 +259,7 @@ if (isset($ticket["client"])) {
     <!-- Form for updating ticket information -->
     <div class="right">
         <div style="display: flex; gap: 1em;">
-            <!-- Remove false for close ticket from readonly client view -->
-            <?php if (false || $readonly) : ?>
+            <?php if ($readonly) : ?>
                 <button id="close-ticket-button" class="button">Close Ticket</button>
             <?php endif; ?>
             <button class="new-note-button button">New Note</button>
@@ -232,36 +267,58 @@ if (isset($ticket["client"])) {
     </div>
     <form id="updateTicketForm" method="POST" action="update_ticket.php">
         <!-- Add a submit button to update the information -->
-        <input id="green-button" type="submit" value="Update Ticket">
-        <div>
-            Send Client Email on Update:<input type="checkbox" name="send_emails" value="send_emails" checked>
+        <div class="horizontalContainer">
+            <div class="horizontalContainerCell">
+                <input id="green-button" type="submit" name="update_ticket" value="Update Ticket">
+            </div>
+            <div class="horizontalContainerCell">
+                <input id="green-button" type="submit" name="update_ticket_with_email" value="Update Ticket & Email">
+            </div>
         </div>
-        <div>
-            Send CC/BCC Emails on Update:<input type="checkbox" name="send_cc_bcc_emails" value="send_cc_bcc_emails" checked>
+        <div class="horizontalContainer">
+            <div class="horizontalContainerCell">
+                Client:<input type="checkbox" name="send_client_email" value="send_client_email" <?= $ticket["send_client_email"] != 0 ? "checked" : "" ?>>
+            </div>
+            <div class="horizontalContainerCell">
+                Tech:<input type="checkbox" name="send_tech_email" value="send_tech_email" <?= $ticket["send_tech_email"] != 0 ? "checked" : "" ?>>
+            </div>
+            <div class="horizontalContainerCell">
+                CC:<input type="checkbox" name="send_cc_emails" value="send_cc_emails" <?= $ticket["send_cc_emails"] != 0 ? "checked" : "" ?>>
+            </div>
+            <div class="horizontalContainerCell">
+                BCC:<input type="checkbox" name="send_bcc_emails" value="send_bcc_emails" <?= $ticket["send_bcc_emails"] != 0 ? "checked" : "" ?>>
+            </div>
         </div>
         <div class="ticketGrid">
             <input type="hidden" name="ticket_create_date" value="<?= $ticket['created'] ?>">
             <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
             <input type="hidden" name="madeby" value="<?= $_SESSION['username'] ?>">
             <input type="hidden" id="client" name="client" value="<?= $ticket['client'] ?>">
-            <?php
-            // If the user is not a tech, display read only form fields if is client
-            if ($readonly) {
-            ?>
-                <div class="readonlyClient">
-                    <span>Client: </span> <span id="client-display"><?= $clientFirstName . " " . $clientLastName . " (" . $ticket['client'] . ")" ?></span>
-                </div>
-            <?php
+			<div class="currentClient">
+				<div>
+					<div class="fake-h3">Client Info </div>
+						<div id="client-display">
+						<?= $clientFirstName . " " . $clientLastName . " — " . email_address_from_username(strtolower(($ticket['client']))) ?><br><br>
+						<?php
+							$result = get_ldap_info($ticket['client'], LDAP_EMPLOYEE_ID | LDAP_EMPLOYEE_LOCATION | LDAP_EMPLOYEE_JOB_TITLE);
 
-            } else {
-            ?>
-                <div class="currentClient">
-                    <span>Client: </span> <span id="client-display"><?= $clientFirstName . " " . $clientLastName . " (" . $ticket['client'] . ")" ?></span> <a>Change Client</a>
-                </div>
-            <?php
-            }
-            ?>
-
+							$employee_id = $result["employeeid"];
+							$employee_location = $result["location"];
+							$job_title = $result["job_title"];
+						?>
+						<?php if (!$readonly): ?>
+						ID: <?= $employee_id ?><br>
+						<?php endif; ?>
+						Location: <?= location_name_from_id($employee_location) ?><br>
+						Job Title: <?= $job_title ?>
+						</div>
+				</div>
+				<?php if (!$readonly): ?>
+				<div class="right">
+					<a id="search-client-button">Change Client</a>
+				</div>
+				<?php endif; ?>
+			</div>
             <div>
                 <span>Created:</span> <?= $ticket['created'] ?>
             </div>
@@ -459,7 +516,7 @@ if (isset($ticket["client"])) {
                         <option value="open" <?= ($ticket['status'] == 'open') ? ' selected' : '' ?>>Open</option>
                         <option value="closed" <?= ($ticket['status'] == 'closed') ? ' selected' : '' ?>>Closed</option>
                         <option value="resolved" <?= ($ticket['status'] == 'resolved') ? ' selected' : '' ?>>Resolved</option>
-                        <option value="pending" <?= ($ticket['status'] == 'pending') ? ' selected' : '' ?>>Pending</option>
+                        <!-- <option value="pending" <?= ($ticket['status'] == 'pending') ? ' selected' : '' ?>>Pending</option> -->
                         <option value="vendor" <?= ($ticket['status'] == 'vendor') ? ' selected' : '' ?>>Vendor</option>
                         <option value="maintenance" <?= ($ticket['status'] == 'maintenance') ? ' selected' : '' ?>>Maintenance</option>
                     </select>
@@ -1106,14 +1163,28 @@ if (isset($ticket["client"])) {
 
         // Then run the function every 60 seconds
         setInterval(updateTimeSinceLastNote, 60000); // 60000 milliseconds
-
-        $(document).ready(function() {
-            $('#close-ticket-button').click(function() {
-                alert("Not yet implemented.");
-            });
-        });
     </script>
 <?php endif; ?>
 
-<script src="/includes/js/pages/edit_ticket.js?v=1.0.01" type="text/javascript"></script>
+<script src="/includes/js/pages/edit_ticket.js?v=1.0.03" type="text/javascript"></script>
 <?php include("footer.php"); ?>
+<script>
+$(document).ready(function() {
+	$('#close-ticket-button').click(function() {
+		$.ajax({
+			url: "/ajax/close_ticket.php",
+			method: "POST",
+			data: {
+				ticket_id: <?= $ticket_id ?>,
+			},
+			success: function (data, textStatus, xhr) {
+				console.log("Ticket closed successfully");
+				location.reload();
+			},
+			error: function () {
+				alert("Error: Autocomplete AJAX call failed");
+			},
+		});
+	});
+});
+</script>

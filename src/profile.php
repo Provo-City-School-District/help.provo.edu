@@ -1,7 +1,27 @@
 <?php
-include("header.php");
-require_once("helpdbconnect.php");
-require_once("status_popup.php");
+require_once from_root('/vendor/autoload.php');
+require_once "status_popup.php";
+require_once from_root("/new-controllers/base_variables.php");
+
+session_start();
+
+
+// TODO: Remove manual echo on controllers for this (they shouldn't directly output anything)
+if (isset($_SESSION['current_status'])) {
+    $status_popup = new StatusPopup($_SESSION["current_status"], StatusPopupType::fromString($_SESSION["status_type"]));
+    echo $status_popup;
+
+    unset($_SESSION['current_status']);
+    unset($_SESSION['status_type']);
+}
+
+$loader = new \Twig\Loader\FilesystemLoader(from_root('/views'));
+$twig = new \Twig\Environment($loader, [
+    'cache' => from_root('/twig-cache')
+]);
+
+
+
 
 $user = $_SESSION["username"];
 $user_query = "SELECT * FROM users WHERE username = ?";
@@ -13,21 +33,17 @@ if (!$user_result) {
 $user_data = mysqli_fetch_assoc($user_result);
 
 $user_id = $user_data['id'];
+$employee_id = $user_data['ifasid'];
 $username = $user_data['username'];
-$firstname = $user_data['firstname'];
-$lastname = $user_data['lastname'];
+$firstname = ucfirst(strtolower($user_data['firstname']));
+$lastname = ucfirst(strtolower($user_data['lastname']));
 $email = $user_data['email'];
-$current_color_scheme = $user_data['color_scheme'];
+$color_scheme = $user_data['color_scheme'];
+$note_order = $user_data['note_order'];
+$hide_alerts = $user_data['hide_alerts'];
+$ticket_limit = $user_data['ticket_limit'];
 
-if (isset($_SESSION['current_status'])) {
-    $status_popup = new StatusPopup($_SESSION["current_status"], StatusPopupType::fromString($_SESSION["status_type"]));
-    echo $status_popup;
-
-    unset($_SESSION['current_status']);
-    unset($_SESSION['status_type']);
-}
-
-if ($_SESSION['permissions']['is_tech'] == 1) {
+if ($permissions["is_tech"]) {
     require_once("time_utils.php");
 
     // Get day for M-F belonging to current work week
@@ -44,78 +60,36 @@ if ($_SESSION['permissions']['is_tech'] == 1) {
 
     $user_times = get_note_time_for_days($user, [$monday_timestamp, $tuesday_timestamp, $wednesday_timestamp, $thursday_timestamp, $friday_timestamp]);
 
-    // Convert times to hours
-    $user_times[0] /= 60;
-    $user_times[1] /= 60;
-    $user_times[2] /= 60;
-    $user_times[3] /= 60;
-    $user_times[4] /= 60;
+    $user_time_total = 0;
+    foreach ($user_times as $idx => $time) {
+        $user_time_total += $user_times[$idx];
+        $user_time_hour = $user_times[$idx] / 60;
+        $user_times[$idx] = number_format($user_time_hour, 2);
+    }
 
-    // Add up all the hours for the total
-    $user_times[5] = array_sum($user_times);
+    $user_time_total /= 60;
+    $user_time_total = number_format($user_time_total, 2);
 }
-?>
-<h1>Profile For <?= ucfirst(strtolower($user_data['firstname'])) . ' ' . ucfirst(strtolower($user_data['lastname'])) ?> (<span><?= $user_data['username'] ?></span>)</h1>
-<h2>My Information</h2>
-<ul>
-    <li>Name: <?= ucfirst(strtolower($user_data['firstname'])) . ' ' . ucfirst(strtolower($user_data['lastname'])) ?></li>
-    <li>Email: <?= $email ?></li>
-    <li>Employee ID: <?= $user_data['ifasid'] ?></li>
-</ul>
-<h2>My Settings</h2>
-<form action="controllers/users/update_user_settings.php" method="post" class="singleColForm">
-    <!-- Controller Variables -->
-    <input type="hidden" name="id" value="<?= $user_id ?>">
-    <input type="hidden" name="referer" value="profile.php">
-    <!-- User Options -->
-    <div>
-        <label for="color_scheme">Color Scheme:</label>
-        <select id="color_scheme" name="color_scheme">
-            <option value="system" <?= $current_color_scheme == 'system' ? 'selected' : '' ?>>System Select</option>
-            <option value="dark" <?= $current_color_scheme == 'dark' ? 'selected' : '' ?>>Dark Mode</option>
-            <option value="light" <?= $current_color_scheme == 'light' ? 'selected' : '' ?>>Light Mode</option>
-        </select>
-    </div>
-    <div>
-        <label for="note_order">Ticket Note Order:</label>
-        <select id="note_order" name="note_order">
-            <option value="ASC" <?= $user_data['note_order'] == 'ASC' ? 'selected' : '' ?>>Ascending</option>
-            <option value="DESC" <?= $user_data['note_order'] == 'DESC' ? 'selected' : '' ?>>Descending</option>
-        </select>
-    </div>
-    <div>
-        <label for="hide_alerts">Hide Alerts Banner on "My Tickets" Page:</label>
-        <input type="checkbox" id="hide_alerts" name="hide_alerts" <?= $user_data['hide_alerts'] == 1 ? 'checked' : '' ?>>
-    </div>
 
-    <input type="submit" value="Update">
-</form>
+echo $twig->render('profile.phtml', [
+    // base variables
+    'color_scheme' => $color_scheme,
+    'current_year' => $current_year,
+    'user_permissions' => $permissions,
+    'wo_time' => $wo_time,
+    'user_pref' => $user_pref,
 
-<h2>Help / Documentation</h2>
-<a href="/note_shortcuts.php">Note Shorthand</a>
-<?php
-if ($_SESSION['permissions']['is_tech'] == 1) {
-?>
-    <h2>Current Week Work Order Hours</h2>
-    <table id="profile_time_table">
-        <tr>
-            <th>Monday</th>
-            <th>Tuesday</th>
-            <th>Wednesday</th>
-            <th>Thursday</th>
-            <th>Friday</th>
-            <th>Total</th>
-        </tr>
-        <tr>
-            <td data-cell="Monday"><?= number_format($user_times[0], 2) ?> hrs</td>
-            <td data-cell="Tuesday"><?= number_format($user_times[1], 2) ?> hrs</td>
-            <td data-cell="Wednesday"><?= number_format($user_times[2], 2) ?> hrs</td>
-            <td data-cell="Thursday"><?= number_format($user_times[3], 2) ?> hrs</td>
-            <td data-cell="Friday"><?= number_format($user_times[4], 2) ?> hrs</td>
-            <td data-cell="Week Total"><?= number_format($user_times[5], 2) ?> hrs</td>
-        </tr>
-    </table>
-<?php
-}
-?>
-<?php include("footer.php"); ?>
+    // profile variables
+    'user_id' => $user_id,
+    'ticket_limit' => $ticket_limit,
+    'employee_id' => $employee_id,
+    'username' => $username,
+    'first_name' => $firstname,
+    'last_name' => $lastname,
+    'email' => $email,
+    'note_order' => $note_order,
+    'hide_alerts' => $hide_alerts,
+    'user_times' => $user_times,
+    'user_time_total' => $user_time_total,
+    'ticket_limit' => $ticket_limit
+]);

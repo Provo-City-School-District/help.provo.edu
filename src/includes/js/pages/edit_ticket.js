@@ -249,9 +249,9 @@ if (descriptionDiv && editDescriptionButton && editDescriptionForm) {
 
 //================================= Ticket - Client Search =================================
 // Show the search-for-client div when the currentClient link is clicked
-var currentClient = document.querySelector(".currentClient");
-if (currentClient) {
-  currentClient.addEventListener("click", function (event) {
+const searchClientButton = document.getElementById("search-client-button");
+if (searchClientButton) {
+	searchClientButton.addEventListener("click", function (event) {
     event.preventDefault(); // Prevent the default action
     document.querySelector("#search-for-client").style.display = "grid"; // Show the div
   });
@@ -280,10 +280,7 @@ if (searchForm) {
             '">' +
             results[i].firstname +
             " " +
-            results[i].lastname +
-            " (" +
-            results[i].username +
-            ")</a></p>";
+            results[i].lastname + " — " + results[i].location_name + " (" + results[i].title + ")" + "</a></p>";
         }
         document.getElementById("search-results").innerHTML = resultsHTML;
       } else {

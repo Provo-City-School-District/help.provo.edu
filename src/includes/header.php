@@ -76,7 +76,7 @@ $current_page = $_SERVER['REQUEST_URI'];
     <title>Help For Provo City School District</title>
     <meta http-equiv="refresh" content="3600">
     <link rel="stylesheet" href="/includes/js/dataTables-1.13.7/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="/includes/css/main.css?v=00.01.35">
+    <link rel="stylesheet" href="/includes/css/main.css?v=00.01.41">
     <link rel="icon" type="image/png" href="/includes/img/favicons/favicon-16x16.png" sizes="16x16">
     <link rel="stylesheet" href="/includes/css/jquery-ui.min.css">
 
@@ -84,11 +84,11 @@ $current_page = $_SERVER['REQUEST_URI'];
     //load color scheme if set. loads light scheme if not set
     if (isset($_SESSION['color_scheme'])) {
     ?>
-        <link rel="stylesheet" type="text/css" href="/includes/css/variables-<?= $_SESSION['color_scheme'] ?>.css?v=0.1.22">
+        <link rel="stylesheet" type="text/css" href="/includes/css/variables-<?= $_SESSION['color_scheme'] ?>.css?v=0.1.21">
     <?php
     } else {
     ?>
-        <link rel="stylesheet" type="text/css" href="/includes/css/variables-light.css?v=0.1.22">
+        <link rel="stylesheet" type="text/css" href="/includes/css/variables-light.css?v=0.1.21">
     <?php
     }
     //load login page styles

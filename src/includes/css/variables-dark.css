@@ -13,7 +13,7 @@
 	--theme-table-border-color: var(--theme-white);
 	--warn-color: #FF8C00;
 	--crit-color: #8B0000;
-	--theme-note-invisible: #4b4b4b;
+	--theme-note-invisible: #fff;
 	--theme-white: #e0e0e0;
 	--success-color: #4caf50;
 	--tech-only-note: #fff;
@@ -60,8 +60,7 @@ table a {
 }
 
 .notClientVisible {
-	background-color: var(--tech-only-note) !important;
-	/* color: #000; */
+	background-color: var(--theme-note-invisible) !important;
 	display: block;
 	padding: 1em;
 	border-radius: 3px;
@@ -71,6 +70,10 @@ table a {
 
 .notClientVisible * {
 	color: #000;
+}
+
+.notClientVisible * {
+	color: var(--theme-black);
 }
 
 .clientVisible {

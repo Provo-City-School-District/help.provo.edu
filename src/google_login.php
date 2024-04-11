@@ -109,6 +109,7 @@ if (isset($_GET['code'])) {
         $_SESSION['color_scheme'] = $local_query_data['color_scheme'];
         $_SESSION['note_order'] = $local_query_data['note_order'];
         $_SESSION['hide_alerts'] = $local_query_data['hide_alerts'];
+        $_SESSION['ticket_limit'] = $local_query_data['ticket_limit'];
         // Store user's permissions in the session
         $_SESSION['permissions'] = $permissions;
 

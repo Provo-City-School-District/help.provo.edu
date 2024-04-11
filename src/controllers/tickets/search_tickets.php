@@ -34,8 +34,8 @@ if (user_is_tech($_SESSION['username'])) {
 ?>
 <div id="results">
 
-</div>
 
+</div>
 
 <?php include("footer.php"); ?>
 <script src="/includes/js/pages/search_tickets.js?v=1.0.0" type="text/javascript"></script>

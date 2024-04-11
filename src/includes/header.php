@@ -76,7 +76,7 @@ $current_page = $_SERVER['REQUEST_URI'];
     <title>Help For Provo City School District</title>
     <meta http-equiv="refresh" content="3600">
     <link rel="stylesheet" href="/includes/js/dataTables-1.13.7/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="/includes/css/main.css?v=00.01.41">
+    <link rel="stylesheet" href="/includes/css/main.css?v=00.01.43">
     <link rel="icon" type="image/png" href="/includes/img/favicons/favicon-16x16.png" sizes="16x16">
     <link rel="stylesheet" href="/includes/css/jquery-ui.min.css">
 

@@ -1,9 +1,12 @@
 <?php
 require_once from_root('/vendor/autoload.php');
-require_once from_root('/includes/time_utils.php');
 require_once "status_popup.php";
+require_once from_root("/new-controllers/base_variables.php");
+
 session_start();
 
+
+// TODO: Remove manual echo on controllers for this (they shouldn't directly output anything)
 if (isset($_SESSION['current_status'])) {
     $status_popup = new StatusPopup($_SESSION["current_status"], StatusPopupType::fromString($_SESSION["status_type"]));
     echo $status_popup;
@@ -17,24 +20,7 @@ $twig = new \Twig\Environment($loader, [
     'cache' => from_root('/twig-cache')
 ]);
 
-$permissions = [
-    "is_supervisor" => $_SESSION["permissions"]["is_supervisor"] != 0,
-    "is_admin" => $_SESSION["permissions"]["is_admin"] != 0,
-    "is_tech" => $_SESSION["permissions"]["is_tech"] != 0
-];
 
-
-$work_order_day_time = null;
-
-$color_scheme = $_SESSION['color_scheme'];
-$user_pref = isset($_SESSION['color_scheme']) ? $_SESSION['color_scheme'] : 'light';
-$ticket_limit = isset($_SESSION['ticket_limit']) ? $_SESSION['ticket_limit'] : 10;
-
-$day_timestamp = strtotime("today");
-$day_ticket_times = get_note_time_for_days($_SESSION["username"], [$day_timestamp]);
-
-$day_time_min = $day_ticket_times[0] / 60;
-$wo_time = number_format($day_time_min, 2);
 
 
 $user = $_SESSION["username"];

@@ -1,0 +1,24 @@
+{% extends "base.twig" %}
+
+{% block menu %}
+<ul id="subMenu">
+    <li><a href="/controllers/tickets/create_ticket.php">Create Ticket</a></li>
+    {% if user_permissions.is_supervisor and (subord_count > 0) %}
+    <li><a href="/controllers/tickets/subordinate_tickets.php">Subordinate Tickets</a></li>
+    {% endif %}
+    {% if user_permissions.is_location_manager %}
+    <li><a href="/controllers/tickets/location_tickets.php">Location Tickets</a></li>
+    {% endif %}
+    <li><a href="/tickets.php">My Tickets ({{ num_assigned_tickets }})</a></li>
+    {% if user_permissions.is_tech %}
+        {% if num_flagged_tickets > 0 %}
+        <li><a href="/controllers/tickets/flagged_tickets.php">Flagged Tickets ({{ num_flagged_tickets }})</a></li>
+        {% endif %}
+        <li><a href="/controllers/tickets/recent_tickets.php">Recent Tickets</a></li>
+        <li><a href="/controllers/tickets/search_tickets.php">Search Tickets</a></li>
+    {% else %}
+    <li><a href="/tickets.php">My Tickets</a></li>
+    <li><a href="/controllers/tickets/ticket_history.php">Ticket History</a></li>
+    {% endif %}
+</ul>
+{% endblock %}

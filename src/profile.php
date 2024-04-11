@@ -41,7 +41,6 @@ $email = $user_data['email'];
 $color_scheme = $user_data['color_scheme'];
 $note_order = $user_data['note_order'];
 $hide_alerts = $user_data['hide_alerts'];
-$ticket_limit = $user_data['ticket_limit'];
 
 if ($permissions["is_tech"]) {
     require_once("time_utils.php");
@@ -71,17 +70,17 @@ if ($permissions["is_tech"]) {
     $user_time_total = number_format($user_time_total, 2);
 }
 
-echo $twig->render('profile.phtml', [
+echo $twig->render('profile.twig', [
     // base variables
     'color_scheme' => $color_scheme,
     'current_year' => $current_year,
     'user_permissions' => $permissions,
     'wo_time' => $wo_time,
     'user_pref' => $user_pref,
+    'ticket_limit' => $ticket_limit,
 
     // profile variables
     'user_id' => $user_id,
-    'ticket_limit' => $ticket_limit,
     'employee_id' => $employee_id,
     'username' => $username,
     'first_name' => $firstname,
@@ -91,5 +90,4 @@ echo $twig->render('profile.phtml', [
     'hide_alerts' => $hide_alerts,
     'user_times' => $user_times,
     'user_time_total' => $user_time_total,
-    'ticket_limit' => $ticket_limit
 ]);

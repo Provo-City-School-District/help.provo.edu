@@ -12,8 +12,8 @@ use Twig\Sandbox\SecurityNotAllowedFunctionError;
 use Twig\Source;
 use Twig\Template;
 
-/* profile.phtml */
-class __TwigTemplate_2fe01b6aac40de333f00d4af8768c162 extends Template
+/* profile.twig */
+class __TwigTemplate_16b3d1357c0455e24b1977806f5784cc extends Template
 {
     private $source;
     private $macros = [];
@@ -32,13 +32,13 @@ class __TwigTemplate_2fe01b6aac40de333f00d4af8768c162 extends Template
     protected function doGetParent(array $context)
     {
         // line 1
-        return "base.phtml";
+        return "base.twig";
     }
 
     protected function doDisplay(array $context, array $blocks = [])
     {
         $macros = $this->macros;
-        $this->parent = $this->loadTemplate("base.phtml", "profile.phtml", 1);
+        $this->parent = $this->loadTemplate("base.twig", "profile.twig", 1);
         $this->parent->display($context, array_merge($this->blocks, $blocks));
     }
 
@@ -241,7 +241,7 @@ class __TwigTemplate_2fe01b6aac40de333f00d4af8768c162 extends Template
      */
     public function getTemplateName()
     {
-        return "profile.phtml";
+        return "profile.twig";
     }
 
     /**
@@ -262,6 +262,6 @@ class __TwigTemplate_2fe01b6aac40de333f00d4af8768c162 extends Template
 
     public function getSourceContext()
     {
-        return new Source("", "profile.phtml", "/var/www/html/views/profile.phtml");
+        return new Source("", "profile.twig", "/var/www/html/views/profile.twig");
     }
 }

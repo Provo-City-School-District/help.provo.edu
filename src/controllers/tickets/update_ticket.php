@@ -411,7 +411,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        if ($updatedSendClientEmail) {
+        if ($updatedSendClientEmail && !($updatedClient == $updatedEmployee)) {
             $res = send_email_and_add_to_ticket($ticket_id, $client_email, $ticket_subject, $template_client, [], [], $attachment_paths);
             if (!$res) {
                 $send_errors[] = "Client";

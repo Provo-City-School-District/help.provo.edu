@@ -407,7 +407,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!$res) {
                 $send_errors[] = "Previously Assigned Tech";
             } else {
-                $sent_tech_email_log_msg .= $old_assigned_email;
+                $sent_tech_email_log_msg .= $old_assigned_email.", ";
             }
         }
 
@@ -416,7 +416,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!$res) {
                 $send_errors[] = "Client";
             } else {
-                $sent_client_email_log_msg .= $client_email;
+                $sent_client_email_log_msg .= $client_email.", ";
             }
         }
 
@@ -425,7 +425,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!$res) {
                 $send_errors[] = "Tech";
             } else {
-                $sent_tech_email_log_msg .= $assigned_tech_email;
+                $sent_tech_email_log_msg .= $assigned_tech_email.", ";
             }
         }
 
@@ -434,14 +434,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!$res) {
                 $send_errors[] = "Tech CC Emails";
             } else {
-                $sent_tech_email_log_msg .= implode(',', $tech_cc_emails);
+                $sent_tech_email_log_msg .= implode(',', $tech_cc_emails).", ";
             }
 
             $res = send_email_and_add_to_ticket($ticket_id, getenv("GMAIL_USER"), $ticket_subject, $template_client, $client_cc_emails, [], $attachment_paths);
             if (!$res) {
                 $send_errors[] = "Client CC Emails";
             } else {
-                $sent_client_email_log_msg .= implode(',', $client_cc_emails);
+                $sent_client_email_log_msg .= implode(',', $client_cc_emails).", ";
             }
         }
 
@@ -450,13 +450,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!$res) {
                 $send_errors[] = "Tech BCC Emails";
             } else {
-                $sent_tech_email_log_msg .= implode(',', $tech_bcc_emails);
+                $sent_tech_email_log_msg .= implode(',', $tech_bcc_emails).", ";
             }
             $res = send_email_and_add_to_ticket($ticket_id, getenv("GMAIL_USER"), $ticket_subject, $template_client, [], $client_bcc_emails, $attachment_paths);
             if (!$res) {
                 $send_errors[] = "Client BCC Emails";
             } else {
-                $sent_client_email_log_msg .= implode(',', $client_bcc_emails);
+                $sent_client_email_log_msg .= implode(',', $client_bcc_emails).", ";
             }
         }
 

@@ -24,7 +24,7 @@ a:hover {
 }
 
 #green-button {
-	background-color: #33a206;
+	background-color: #3aa410;
 }
 
 strong {
@@ -83,6 +83,15 @@ input[type=submit] {
 #wrapper {
 	width: 100%;
 	/* padding:1em; */
+}
+
+.horizontalContainer {
+	display: table;
+}
+
+.horizontalContainerCell {
+	display: table-cell;
+	padding: 5px;
 }
 
 /* =============================== Utility Styles =============================== */

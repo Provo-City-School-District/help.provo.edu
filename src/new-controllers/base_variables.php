@@ -20,3 +20,4 @@ $day_ticket_times = get_note_time_for_days($_SESSION["username"], [$day_timestam
 
 $day_time_min = $day_ticket_times[0] / 60;
 $wo_time = number_format($day_time_min, 2);
+$current_year = date("Y");

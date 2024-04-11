@@ -72,12 +72,15 @@ if ($permissions["is_tech"]) {
 }
 
 echo $twig->render('profile.phtml', [
-    'user_id' => $user_id,
+    // base variables
     'color_scheme' => $color_scheme,
-    'current_year' => date("Y"),
+    'current_year' => $current_year,
     'user_permissions' => $permissions,
     'wo_time' => $wo_time,
     'user_pref' => $user_pref,
+
+    // profile variables
+    'user_id' => $user_id,
     'ticket_limit' => $ticket_limit,
     'employee_id' => $employee_id,
     'username' => $username,

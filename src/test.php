@@ -1,0 +1,28 @@
+<?php
+require_once from_root('/vendor/autoload.php');
+require_once "status_popup.php";
+require_once from_root("/new-controllers/base_variables.php");
+require_once from_root("/new-controllers/ticket_base_variables.php");
+require_once "helpdbconnect.php";
+
+$loader = new \Twig\Loader\FilesystemLoader(from_root('/views'));
+$twig = new \Twig\Environment($loader, [
+    'cache' => from_root('/twig-cache'),
+    'auto_reload' => true
+]);
+
+
+echo $twig->render('ticket_base.twig', [
+    // base variables
+    'color_scheme' => $color_scheme,
+    'current_year' => $current_year,
+    'user_permissions' => $permissions,
+    'wo_time' => $wo_time,
+    'user_pref' => $user_pref,
+    'ticket_limit' => $ticket_limit,
+
+    // ticket_base variables
+    'num_assigned_tickets' => $num_assigned_tickets,
+    'num_flagged_tickets' => $num_flagged_tickets,
+    'subord_count' => $subord_count
+]);

@@ -143,6 +143,10 @@ tickets.bcc_emails,
 tickets.priority,
 tickets.request_type_id,
 tickets.merged_into_id,
+tickets.send_client_email,
+tickets.send_tech_email,
+tickets.send_cc_emails,
+tickets.send_bcc_emails,
 tickets.parent_ticket,
 JSON_ARRAYAGG(
     JSON_OBJECT(
@@ -263,12 +267,27 @@ if (isset($ticket["client"])) {
     </div>
     <form id="updateTicketForm" method="POST" action="update_ticket.php">
         <!-- Add a submit button to update the information -->
-        <input id="green-button" type="submit" value="Update Ticket">
-        <div>
-            Send Client Email on Update:<input type="checkbox" name="send_emails" value="send_emails" checked>
+        <div class="horizontalContainer">
+            <div class="horizontalContainerCell">
+                <input id="green-button" type="submit" name="update_ticket" value="Update Ticket">
+            </div>
+            <div class="horizontalContainerCell">
+                <input id="green-button" type="submit" name="update_ticket_with_email" value="Update Ticket & Email">
+            </div>
         </div>
-        <div>
-            Send CC/BCC Emails on Update:<input type="checkbox" name="send_cc_bcc_emails" value="send_cc_bcc_emails" checked>
+        <div class="horizontalContainer">
+            <div class="horizontalContainerCell">
+                Client:<input type="checkbox" name="send_client_email" value="send_client_email" <?= $ticket["send_client_email"] != 0 ? "checked" : "" ?>>
+            </div>
+            <div class="horizontalContainerCell">
+                Tech:<input type="checkbox" name="send_tech_email" value="send_tech_email" <?= $ticket["send_tech_email"] != 0 ? "checked" : "" ?>>
+            </div>
+            <div class="horizontalContainerCell">
+                CC:<input type="checkbox" name="send_cc_emails" value="send_cc_emails" <?= $ticket["send_cc_emails"] != 0 ? "checked" : "" ?>>
+            </div>
+            <div class="horizontalContainerCell">
+                BCC:<input type="checkbox" name="send_bcc_emails" value="send_bcc_emails" <?= $ticket["send_bcc_emails"] != 0 ? "checked" : "" ?>>
+            </div>
         </div>
         <div class="ticketGrid">
             <input type="hidden" name="ticket_create_date" value="<?= $ticket['created'] ?>">

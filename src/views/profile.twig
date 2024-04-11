@@ -1,0 +1,110 @@
+{% extends "base.twig" %}
+
+{% block content %}
+<h1> Profile For {{ first_name }} {{ last_name }} ({{ username }}) </h1>
+
+<h2>My Information</h2>
+<ul>
+    <li>Name: {{ first_name }} {{ last_name }}</li>
+    <li>Email: {{ email }}</li>
+    <li>Employee ID: {{ employee_id }}</li>
+</ul>
+
+<h2>My Settings</h2>
+<form action="/controllers/users/update_user_settings.php" method="post" class="singleColForm">
+    <!-- Controller Variables -->
+    <input type="hidden" name="id" value="{{ user_id }}">
+    <input type="hidden" name="referer" value="profile.php">
+    <!-- User Options -->
+    <div>
+        <label for="color_scheme">Color Scheme:</label>
+        <select id="color_scheme" name="color_scheme">
+            {% if color_scheme == "system" %}
+            <option value="system" selected>System Select</option>
+            <option value="dark">Dark Mode</option>
+            <option value="light">Light Mode</option>
+            {% elseif color_scheme == "dark" %}
+            <option value="system">System Select</option>
+            <option value="dark" selected>Dark Mode</option>
+            <option value="light">Light Mode</option>
+            {% elseif color_scheme == "light" %}
+            <option value="system">System Select</option>
+            <option value="dark" >Dark Mode</option>
+            <option value="light" selected>Light Mode</option>
+            {% endif %}
+        </select>
+    </div>
+    <div>
+        <label for="note_order">Ticket Note Order:</label>
+        <select id="note_order" name="note_order">
+            {% if note_order == "ASC" %}
+            <option value="ASC" selected>Ascending</option>
+            <option value="DESC">Descending</option>
+            {% else %}
+            <option value="ASC">Ascending</option>
+            <option value="DESC" selected>Descending</option>
+            {% endif %}
+        </select>
+    </div>
+    <div>
+        <label for="hide_alerts">Hide Alerts Banner on "My Tickets" Page:</label>
+        {% if hide_alerts %}
+        <input type="checkbox" id="hide_alerts" name="hide_alerts" checked="checked">
+        {% else %}
+        <input type="checkbox" id="hide_alerts" name="hide_alerts">
+        {% endif %}
+    </div>
+    <div>
+        <label for="ticket_limit">Default Entries Per Page:</label>
+        <select id="ticket_limit" name="ticket_limit">
+            {% if ticket_limit == 10 %}
+            <option value="10" selected>10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+            {% elseif ticket_limit == 25 %}
+            <option value="10">10</option>
+            <option value="25" selected>25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+            {% elseif ticket_limit == 50 %}
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50" selected>50</option>
+            <option value="100">100</option>
+            {% elseif ticket_limit == 100 %}
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100" selected>100</option>
+            {% endif %}
+
+        </select>
+    </div>
+
+    <input type="submit" value="Update">
+</form>
+<h2>Help / Documentation</h2>
+<a href="/note_shortcuts.php">Note Shorthand</a>
+{% if user_permissions.is_tech %}
+<h2>Current Week Work Order Hours</h2>
+    <table id="profile_time_table">
+        <tr>
+            <th>Monday</th>
+            <th>Tuesday</th>
+            <th>Wednesday</th>
+            <th>Thursday</th>
+            <th>Friday</th>
+            <th>Total</th>
+        </tr>
+        <tr>
+            <td data-cell="Monday">{{ user_times[0] }} hrs</td>
+            <td data-cell="Tuesday">{{ user_times[1] }} hrs</td>
+            <td data-cell="Wednesday">{{ user_times[2] }} hrs</td>
+            <td data-cell="Thursday">{{ user_times[3] }} hrs</td>
+            <td data-cell="Friday">{{ user_times[4] }} hrs</td>
+            <td data-cell="Week Total">{{ user_time_total }} hrs</td>
+        </tr>
+    </table>
+{% endif %}
+{% endblock %}

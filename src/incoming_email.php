@@ -341,9 +341,9 @@ function find_and_upload_attachments(int $ticket_id, IMAP\Connection $mbox, int 
             $wrote_filenames[] = $filename;
         }
     }
-    $attachmentPath = implode(',', $uploadPaths);
+    $attachmentPath = count($uploadPaths) > 0 ? implode(',', $uploadPaths) : "";
 
-    $insertQuery = "UPDATE help.tickets SET attachment_path = CONCAT(IFNULL(attachment_path, ''), ?) WHERE id = ?";
+    $insertQuery = "UPDATE help.tickets SET attachment_path = ? WHERE id = ?";
     $stmt = mysqli_prepare($database, $insertQuery);
     mysqli_stmt_bind_param($stmt, "si", $attachmentPath, $ticket_id);
     mysqli_stmt_execute($stmt);

@@ -8,7 +8,7 @@ if (!isset($_POST['id'])) {
 $user_id = $_POST['id'];
 //catch changes from the users profile page that the user is allowed to change.
 if ($_POST['referer'] == 'profile.php') {
-
+   // echo var_dump($_POST);
     // Retrieve the color_scheme from the form submission
     $color_scheme = $_POST['color_scheme'] ?? 'system';
     $note_order = $_POST['note_order'] ?? 'desc';

@@ -355,8 +355,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         log_app(LOG_INFO, "Sending email on ticket update");
         if ($updatedStatus == "resolved") {
             $template_path = "ticket_resolved";
+            $subject_status = "Resolved";
         } else {
             $template_path = "ticket_updated";
+            $subject_status = "Updated";
         }
 
         // message for gui to display

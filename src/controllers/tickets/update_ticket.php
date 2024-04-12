@@ -476,7 +476,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             log_app(LOG_ERR, "$error \n\n $formData");
             header("Location: edit_ticket.php?$formData&id=$ticket_id");
             exit;
-        }
+        } else {
+			$send_to_msg_states = [
+				"",
+				"An email was sent to the BCC emails",
+				"An email was sent to the CC emails",
+				"An email was sent to the CC emails and BCC emails",
+				"An email was sent to the tech",
+				"An email was sent to the tech and BCC emails",
+				"An email was sent to the tech and CC emails",
+				"An email was sent to the tech, CC emails, and BCC emails",
+				"An email was sent to the client",
+				"An email was sent to the client and BCC emails",
+				"An email was sent to the client and CC emails",
+				"An email was sent to the client, CC emails, and BCC emails",
+				"An email was sent to the client and the tech",
+				"An email was sent to the client, tech, and BCC emails",
+				"An email was sent to the client, tech, and CC emails",
+				"An email was sent to the client, tech, CC emails, and BCC emails",
+			];
+			$state_idx = ($updatedSendClientEmail << 3) | ($updatedSendTechEmail << 2) | ($updatedSendCCEmails << 1) | $updatedSendBCCEmails;
+			assert($state_idx < 16, "Expected state_idx to be < 16");
+			$msg .= " ".$send_to_msg_states[$state_idx];
+		}
 
 
 

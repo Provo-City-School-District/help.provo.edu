@@ -112,7 +112,7 @@ class __TwigTemplate_7f19428e86aee5af976a997339f0eecf extends Template
         $this->displayBlock('content', $context, $blocks);
         // line 54
         echo "            </main>
-            <div id=\"footer\">
+            <div id=\"mainFooter\">
                 ";
         // line 56
         $this->displayBlock('footer', $context, $blocks);

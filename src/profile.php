@@ -5,16 +5,6 @@ require_once from_root("/new-controllers/base_variables.php");
 
 session_start();
 
-
-// TODO: Remove manual echo on controllers for this (they shouldn't directly output anything)
-if (isset($_SESSION['current_status'])) {
-    $status_popup = new StatusPopup($_SESSION["current_status"], StatusPopupType::fromString($_SESSION["status_type"]));
-    echo $status_popup;
-
-    unset($_SESSION['current_status']);
-    unset($_SESSION['status_type']);
-}
-
 $loader = new \Twig\Loader\FilesystemLoader(from_root('/views'));
 $twig = new \Twig\Environment($loader, [
     'cache' => from_root('/twig-cache')
@@ -22,10 +12,8 @@ $twig = new \Twig\Environment($loader, [
 
 
 
-
-$user = $_SESSION["username"];
 $user_query = "SELECT * FROM users WHERE username = ?";
-$user_result = $database->execute_query($user_query, [$user]);
+$user_result = $database->execute_query($user_query, [$username]);
 // Check if the query was successful
 if (!$user_result) {
     die("Query failed: " . mysqli_error($conn));
@@ -57,7 +45,7 @@ if ($permissions["is_tech"]) {
     $thursday_timestamp = strtotime('+3 day', $monday_timestamp);
     $friday_timestamp = strtotime('+4 day', $monday_timestamp);
 
-    $user_times = get_note_time_for_days($user, [$monday_timestamp, $tuesday_timestamp, $wednesday_timestamp, $thursday_timestamp, $friday_timestamp]);
+    $user_times = get_note_time_for_days($username, [$monday_timestamp, $tuesday_timestamp, $wednesday_timestamp, $thursday_timestamp, $friday_timestamp]);
 
     $user_time_total = 0;
     foreach ($user_times as $idx => $time) {
@@ -78,6 +66,8 @@ echo $twig->render('profile.twig', [
     'wo_time' => $wo_time,
     'user_pref' => $user_pref,
     'ticket_limit' => $ticket_limit,
+	'status_alert_type' => $status_alert_type,
+	'status_alert_message' => $status_alert_message,
 
     // profile variables
     'user_id' => $user_id,

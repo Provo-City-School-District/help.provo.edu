@@ -82,29 +82,50 @@ class __TwigTemplate_7f19428e86aee5af976a997339f0eecf extends Template
         echo " hrs
                 </div>
             </header>
-            <main id=\"pageContent\">
+\t\t\t";
+        // line 39
+        if ( !(null === ($context["status_alert_message"] ?? null))) {
+            // line 40
+            echo "\t\t\t<link rel=\"stylesheet\" href=\"/includes/css/status_popup.css?v=1.0.0\">
+\t\t\t<div class=\"ticket-status-notification\">
+\t\t\t\t<div class=\"alert ";
+            // line 42
+            echo twig_escape_filter($this->env, ($context["status_alert_type"] ?? null), "html", null, true);
+            echo "\">
+\t\t\t\t<span class=\"alertText\"><b>";
+            // line 43
+            echo twig_escape_filter($this->env, twig_capitalize_string_filter($this->env, ($context["status_alert_type"] ?? null)), "html", null, true);
+            echo ":</b> ";
+            echo twig_escape_filter($this->env, ($context["status_alert_message"] ?? null), "html", null, true);
+            echo "</span>
+\t\t\t\t</div>
+\t\t\t</div>
+\t\t\t";
+        }
+        // line 47
+        echo "            <main id=\"pageContent\">
                 ";
-        // line 40
+        // line 48
         $this->displayBlock('menu', $context, $blocks);
-        // line 43
+        // line 51
         echo "                ";
         $this->displayBlock('content', $context, $blocks);
-        // line 46
+        // line 54
         echo "            </main>
             <div id=\"footer\">
                 ";
-        // line 48
+        // line 56
         $this->displayBlock('footer', $context, $blocks);
-        // line 51
+        // line 59
         echo "            </div>
         </div>
         <script>
             const userPref = \"";
-        // line 54
+        // line 62
         echo twig_escape_filter($this->env, ($context["user_pref"] ?? null), "html", null, true);
         echo "\";
             const ticketLimit = \"";
-        // line 55
+        // line 63
         echo twig_escape_filter($this->env, ($context["ticket_limit"] ?? null), "html", null, true);
         echo "\";
         </script>
@@ -140,29 +161,29 @@ class __TwigTemplate_7f19428e86aee5af976a997339f0eecf extends Template
         ";
     }
 
-    // line 40
+    // line 48
     public function block_menu($context, array $blocks = [])
     {
         $macros = $this->macros;
-        // line 41
+        // line 49
         echo "                
                 ";
     }
 
-    // line 43
+    // line 51
     public function block_content($context, array $blocks = [])
     {
         $macros = $this->macros;
-        // line 44
+        // line 52
         echo "
                 ";
     }
 
-    // line 48
+    // line 56
     public function block_footer($context, array $blocks = [])
     {
         $macros = $this->macros;
-        // line 49
+        // line 57
         echo "                    <p>&copy; 2023 - ";
         echo twig_escape_filter($this->env, ($context["current_year"] ?? null), "html", null, true);
         echo " Provo City School District | <a href=\"https://provo.edu/helpdesk-feedback-form/\">Help us Improve our Helpdesk</a></p>
@@ -190,7 +211,7 @@ class __TwigTemplate_7f19428e86aee5af976a997339f0eecf extends Template
      */
     public function getDebugInfo()
     {
-        return array (  166 => 49,  162 => 48,  157 => 44,  153 => 43,  148 => 41,  144 => 40,  138 => 13,  128 => 5,  124 => 4,  108 => 55,  104 => 54,  99 => 51,  97 => 48,  93 => 46,  90 => 43,  88 => 40,  81 => 36,  75 => 32,  71 => 30,  69 => 29,  66 => 28,  62 => 26,  60 => 25,  48 => 15,  46 => 4,  41 => 1,);
+        return array (  187 => 57,  183 => 56,  178 => 52,  174 => 51,  169 => 49,  165 => 48,  159 => 13,  149 => 5,  145 => 4,  129 => 63,  125 => 62,  120 => 59,  118 => 56,  114 => 54,  111 => 51,  109 => 48,  106 => 47,  97 => 43,  93 => 42,  89 => 40,  87 => 39,  81 => 36,  75 => 32,  71 => 30,  69 => 29,  66 => 28,  62 => 26,  60 => 25,  48 => 15,  46 => 4,  41 => 1,);
     }
 
     public function getSourceContext()

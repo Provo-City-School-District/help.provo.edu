@@ -2,6 +2,8 @@
 require_once from_root('/includes/time_utils.php');
 session_start();
 
+$username = $_SESSION["username"];
+
 $permissions = [
     "is_supervisor" => $_SESSION["permissions"]["is_supervisor"] != 0,
     "is_admin" => $_SESSION["permissions"]["is_admin"] != 0,
@@ -16,8 +18,14 @@ $user_pref = isset($_SESSION['color_scheme']) ? $_SESSION['color_scheme'] : 'lig
 $ticket_limit = isset($_SESSION['ticket_limit']) ? $_SESSION['ticket_limit'] : 10;
 
 $day_timestamp = strtotime("today");
-$day_ticket_times = get_note_time_for_days($_SESSION["username"], [$day_timestamp]);
+$day_ticket_times = get_note_time_for_days($username, [$day_timestamp]);
 
 $day_time_min = $day_ticket_times[0] / 60;
 $wo_time = number_format($day_time_min, 2);
 $current_year = date("Y");
+
+$status_alert_type = $_SESSION["status_type"];
+$status_alert_message = $_SESSION["current_status"];
+
+unset($_SESSION["status_type"]);
+unset($_SESSION["current_status"]);

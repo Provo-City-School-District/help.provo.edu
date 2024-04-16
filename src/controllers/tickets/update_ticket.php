@@ -46,6 +46,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+	// Prevent ticket from being closed in any way if tasks are not complete
+	if ($updatedStatus == "resolved" || $updatedStatus == "closed") {
+		$tasks_result = $database->execute_query("SELECT COUNT(*) as count FROM ticket_tasks WHERE (ticket_id = ? AND required = 1 AND completed != 1)", [$ticket_id]);
+		$row = mysqli_fetch_assoc($tasks_result);
+        if ($row['count'] != 0) {
+            // Stop the resolving process and display an error message
+            $error = "Cannot resolve with required, uncompleted tasks";
+            $_SESSION['current_status'] = $error;
+            $_SESSION['status_type'] = 'error';
+            header("Location: edit_ticket.php?$formData&id=$ticket_id");
+            exit;
+		}
+	}
+
 
     // Allow trailing comma
     if (substr($updatedCCEmails, -1) == ",") {

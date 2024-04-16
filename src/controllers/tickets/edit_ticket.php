@@ -741,7 +741,7 @@ if (isset($ticket["client"])) {
     <h2>Tasks</h2>
     <?php
     // Show existing tasks on ticket
-    $tasks_res = $database->execute_query("SELECT id, description, completed FROM help.ticket_tasks WHERE ticket_id = ?", [$ticket_id]);
+    $tasks_res = $database->execute_query("SELECT id, description, completed, required FROM help.ticket_tasks WHERE ticket_id = ?", [$ticket_id]);
     $task_rows = $tasks_res->fetch_all(MYSQLI_ASSOC);
 
     if (count($task_rows) > 0) {
@@ -749,18 +749,22 @@ if (isset($ticket["client"])) {
         <table style="max-width: 500px;">
             <tr>
                 <th>Task Description</th>
-                <th>Status</th>
+                <th>Completed</th>
+				<th>Required</th>
 				<th>Remove Task</th>
             </tr>
             <?php
             foreach ($task_rows as $row) {
 				$task_complete = isset($row['completed']) && $row['completed'] != 0;
+				$task_required = isset($row['required']) && $row['required'] != 0;
 				$task_id = $row['id'];
 				$checked_if_done = $task_complete ? "checked" : "";
+				$checked_if_required = $task_required ? "checked" : "";
             ?>
                 <tr>
                     <td data-cell="Task Description"><?= htmlspecialchars($row['description']); ?></td>
                     <td data-cell="Status"><input type="checkbox" onclick="taskStatusChanged(this, '<?= $task_id ?>');" <?= $checked_if_done ?>/></td>
+					<td data-cell="Required"><input type="checkbox" onclick="taskRequiredChanged(this, '<?= $task_id ?>');" <?= $checked_if_required ?>/></td>
 					<td data-cell="Delete Task"><button onclick="confirmDeleteTask('<?= $task_id ?>');">Delete Task</button></td>
 				</tr>
             <?php
@@ -781,10 +785,18 @@ if (isset($ticket["client"])) {
                 <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
                 <input type="hidden" name="username" value="<?= $_SESSION['username'] ?>">
                 <div>
-                    <label for="task-description">Task description: </label>
-                    <input type="text" name="task_description"></input><br>
-                    <label for="task-description">Completed: </label>
-                    <input type="checkbox" name="task_complete"></input>
+					<div>
+                    	<label for="task-description">Task description: </label>
+                    	<input type="text" name="task_description"></input>
+					</div>
+					<div>
+                    	<label for="task-description">Completed: </label>
+                    	<input type="checkbox" name="task_complete"></input>
+					</div>
+					<div>
+						<label for="task-description">Required: </label>
+                    	<input type="checkbox" name="required" checked></input>
+					</div>
                 </div>
                 <input style="margin-top: 20px;" type="submit" value="Submit Task">
             </form>
@@ -1221,6 +1233,24 @@ function taskStatusChanged(obj, task_id) {
 		},
 	});	
 }
+
+function taskRequiredChanged(obj, task_id) {
+	$.ajax({
+		url: "/ajax/ticket_tasks/update_task_required.php",
+		method: "POST",
+		data: {
+			task_id: task_id,
+			new_status: obj.checked ? 1 : 0
+		},
+		success: function(data, textStatus, xhr) {
+			console.log("Ticket task status changed successfully");
+		},
+		error: function () {
+			alert("Error: Ticket task status AJAX call failed");
+		},
+	});	
+}
+
 
 function confirmDeleteTask(task_id) {
 	if (confirm("Are you sure you want to delete this task?")) {

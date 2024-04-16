@@ -49,7 +49,7 @@ if (!$active_ticket_res) {
 	log_app(LOG_ERR, "Failed to update active_ticket for user $username on ticket $ticket_id");
 }
 
-if (count($ticket_shared_usernames) > 0) {
+if (count($ticket_shared_usernames) == 0) {
 	$shared_ticket_username = $ticket_shared_usernames[0];
 	$status = [
 		"message" => "This ticket is currently being edited by {$shared_ticket_username}",
@@ -61,7 +61,7 @@ if (count($ticket_shared_usernames) > 0) {
 // New notifications API
 if (isset($_SESSION['user_notifications'])) {
 	foreach ($_SESSION['user_notifications'] as $notif) {
-		$status_popup = new StatusPopup($notif->message, $notif->type);
+		$status_popup = new StatusPopup($notif["message"], StatusPopupType::fromString($notif["type"]));
 		echo $status_popup;
 	}
 

@@ -1219,11 +1219,12 @@ $(document).ready(function() {
 
 function taskStatusChanged(obj, task_id) {
 	$.ajax({
-		url: "/ajax/ticket_tasks/update_task_status.php",
+		url: "/ajax/ticket_tasks/update_task.php",
 		method: "POST",
 		data: {
 			task_id: task_id,
-			new_status: obj.checked ? 1 : 0
+			new_status: obj.checked ? 1 : 0,
+			update_type: "completed_change"
 		},
 		success: function(data, textStatus, xhr) {
 			console.log("Ticket task status changed successfully");
@@ -1236,11 +1237,12 @@ function taskStatusChanged(obj, task_id) {
 
 function taskRequiredChanged(obj, task_id) {
 	$.ajax({
-		url: "/ajax/ticket_tasks/update_task_required.php",
+		url: "/ajax/ticket_tasks/update_task.php",
 		method: "POST",
 		data: {
 			task_id: task_id,
-			new_status: obj.checked ? 1 : 0
+			new_status: obj.checked ? 1 : 0,
+			update_type: "required_change"
 		},
 		success: function(data, textStatus, xhr) {
 			console.log("Ticket task status changed successfully");

@@ -3,6 +3,8 @@ require_once("block_file.php");
 require_once("sanitization_utils.php");
 require_once("email_utils.php");
 
+$_SESSION["user_notifications"] = [];
+
 ob_start();
 include("ticket_utils.php");
 $readonly = session_is_tech() ? '' : 'readonly';
@@ -49,11 +51,23 @@ if (!$active_ticket_res) {
 
 if (count($ticket_shared_usernames) > 0) {
 	$shared_ticket_username = $ticket_shared_usernames[0];
-	$_SESSION["current_status"] = "This ticket is currently being edited by {$shared_ticket_username}";
-	$_SESSION["status_type"] = "info";
+	$status = [
+		"message" => "This ticket is currently being edited by {$shared_ticket_username}",
+		"type" => "info"
+	];
+	$_SESSION["user_notifications"][] = $status;
 }
 
-// Check if an error message is set
+// New notifications API
+if (isset($_SESSION['user_notifications'])) {
+	foreach ($_SESSION['user_notifications'] as $notif) {
+		$status_popup = new StatusPopup($notif->message, $notif->type);
+		echo $status_popup;
+	}
+
+    unset($_SESSION['user_notifications']);
+}
+
 if (isset($_SESSION['current_status'])) {
     $status_popup = new StatusPopup($_SESSION["current_status"], StatusPopupType::fromString($_SESSION["status_type"]));
     echo $status_popup;

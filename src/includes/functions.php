@@ -56,6 +56,12 @@ function add_ticket_msg_id_mapping(string $message_id, int $ticket_id)
 
 function get_client_name(string $client)
 {
+	// Do lookup in local table before LDAP
+	$res = get_local_name_for_user($client);
+	if ($res != null) {
+		return $res;
+	}
+
     $ldap_host = getenv('LDAPHOST');
     $ldap_port = getenv('LDAPPORT');
     $ldap_dn = getenv('LDAP_DN');
@@ -243,7 +249,7 @@ function get_local_name_for_user(string $username)
         return null;
     }
 
-    return ["firstname" => $name_data["firstname"], "lastname" => $name_data["lastname"]];
+    return ["firstname" => ucfirst(strtolower($name_data["firstname"])), "lastname" => ucfirst(strtolower($name_data["lastname"]))];
 }
 
 function get_fast_client_location(string $name)

@@ -454,7 +454,7 @@ function get_parsed_ticket_data($ticket_data)
 
 		$tmp["row_color"] =  $row_color;
 		$tmp["title"] = $row["name"];
-		$tmp["description"] = strip_tags(html_entity_decode($row["description"]));;
+		$tmp["description"] = limitChars(strip_tags(html_entity_decode($row["description"])), 100);
 
 		$notes_query = "SELECT creator, note FROM help.notes WHERE linked_id = ? ORDER BY
 			(CASE WHEN date_override IS NULL THEN created ELSE date_override END) DESC
@@ -476,7 +476,7 @@ function get_parsed_ticket_data($ticket_data)
 		$latest_note_str = "";
 		if ($creator != null && $note_data != null) {
 			$tmp["latest_note_author"] = $creator;
-			$tmp["latest_note"] = strip_tags(html_entity_decode($note_data));
+			$tmp["latest_note"] = limitChars(strip_tags(html_entity_decode($note_data)), 150);
 		}
 
 		$tmp["client_username"] = $row["client"];

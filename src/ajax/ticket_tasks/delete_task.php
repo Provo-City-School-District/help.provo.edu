@@ -13,6 +13,7 @@ $username = $_SESSION["username"];
 
 if (!user_is_tech($username)) {
 	log_app(LOG_INFO, "[delete_task.php] User is not a tech. Ignoring ajax request...");
+	http_response_code(401);
 	exit;
 }
 

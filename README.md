@@ -80,3 +80,6 @@ If you're setting up a fresh development instance the database should initialize
 - CanvasJS: https://canvasjs.com/php-charts/
 - PHPMailer: https://github.com/PHPMailer/PHPMailer
 - Composer: https://getcomposer.org/
+- Twig: https://twig.symfony.com/
+- Jquery: https://jquery.com/
+- Jquery UI: https://jqueryui.com/

@@ -1,18 +1,23 @@
 <?php
-include("header.php");
-?>
-<h2>Note Shortcuts</h1><br>
-    <h4>Link to asset in vault: BC#[barcode number] (requires the leading zeroes)</h4><br>
-    <p>Example: <a href="//vault.provo.edu/nac_edit.php?barcode=003001">BC#003001</a>, <a href="//vault.provo.edu/nac_edit.php?barcode=FVFZ624JLYWH">BC#FVFZ624JLYWH</a></p>
-    <h4>Link to another ticket / work order: WO#[ticket number]</h4><br>
-    <p>Example: <a href="/controllers/tickets/edit_ticket.php?id=50">WO#50</a></p><br>
-    <!-- <h2>Markdown Guide</h2>
-    <p>our editor does accept markdown syntax for formatting.</p>
-    <a href="https://www.markdownguide.org/basic-syntax/">Markdown Syntax Guide</a> -->
-    <form>
-        <!-- maybe not hardcode return location (?)-->
-        <button formaction="/profile.php">Return</button>
-    </form>
-    <?php
-    include("footer.php");
-    ?>
+require_once from_root('/vendor/autoload.php');
+require_once from_root("/new-controllers/ticket_base_variables.php");
+require_once "helpdbconnect.php";
+
+$loader = new \Twig\Loader\FilesystemLoader(from_root('/views'));
+$twig = new \Twig\Environment($loader, [
+    'cache' => from_root('/twig-cache'),
+    'auto_reload' => true
+]);
+
+
+echo $twig->render('note_shortcuts.twig', [
+    // base variables
+    'color_scheme' => $color_scheme,
+    'current_year' => $current_year,
+    'user_permissions' => $permissions,
+    'wo_time' => $wo_time,
+    'user_pref' => $user_pref,
+    'ticket_limit' => $ticket_limit,
+	'status_alert_type' => $status_alert_type,
+	'status_alert_message' => $status_alert_message,
+]);

@@ -6,4 +6,4 @@ set -o allexport
 set +o allexport
 
 # Run PHP script
-/usr/local/bin/php /var/www/html/includes/alert_client_response.php
+/usr/local/bin/php /var/www/html/scripts/alert_client_response.php

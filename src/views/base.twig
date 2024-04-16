@@ -36,6 +36,14 @@
                     Today's WO time: {{ wo_time }} hrs
                 </div>
             </header>
+			{% if status_alert_message is not null %}
+			<link rel="stylesheet" href="/includes/css/status_popup.css?v=1.0.0">
+			<div class="ticket-status-notification">
+				<div class="alert {{ status_alert_type }}">
+				<span class="alertText"><b>{{ status_alert_type|capitalize }}:</b> {{ status_alert_message }}</span>
+				</div>
+			</div>
+			{% endif %}
             <main id="pageContent">
                 {% block menu %}
                 
@@ -44,7 +52,7 @@
 
                 {% endblock %}
             </main>
-            <div id="footer">
+            <div id="mainFooter">
                 {% block footer %}
                     <p>&copy; 2023 - {{ current_year }} Provo City School District | <a href="https://provo.edu/helpdesk-feedback-form/">Help us Improve our Helpdesk</a></p>
                 {% endblock %}

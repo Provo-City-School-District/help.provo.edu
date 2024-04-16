@@ -1,6 +1,7 @@
 <?php
+require_once from_root("/new-controllers/base_variables.php");
+
 session_start();
-$username = $_SESSION["username"];
 $num_assigned_tickets = 0;
 $num_flagged_tickets = 0;
 

@@ -1,6 +1,7 @@
 /db_data
 .env
 src/vendor
+src/twig-cache
 .DS_Store
 src/info.php
 src/uploads/*

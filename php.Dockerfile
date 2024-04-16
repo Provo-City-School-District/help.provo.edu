@@ -84,4 +84,4 @@ RUN mkdir -p /var/php/sessions && chown -R www-data:www-data /var/php/sessions &
 
 RUN chown -R www-data:www-data /var/www/html/
 # CMD cron && docker-php-entrypoint apache2-foreground
-CMD service cron start && chown -R www-data:www-data /var/php/sessions && composer install --no-interaction --no-ansi --no-scripts --no-progress --prefer-dist && chown -R www-data:www-data /var/www/html/vendor && docker-php-entrypoint apache2-foreground
+CMD service cron start && chown -R www-data:www-data /var/www/html/vendor && chown -R www-data:www-data /var/php/sessions && chown -R www-data:www-data /var/www/html/twig-cache && composer install --no-interaction --no-ansi --no-scripts --no-progress --prefer-dist && docker-php-entrypoint apache2-foreground

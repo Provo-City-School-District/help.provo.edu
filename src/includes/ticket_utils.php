@@ -432,3 +432,100 @@ function generateUpdateHTML($type, $old_value, $new_value, $action, $id)
 
     return '<div class="note-container" id="note-container-' . $id . '">' . $type . ' ' . $action . ': <span class="note" id="note-' . $id . '">' . $old_value . $new_value . '</span></div>';
 }
+
+function get_parsed_ticket_data($ticket_data)
+{
+	global $database;
+
+	$priorityTypes = [1 => "Critical", 3 => "Urgent", 5 => "High", 10 => "Standard", 15 => "Client Response", 30 => "Project", 60 => "Meeting Support"];
+
+	$tickets = [];
+	while ($row = $ticket_data->fetch_assoc()) {
+		$tmp = [];
+		$tmp["id"] = $row["id"];
+
+		$row_color = '';
+        if (isset($row["alert_levels"])) {
+            $alert_levels = explode(',', $row["alert_levels"]);
+            foreach ($alert_levels as $alert_level) {
+                $row_color .= trim($alert_level) . ' ';
+            }
+        }
+
+		$tmp["row_color"] =  $row_color;
+		$tmp["title"] = $row["name"];
+		$tmp["description"] = strip_tags(html_entity_decode($row["description"]));;
+
+		$notes_query = "SELECT creator, note FROM help.notes WHERE linked_id = ? ORDER BY
+			(CASE WHEN date_override IS NULL THEN created ELSE date_override END) DESC
+		";
+		$notes_stmt = mysqli_prepare($database, $notes_query);
+		$creator = null;
+		$note_data = null;
+		if ($notes_stmt) {
+			mysqli_stmt_bind_param($notes_stmt, "i", $row["id"]);
+			mysqli_stmt_execute($notes_stmt);
+
+			mysqli_stmt_bind_result($notes_stmt, $creator, $note_data);
+			// Fetch the result
+			mysqli_stmt_fetch($notes_stmt);
+
+			// Use $location_name as needed
+			mysqli_stmt_close($notes_stmt);
+		}
+		$latest_note_str = "";
+		if ($creator != null && $note_data != null) {
+			$tmp["latest_note_author"] = $creator;
+			$tmp["latest_note"] = strip_tags(html_entity_decode($note_data));
+		}
+
+		$tmp["client_username"] = $row["client"];
+		if (isset($row["client"])) {
+            $result = get_client_name($row["client"]);
+        }
+
+		$tmp["client_first_name"] = $result['firstname'] ?: "";
+		$tmp["client_last_name"] = $result['lastname'] ?: "";
+
+        $location_query = "SELECT location_name FROM locations WHERE sitenumber = ?";
+        $loc_stmt = mysqli_prepare($database, $location_query);
+		$location_name = "";
+        if ($loc_stmt) {
+            mysqli_stmt_bind_param($loc_stmt, "s", $row["location"]);
+            mysqli_stmt_execute($loc_stmt);
+            mysqli_stmt_bind_result($loc_stmt, $location_name);
+
+            // Fetch the result
+            mysqli_stmt_fetch($loc_stmt);
+
+            // Use $location_name as needed
+            mysqli_stmt_close($loc_stmt);
+        }
+
+		$tmp["room"] = $row["room"];
+		$tmp["location_name"] = $location_name;
+
+		if ($row['request_type_id'] === '0') {
+            $request_type_name = "Other";
+        } else {
+            $request_type_query_result = $database->execute_query("SELECT request_name FROM request_type WHERE request_id = ?", [$row['request_type_id']]);
+            $request_type_name = mysqli_fetch_assoc($request_type_query_result)['request_name'];
+        }
+
+		$tmp["request_category"] = $request_type_name;
+		$tmp["status"] = $row["status"];
+
+		$priority = $row["priority"];
+		$tmp["priority"] = $priorityTypes[$priority];
+		$tmp["sort_value"] = $priority;
+
+		$tmp["created"] = $row["created"];
+		$tmp["last_updated"] = $row["last_updated"];
+		$tmp["due_date"] = $row["due_date"];
+		$tmp["assigned_tech"] = $row["employee"];
+		$tmp["alert_level"] = isset($row["alert_levels"]) ? $row["alert_levels"] : '';
+		$tickets[] = $tmp;
+	}
+
+	return $tickets;
+}

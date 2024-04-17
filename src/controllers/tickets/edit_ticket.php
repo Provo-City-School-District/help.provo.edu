@@ -687,24 +687,29 @@ if (isset($ticket["client"])) {
             }
             ?>
         </ul>
+
     <?php
+        $hasfiles = true;
     }
     ?>
-    <button id="toggle-file-upload-form">Attach Files</button>
+
+
+
     <div id="file-upload-form" style="display: none;">
         <h3>Upload Files</h3>
+        <p class="help-message">When you click 'Choose Files', a dialog box will appear. You can select either one file or multiple files at once from your computer. After making your selection, remember to click 'Attach Files' to attach the files to the ticket.</p>
         <form method="post" action="upload_files_handler.php" enctype="multipart/form-data">
             <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
             <input type="hidden" name="username" value="<?= $_SESSION['username'] ?>">
             <label for="attachment">Attachment:</label>
             <input id="attachment" name="attachment[]" type="file" multiple>
-            <input type="submit" value="Upload">
+            <input type="submit" value="Attach Files">
         </form>
         <div id="maximum-file-size-text">
             Maximum of 50MB
         </div>
     </div>
-
+    <button id="toggle-file-upload-form">Attach <?= $hasfiles ? 'Additional' : '' ?> Files</button>
 
     <?php
     if (count($child_tickets) > 0) {

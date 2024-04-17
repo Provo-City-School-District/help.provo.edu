@@ -27,6 +27,11 @@ a:hover {
 	background-color: #3aa410;
 }
 
+.help-message {
+	font-size: 80%;
+	font-style: italic;
+}
+
 strong {
 	font-weight: 700;
 }

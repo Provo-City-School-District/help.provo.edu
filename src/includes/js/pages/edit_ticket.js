@@ -225,8 +225,10 @@ if (toggleFileUploadForm && fileUploadForm) {
   toggleFileUploadForm.addEventListener("click", function () {
     if (fileUploadForm.style.display === "none") {
       fileUploadForm.style.display = "block";
+      toggleFileUploadForm.style.display = "none";
     } else {
       fileUploadForm.style.display = "none";
+      toggleFileUploadForm.style.display = "block";
     }
   });
 }

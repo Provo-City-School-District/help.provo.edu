@@ -253,7 +253,7 @@ if (descriptionDiv && editDescriptionButton && editDescriptionForm) {
 // Show the search-for-client div when the currentClient link is clicked
 const searchClientButton = document.getElementById("search-client-button");
 if (searchClientButton) {
-	searchClientButton.addEventListener("click", function (event) {
+  searchClientButton.addEventListener("click", function (event) {
     event.preventDefault(); // Prevent the default action
     document.querySelector("#search-for-client").style.display = "grid"; // Show the div
   });
@@ -282,7 +282,13 @@ if (searchForm) {
             '">' +
             results[i].firstname +
             " " +
-            results[i].lastname + " — " + results[i].location_name + " (" + results[i].title + ")" + "</a></p>";
+            results[i].lastname +
+            " — " +
+            results[i].location_name +
+            " (" +
+            results[i].title +
+            ")" +
+            "</a></p>";
         }
         document.getElementById("search-results").innerHTML = resultsHTML;
       } else {

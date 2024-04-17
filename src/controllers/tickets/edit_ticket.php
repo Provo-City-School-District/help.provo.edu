@@ -1200,7 +1200,7 @@ if (isset($ticket["client"])) {
     </script>
 <?php endif; ?>
 
-<script src="/includes/js/pages/edit_ticket.js?v=1.0.03" type="text/javascript"></script>
+<script src="/includes/js/pages/edit_ticket.js?v=1.0.04" type="text/javascript"></script>
 <?php include("footer.php"); ?>
 <script>
     $(document).ready(function() {

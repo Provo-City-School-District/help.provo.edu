@@ -127,8 +127,8 @@ $current_page = $_SERVER['REQUEST_URI'];
                     <?php
                     }
                     ?>
-
                     <a href="/controllers/logout.php">Logout</a>
+                    <span id="mobileMenu" onclick="toggleMobileMenu()">&#9776; Menu</span>
                 </nav>
                 <div id="dayWOHours">
                     <?php

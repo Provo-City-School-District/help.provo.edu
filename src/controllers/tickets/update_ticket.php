@@ -261,6 +261,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             removeAlert($database, $alert7DayMessage, $ticket_id);
             removeAlert($database, $alert15DayMessage, $ticket_id);
             removeAlert($database, $alert20DayMessage, $ticket_id);
+            removeAlert($database, $pastDueMessage, $ticket_id);
         }
     }
 

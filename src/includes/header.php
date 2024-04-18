@@ -110,7 +110,8 @@ $current_page = $_SERVER['REQUEST_URI'];
             if ($is_logged_in) {
             ?>
                 <div id="headerNav">
-                    <nav>
+                    <span id="mobileMenu">&#9776; Menu</span>
+                    <nav id="mainNav">
                         <a href="/profile.php">Profile</a>
                         <a href="/tickets.php">Tickets</a>
                         <?php
@@ -130,7 +131,7 @@ $current_page = $_SERVER['REQUEST_URI'];
                         ?>
                         <a href="/controllers/logout.php">Logout</a>
                     </nav>
-                    <span id="mobileMenu" onclick="toggleMobileMenu()">&#9776; Menu</span>
+
                 </div>
                 <div id="dayWOHours">
                     <?php

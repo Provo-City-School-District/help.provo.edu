@@ -1,0 +1,112 @@
+{% extends "ticket_base.twig" %}
+
+{% block content %}
+{% if user_permissions.is_tech and not hide_alerts %}
+<div class="alerts_wrapper">
+	{% for alert in alerts %}
+	<p class="{{ alert.alert_level }}">
+	<a href="/controllers/tickets/edit_ticket.php?id={{ alert.ticket_id}}">
+		Ticket: {{ alert.ticket_id }} - {{ alert.message }}
+	</a>
+	<a class="close-alert" href="/controllers/tickets/alert_delete.php?id={{ alert.id }}">&times;</a>
+	{% endfor %}
+</div>
+{% endif %}
+<h1>My Assigned Tickets</h1>
+<table class="ticketsTable data-table">
+	<thead>
+		<tr>
+			<th class="tID">ID</th>
+			<th class="reqDetail">Request Detail</th>
+			<th class="tLatestNote">Latest Note</th>
+			<th class="client">Client</th>
+			<th class="tLocation">Location</th>
+			<th class="category">Request Category</th>
+			<th class="status">Current Status</th>
+			<th class="priority">Priority</th>
+			<th class="tDate">Created Date</th>
+			<th class="tDate">Last Updated</th>
+			<th class="date">Due</th>
+			<th class="">Assigned</th>
+			<th class="alertLevel">Alert</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for ticket in my_tickets %}
+		<tr class="{{ ticket.row_color }}">
+            <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id={{ ticket.id }}">{{ ticket.id }}</a></td>
+            <td class="details" data-cell="Request Detail"><a href="/controllers/tickets/edit_ticket.php?id={{ ticket.id }}">{{ ticket.title }}</a>{{ ticket.description|raw }}</td>
+            <td class="latestNote" data-cell="Latest Note:"><strong>{{ ticket.latest_note_author }}: </strong> {{ ticket.latest_note|raw }}</td>
+            <td data-cell="Client: ">{{ ticket.client_first_name }} {{ ticket.client_last_name }} ({{ ticket.client_username }})</td>
+            <td data-cell="Location">
+				{{ ticket.location_name }}
+				{% if ticket.room is not null %}
+					<br><br>
+					RM {{ ticket.room }}
+				{% endif %}
+			</td>
+            <td data-cell="Request Category">{{ ticket.request_category }}</td>
+            <td data-cell="Current Status">{{ ticket.status }}</td>
+            <td data-cell="Priority">
+				<span class="sort-value">{{ ticket.sort_value }}</span>
+				{{ ticket.priority }}
+			</td>
+            <td data-cell="Created">{{ ticket.created }}</td>
+            <td data-cell="Last Updated">{{ ticket.last_updated }}</td>
+            <td data-cell="Due">{{ ticket.due_date }}</td>
+            <td data-cell="Assigned">{{ ticket.assigned_tech }}</td>
+            <td data-cell="Alert Levels">{{ ticket.alert_level }}</td>
+        </tr>
+		{% endfor %}
+	</tbody>
+	</table>
+
+	<h1>My Open Tickets</h1>
+	<table class="ticketsTable data-table">
+	<thead>
+		<tr>
+			<th class="tID">ID</th>
+			<th class="reqDetail">Request Detail</th>
+			<th class="tLatestNote">Latest Note</th>
+			<th class="client">Client</th>
+			<th class="tLocation">Location</th>
+			<th class="category">Request Category</th>
+			<th class="status">Current Status</th>
+			<th class="priority">Priority</th>
+			<th class="tDate">Created Date</th>
+			<th class="tDate">Last Updated</th>
+			<th class="date">Due</th>
+			<th class="">Assigned</th>
+			<th class="alertLevel">Alert</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for ticket in open_tickets %}
+		<tr class="{{ ticket.row_color }}">
+            <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id={{ ticket.id }}">{{ ticket.id }}</a></td>
+            <td class="details" data-cell="Request Detail"><a href="/controllers/tickets/edit_ticket.php?id={{ ticket.id }}">{{ ticket.title }}</a>{{ ticket.description|raw }}</td>
+            <td class="latestNote" data-cell="Latest Note:"><strong>{{ ticket.latest_note_author }}: </strong> {{ ticket.latest_note|raw }}</td>
+            <td data-cell="Client: ">{{ ticket.client_first_name }} {{ ticket.client_last_name }} ({{ ticket.client_username }})</td>
+            <td data-cell="Location">
+				{{ ticket.location_name }}
+				{% if ticket.room is not null %}
+					<br><br>
+					RM {{ ticket.room }}
+				{% endif %}
+			</td>
+            <td data-cell="Request Category">{{ ticket.request_category }}</td>
+            <td data-cell="Current Status">{{ ticket.status }}</td>
+            <td data-cell="Priority">
+				<span class="sort-value">{{ ticket.sort_value }}</span>
+				{{ ticket.priority }}
+			</td>
+            <td data-cell="Created">{{ ticket.created }}</td>
+            <td data-cell="Last Updated">{{ ticket.last_updated }}</td>
+            <td data-cell="Due">{{ ticket.due_date }}</td>
+            <td data-cell="Assigned">{{ ticket.assigned_tech }}</td>
+            <td data-cell="Alert Levels">{{ ticket.alert_level }}</td>
+        </tr>
+		{% endfor %}
+	</tbody>
+</table>
+{% endblock %}

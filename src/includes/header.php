@@ -76,7 +76,7 @@ $current_page = $_SERVER['REQUEST_URI'];
     <title>Help For Provo City School District</title>
     <meta http-equiv="refresh" content="3600">
     <link rel="stylesheet" href="/includes/js/dataTables-1.13.7/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="/includes/css/main.css?v=00.01.43">
+    <link rel="stylesheet" href="/includes/css/main.css?v=00.01.44">
     <link rel="icon" type="image/png" href="/includes/img/favicons/favicon-16x16.png" sizes="16x16">
     <link rel="stylesheet" href="/includes/css/jquery-ui.min.css">
 
@@ -109,27 +109,30 @@ $current_page = $_SERVER['REQUEST_URI'];
             <?php
             if ($is_logged_in) {
             ?>
-                <nav id="headerNav">
-                    <a href="/profile.php">Profile</a>
-                    <a href="/tickets.php">Tickets</a>
-                    <?php
-                    if ($_SESSION['permissions']['is_supervisor'] == 1) {
-                    ?>
-                        <a href="/supervisor.php">Supervisor</a>
-                    <?php
-                    }
-                    ?>
+                <div id="headerNav">
+                    <span id="mobileMenu">&#9776; Menu</span>
+                    <nav id="mainNav">
+                        <a href="/profile.php">Profile</a>
+                        <a href="/tickets.php">Tickets</a>
+                        <?php
+                        if ($_SESSION['permissions']['is_supervisor'] == 1) {
+                        ?>
+                            <a href="/supervisor.php">Supervisor</a>
+                        <?php
+                        }
+                        ?>
 
-                    <?php
-                    if ($_SESSION['permissions']['is_admin'] == 1) {
-                    ?>
-                        <a href="/admin.php">Admin</a>
-                    <?php
-                    }
-                    ?>
+                        <?php
+                        if ($_SESSION['permissions']['is_admin'] == 1) {
+                        ?>
+                            <a href="/admin.php">Admin</a>
+                        <?php
+                        }
+                        ?>
+                        <a href="/controllers/logout.php">Logout</a>
+                    </nav>
 
-                    <a href="/controllers/logout.php">Logout</a>
-                </nav>
+                </div>
                 <div id="dayWOHours">
                     <?php
                     $day_timestamp = strtotime("today");

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         {% block head %}
             <title>Help For Provo City School District</title>
@@ -19,21 +19,27 @@
                 <a href="/tickets.php">
                     <img id="pcsd-logo" src="/includes/img/pcsd-logo-website-header-160w.png" alt="Provo City School District Logo" />
                 </a>
-                <nav id="headerNav">
-                    <a href="/profile.php">Profile</a>
-                    <a href="/tickets.php">Tickets</a>
-                    {% if user_permissions.is_supervisor %}
+                
+                <div id="headerNav">
+                    <span id="mobileMenu">&#9776; Menu</span>
+                    <nav id="mainNav">
+                        <a href="/profile.php">Profile</a>
+                        <a href="/tickets.php">Tickets</a>
+                        {% if user_permissions.is_supervisor %}
                         <a href="/supervisor.php">Supervisor</a>
                     {% endif %}
 
-                    {% if user_permissions.is_admin %}
+
+                       {% if user_permissions.is_admin %}
                         <a href="/admin.php">Admin</a>
                     {% endif %}
+                        <a href="/controllers/logout.php">Logout</a>
+                    </nav>
 
-                    <a href="/controllers/logout.php">Logout</a>
-                </nav>
+                </div>
                 <div id="dayWOHours">
-                    Today's WO time: {{ wo_time }} hrs
+                    <div>Today's WO time:</div> 
+					{{ wo_time }} hrs
                 </div>
             </header>
 			{% if status_alert_message is not null %}

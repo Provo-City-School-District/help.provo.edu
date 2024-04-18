@@ -29,41 +29,41 @@ $ticket_shared_usernames = [];
 
 $is_ticket_shared_res = $database->execute_query("SELECT username FROM help.users WHERE active_ticket = ?", [$ticket_id]);
 if (!$is_ticket_shared_res) {
-	log_app(LOG_ERR, "Failed to get active_ticket status for ticket $ticket_id");
+    log_app(LOG_ERR, "Failed to get active_ticket status for ticket $ticket_id");
 }
 
 if ($is_ticket_shared_res->num_rows > 0) {
-	
-	while ($row = $is_ticket_shared_res->fetch_assoc()) {
-		$tmp_username = $row["username"];
-		log_app(LOG_INFO, "is_ticket_shared fetched username: $tmp_username ");
-		if ($tmp_username != $username)
-			$ticket_shared_usernames[] = $tmp_username;
-	}
+
+    while ($row = $is_ticket_shared_res->fetch_assoc()) {
+        $tmp_username = $row["username"];
+        log_app(LOG_INFO, "is_ticket_shared fetched username: $tmp_username ");
+        if ($tmp_username != $username)
+            $ticket_shared_usernames[] = $tmp_username;
+    }
 }
 
 
 // Update active ticket for user
 $active_ticket_res = $database->execute_query("UPDATE help.users SET active_ticket = ?, active_ticket_updated = NOW() WHERE username = ?", [$ticket_id, $username]);
 if (!$active_ticket_res) {
-	log_app(LOG_ERR, "Failed to update active_ticket for user $username on ticket $ticket_id");
+    log_app(LOG_ERR, "Failed to update active_ticket for user $username on ticket $ticket_id");
 }
 
 if (count($ticket_shared_usernames) > 0) {
-	$shared_ticket_username = $ticket_shared_usernames[0];
-	$status = [
-		"message" => "This ticket is currently being edited by {$shared_ticket_username}",
-		"type" => "info"
-	];
-	$_SESSION["user_notifications"][] = $status;
+    $shared_ticket_username = $ticket_shared_usernames[0];
+    $status = [
+        "message" => "This ticket is currently being edited by {$shared_ticket_username}",
+        "type" => "info"
+    ];
+    $_SESSION["user_notifications"][] = $status;
 }
 
 // New notifications API
 if (isset($_SESSION['user_notifications'])) {
-	foreach ($_SESSION['user_notifications'] as $notif) {
-		$status_popup = new StatusPopup($notif["message"], StatusPopupType::fromString($notif["type"]));
-		echo $status_popup;
-	}
+    foreach ($_SESSION['user_notifications'] as $notif) {
+        $status_popup = new StatusPopup($notif["message"], StatusPopupType::fromString($notif["type"]));
+        echo $status_popup;
+    }
 
     unset($_SESSION['user_notifications']);
 }
@@ -308,31 +308,31 @@ if (isset($ticket["client"])) {
             <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
             <input type="hidden" name="madeby" value="<?= $_SESSION['username'] ?>">
             <input type="hidden" id="client" name="client" value="<?= $ticket['client'] ?>">
-			<div class="currentClient">
-				<div>
-					<div class="fake-h3">Client Info </div>
-						<div id="client-display">
-						<?= $clientFirstName . " " . $clientLastName . " — " . email_address_from_username(strtolower(($ticket['client']))) ?><br><br>
-						<?php
-							$result = get_ldap_info($ticket['client'], LDAP_EMPLOYEE_ID | LDAP_EMPLOYEE_LOCATION | LDAP_EMPLOYEE_JOB_TITLE);
+            <div class="currentClient">
+                <div>
+                    <div class="fake-h3">Client Info </div>
+                    <div id="client-display">
+                        <?= $clientFirstName . " " . $clientLastName . " — " . email_address_from_username(strtolower(($ticket['client']))) ?><br><br>
+                        <?php
+                        $result = get_ldap_info($ticket['client'], LDAP_EMPLOYEE_ID | LDAP_EMPLOYEE_LOCATION | LDAP_EMPLOYEE_JOB_TITLE);
 
-							$employee_id = $result["employeeid"];
-							$employee_location = $result["location"];
-							$job_title = $result["job_title"];
-						?>
-						<?php if (!$readonly): ?>
-						ID: <?= $employee_id ?><br>
-						<?php endif; ?>
-						Location: <?= location_name_from_id($employee_location) ?><br>
-						Job Title: <?= $job_title ?>
-						</div>
-				</div>
-				<?php if (!$readonly): ?>
-				<div class="right">
-					<a id="search-client-button">Change Client</a>
-				</div>
-				<?php endif; ?>
-			</div>
+                        $employee_id = $result["employeeid"];
+                        $employee_location = $result["location"];
+                        $job_title = $result["job_title"];
+                        ?>
+                        <?php if (!$readonly) : ?>
+                            ID: <?= $employee_id ?><br>
+                        <?php endif; ?>
+                        Location: <?= location_name_from_id($employee_location) ?><br>
+                        Job Title: <?= $job_title ?>
+                    </div>
+                </div>
+                <?php if (!$readonly) : ?>
+                    <div class="right">
+                        <a id="search-client-button">Change Client</a>
+                    </div>
+                <?php endif; ?>
+            </div>
             <div>
                 <span>Created:</span> <?= $ticket['created'] ?>
             </div>
@@ -687,24 +687,29 @@ if (isset($ticket["client"])) {
             }
             ?>
         </ul>
+
     <?php
+        $hasfiles = true;
     }
     ?>
-    <button id="toggle-file-upload-form">Attach Files</button>
+
+
+
     <div id="file-upload-form" style="display: none;">
         <h3>Upload Files</h3>
+        <p class="help-message">When you click 'Choose Files', a dialog box will appear. You can select either one file or multiple files at once from your computer. After making your selection, remember to click 'Attach Files' to attach the files to the ticket.</p>
         <form method="post" action="upload_files_handler.php" enctype="multipart/form-data">
             <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
             <input type="hidden" name="username" value="<?= $_SESSION['username'] ?>">
             <label for="attachment">Attachment:</label>
             <input id="attachment" name="attachment[]" type="file" multiple>
-            <input type="submit" value="Upload">
+            <input type="submit" value="Attach Files">
         </form>
         <div id="maximum-file-size-text">
             Maximum of 50MB
         </div>
     </div>
-
+    <button id="toggle-file-upload-form">Attach <?= $hasfiles ? 'Additional' : '' ?> Files</button>
 
     <?php
     if (count($child_tickets) > 0) {
@@ -750,23 +755,23 @@ if (isset($ticket["client"])) {
             <tr>
                 <th>Task Description</th>
                 <th>Completed</th>
-				<th>Required</th>
-				<th>Remove Task</th>
+                <th>Required</th>
+                <th>Remove Task</th>
             </tr>
             <?php
             foreach ($task_rows as $row) {
-				$task_complete = isset($row['completed']) && $row['completed'] != 0;
-				$task_required = isset($row['required']) && $row['required'] != 0;
-				$task_id = $row['id'];
-				$checked_if_done = $task_complete ? "checked" : "";
-				$checked_if_required = $task_required ? "checked" : "";
+                $task_complete = isset($row['completed']) && $row['completed'] != 0;
+                $task_required = isset($row['required']) && $row['required'] != 0;
+                $task_id = $row['id'];
+                $checked_if_done = $task_complete ? "checked" : "";
+                $checked_if_required = $task_required ? "checked" : "";
             ?>
                 <tr>
                     <td data-cell="Task Description"><?= htmlspecialchars($row['description']); ?></td>
-                    <td data-cell="Status"><input type="checkbox" onclick="taskStatusChanged(this, '<?= $task_id ?>');" <?= $checked_if_done ?>/></td>
-					<td data-cell="Required"><input type="checkbox" onclick="taskRequiredChanged(this, '<?= $task_id ?>');" <?= $checked_if_required ?>/></td>
-					<td data-cell="Delete Task"><button onclick="confirmDeleteTask('<?= $task_id ?>');">Delete Task</button></td>
-				</tr>
+                    <td data-cell="Status"><input type="checkbox" onclick="taskStatusChanged(this, '<?= $task_id ?>');" <?= $checked_if_done ?> /></td>
+                    <td data-cell="Required"><input type="checkbox" onclick="taskRequiredChanged(this, '<?= $task_id ?>');" <?= $checked_if_required ?> /></td>
+                    <td data-cell="Delete Task"><button onclick="confirmDeleteTask('<?= $task_id ?>');">Delete Task</button></td>
+                </tr>
             <?php
             }
             ?>
@@ -785,18 +790,18 @@ if (isset($ticket["client"])) {
                 <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
                 <input type="hidden" name="username" value="<?= $_SESSION['username'] ?>">
                 <div>
-					<div>
-                    	<label for="task-description">Task description: </label>
-                    	<input type="text" name="task_description"></input>
-					</div>
-					<div>
-                    	<label for="task-description">Completed: </label>
-                    	<input type="checkbox" name="task_complete"></input>
-					</div>
-					<div>
-						<label for="task-description">Required: </label>
-                    	<input type="checkbox" name="required" checked></input>
-					</div>
+                    <div>
+                        <label for="task-description">Task description: </label>
+                        <input type="text" name="task_description"></input>
+                    </div>
+                    <div>
+                        <label for="task-description">Completed: </label>
+                        <input type="checkbox" name="task_complete"></input>
+                    </div>
+                    <div>
+                        <label for="task-description">Required: </label>
+                        <input type="checkbox" name="required" checked></input>
+                    </div>
                 </div>
                 <input style="margin-top: 20px;" type="submit" value="Submit Task">
             </form>
@@ -812,9 +817,9 @@ if (isset($ticket["client"])) {
         <div id="note-table" class="note">
             <table class="ticketsTable">
                 <tr>
-                    <th>Date</th>
-                    <th>Created By</th>
-                    <th>Note</th>
+                    <th class='tableDate'>Date</th>
+                    <th class="tableUser">Created By</th>
+                    <th class="tableString">Note</th>
                     <th class="timeColumn">Time</th>
                 </tr>
                 <?php
@@ -1046,9 +1051,9 @@ if (isset($ticket["client"])) {
                 <p id="ticket-history-status">(collapsed)</p>
                 <table id="ticket-history">
                     <tr class="ticket-history-header">
-                        <th>Created At</th>
-                        <th>Changed By</th>
-                        <th>Changes made</th>
+                        <th class="tableDate">Created At</th>
+                        <th class="tableUser">Changed By</th>
+                        <th class="tableString">Changes made</th>
                     </tr>
                     <?php
                     while ($log_row = mysqli_fetch_assoc($log_result)) {
@@ -1195,81 +1200,84 @@ if (isset($ticket["client"])) {
     </script>
 <?php endif; ?>
 
-<script src="/includes/js/pages/edit_ticket.js?v=1.0.03" type="text/javascript"></script>
+<script src="/includes/js/pages/edit_ticket.js?v=1.0.04" type="text/javascript"></script>
 <?php include("footer.php"); ?>
 <script>
-$(document).ready(function() {
-	$('#close-ticket-button').click(function() {
-		$.ajax({
-			url: "/ajax/close_ticket.php",
-			method: "POST",
-			data: {
-				ticket_id: <?= $ticket_id ?>,
-			},
-			success: function (data, textStatus, xhr) {
-				console.log("Ticket closed successfully");
-				location.reload();
-			},
-			error: function () {
-				alert("Error: Autocomplete AJAX call failed");
-			},
-		});
-	});
-});
+    $(document).ready(function() {
+        $('#close-ticket-button').click(function() {
+            $.ajax({
+                url: "/ajax/close_ticket.php",
+                method: "POST",
+                data: {
+                    ticket_id: <?= $ticket_id ?>,
+                },
+                success: function(data, textStatus, xhr) {
+                    console.log("Ticket closed successfully");
+                    location.reload();
+                },
+                error: function() {
+                    alert("Error: Autocomplete AJAX call failed");
+                },
+            });
+        });
+    });
 
-function taskStatusChanged(obj, task_id) {
-	$.ajax({
-		url: "/ajax/ticket_tasks/update_task_status.php",
-		method: "POST",
-		data: {
-			task_id: task_id,
-			new_status: obj.checked ? 1 : 0
-		},
-		success: function(data, textStatus, xhr) {
-			console.log("Ticket task status changed successfully");
-		},
-		error: function () {
-			alert("Error: Ticket task status AJAX call failed");
-		},
-	});	
-}
+    function taskStatusChanged(obj, task_id) {
+        $.ajax({
+            url: "/ajax/ticket_tasks/update_task.php",
+            method: "POST",
+            data: {
+                task_id: task_id,
+                new_status: obj.checked ? 1 : 0,
+                update_type: "completed_change"
+            },
+            success: function(data, textStatus, xhr) {
+                console.log("Ticket task status changed successfully");
+            },
+            error: function() {
+                alert("Error: Ticket task status AJAX call failed");
+            },
+        });
+    }
 
-function taskRequiredChanged(obj, task_id) {
-	$.ajax({
-		url: "/ajax/ticket_tasks/update_task_required.php",
-		method: "POST",
-		data: {
-			task_id: task_id,
-			new_status: obj.checked ? 1 : 0
-		},
-		success: function(data, textStatus, xhr) {
-			console.log("Ticket task status changed successfully");
-		},
-		error: function () {
-			alert("Error: Ticket task status AJAX call failed");
-		},
-	});	
-}
+    function taskRequiredChanged(obj, task_id) {
+        $.ajax({
+            url: "/ajax/ticket_tasks/update_task.php",
+            method: "POST",
+            data: {
+                task_id: task_id,
+                new_status: obj.checked ? 1 : 0,
+                update_type: "required_change"
+            },
+            success: function(data, textStatus, xhr) {
+                console.log("Ticket task status changed successfully");
+            },
+            error: function() {
+                alert("Error: Ticket task status AJAX call failed");
+            },
+        });
+    }
 
 
-function confirmDeleteTask(task_id) {
-	if (confirm("Are you sure you want to delete this task?")) {
-		deleteTask(task_id);
-	}
-}
-function deleteTask(task_id) {
-	$.ajax({
-		url: "/ajax/ticket_tasks/delete_task.php",
-		method: "POST",
-		data: {
-			task_id: task_id,
-		},
-		success: function(data, textStatus, xhr) {
-			alert("Ticket task deleted successfully");
-		},
-		error: function () {
-			alert("Error: Ticket task deletion AJAX call failed");
-		},
-	});	
-}
+    function confirmDeleteTask(task_id) {
+        if (confirm("Are you sure you want to delete this task?")) {
+            deleteTask(task_id);
+        }
+    }
+
+    function deleteTask(task_id) {
+        $.ajax({
+            url: "/ajax/ticket_tasks/delete_task.php",
+            method: "POST",
+            data: {
+                task_id: task_id,
+            },
+            success: function(data, textStatus, xhr) {
+                alert("Ticket task deleted successfully");
+            },
+            error: function() {
+                alert("Error: Ticket task deletion AJAX call failed");
+            },
+        });
+    }
 </script>

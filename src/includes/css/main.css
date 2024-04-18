@@ -9,10 +9,12 @@ body {
 	font-family: "Campton-Medium";
 	background-color: var(--page-background);
 }
+
 .fake-h3 {
 	font-size: 26px;
 	font-weight: bold;
 }
+
 a {
 	color: var(--theme-url-color);
 	text-decoration: none;
@@ -25,6 +27,11 @@ a:hover {
 
 #green-button {
 	background-color: #3aa410;
+}
+
+.help-message {
+	font-size: 80%;
+	font-style: italic;
 }
 
 strong {
@@ -179,7 +186,7 @@ input[type=submit] {
 	display: grid;
 	grid-template-columns: 1fr;
 	gap: 1em;
-	max-height: 160px;
+	/* max-height: 170px; */
 	padding: 1em;
 	justify-items: center;
 }
@@ -191,15 +198,28 @@ input[type=submit] {
 }
 
 /* =============================== Navigation Styles =============================== */
-#headerNav a {
+#headerNav * {
 	color: var(--theme-text-color);
-	padding: 1em;
 	border-radius: 4px;
 	text-align: center;
 }
 
-#headerNav a:hover {
+#headerNav *:hover {
 	background-color: var(--theme-url-highlight);
+}
+
+#headerNav #mobileMenu {
+	display: block;
+}
+
+#headerNav nav {
+	margin-top: 1em;
+	display: none;
+}
+
+#headerNav nav a {
+	display: block;
+	padding: 1em;
 }
 
 #pageContent {
@@ -213,6 +233,7 @@ table,
 table.dataTable.no-footer {
 	width: 100%;
 	border: 2px solid var(--theme-table-border-color);
+	table-layout: fixed;
 }
 
 table[style] {
@@ -289,7 +310,8 @@ table.dataTable .details a {
 	margin-bottom: 1em;
 }
 
-table.dataTable .latestNote {
+table.dataTable .latestNote,
+table.dataTable .details {
 	word-break: break-all;
 	overflow-wrap: break-word;
 }
@@ -528,9 +550,26 @@ select {
 		justify-items: var(--header-location);
 	}
 
+	#headerNav * {
+		padding: 1em;
+	}
+
 	#headerNav {
 		display: flex;
 		justify-content: var(--header-location);
+	}
+
+	#headerNav nav {
+		display: block;
+	}
+
+	#headerNav #mobileMenu {
+		display: none;
+	}
+
+	#headerNav nav a {
+		display: unset;
+		padding: 1em;
 	}
 
 	.totalTime {
@@ -566,6 +605,11 @@ select {
 
 	.ticketsTable {
 		font-size: 80%;
+	}
+
+	/* Table Column Widths */
+	table .tableUser {
+		width: 100px;
 	}
 
 	@media (min-width: 750px) {

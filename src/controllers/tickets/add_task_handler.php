@@ -4,6 +4,13 @@ require_once('init.php');
 require_once('helpdbconnect.php');
 require_once('ticket_utils.php');
 
+$username = $_SESSION["username"];
+if (!user_is_tech($username)) {
+	log_app(LOG_INFO, "[delete_task.php] User is not a tech. Ignoring task request...");
+	http_response_code(401);
+	exit;
+}
+
 $ticket_id = $_POST['ticket_id'];
 $ticket_desc = $_POST['task_description'];
 $form_task_complete = $_POST['task_complete'];
@@ -20,6 +27,6 @@ if (isset($form_task_required)) {
 }
 
 $res = $database->execute_query("INSERT INTO help.ticket_tasks (ticket_id, description, required, completed) VALUES (?, ?, ?, ?)", [$ticket_id, $ticket_desc, $task_required, $task_complete]);
-
+logTicketChange($database, $ticket_id, $username, "Task \"$ticket_desc\" created", "", "");
 header("Location: edit_ticket.php?id=$ticket_id");
 exit();

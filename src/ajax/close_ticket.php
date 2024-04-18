@@ -36,7 +36,6 @@ $res = $database->execute_query("UPDATE tickets SET status = ? WHERE tickets.id 
 
 if (isset($old_ticket_data['status']) && $old_ticket_data['status'] != $updatedStatus) {
 	logTicketChange($database, $ticket_id, $_SESSION['username'], "status", $old_ticket_data['status'], $updatedStatus);
-	$changesMessage .= "<li>Changed Status from " . $old_ticket_data['status'] . " to " . $updatedStatus . "</li>";
 
 	// Check if the ticket has an alert about not being updated in last 48 hours and clear it since the ticket was just updated.
 	removeAlert($database, $alert48Message, $ticket_id);

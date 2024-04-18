@@ -1,7 +1,7 @@
 {% extends "ticket_base.twig" %}
 
 {% block content %}
-{% if user_permissions.is_tech %}
+{% if user_permissions.is_tech and not hide_alerts %}
 <div class="alerts_wrapper">
 	{% for alert in alerts %}
 	<p class="{{ alert.alert_level }}">

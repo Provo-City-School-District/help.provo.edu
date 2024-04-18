@@ -1,6 +1,9 @@
 <?php
 require_once from_root('/includes/time_utils.php');
-session_start();
+
+if (!session_id()) {
+	session_start();
+}
 
 $username = $_SESSION["username"];
 
@@ -24,8 +27,8 @@ $day_time_min = $day_ticket_times[0] / 60;
 $wo_time = number_format($day_time_min, 2);
 $current_year = date("Y");
 
-$status_alert_type = $_SESSION["status_type"];
-$status_alert_message = $_SESSION["current_status"];
+$status_alert_type = isset($_SESSION["status_type"]) ? $_SESSION["status_type"] : null;
+$status_alert_message = isset($_SESSION["current_status"]) ? $_SESSION["current_status"] : null;
 
 unset($_SESSION["status_type"]);
 unset($_SESSION["current_status"]);

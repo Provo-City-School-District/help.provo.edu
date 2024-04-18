@@ -25,12 +25,12 @@
                     <nav id="mainNav">
                         <a href="/profile.php">Profile</a>
                         <a href="/tickets.php">Tickets</a>
-                        {% if user_permissions.is_supervisor %}
+                    {% if user_permissions.is_supervisor %}
                         <a href="/supervisor.php">Supervisor</a>
                     {% endif %}
 
 
-                       {% if user_permissions.is_admin %}
+                    {% if user_permissions.is_admin %}
                         <a href="/admin.php">Admin</a>
                     {% endif %}
                         <a href="/controllers/logout.php">Logout</a>

@@ -47,7 +47,7 @@ mysqli_stmt_close($flagged_stmt);
 
 $subord_query = "SELECT count(supervisor_username) as supervisor_username FROM users WHERE supervisor_username = ?";
 $subord_stmt = $database->prepare($subord_query);
-$subord_stmt->bind_param("s", $userId);
+$subord_stmt->bind_param("s", $username);
 $subord_stmt->execute();
 $subord_result = $subord_stmt->get_result();
 $subord_row = $subord_result->fetch_assoc();

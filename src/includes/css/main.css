@@ -200,7 +200,6 @@ input[type=submit] {
 /* =============================== Navigation Styles =============================== */
 #headerNav * {
 	color: var(--theme-text-color);
-	padding: 1em;
 	border-radius: 4px;
 	text-align: center;
 }

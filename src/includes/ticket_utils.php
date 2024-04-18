@@ -154,10 +154,17 @@ function add_note_with_filters(
 
     // Send email to assigned tech on update if the client updates ticket
     $client = client_for_ticket($ticket_id_clean);
+	$cc_emails = explode(',', emails_for_ticket($ticket_id_clean, false));
+	$bcc_emails = explode(',', emails_for_ticket($ticket_id_clean, true));
+
+	$user_email = email_address_from_username(strtolower($username));
 
 	log_app(LOG_INFO, "username: $username, client: $client");
 
-    if ($username == $client) {
+	// Allow pseudo-clients to update ticket status if in CC/BCC field
+    if (strtolower($username) == strtolower($client) || 
+		in_array($user_email, $cc_emails) || 
+		in_array($user_email, $bcc_emails)) {
 		// set priority to standard
         $result = $database->execute_query("UPDATE tickets SET tickets.priority = 10 WHERE tickets.id = ?", [$ticket_id_clean]);
         if (!$result) {
@@ -345,6 +352,7 @@ function displayTotalTime($total_hours, $total_minutes)
         }
     }
 }
+
 function location_name_from_id(string $site_id)
 {
     if ($site_id == "")
@@ -398,6 +406,36 @@ function client_for_ticket(int $ticket_id)
     }
 
     return strtolower($client_data["client"]);
+}
+
+/*
+emails_for_ticket
+Input: ticket_id, flag for whether this should return bcc or just cc
+Output: The result set of cc or bcc emails on the ticket
+*/
+function emails_for_ticket(int $ticket_id, bool $bcc)
+{
+    global $database;
+
+	if ($bcc) {
+		$email_type = "bcc_emails";
+		$query = "SELECT bcc_emails FROM help.tickets WHERE tickets.id = ?";
+	} else {
+		$email_type = "cc_emails";
+		$query = "SELECT cc_emails FROM help.tickets WHERE tickets.id = ?";
+	}
+
+    $email_result = $database->execute_query($query, [$ticket_id]);
+    if (!isset($email_result)) {
+        log_app(LOG_ERR, "[emails_for_ticket] Failed to get result");
+    }
+
+    $email_data = $email_result->fetch_assoc();	
+    if (!isset($email_data)) {
+        log_app(LOG_ERR, "[emails_for_ticket] Failed to get data");
+    }
+
+    return $email_data[$email_type];
 }
 
 function status_for_ticket(int $ticket_id)

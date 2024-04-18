@@ -210,7 +210,13 @@ input[type=submit] {
 }
 
 #headerNav #mobileMenu {
+	display: block;
+}
+
+#headerNav nav {
+	margin-top: 1em;
 	display: none;
+	gap: 1em;
 }
 
 #pageContent {
@@ -541,10 +547,23 @@ select {
 		justify-items: var(--header-location);
 	}
 
+	#headerNav * {
+		padding: 1em;
+	}
+
 	#headerNav {
 		display: flex;
 		justify-content: var(--header-location);
 	}
+
+	#headerNav nav {
+		display: block;
+	}
+
+	#headerNav #mobileMenu {
+		display: none;
+	}
+
 
 	.totalTime {
 		text-align: right;

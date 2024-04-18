@@ -198,14 +198,14 @@ input[type=submit] {
 }
 
 /* =============================== Navigation Styles =============================== */
-#headerNav a {
+#headerNav * {
 	color: var(--theme-text-color);
 	padding: 1em;
 	border-radius: 4px;
 	text-align: center;
 }
 
-#headerNav a:hover {
+#headerNav *:hover {
 	background-color: var(--theme-url-highlight);
 }
 

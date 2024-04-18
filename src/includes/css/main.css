@@ -186,7 +186,7 @@ input[type=submit] {
 	display: grid;
 	grid-template-columns: 1fr;
 	gap: 1em;
-	max-height: 170px;
+	/* max-height: 170px; */
 	padding: 1em;
 	justify-items: center;
 }
@@ -224,6 +224,7 @@ table,
 table.dataTable.no-footer {
 	width: 100%;
 	border: 2px solid var(--theme-table-border-color);
+	table-layout: fixed;
 }
 
 table[style] {
@@ -300,7 +301,8 @@ table.dataTable .details a {
 	margin-bottom: 1em;
 }
 
-table.dataTable .latestNote {
+table.dataTable .latestNote,
+table.dataTable .details {
 	word-break: break-all;
 	overflow-wrap: break-word;
 }

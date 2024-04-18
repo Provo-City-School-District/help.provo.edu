@@ -209,6 +209,10 @@ input[type=submit] {
 	background-color: var(--theme-url-highlight);
 }
 
+#headerNav #mobileMenu {
+	display: none;
+}
+
 #pageContent {
 	padding: 1em;
 	background-color: var(--page-background);

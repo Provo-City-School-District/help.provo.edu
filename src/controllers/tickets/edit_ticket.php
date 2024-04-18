@@ -817,9 +817,9 @@ if (isset($ticket["client"])) {
         <div id="note-table" class="note">
             <table class="ticketsTable">
                 <tr>
-                    <th>Date</th>
-                    <th>Created By</th>
-                    <th>Note</th>
+                    <th class='tableDate'>Date</th>
+                    <th class="tableUser">Created By</th>
+                    <th class="tableString">Note</th>
                     <th class="timeColumn">Time</th>
                 </tr>
                 <?php
@@ -1051,9 +1051,9 @@ if (isset($ticket["client"])) {
                 <p id="ticket-history-status">(collapsed)</p>
                 <table id="ticket-history">
                     <tr class="ticket-history-header">
-                        <th>Created At</th>
-                        <th>Changed By</th>
-                        <th>Changes made</th>
+                        <th class="tableDate">Created At</th>
+                        <th class="tableUser">Changed By</th>
+                        <th class="tableString">Changes made</th>
                     </tr>
                     <?php
                     while ($log_row = mysqli_fetch_assoc($log_result)) {

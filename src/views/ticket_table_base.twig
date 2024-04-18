@@ -25,29 +25,33 @@
 	<tbody>
 		{% for ticket in tickets %}
 		<tr class="{{ ticket.row_color }}">
-            <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id={{ ticket.id }}">{{ ticket.id }}</a></td>
-            <td class="details" data-cell="Request Detail"><a href="/controllers/tickets/edit_ticket.php?id={{ ticket.id }}">{{ ticket.title }}</a>{{ ticket.description|raw }}</td>
-            <td class="latestNote" data-cell="Latest Note:"><strong>{{ ticket.latest_note_author }}: </strong> {{ ticket.latest_note }}</td>
-            <td data-cell="Client: ">{{ ticket.client_first_name }} {{ ticket.client_last_name }} ({{ ticket.client_username }})</td>
-            <td data-cell="Location">
+			<td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id={{ ticket.id }}">{{ ticket.id }}</a></td>
+			<td class="details" data-cell="Request Detail"><a href="/controllers/tickets/edit_ticket.php?id={{ ticket.id }}">{{ ticket.title }}</a>{{ ticket.description|raw }}</td>
+			{% if ticket.latest_note is defined and ticket.latest_note is not null %}
+				<td class="latestNote" data-cell="Latest Note:"><strong>{{ ticket.latest_note_author }}: </strong> {{ ticket.latest_note|raw }}</td>
+			{% else %}
+				<td class="latestNote" data-cell="Latest Note:"></td>
+			{% endif %}
+			<td data-cell="Client: ">{{ ticket.client_first_name }} {{ ticket.client_last_name }} ({{ ticket.client_username }})</td>
+			<td data-cell="Location">
 				{{ ticket.location_name }}
-				{% if ticket.room is not null %}
+				{% if ticket.room is defined and ticket.room is not null and ticket.room is not empty %}
 					<br><br>
 					RM {{ ticket.room }}
 				{% endif %}
 			</td>
-            <td data-cell="Request Category">{{ ticket.request_category }}</td>
-            <td data-cell="Current Status">{{ ticket.status }}</td>
-            <td data-cell="Priority">
+			<td data-cell="Request Category">{{ ticket.request_category }}</td>
+			<td data-cell="Current Status">{{ ticket.status }}</td>
+			<td data-cell="Priority">
 				<span class="sort-value">{{ ticket.sort_value }}</span>
 				{{ ticket.priority }}
 			</td>
-            <td data-cell="Created">{{ ticket.created }}</td>
-            <td data-cell="Last Updated">{{ ticket.last_updated }}</td>
-            <td data-cell="Due">{{ ticket.due_date }}</td>
-            <td data-cell="Assigned">{{ ticket.assigned_tech }}</td>
-            <td data-cell="Alert Levels">{{ ticket.alert_level }}</td>
-        </tr>
+			<td data-cell="Created">{{ ticket.created }}</td>
+			<td data-cell="Last Updated">{{ ticket.last_updated }}</td>
+			<td data-cell="Due">{{ ticket.due_date }}</td>
+			<td data-cell="Assigned">{{ ticket.assigned_tech }}</td>
+			<td data-cell="Alert Levels">{{ ticket.alert_level }}</td>
+		</tr>
 		{% endfor %}
 	</tbody>
 </table>

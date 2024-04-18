@@ -567,3 +567,18 @@ function get_parsed_ticket_data($ticket_data)
 
 	return $tickets;
 }
+
+function get_parsed_alert_data($alerts_result)
+{
+	$data = [];
+	while ($row = $alerts_result->fetch_assoc()) {
+		$tmp = [];
+		$tmp["alert_level"] = $row["alert_level"];
+		$tmp["ticket_id"] = $row["ticket_id"];
+		$tmp["message"] = $row["message"];
+		$tmp["employee"] = $row["employee"];
+		$tmp["id"] = $row["id"];
+		$data[] = $tmp;
+    }
+    return $data;
+}

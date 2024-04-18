@@ -215,7 +215,11 @@ input[type=submit] {
 #headerNav nav {
 	margin-top: 1em;
 	display: none;
-	gap: 1em;
+}
+
+#headerNav nav a {
+	display: block;
+	padding: 1em;
 }
 
 #pageContent {
@@ -563,6 +567,10 @@ select {
 		display: none;
 	}
 
+	#headerNav nav a {
+		display: unset;
+		padding: 1em;
+	}
 
 	.totalTime {
 		text-align: right;

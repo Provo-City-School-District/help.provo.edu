@@ -109,27 +109,29 @@ $current_page = $_SERVER['REQUEST_URI'];
             <?php
             if ($is_logged_in) {
             ?>
-                <nav id="headerNav">
-                    <a href="/profile.php">Profile</a>
-                    <a href="/tickets.php">Tickets</a>
-                    <?php
-                    if ($_SESSION['permissions']['is_supervisor'] == 1) {
-                    ?>
-                        <a href="/supervisor.php">Supervisor</a>
-                    <?php
-                    }
-                    ?>
+                <div id="headerNav">
+                    <nav>
+                        <a href="/profile.php">Profile</a>
+                        <a href="/tickets.php">Tickets</a>
+                        <?php
+                        if ($_SESSION['permissions']['is_supervisor'] == 1) {
+                        ?>
+                            <a href="/supervisor.php">Supervisor</a>
+                        <?php
+                        }
+                        ?>
 
-                    <?php
-                    if ($_SESSION['permissions']['is_admin'] == 1) {
-                    ?>
-                        <a href="/admin.php">Admin</a>
-                    <?php
-                    }
-                    ?>
-                    <a href="/controllers/logout.php">Logout</a>
+                        <?php
+                        if ($_SESSION['permissions']['is_admin'] == 1) {
+                        ?>
+                            <a href="/admin.php">Admin</a>
+                        <?php
+                        }
+                        ?>
+                        <a href="/controllers/logout.php">Logout</a>
+                    </nav>
                     <span id="mobileMenu" onclick="toggleMobileMenu()">&#9776; Menu</span>
-                </nav>
+                </div>
                 <div id="dayWOHours">
                     <?php
                     $day_timestamp = strtotime("today");

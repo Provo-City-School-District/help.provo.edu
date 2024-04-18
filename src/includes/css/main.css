@@ -186,7 +186,7 @@ input[type=submit] {
 	display: grid;
 	grid-template-columns: 1fr;
 	gap: 1em;
-	max-height: 160px;
+	max-height: 170px;
 	padding: 1em;
 	justify-items: center;
 }

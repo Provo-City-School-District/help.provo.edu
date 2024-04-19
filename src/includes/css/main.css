@@ -725,4 +725,7 @@ select {
 	#ticket-title-container {
 		display: inline-block;
 		cursor: pointer;
+		margin-bottom: 20px;
+		font-size: 32px;
 	}
+}

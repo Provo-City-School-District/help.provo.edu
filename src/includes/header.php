@@ -34,14 +34,9 @@ $subord_stmt->close();
 
 // List of Ticket pages for which you want to display a ticket sub-menu
 $ticketPages = array(
-    '/tickets.php',
     '/edit_ticket.php',
     '/create_ticket.php',
-    '/recent_tickets.php',
     '/search_tickets.php',
-    '/ticket_history.php',
-    '/flagged_tickets.php',
-    '/subordinate_tickets.php',
     '/location_tickets.php'
 );
 // List of Supervisor pages for which you want to display a supervisor sub-menu

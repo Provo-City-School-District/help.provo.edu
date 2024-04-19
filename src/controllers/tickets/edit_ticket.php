@@ -709,7 +709,7 @@ if (isset($ticket["client"])) {
             Maximum of 50MB
         </div>
     </div>
-    <button id="toggle-file-upload-form">Attach <?= $hasfiles ? 'Additional' : '' ?> Files</button>
+    <button id="toggle-file-upload-form">Attach <?= isset($hasfiles) && $hasfiles ? 'Additional' : '' ?> Files</button>
 
     <?php
     if (count($child_tickets) > 0) {
@@ -857,8 +857,7 @@ if (isset($ticket["client"])) {
                             if ($note['note'] !== null) {
                                 $note_data = sanitize_html($note['note']);
                             }
-                            if ($note_data !== null) {
-                                //$note_data = htmlspecialchars(strip_tags(html_entity_decode($note_data)));
+                            if (isset($note_data)) {
 
                                 $ticket_matches = [];
                                 $ticket_match_result = preg_match_all($ticket_pattern, $note_data, $ticket_matches, PREG_OFFSET_CAPTURE);

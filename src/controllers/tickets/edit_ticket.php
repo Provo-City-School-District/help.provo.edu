@@ -255,7 +255,6 @@ if (strtolower($ticket["employee"]) == strtolower($username)) {
 	while ($row = $assigned_tickets_result->fetch_assoc()) {
 		$assigned_ticket_ids[] = $row["id"];
 	}
-	sort($assigned_ticket_ids);
 
 	$max_idx = count($assigned_ticket_ids) - 1;
 

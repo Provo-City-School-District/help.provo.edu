@@ -1,6 +1,17 @@
 {% extends "ticket_base.twig" %}
 
 {% block content %}
+{% if alerts is defined and user_permissions.is_tech and not hide_alerts %}
+<div class="alerts_wrapper">
+	{% for alert in alerts %}
+	<p class="{{ alert.alert_level }}">
+	<a href="/controllers/tickets/edit_ticket.php?id={{ alert.ticket_id}}">
+		Ticket: {{ alert.ticket_id }} - {{ alert.message }}
+	</a>
+	<a class="close-alert" href="/controllers/tickets/alert_delete.php?id={{ alert.id }}">&times;</a>
+	{% endfor %}
+</div>
+{% endif %}
 {% block page_title %}
 
 {% endblock %}

@@ -243,10 +243,47 @@ if (isset($ticket["client"])) {
     $clientFirstName = $result['firstname'];
     $clientLastName = $result['lastname'];
 }
+
+$show_quick_switch_buttons = false;
+// If ticket assigned tech is currently logged in user's
+if (strtolower($ticket["employee"]) == strtolower($username)) {
+	$show_quick_switch_buttons = true;
+
+	$assigned_tickets_result = $database->execute_query("SELECT id FROM tickets WHERE (status NOT IN ('Closed', 'Resolved') AND employee = ?) ORDER BY id ASC", [$username]);
+
+	$assigned_ticket_ids = [];
+	while ($row = $assigned_tickets_result->fetch_assoc()) {
+		$assigned_ticket_ids[] = $row["id"];
+	}
+	sort($assigned_ticket_ids);
+
+	$max_idx = count($assigned_ticket_ids) - 1;
+
+	$left_idx = array_search($ticket_id, $assigned_ticket_ids) - 1;
+	$right_idx = array_search($ticket_id, $assigned_ticket_ids) + 1;
+
+	if ($left_idx < 0) {
+		$left_idx = $max_idx;
+	}
+
+	if ($right_idx > $max_idx) {
+		$right_idx = 0;
+	}
+
+	$left_ticket_id = $assigned_ticket_ids[$left_idx];
+	$right_ticket_id = $assigned_ticket_ids[$right_idx];
+}
+
 ?>
 <article id="ticketWrapper">
     <div id="ticket-title-container">
-        <h1 id="ticket-title">Ticket #<?= $ticket['id'] ?></h1>
+		<?php if ($show_quick_switch_buttons): ?>
+			<a href="/controllers/tickets/edit_ticket.php?id=<?= $left_ticket_id ?>">&larr;</a>
+		<? endif; ?>
+		Ticket <?= $ticket['id'] ?>
+		<?php if ($show_quick_switch_buttons): ?>
+			<a href="/controllers/tickets/edit_ticket.php?id=<?= $right_ticket_id ?>">&rarr;</a>
+		<? endif; ?>
     </div>
     <?php
     if (isset($ticket['parent_ticket']) && $ticket['parent_ticket'] != null) {

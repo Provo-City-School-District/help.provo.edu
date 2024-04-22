@@ -685,9 +685,13 @@ select {
 			align-self: center;
 		}
 
-		#search-for-client input {
-			display: unset;
-		}
+	.taskTable {
+		max-width: 50%;
+	}
+
+	.taskTable tr {
+		display: grid;
+		grid-template-columns: minmax(125px, 1fr) 125px 125px 100px;
 	}
 
 	@media (max-width: 400px) {

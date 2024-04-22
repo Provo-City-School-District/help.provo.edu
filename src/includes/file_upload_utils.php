@@ -104,7 +104,7 @@ function handleFileUploads($files, $ticket_id = null)
                         mysqli_stmt_execute($stmt);
 
                         // Add the file name to the uploaded_files array
-                        $uploaded_files[] = $fileName;
+                        $uploaded_files[] = $newFilePath;
                     } else {
                         $failed_files[] = [
                             "filename" => $fileName,

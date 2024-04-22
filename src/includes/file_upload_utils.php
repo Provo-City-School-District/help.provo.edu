@@ -49,8 +49,11 @@ function compress_and_resize_image(string $image_path, string $image_type)
         return imagepng($image_to_compress, $image_path);
 }
 
-function handleFileUploads($files, $ticket_id, $database, $maxFileSize, $allowed_extensions)
+function handleFileUploads($files, $ticket_id = null)
 {
+    global $maxFileSize;
+    global $database;
+    global $allowed_extensions;
     $failed_files = [];
     $uploaded_files = [];
 

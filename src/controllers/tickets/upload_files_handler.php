@@ -34,7 +34,7 @@ $uploaded_files = [];
 
 // if has attachments, handle them
 if (isset($_FILES['attachment'])) {
-    list($failed_files, $uploaded_files) = handleFileUploads($_FILES, $ticket_id, $database, $maxFileSize, $allowed_extensions);
+    list($failed_files, $uploaded_files) = handleFileUploads($_FILES, $ticket_id);
 }
 
 // Log the ticket changes

@@ -105,8 +105,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	// Handle file upload
 	$uploadPaths = [];
 	$failed_files = [];
+
 	if (isset($_FILES['attachment'])) {
-		list($failed_files, $uploadPaths) = handleFileUploads($_FILES, $ticket_id, $database, $maxFileSize, $allowed_extensions);
+		list($failed_files, $uploadPaths) = handleFileUploads($_FILES);
 	}
 
 

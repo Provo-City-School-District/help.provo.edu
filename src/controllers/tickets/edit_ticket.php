@@ -787,7 +787,7 @@ if (strtolower($ticket["employee"]) == strtolower($username)) {
 
     if (count($task_rows) > 0) {
     ?>
-        <table style="max-width: 500px;">
+        <table class="taskTable">
             <tr>
                 <th>Task Description</th>
                 <th>Completed</th>

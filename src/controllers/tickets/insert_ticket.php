@@ -143,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	if ($stmt === false) {
 		die('Error preparing insert query: ' . mysqli_error($database));
 	}
-	$uploadPath = [];
+
 	foreach ($uploadPaths as $attachmentPath) {
 		// Replace '../../uploads/' with '/uploads/' in the attachment path if it exists
 		$attachmentPath = str_replace('../../uploads/', '/uploads/', $attachmentPath);

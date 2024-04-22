@@ -1,12 +1,6 @@
 <?php
 require_once("block_file.php");
 require_once('init.php');
-require_once('helpdbconnect.php');
-require_once('email_utils.php');
-require_once('template.php');
-
-include("ticket_utils.php");
-
 if ($_SESSION['permissions']['is_admin'] != 1) {
 	// User is not an admin
 	if ($_SESSION['permissions']['can_create_tickets'] == 0) {
@@ -15,6 +9,12 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
 		exit;
 	}
 }
+//include resources if have permissions
+require_once('helpdbconnect.php');
+require_once('email_utils.php');
+require_once('template.php');
+include("ticket_utils.php");
+
 $username = $_SESSION["username"];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

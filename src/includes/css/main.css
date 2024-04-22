@@ -240,6 +240,11 @@ table[style] {
 	width: 100% !important;
 }
 
+/* Data tables throwing in colgroup. This hides it till we find a solution. */
+colgroup {
+	display: none;
+}
+
 th,
 td {
 	border: 1px solid var(--theme-primary);

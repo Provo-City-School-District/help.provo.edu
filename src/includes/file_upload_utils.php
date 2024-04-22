@@ -77,6 +77,9 @@ function handleFileUploads($files, $ticket_id = null)
         // Filesize in bytes
         $fileSize = filesize($tmpFilePath);
 
+        // remove commas from the filename
+        $fileName = str_replace(',', '', $fileName);
+
         // Check if the file was uploaded successfully and has an allowed extension / file type
         // Will also check the file to validate the file is what it claims (eg: cant rename .exe to .png)
         if ($tmpFilePath != "") {

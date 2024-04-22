@@ -83,7 +83,11 @@ function handleFileUploads($files, $ticket_id = null)
             if ($fileSize <= $maxFileSize) {
                 if (in_array($fileExtension, $allowed_extensions)) {
                     // Generate a unique file name
-                    $newFilePath = "/uploads/" . $ticket_id . "-" . $fileName;
+                    if ($ticket_id != null) {
+                        $newFilePath = "/uploads/" . $ticket_id . "-" . $fileName;
+                    } else {
+                        $newFilePath = "/uploads/" . date('Ymd_Hi') . "-" . $fileName;
+                    }
                     $absolute_path = from_root($newFilePath);
 
                     if ($fileType == "image/png" || $fileType == "image/jpeg")

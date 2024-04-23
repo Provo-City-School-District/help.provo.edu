@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$uploadPaths = [];
 	$failed_files = [];
 
-	if (isset($_FILES['attachment'])) {
+	if (isset($_FILES['attachment']) && $_FILES['attachment']['error'][0] != 4) {
 		list($failed_files, $uploadPaths) = handleFileUploads($_FILES);
 	}
 

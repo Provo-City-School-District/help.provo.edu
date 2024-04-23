@@ -321,6 +321,11 @@ table.dataTable .details {
 	overflow-wrap: break-word;
 }
 
+.latestNote strong {
+	display: block;
+
+}
+
 /* =============================== Sub Menu Styles =============================== */
 #subMenu {
 	margin-top: -1em;

@@ -1,12 +1,6 @@
 <?php
 require_once("block_file.php");
 require_once('init.php');
-require_once('helpdbconnect.php');
-require_once('email_utils.php');
-require_once('template.php');
-
-include("ticket_utils.php");
-
 if ($_SESSION['permissions']['is_admin'] != 1) {
 	// User is not an admin
 	if ($_SESSION['permissions']['can_create_tickets'] == 0) {
@@ -15,6 +9,13 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
 		exit;
 	}
 }
+//include resources if have permissions
+require_once('helpdbconnect.php');
+require_once('email_utils.php');
+require_once('template.php');
+include("ticket_utils.php");
+require_once('file_upload_utils.php');
+
 $username = $_SESSION["username"];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -23,12 +24,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$room = filter_input(INPUT_POST, 'room', FILTER_SANITIZE_SPECIAL_CHARS);
 	$name = filter_input(INPUT_POST, 'ticket_name', FILTER_SANITIZE_SPECIAL_CHARS);
 	$description = filter_input(INPUT_POST, 'description', FILTER_SANITIZE_SPECIAL_CHARS);
-	$client = $_POST['client'];
+	$client = filter_input(INPUT_POST, 'client', FILTER_SANITIZE_SPECIAL_CHARS);
 	$phone = filter_input(INPUT_POST, 'phone', FILTER_SANITIZE_SPECIAL_CHARS);
 	$cc_emails = filter_input(INPUT_POST, 'cc_emails', FILTER_SANITIZE_SPECIAL_CHARS);
 	$bcc_emails = filter_input(INPUT_POST, 'bcc_emails', FILTER_SANITIZE_SPECIAL_CHARS);
 	$assigned_tech = filter_input(INPUT_POST, 'assigned', FILTER_SANITIZE_SPECIAL_CHARS);
 
+
+	if ($client === "") {
+		$client = $username;
+	}
 	// Allow trailing comma
 	if (substr($cc_emails, -1) == ",") {
 		$cc_emails = substr_replace($cc_emails, '', -1, 1);
@@ -103,27 +108,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 	// Handle file upload
 	$uploadPaths = [];
-	if (isset($_FILES['attachment'])) {
-		$attachmentCount = count($_FILES['attachment']['name']);
+	$failed_files = [];
 
-		for ($i = 0; $i < $attachmentCount; $i++) {
-			$filename = $_FILES['attachment']['name'][$i];
-			$tmp_name = $_FILES['attachment']['tmp_name'][$i];
-			$error = $_FILES['attachment']['error'][$i];
-
-			if ($error === UPLOAD_ERR_OK) {
-				// // Create uploads directory if it doesn't exist
-				// if (!file_exists("../../uploads/")) {
-				//     mkdir("../../uploads/", 0766, true);
-				// }
-
-				// Generate a unique filename using the current timestamp and the original filename
-				$uniqueFilename = date('Ymd_Hi') . '_' . $filename;
-				$uploadPath = "../../uploads/{$uniqueFilename}";
-				move_uploaded_file($tmp_name, $uploadPath);
-				$uploadPaths[] = $uploadPath;
-			}
-		}
+	if (isset($_FILES['attachment']) && $_FILES['attachment']['error'][0] != 4) {
+		list($failed_files, $uploadPaths) = handleFileUploads($_FILES);
 	}
 
 
@@ -159,13 +147,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	if ($stmt === false) {
 		die('Error preparing insert query: ' . mysqli_error($database));
 	}
-	$uploadPath = [];
+
+	$uploadPaths_final = [];
 	foreach ($uploadPaths as $attachmentPath) {
 		// Replace '../../uploads/' with '/uploads/' in the attachment path if it exists
 		$attachmentPath = str_replace('../../uploads/', '/uploads/', $attachmentPath);
-		$uploadPath[] = $attachmentPath;
+		$uploadPaths_final[] = $attachmentPath;
 	}
-	$attachmentPath = implode(',', $uploadPath);
+	$attachmentPath = implode(',', $uploadPaths_final);
 	// print_r($uploadPath);
 	// Bind parameters
 	$cc_emails_clean = implode(',', $valid_cc_emails);
@@ -206,6 +195,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$assigned_tech
 	);
 
+	$failed_files_count = count($failed_files);
+
+	if ($failed_files_count != 0) {
+		$error_str = 'Failed to upload file(s): ';
+
+		for ($i = 0; $i < $failed_files_count; $i++) {
+			$failed_file = $failed_files[$i];
+			$filename = $failed_file["filename"];
+			$fail_reason = $failed_file["fail_reason"];
+
+			if ($i == $failed_files_count - 1)
+				$error_str .= "$filename (Reason: $fail_reason)";
+			else
+				$error_str .= "$filename (Reason: $fail_reason), ";
+		}
+
+		$_SESSION['current_status'] = $error_str;
+		$_SESSION['status_type'] = 'error';
+		$formData = http_build_query($_POST);
+		header("Location: create_ticket.php?$formData");
+		exit;
+	}
 
 	// Execute the prepared statement
 	if (mysqli_stmt_execute($stmt)) {

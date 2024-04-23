@@ -204,7 +204,7 @@ input[type=submit] {
 	text-align: center;
 }
 
-#headerNav *:hover {
+#headerNav #mainNav *:hover {
 	background-color: var(--theme-url-highlight);
 }
 
@@ -233,11 +233,15 @@ table,
 table.dataTable.no-footer {
 	width: 100%;
 	border: 2px solid var(--theme-table-border-color);
-	table-layout: fixed;
 }
 
 table[style] {
 	width: 100% !important;
+}
+
+/* Data tables throwing in colgroup. This hides it till we find a solution. */
+colgroup {
+	display: none;
 }
 
 th,
@@ -312,8 +316,12 @@ table.dataTable .details a {
 
 table.dataTable .latestNote,
 table.dataTable .details {
-	word-break: break-all;
 	overflow-wrap: break-word;
+}
+
+.latestNote strong {
+	display: block;
+
 }
 
 /* =============================== Sub Menu Styles =============================== */
@@ -611,121 +619,131 @@ select {
 	table .tableUser {
 		width: 100px;
 	}
+}
 
-	@media (min-width: 750px) {
-		.ticketGrid {
-			grid-template-columns: 1fr 1fr;
-			gap: 1em;
-		}
-
-		#subMenu {
-			display: flex;
-			justify-content: var(--header-location);
-			align-items: center;
-			gap: 2em;
-		}
-
-		#subMenu li {
-			margin: unset;
-		}
-
-		.alerts_wrapper {
-			width: 60%;
-			max-width: 650px;
-		}
+@media (min-width: 750px) {
+	.ticketGrid {
+		grid-template-columns: 1fr 1fr;
+		gap: 1em;
 	}
 
-	@media (min-width:800px) {
-		.ticketGrid>* {
-			/* display: grid;
+	#subMenu {
+		display: flex;
+		justify-content: var(--header-location);
+		align-items: center;
+		gap: 2em;
+	}
+
+	#subMenu li {
+		margin: unset;
+	}
+
+	.alerts_wrapper {
+		width: 60%;
+		max-width: 650px;
+	}
+}
+
+@media (min-width:800px) {
+	.ticketGrid>* {
+		/* display: grid;
 		grid-template-columns: 200px 1fr; */
-			display: flex;
-			/* justify-content: space-between; */
-			align-items: center;
+		display: flex;
+		/* justify-content: space-between; */
+		align-items: center;
 
-		}
-
-		.ticketGrid span,
-		.ticketGrid label {
-			width: 200px;
-			/* flex: 1; */
-		}
-
-		.ticketGrid input,
-		.ticketGrid select {
-			flex: 3;
-		}
-
-		.ticketGrid span:first-of-type {
-			margin-right: 5px;
-			max-width: 200px;
-			margin-bottom: unset;
-		}
-
-		.currentClient {
-			padding: 0.5em;
-			display: grid;
-			grid-template-columns: minmax(min-content, 540px) 1fr;
-		}
-
-		.readonlyClient {
-			display: grid;
-			grid-template-columns: minmax(min-content, 540px) 1fr;
-		}
-
-		.currentClient,
-		.readonlyClient {
-			grid-column: span 2;
-		}
-
-		.currentClient a {
-			place-self: end;
-			padding-right: 1em;
-			align-self: center;
-		}
-
-		#search-for-client input {
-			display: unset;
-		}
 	}
 
-	@media (max-width: 400px) {
-
-		#headerNav,
-		#subMenu {
-			font-size: 12px;
-		}
+	.ticketGrid span,
+	.ticketGrid label {
+		width: 200px;
+		/* flex: 1; */
 	}
 
-	.note .note_id {
-		font-size: 50%;
-		display: block;
-		text-align: right;
+	.ticketGrid input,
+	.ticketGrid select {
+		flex: 3;
 	}
 
-	.note_id .created_date {
-		display: none;
+	.ticketGrid span:first-of-type {
+		margin-right: 5px;
+		max-width: 200px;
+		margin-bottom: unset;
 	}
 
-	.note_id a,
-	.note_id span {
-		display: block;
+	.currentClient {
+		padding: 0.5em;
+		display: grid;
+		grid-template-columns: minmax(min-content, 540px) 1fr;
 	}
 
-	#profile_time_table {
-		max-width: 800px;
+	.readonlyClient {
+		display: grid;
+		grid-template-columns: minmax(min-content, 540px) 1fr;
 	}
 
-	#maximum-file-size-text {
-		padding: 3px;
-		margin-top: 5px;
-		font-size: 80%;
+	.currentClient,
+	.readonlyClient {
+		grid-column: span 2;
 	}
 
-	#ticket-title-container {
-		display: inline-block;
-		cursor: pointer;
-		margin-bottom: 20px;
-		font-size: 32px;
+	.currentClient a {
+		place-self: end;
+		padding-right: 1em;
+		align-self: center;
 	}
+
+	#search-for-client input {
+		display: unset;
+	}
+
+	.taskTable {
+		max-width: 50%;
+	}
+
+	.taskTable tr {
+		display: grid;
+		grid-template-columns: minmax(125px, 1fr) 125px 125px 100px;
+	}
+}
+
+@media (max-width: 400px) {
+
+	#headerNav,
+	#subMenu {
+		font-size: 12px;
+	}
+}
+
+.note .note_id {
+	font-size: 50%;
+	display: block;
+	text-align: right;
+}
+
+.note_id .created_date {
+	display: none;
+}
+
+.note_id a,
+.note_id span {
+	display: block;
+}
+
+#profile_time_table {
+	max-width: 800px;
+}
+
+#maximum-file-size-text {
+	padding: 3px;
+	margin-top: 5px;
+	font-size: 80%;
+}
+
+#ticket-title-container {
+	display: inline-block;
+	cursor: pointer;
+	margin-bottom: 20px;
+	font-size: 32px;
+}
 }

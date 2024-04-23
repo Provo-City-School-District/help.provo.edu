@@ -1,23 +1,47 @@
 <?php
-require_once("block_file.php");
-require_once(from_root("/includes/tickets_template.php"));
-include("header.php");
 require_once('helpdbconnect.php');
-include("ticket_utils.php");
+require_once(from_root("/includes/block_file.php"));
+require_once(from_root("/includes/ticket_utils.php"));
+require from_root("/vendor/autoload.php");
+require from_root("/new-controllers/ticket_base_variables.php");
 
-//page query
-$ticket_query = "(SELECT * FROM tickets WHERE client = ?)
-        UNION
-        (SELECT tickets.* FROM tickets 
-        JOIN notes ON tickets.id = notes.linked_id 
-        WHERE notes.creator = ?)
-        ORDER BY last_updated DESC";
+if (!session_id())
+	session_start();
 
-$username = $_SESSION["username"];
+$loader = new \Twig\Loader\FilesystemLoader(from_root('/views'));
+$twig = new \Twig\Environment($loader, [
+    'cache' => from_root('/twig-cache')
+]);
+
+// Tickets query
+$ticket_query = <<<STR
+	(SELECT * FROM tickets WHERE client = ?)
+		UNION
+		(SELECT tickets.* FROM tickets 
+		JOIN notes ON tickets.id = notes.linked_id 
+		WHERE notes.creator = ?)
+		ORDER BY last_updated DESC
+STR;
+
 $ticket_result = $database->execute_query($ticket_query, [$username, $username]);
+$ticket_data = get_parsed_ticket_data($ticket_result);
 
-?>
-<h1>Ticket History</h1>
+echo $twig->render('ticket_history.twig', [
+    // base variables
+    'color_scheme' => $color_scheme,
+    'current_year' => $current_year,
+    'user_permissions' => $permissions,
+    'wo_time' => $wo_time,
+    'user_pref' => $user_pref,
+    'ticket_limit' => $ticket_limit,
+	'status_alert_type' => $status_alert_type,
+	'status_alert_message' => $status_alert_message,
 
-<?php display_tickets_table($ticket_result, $database); ?>
-<?php include("footer.php"); ?>
+    // ticket_base variables
+    'subord_count' => $subord_count,
+	'num_assigned_tickets' => $num_assigned_tickets,
+	'num_flagged_tickets' => $num_flagged_tickets,
+
+	// tickets variables
+	'tickets' => $ticket_data
+]);

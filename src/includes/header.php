@@ -34,14 +34,9 @@ $subord_stmt->close();
 
 // List of Ticket pages for which you want to display a ticket sub-menu
 $ticketPages = array(
-    '/tickets.php',
     '/edit_ticket.php',
     '/create_ticket.php',
-    '/recent_tickets.php',
     '/search_tickets.php',
-    '/ticket_history.php',
-    '/flagged_tickets.php',
-    '/subordinate_tickets.php',
     '/location_tickets.php'
 );
 // List of Supervisor pages for which you want to display a supervisor sub-menu
@@ -76,7 +71,7 @@ $current_page = $_SERVER['REQUEST_URI'];
     <title>Help For Provo City School District</title>
     <meta http-equiv="refresh" content="3600">
     <link rel="stylesheet" href="/includes/js/dataTables-2.0.5/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="/includes/css/main.css?v=00.01.48">
+    <link rel="stylesheet" href="/includes/css/main.css?v=00.01.50">
     <link rel="icon" type="image/png" href="/includes/img/favicons/favicon-16x16.png" sizes="16x16">
     <link rel="stylesheet" href="/includes/css/jquery-ui.min.css">
 

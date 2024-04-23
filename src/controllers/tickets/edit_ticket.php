@@ -787,7 +787,7 @@ if (strtolower($ticket["employee"]) == strtolower($username)) {
 
     if (count($task_rows) > 0) {
     ?>
-        <table style="max-width: 500px;">
+        <table class="taskTable">
             <tr>
                 <th>Task Description</th>
                 <th>Completed</th>
@@ -1104,7 +1104,7 @@ if (strtolower($ticket["employee"]) == strtolower($username)) {
                                 $new_value = sanitize_html(html_entity_decode(test_input($log_row['new_value'])));
                                 switch ($log_row['field_name']) {
                                     case 'Attachment':
-                                        $note_str = generateUpdateHTML('Attachment', null, $old_value, 'Added', $uniqueNoteId);
+                                        $note_str = generateUpdateHTML('Attachment', null, $new_value, 'Added', $uniqueNoteId);
                                         break;
                                     case 'notedeleted':
                                         $note_str = generateUpdateHTML('Note', $old_value, null, 'Deleted', $uniqueNoteId);

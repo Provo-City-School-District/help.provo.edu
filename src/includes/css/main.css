@@ -204,7 +204,7 @@ input[type=submit] {
 	text-align: center;
 }
 
-#headerNav *:hover {
+#headerNav #mainNav *:hover {
 	background-color: var(--theme-url-highlight);
 }
 

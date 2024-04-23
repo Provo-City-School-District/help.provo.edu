@@ -30,6 +30,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$bcc_emails = filter_input(INPUT_POST, 'bcc_emails', FILTER_SANITIZE_SPECIAL_CHARS);
 	$assigned_tech = filter_input(INPUT_POST, 'assigned', FILTER_SANITIZE_SPECIAL_CHARS);
 
+
+	if ($client === "") {
+		$client = $username;
+	}
 	// Allow trailing comma
 	if (substr($cc_emails, -1) == ",") {
 		$cc_emails = substr_replace($cc_emails, '', -1, 1);

@@ -316,7 +316,6 @@ table.dataTable .details a {
 
 table.dataTable .latestNote,
 table.dataTable .details {
-	word-break: break-all;
 	overflow-wrap: break-word;
 }
 

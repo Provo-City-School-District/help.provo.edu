@@ -144,12 +144,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		die('Error preparing insert query: ' . mysqli_error($database));
 	}
 
+	$uploadPaths_final = [];
 	foreach ($uploadPaths as $attachmentPath) {
 		// Replace '../../uploads/' with '/uploads/' in the attachment path if it exists
 		$attachmentPath = str_replace('../../uploads/', '/uploads/', $attachmentPath);
-		$uploadPath[] = $attachmentPath;
+		$uploadPaths_final[] = $attachmentPath;
 	}
-	$attachmentPath = implode(',', $uploadPath);
+	$attachmentPath = implode(',', $uploadPaths_final);
 	// print_r($uploadPath);
 	// Bind parameters
 	$cc_emails_clean = implode(',', $valid_cc_emails);

@@ -4,7 +4,8 @@ require_once from_root('/includes/time_utils.php');
 if (!session_id()) {
     session_start();
 }
-
+//included in twig base_variables and in functions.php while transitioning to twig
+$app_version = "1.0.1";
 // check if logged in. redirects to login page if not
 if (!$_SESSION['username']) {
     // Store the requested page in the session

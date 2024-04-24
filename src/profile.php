@@ -65,8 +65,9 @@ echo $twig->render('profile.twig', [
     'wo_time' => $wo_time,
     'user_pref' => $user_pref,
     'ticket_limit' => $ticket_limit,
-	'status_alert_type' => $status_alert_type,
-	'status_alert_message' => $status_alert_message,
+    'status_alert_type' => $status_alert_type,
+    'status_alert_message' => $status_alert_message,
+    'app_version' => $app_version,
 
     // profile variables
     'user_id' => $user_id,

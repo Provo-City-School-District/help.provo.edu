@@ -31,12 +31,12 @@
     var ticketLimit = '<?php echo isset($_SESSION['ticket_limit']) ? $_SESSION['ticket_limit'] : 10; ?>';
 </script>
 <?php if (basename($_SERVER['PHP_SELF']) != 'index.php') : ?>
-    <script src="/includes/js/inactiveModal.js?v=1.0.0" type="text/javascript"></script>
+    <script src="/includes/js/inactiveModal.js?v=<?= $app_version; ?>" type="text/javascript"></script>
 <?php endif; ?>
 <!-- <script src="/includes/js/clientSearch.js?v=1.0.0" type="text/javascript"></script> -->
-<script src="/includes/js/tinyMCE-conf.js?v=1.0.0" type="text/javascript"></script>
-<script src="/includes/js/dataTables-conf.js?v=1.0.01" type="text/javascript"></script>
-<script src="/includes/js/global.js?v=1" type="text/javascript"></script>
+<script src="/includes/js/tinyMCE-conf.js?v=<?= $app_version; ?>" type="text/javascript"></script>
+<script src="/includes/js/dataTables-conf.js?v=<?= $app_version; ?>" type="text/javascript"></script>
+<script src="/includes/js/global.js?v=<?= $app_version; ?>" type="text/javascript"></script>
 </body>
 
 </html>

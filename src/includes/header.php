@@ -71,25 +71,24 @@ $current_page = $_SERVER['REQUEST_URI'];
     <title>Help For Provo City School District</title>
     <meta http-equiv="refresh" content="3600">
     <link rel="stylesheet" href="/includes/js/dataTables-2.0.5/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="/includes/css/main.css?v=00.01.50">
+    <link rel="stylesheet" href="/includes/css/main.css?v=<?= $app_version; ?>">
     <link rel="icon" type="image/png" href="/includes/img/favicons/favicon-16x16.png" sizes="16x16">
     <link rel="stylesheet" href="/includes/css/jquery-ui.min.css">
-
     <?php
     //load color scheme if set. loads light scheme if not set
     if (isset($_SESSION['color_scheme'])) {
     ?>
-        <link rel="stylesheet" type="text/css" href="/includes/css/variables-<?= $_SESSION['color_scheme'] ?>.css?v=0.1.21">
+        <link rel="stylesheet" type="text/css" href="/includes/css/variables-<?= $_SESSION['color_scheme'] ?>.css?v=<?= $app_version; ?>">
     <?php
     } else {
     ?>
-        <link rel="stylesheet" type="text/css" href="/includes/css/variables-light.css?v=0.1.21">
+        <link rel="stylesheet" type="text/css" href="/includes/css/variables-light.css?v=<?= $app_version; ?>">
     <?php
     }
     //load login page styles
     if ($_SERVER['REQUEST_URI'] === '/index.php' || $_SERVER['REQUEST_URI'] === '/') {
     ?>
-        <link rel="stylesheet" type="text/css" href="/includes/css/login-styles.css?v=0.1.18">
+        <link rel="stylesheet" type="text/css" href="/includes/css/login-styles.css?v=<?= $app_version; ?>">
     <?php
     }
     ?>

@@ -15,5 +15,6 @@ $username = $_SESSION["username"];
 log_app(LOG_INFO, "[alert_delete.php] Deleting alert with id=$id");
 
 $database->execute_query("DELETE FROM alerts WHERE id = ? AND LOWER(employee) = ?", [$id, strtolower($username)]);
+
 header('Location: ' . $_SERVER['HTTP_REFERER']);
 exit;

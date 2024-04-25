@@ -55,7 +55,11 @@ try {
 
         // Build Email Template
         $template_path = "ticket_response_required";
-        $template_client = new Template(__DIR__ . "/templates/{$template_path}_client.phtml");
+        if (!file_exists(__DIR__ . "/../includes/templates/{$template_path}_client.phtml")) {
+            throw new Exception('Template File not found');
+            log_app(LOG_ERR, "Template File not found when running alert_client_response.php");
+        }
+        $template_client = new Template(__DIR__ . "/../includes/templates/{$template_path}_client.phtml");
 
         $client_name = get_local_name_for_user($ticket['client']);
         $template_client->client = $client_name["firstname"] . " " . $client_name["lastname"];

@@ -8,7 +8,7 @@ if (!session_id())
 
 $loader = new \Twig\Loader\FilesystemLoader(from_root('/views'));
 $twig = new \Twig\Environment($loader, [
-    'cache' => from_root('/twig-cache')
+    'cache' => from_root('/../twig-cache')
 ]);
 
 $tech_ticket_query = <<<STR

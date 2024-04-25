@@ -7,7 +7,7 @@ session_start();
 
 $loader = new \Twig\Loader\FilesystemLoader(from_root('/views'));
 $twig = new \Twig\Environment($loader, [
-	'cache' => from_root('/twig-cache')
+	'cache' => from_root('/../twig-cache')
 ]);
 
 $ticket_query = <<<QUERY

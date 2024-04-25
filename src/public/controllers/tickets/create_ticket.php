@@ -46,10 +46,6 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
 		<input type="hidden" name="client" value="<?= $_SESSION['username'] ?>">
 		<div class="ticketGrid">
 			<div>
-				<label for="client">Client:</label>
-				<input type="text" id="client" name="client" value="<?= isset($_GET['client']) ? htmlspecialchars($_GET['client']) : '' ?>">
-			</div>
-			<div>
 				<label for="location">Department/Location:</label>
 				<select id="location" name="location">
 					<option value=""></option>
@@ -127,6 +123,10 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
 						?>
 					</select>
 				</div>
+				<div>
+					<label for="client">Client:</label>
+					<input type="text" id="client" name="client" value="<?= isset($_GET['client']) ? htmlspecialchars($_GET['client']) : '' ?>">
+				</div>
 			<?php endif ?>
 
 		</div>
@@ -163,36 +163,35 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
 		});
 	});
 
-	$("#client").on("input", function () {
+	$("#client").on("input", function() {
 		const new_value = extractLast($(this).val());
 		$("#client").autocomplete({
-			source: function (request, response) {
-			$.ajax({
-				url: "/ajax/username_search_ldap.php",
-				method: "GET",
-				data: {
-				username: new_value,
-				},
-				success: function (data, textStatus, xhr) {
-				let mappedResults = $.map(data, function (item) {
-					let itemLocation = item.location ? item.location : "unknown";
-					return $.extend(item, {
-					label:
-						item.firstName +
-						" " +
-						item.lastName +
-						" (" +
-						itemLocation +
-						")",
-					value: item.username,
-					});
+			source: function(request, response) {
+				$.ajax({
+					url: "/ajax/username_search_ldap.php",
+					method: "GET",
+					data: {
+						username: new_value,
+					},
+					success: function(data, textStatus, xhr) {
+						let mappedResults = $.map(data, function(item) {
+							let itemLocation = item.location ? item.location : "unknown";
+							return $.extend(item, {
+								label: item.firstName +
+									" " +
+									item.lastName +
+									" (" +
+									itemLocation +
+									")",
+								value: item.username,
+							});
+						});
+						response(mappedResults);
+					},
+					error: function() {
+						alert("Error: Autocomplete AJAX call failed");
+					},
 				});
-				response(mappedResults);
-				},
-				error: function () {
-				alert("Error: Autocomplete AJAX call failed");
-				},
-			});
 			},
 			minLength: 3
 		});

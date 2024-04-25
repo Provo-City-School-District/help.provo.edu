@@ -88,9 +88,9 @@ function handleFileUploads($files, $ticket_id = null)
                     // Generate a unique file name
 					// TODO: Move uploads to ../uploads (outside of public)
                     if ($ticket_id != null) {
-                        $newFilePath = "/uploads/" . $ticket_id . "-" . $fileName;
+                        $newFilePath = "/../uploads/" . $ticket_id . "-" . $fileName;
                     } else {
-                        $newFilePath = "/uploads/" . date('Ymd_Hi') . "-" . $fileName;
+                        $newFilePath = "/../uploads/" . date('Ymd_Hi') . "-" . $fileName;
                     }
                     $absolute_path = from_root($newFilePath);
 

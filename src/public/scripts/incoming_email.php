@@ -332,7 +332,7 @@ function find_and_upload_attachments(int $ticket_id, IMAP\Connection $mbox, int 
             else
                 $filename = date('Ymd_Hi') . $attachment['name'];
 
-            $uploadPath = "/uploads/" . $ticket_id . "-" . $filename;
+            $uploadPath = "/../uploads/" . $ticket_id . "-" . $filename;
             log_app(LOG_INFO, "Uploading image to " . from_root($uploadPath));
             $fp = fopen(from_root($uploadPath), "w+");
             fwrite($fp, $attachment['attachment']);

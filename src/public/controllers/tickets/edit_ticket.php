@@ -719,7 +719,8 @@ if (strtolower($ticket["employee"]) == strtolower($username)) {
         <ul>
             <?php
             foreach ($attachmentPaths as $attachmentPath) {
-                echo '<li><a href="' . $attachmentPath . '">' . basename($attachmentPath) . '</a></li>';
+				$path = basename($attachmentPath);
+                echo "<li><a href=\"/upload_viewer.php?file=$path\">$path</a></li>";
             }
             ?>
         </ul>

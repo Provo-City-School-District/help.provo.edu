@@ -1,17 +1,19 @@
 <?php
-/*require from_root("/../vendor/autoload.php");
-require "ticket_utils.php";
+require "block_file.php";
 
-if (!session_id())
-    session_start();
-
-$loader = new \Twig\Loader\FilesystemLoader(from_root('/views'));
-$twig = new \Twig\Environment($loader, [
-    'cache' => from_root('/../twig-cache')
-]);
+$file_path = $_GET["file"];
+$real_user_path = realpath(from_root("/../uploads/$file_path"));
+$real_base_path = realpath(from_root("/../uploads/"));
 
 
-echo $twig->render('upload_viewer.twig', [
+if ($real_user_path === false || (substr($real_user_path, 0, strlen($real_base_path)) != $real_base_path)) {
+	echo "Error parsing file request";
+	exit;
+}
+$content_type = mime_content_type($real_user_path);
+$content_size = filesize($real_user_path);
 
-]);
-*/
+header("Content-Type: $content_type");
+header("Content-Length: $content_size");
+readfile("$real_user_path");
+exit;

@@ -46,10 +46,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-	// Prevent ticket from being closed in any way if tasks are not complete
-	if ($updatedStatus == "resolved" || $updatedStatus == "closed") {
-		$tasks_result = $database->execute_query("SELECT COUNT(*) as count FROM ticket_tasks WHERE (ticket_id = ? AND required = 1 AND completed != 1)", [$ticket_id]);
-		$row = mysqli_fetch_assoc($tasks_result);
+    // Prevent ticket from being closed in any way if tasks are not complete
+    if ($updatedStatus == "resolved" || $updatedStatus == "closed") {
+        $tasks_result = $database->execute_query("SELECT COUNT(*) as count FROM ticket_tasks WHERE (ticket_id = ? AND required = 1 AND completed != 1)", [$ticket_id]);
+        $row = mysqli_fetch_assoc($tasks_result);
         if ($row['count'] != 0) {
             // Stop the resolving process and display an error message
             $error = "Cannot resolve with required, uncompleted tasks";
@@ -57,8 +57,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['status_type'] = 'error';
             header("Location: edit_ticket.php?$formData&id=$ticket_id");
             exit;
-		}
-	}
+        }
+    }
 
 
     // Allow trailing comma
@@ -163,7 +163,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $update_ticket_query_vars = [
         $updatedClient, $updatedEmployee, $updatedLocation, $updatedRoom, $updatedName,
         $updatedDescription, $updatedDueDate, $updatedStatus, $updatedPhone, $updatedCCEmails,
-        $updatedBCCEmails, $updatedPriority, $updatedRequestType, $updatedParentTicket, 
+        $updatedBCCEmails, $updatedPriority, $updatedRequestType, $updatedParentTicket,
         $updatedSendClientEmail, $updatedSendTechEmail, $updatedSendCCEmails, $updatedSendBCCEmails, $ticket_id
     ];
 
@@ -255,7 +255,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($old_ticket_data['status'], $updatedStatus) && $old_ticket_data['status'] != $updatedStatus) {
         logTicketChange($database, $ticket_id, $updatedby, $statusColumn, $old_ticket_data['status'], $updatedStatus);
         $changesMessage .= "<li>Changed Status from " . $old_ticket_data['status'] . " to " . $updatedStatus . "</li>";
-        if ($updatedPriority == "resolved" || $updatedPriority == "closed") {
+        if ($updatedStatus == "resolved" || $updatedStatus == "closed") {
             // Check if the ticket has an alert about not being updated in last 48 hours and clear it since the ticket was just updated.
             removeAlert($database, $alert48Message, $ticket_id);
             removeAlert($database, $alert7DayMessage, $ticket_id);
@@ -424,7 +424,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!$res) {
                 $send_errors[] = "Previously Assigned Tech";
             } else {
-                $sent_tech_email_log_msg .= $old_assigned_email.", ";
+                $sent_tech_email_log_msg .= $old_assigned_email . ", ";
             }
         }
 
@@ -433,7 +433,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!$res) {
                 $send_errors[] = "Client";
             } else {
-                $sent_client_email_log_msg .= $client_email.", ";
+                $sent_client_email_log_msg .= $client_email . ", ";
             }
         }
 
@@ -442,7 +442,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!$res) {
                 $send_errors[] = "Tech";
             } else {
-                $sent_tech_email_log_msg .= $assigned_tech_email.", ";
+                $sent_tech_email_log_msg .= $assigned_tech_email . ", ";
             }
         }
 
@@ -451,14 +451,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!$res) {
                 $send_errors[] = "Tech CC Emails";
             } else {
-                $sent_tech_email_log_msg .= implode(',', $tech_cc_emails).", ";
+                $sent_tech_email_log_msg .= implode(',', $tech_cc_emails) . ", ";
             }
 
             $res = send_email_and_add_to_ticket($ticket_id, getenv("GMAIL_USER"), $ticket_subject, $template_client, $client_cc_emails, [], $attachment_paths);
             if (!$res) {
                 $send_errors[] = "Client CC Emails";
             } else {
-                $sent_client_email_log_msg .= implode(',', $client_cc_emails).", ";
+                $sent_client_email_log_msg .= implode(',', $client_cc_emails) . ", ";
             }
         }
 
@@ -467,13 +467,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!$res) {
                 $send_errors[] = "Tech BCC Emails";
             } else {
-                $sent_tech_email_log_msg .= implode(',', $tech_bcc_emails).", ";
+                $sent_tech_email_log_msg .= implode(',', $tech_bcc_emails) . ", ";
             }
             $res = send_email_and_add_to_ticket($ticket_id, getenv("GMAIL_USER"), $ticket_subject, $template_client, [], $client_bcc_emails, $attachment_paths);
             if (!$res) {
                 $send_errors[] = "Client BCC Emails";
             } else {
-                $sent_client_email_log_msg .= implode(',', $client_bcc_emails).", ";
+                $sent_client_email_log_msg .= implode(',', $client_bcc_emails) . ", ";
             }
         }
 
@@ -481,7 +481,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             log_app(LOG_INFO, "Email errors found");
             $error_str = "Error sending email(s) to: ";
             foreach ($send_errors as $error) {
-                $error_str .= $error.", ";
+                $error_str .= $error . ", ";
             }
 
             $_SESSION['current_status'] = $error_str;
@@ -492,28 +492,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header("Location: edit_ticket.php?$formData&id=$ticket_id");
             exit;
         } else {
-			$send_to_msg_states = [
-				"",
-				"An email was sent to the BCC emails",
-				"An email was sent to the CC emails",
-				"An email was sent to the CC emails and BCC emails",
-				"An email was sent to the tech",
-				"An email was sent to the tech and BCC emails",
-				"An email was sent to the tech and CC emails",
-				"An email was sent to the tech, CC emails, and BCC emails",
-				"An email was sent to the client",
-				"An email was sent to the client and BCC emails",
-				"An email was sent to the client and CC emails",
-				"An email was sent to the client, CC emails, and BCC emails",
-				"An email was sent to the client and the tech",
-				"An email was sent to the client, tech, and BCC emails",
-				"An email was sent to the client, tech, and CC emails",
-				"An email was sent to the client, tech, CC emails, and BCC emails",
-			];
-			$state_idx = ($updatedSendClientEmail << 3) | ($updatedSendTechEmail << 2) | ($updatedSendCCEmails << 1) | $updatedSendBCCEmails;
-			assert($state_idx < 16, "Expected state_idx to be < 16");
-			$msg .= " ".$send_to_msg_states[$state_idx];
-		}
+            $send_to_msg_states = [
+                "",
+                "An email was sent to the BCC emails",
+                "An email was sent to the CC emails",
+                "An email was sent to the CC emails and BCC emails",
+                "An email was sent to the tech",
+                "An email was sent to the tech and BCC emails",
+                "An email was sent to the tech and CC emails",
+                "An email was sent to the tech, CC emails, and BCC emails",
+                "An email was sent to the client",
+                "An email was sent to the client and BCC emails",
+                "An email was sent to the client and CC emails",
+                "An email was sent to the client, CC emails, and BCC emails",
+                "An email was sent to the client and the tech",
+                "An email was sent to the client, tech, and BCC emails",
+                "An email was sent to the client, tech, and CC emails",
+                "An email was sent to the client, tech, CC emails, and BCC emails",
+            ];
+            $state_idx = ($updatedSendClientEmail << 3) | ($updatedSendTechEmail << 2) | ($updatedSendCCEmails << 1) | $updatedSendBCCEmails;
+            assert($state_idx < 16, "Expected state_idx to be < 16");
+            $msg .= " " . $send_to_msg_states[$state_idx];
+        }
 
 
 

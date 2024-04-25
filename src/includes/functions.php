@@ -1,6 +1,6 @@
 <?php
 //included in twig base_variables and in functions.php while transitioning to twig
-$app_version = "1.0.1";
+$app_version = "1.0.1-1";
 // handle 500 error
 register_shutdown_function("handleFatalError");
 
@@ -58,11 +58,11 @@ function add_ticket_msg_id_mapping(string $message_id, int $ticket_id)
 
 function get_client_name(string $client)
 {
-	// Do lookup in local table before LDAP
-	$res = get_local_name_for_user($client);
-	if ($res != null) {
-		return $res;
-	}
+    // Do lookup in local table before LDAP
+    $res = get_local_name_for_user($client);
+    if ($res != null) {
+        return $res;
+    }
 
     $ldap_host = getenv('LDAPHOST');
     $ldap_port = getenv('LDAPPORT');
@@ -121,7 +121,7 @@ function get_client_location(string $client)
 
 function get_employee_id(string $username)
 {
-	$ldap_host = getenv('LDAPHOST');
+    $ldap_host = getenv('LDAPHOST');
     $ldap_port = getenv('LDAPPORT');
     $ldap_dn = getenv('LDAP_DN');
     $ldap_user = getenv('LDAP_USER');
@@ -138,7 +138,7 @@ function get_employee_id(string $username)
     $search = "(&(objectCategory=person)(objectClass=user)(samaccountname=$username))";
     $ldap_result = ldap_search($ldap_conn, $ldap_dn, $search);
     $entries = ldap_get_entries($ldap_conn, $ldap_result);
-	return $entries[0]["employeeid"][0];
+    return $entries[0]["employeeid"][0];
 }
 
 const LDAP_EMPLOYEE_ID = (1 << 0);
@@ -148,7 +148,7 @@ const LDAP_EMPLOYEE_JOB_TITLE = (1 << 3);
 
 function get_ldap_info(string $username, int $request_flags)
 {
-	$ldap_host = getenv('LDAPHOST');
+    $ldap_host = getenv('LDAPHOST');
     $ldap_port = getenv('LDAPPORT');
     $ldap_dn = getenv('LDAP_DN');
     $ldap_user = getenv('LDAP_USER');
@@ -166,37 +166,37 @@ function get_ldap_info(string $username, int $request_flags)
     $ldap_result = ldap_search($ldap_conn, $ldap_dn, $search);
     $entries = ldap_get_entries($ldap_conn, $ldap_result);
 
-	$first_entry = $entries[0];
+    $first_entry = $entries[0];
 
-	$result = [];
-	if ($request_flags & LDAP_EMPLOYEE_ID) {
-		$result["employeeid"] = $first_entry["employeeid"][0];
-	}
+    $result = [];
+    if ($request_flags & LDAP_EMPLOYEE_ID) {
+        $result["employeeid"] = $first_entry["employeeid"][0];
+    }
 
-	if ($request_flags & LDAP_EMPLOYEE_NAME) {
-		$firstname = isset($first_entry['givenname'][0]) ? $first_entry['givenname'][0] : null;
-    	$lastname = isset($first_entry['sn'][0]) ? $first_entry['sn'][0] : null;
+    if ($request_flags & LDAP_EMPLOYEE_NAME) {
+        $firstname = isset($first_entry['givenname'][0]) ? $first_entry['givenname'][0] : null;
+        $lastname = isset($first_entry['sn'][0]) ? $first_entry['sn'][0] : null;
 
-		$result["firstname"] = $firstname;
-		$result["lastname"] = $lastname;
-	}
+        $result["firstname"] = $firstname;
+        $result["lastname"] = $lastname;
+    }
 
-	if ($request_flags & LDAP_EMPLOYEE_LOCATION) {
-		$location_code = intval($first_entry["ou"][0] ?: 38);
+    if ($request_flags & LDAP_EMPLOYEE_LOCATION) {
+        $location_code = intval($first_entry["ou"][0] ?: 38);
 
-		// Hacky mapping for aux services, should be 1896 internally
-		if ($location_code == 1892)
-			$location_code = 1896;
-		
-		$result["location"] = $location_code;
-	}
+        // Hacky mapping for aux services, should be 1896 internally
+        if ($location_code == 1892)
+            $location_code = 1896;
 
-	if ($request_flags & LDAP_EMPLOYEE_JOB_TITLE) {
-		$title = $first_entry["title"][0];
-		$result["job_title"] = $title;
-	}
+        $result["location"] = $location_code;
+    }
 
-	return $result;
+    if ($request_flags & LDAP_EMPLOYEE_JOB_TITLE) {
+        $title = $first_entry["title"][0];
+        $result["job_title"] = $title;
+    }
+
+    return $result;
 }
 
 function find_clients(string $name)

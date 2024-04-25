@@ -4,6 +4,8 @@ require_once('ticket_utils.php');
 require_once("email_utils.php");
 require("template.php");
 
+log_app(LOG_INFO, "alert_client_response.php running");
+
 try {
     $client_response_tickets_query = "SELECT * FROM tickets WHERE priority = 15 AND status = 'open'";
     $client_response_tickets_results = $database->execute_query($client_response_tickets_query);

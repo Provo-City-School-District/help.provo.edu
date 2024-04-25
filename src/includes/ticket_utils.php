@@ -162,9 +162,9 @@ function add_note_with_filters(
 	log_app(LOG_INFO, "username: $username, client: $client");
 
 	// Allow pseudo-clients to update ticket status if in CC/BCC field
-    if (strtolower($username) == strtolower($client) || 
+    if ((strtolower($username) == strtolower($client) || 
 		in_array($user_email, $cc_emails) || 
-		in_array($user_email, $bcc_emails)) {
+		in_array($user_email, $bcc_emails)) && !user_is_tech($username) ) {
 		// set priority to standard
         $result = $database->execute_query("UPDATE tickets SET tickets.priority = 10 WHERE tickets.id = ?", [$ticket_id_clean]);
         if (!$result) {

@@ -1,6 +1,7 @@
 <?php
 
 require_once('helpdbconnect.php');
+require_once('functions.php');
 
 log_app(LOG_INFO, "close_resolved.php running");
 

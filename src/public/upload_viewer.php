@@ -1,5 +1,5 @@
 <?php
-require from_root("/../vendor/autoload.php");
+/*require from_root("/../vendor/autoload.php");
 require "ticket_utils.php";
 
 if (!session_id())
@@ -14,3 +14,4 @@ $twig = new \Twig\Environment($loader, [
 echo $twig->render('upload_viewer.twig', [
 
 ]);
+*/

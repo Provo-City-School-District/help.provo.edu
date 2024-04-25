@@ -6,4 +6,4 @@ set -o allexport
 set +o allexport
 
 # Run PHP script
-/usr/local/bin/php /var/www/html/scripts/incoming_email.php
+/usr/local/bin/php /var/www/html/public/scripts/incoming_email.php

@@ -6,4 +6,4 @@ set -o allexport
 set +o allexport
 
 # Run PHP script
-/usr/local/bin/php /var/www/html/scripts/close_resolved.php
+/usr/local/bin/php /var/www/html/public/scripts/close_resolved.php

@@ -1,5 +1,5 @@
 <?php
-require_once(from_root("/vendor/autoload.php"));
+require_once(from_root("/../vendor/autoload.php"));
 require_once("helpdbconnect.php");
 require_once("functions.php");
 require_once("authentication_utils.php");

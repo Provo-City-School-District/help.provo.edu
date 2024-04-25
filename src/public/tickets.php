@@ -1,5 +1,5 @@
 <?php
-require from_root("/vendor/autoload.php");
+require from_root("/../vendor/autoload.php");
 require from_root("/new-controllers/ticket_base_variables.php");
 require "ticket_utils.php";
 

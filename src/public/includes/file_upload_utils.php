@@ -87,9 +87,9 @@ function handleFileUploads($files, $ticket_id = null)
                 if (in_array($fileExtension, $allowed_extensions)) {
                     // Generate a unique file name
                     if ($ticket_id != null) {
-                        $newFilePath = "/uploads/" . $ticket_id . "-" . $fileName;
+                        $newFilePath = "/../uploads/" . $ticket_id . "-" . $fileName;
                     } else {
-                        $newFilePath = "/uploads/" . date('Ymd_Hi') . "-" . $fileName;
+                        $newFilePath = "/../uploads/" . date('Ymd_Hi') . "-" . $fileName;
                     }
                     $absolute_path = from_root($newFilePath);
 

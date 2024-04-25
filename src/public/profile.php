@@ -1,5 +1,5 @@
 <?php
-require_once from_root('/vendor/autoload.php');
+require_once from_root('/../vendor/autoload.php');
 require_once from_root("/new-controllers/base_variables.php");
 
 session_start();

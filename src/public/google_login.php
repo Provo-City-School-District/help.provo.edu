@@ -1,5 +1,5 @@
 <?php
-require(from_root('/vendor/autoload.php'));
+require(from_root('/../vendor/autoload.php'));
 require("authentication_utils.php");
 
 session_start();

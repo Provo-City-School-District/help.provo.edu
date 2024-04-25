@@ -1,5 +1,5 @@
 <?php
-require(__DIR__ . '/../vendor/autoload.php');
+require(from_root("/../vendor/autoload.php"));
 require_once("functions.php");
 
 use PHPMailer\PHPMailer\PHPMailer;

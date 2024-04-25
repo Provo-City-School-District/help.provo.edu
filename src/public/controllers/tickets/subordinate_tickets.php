@@ -2,7 +2,7 @@
 require_once('helpdbconnect.php');
 require_once(from_root("/includes/block_file.php"));
 require_once(from_root("/includes/ticket_utils.php"));
-require from_root("/vendor/autoload.php");
+require from_root("/../vendor/autoload.php");
 require from_root("/new-controllers/ticket_base_variables.php");
 
 if (!session_id())

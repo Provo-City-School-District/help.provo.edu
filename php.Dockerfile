@@ -57,7 +57,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 COPY /src/composer.json /var/www/html/
 COPY /src/composer.lock /var/www/html/
 
-COPY /src/boot.php /var/www/html/boot.php
+COPY /src/public/boot.php /var/www/html/public/boot.php
 
 # since .env variables aren't available by default to CLI scripts, we need to copy the .env file to the root directory so it can be loaded for them
 COPY .env /root/.env
@@ -77,6 +77,12 @@ RUN chmod +x /root/run_client_response.sh
 
 COPY run_active_ticket_clear.sh /root/run_active_ticket_clear.sh
 RUN chmod +x /root/run_active_ticket_clear.sh
+
+
+# Change document root folder
+ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
 # Create the uploads directory and set permissions
 RUN mkdir -p /var/www/html/uploads && chown -R www-data:www-data /var/www/html/uploads && chmod -R 775 /var/www/html/uploads

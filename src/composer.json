@@ -4,7 +4,6 @@
     "google/apiclient": "^2.15.3",
     "ezyang/htmlpurifier": "^4.17",
     "tinymce/tinymce": "^7.0.0",
-    "twig/twig": "^3.0",
-    "javanile/php-imap2": "^0.1.10"
+    "twig/twig": "^3.0"
   }
 }

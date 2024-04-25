@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ec1b9b3f89ee2b6f57c0aef09d7a9c86",
+    "content-hash": "75bba47b0734b158f6202ae259ded06e",
     "packages": [
         {
             "name": "ezyang/htmlpurifier",
@@ -132,16 +132,16 @@
         },
         {
             "name": "google/apiclient",
-            "version": "v2.15.3",
+            "version": "v2.15.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client.git",
-                "reference": "e70273c06d18824de77e114247ae3102f8aec64d"
+                "reference": "73fa9cf8d8886db7269bcda0457d0a251a02cfd9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client/zipball/e70273c06d18824de77e114247ae3102f8aec64d",
-                "reference": "e70273c06d18824de77e114247ae3102f8aec64d",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client/zipball/73fa9cf8d8886db7269bcda0457d0a251a02cfd9",
+                "reference": "73fa9cf8d8886db7269bcda0457d0a251a02cfd9",
                 "shasum": ""
             },
             "require": {
@@ -149,14 +149,14 @@
                 "google/apiclient-services": "~0.200",
                 "google/auth": "^1.33",
                 "guzzlehttp/guzzle": "^6.5.8||^7.4.5",
-                "guzzlehttp/psr7": "^1.8.4||^2.2.1",
+                "guzzlehttp/psr7": "^1.9.1||^2.2.1",
                 "monolog/monolog": "^2.9||^3.0",
                 "php": "^7.4|^8.0",
-                "phpseclib/phpseclib": "^3.0.34"
+                "phpseclib/phpseclib": "^3.0.36"
             },
             "require-dev": {
                 "cache/filesystem-adapter": "^1.1",
-                "composer/composer": "^1.10.22",
+                "composer/composer": "^1.10.23",
                 "phpcompatibility/php-compatibility": "^9.2",
                 "phpspec/prophecy-phpunit": "^2.0",
                 "phpunit/phpunit": "^9.5",
@@ -195,9 +195,9 @@
             ],
             "support": {
                 "issues": "https://github.com/googleapis/google-api-php-client/issues",
-                "source": "https://github.com/googleapis/google-api-php-client/tree/v2.15.3"
+                "source": "https://github.com/googleapis/google-api-php-client/tree/v2.15.4"
             },
-            "time": "2024-01-04T19:15:22+00:00"
+            "time": "2024-04-24T00:56:12+00:00"
         },
         {
             "name": "google/apiclient-services",
@@ -1646,16 +1646,16 @@
         },
         {
             "name": "tinymce/tinymce",
-            "version": "7.0.0",
+            "version": "7.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tinymce/tinymce-dist.git",
-                "reference": "c011b5164178ac5224e658bf2aed713479fc78ae"
+                "reference": "863759766e2397d1f639c63d006680a9e8ba6233"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tinymce/tinymce-dist/zipball/c011b5164178ac5224e658bf2aed713479fc78ae",
-                "reference": "c011b5164178ac5224e658bf2aed713479fc78ae",
+                "url": "https://api.github.com/repos/tinymce/tinymce-dist/zipball/863759766e2397d1f639c63d006680a9e8ba6233",
+                "reference": "863759766e2397d1f639c63d006680a9e8ba6233",
                 "shasum": ""
             },
             "type": "component",
@@ -1699,9 +1699,9 @@
                 "wysiwyg"
             ],
             "support": {
-                "source": "https://github.com/tinymce/tinymce-dist/tree/7.0.0"
+                "source": "https://github.com/tinymce/tinymce-dist/tree/7.0.1"
             },
-            "time": "2024-03-20T05:46:56+00:00"
+            "time": "2024-04-10T07:29:34+00:00"
         },
         {
             "name": "twig/twig",

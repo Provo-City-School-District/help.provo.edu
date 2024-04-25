@@ -4,7 +4,7 @@ require from_root("/new-controllers/ticket_base_variables.php");
 require "ticket_utils.php";
 
 if (!session_id())
-	session_start();
+    session_start();
 
 $loader = new \Twig\Loader\FilesystemLoader(from_root('/views'));
 $twig = new \Twig\Environment($loader, [
@@ -48,17 +48,18 @@ echo $twig->render('tickets.twig', [
     'wo_time' => $wo_time,
     'user_pref' => $user_pref,
     'ticket_limit' => $ticket_limit,
-	'status_alert_type' => $status_alert_type,
-	'status_alert_message' => $status_alert_message,
+    'status_alert_type' => $status_alert_type,
+    'status_alert_message' => $status_alert_message,
+    'app_version' => $app_version,
 
     // ticket_base variables
     'subord_count' => $subord_count,
-	'num_assigned_tickets' => $num_assigned_tickets,
-	'num_flagged_tickets' => $num_flagged_tickets,
+    'num_assigned_tickets' => $num_assigned_tickets,
+    'num_flagged_tickets' => $num_flagged_tickets,
 
-	// tickets variables
-	'my_tickets' => $my_tickets,
-	'open_tickets' => $client_tickets,
-	'alerts' => $alerts,
-	'hide_alerts' => $_SESSION['hide_alerts']
+    // tickets variables
+    'my_tickets' => $my_tickets,
+    'open_tickets' => $client_tickets,
+    'alerts' => $alerts,
+    'hide_alerts' => $_SESSION['hide_alerts']
 ]);

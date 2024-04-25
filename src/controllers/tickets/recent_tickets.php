@@ -7,7 +7,7 @@ session_start();
 
 $loader = new \Twig\Loader\FilesystemLoader(from_root('/views'));
 $twig = new \Twig\Environment($loader, [
-    'cache' => from_root('/twig-cache')
+	'cache' => from_root('/twig-cache')
 ]);
 
 $ticket_query = <<<QUERY
@@ -25,18 +25,19 @@ $ticket_result = $database->execute_query($ticket_query, [$username, $username])
 $tickets = get_parsed_ticket_data($ticket_result);
 
 echo $twig->render('recent_tickets.twig', [
-    // base variables
-    'color_scheme' => $color_scheme,
-    'current_year' => $current_year,
-    'user_permissions' => $permissions,
-    'wo_time' => $wo_time,
-    'user_pref' => $user_pref,
-    'ticket_limit' => $ticket_limit,
+	// base variables
+	'color_scheme' => $color_scheme,
+	'current_year' => $current_year,
+	'user_permissions' => $permissions,
+	'wo_time' => $wo_time,
+	'user_pref' => $user_pref,
+	'ticket_limit' => $ticket_limit,
 	'status_alert_type' => $status_alert_type,
 	'status_alert_message' => $status_alert_message,
+	'app_version' => $app_version,
 
-    // ticket_base variables
-    'subord_count' => $subord_count,
+	// ticket_base variables
+	'subord_count' => $subord_count,
 	'num_assigned_tickets' => $num_assigned_tickets,
 	'num_flagged_tickets' => $num_flagged_tickets,
 

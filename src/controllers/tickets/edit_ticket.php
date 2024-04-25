@@ -247,42 +247,42 @@ if (isset($ticket["client"])) {
 $show_quick_switch_buttons = false;
 // If ticket assigned tech is currently logged in user's
 if (strtolower($ticket["employee"]) == strtolower($username)) {
-	$show_quick_switch_buttons = true;
+    $show_quick_switch_buttons = true;
 
-	$assigned_tickets_result = $database->execute_query("SELECT id FROM tickets WHERE (status NOT IN ('Closed', 'Resolved') AND employee = ?) ORDER BY id ASC", [$username]);
+    $assigned_tickets_result = $database->execute_query("SELECT id FROM tickets WHERE (status NOT IN ('Closed', 'Resolved') AND employee = ?) ORDER BY id ASC", [$username]);
 
-	$assigned_ticket_ids = [];
-	while ($row = $assigned_tickets_result->fetch_assoc()) {
-		$assigned_ticket_ids[] = $row["id"];
-	}
+    $assigned_ticket_ids = [];
+    while ($row = $assigned_tickets_result->fetch_assoc()) {
+        $assigned_ticket_ids[] = $row["id"];
+    }
 
-	$max_idx = count($assigned_ticket_ids) - 1;
+    $max_idx = count($assigned_ticket_ids) - 1;
 
-	$left_idx = array_search($ticket_id, $assigned_ticket_ids) - 1;
-	$right_idx = array_search($ticket_id, $assigned_ticket_ids) + 1;
+    $left_idx = array_search($ticket_id, $assigned_ticket_ids) - 1;
+    $right_idx = array_search($ticket_id, $assigned_ticket_ids) + 1;
 
-	if ($left_idx < 0) {
-		$left_idx = $max_idx;
-	}
+    if ($left_idx < 0) {
+        $left_idx = $max_idx;
+    }
 
-	if ($right_idx > $max_idx) {
-		$right_idx = 0;
-	}
+    if ($right_idx > $max_idx) {
+        $right_idx = 0;
+    }
 
-	$left_ticket_id = $assigned_ticket_ids[$left_idx];
-	$right_ticket_id = $assigned_ticket_ids[$right_idx];
+    $left_ticket_id = $assigned_ticket_ids[$left_idx];
+    $right_ticket_id = $assigned_ticket_ids[$right_idx];
 }
 
 ?>
 <article id="ticketWrapper">
     <div id="ticket-title-container">
-		<?php if ($show_quick_switch_buttons): ?>
-			<a href="/controllers/tickets/edit_ticket.php?id=<?= $left_ticket_id ?>">&larr;</a>
-		<? endif; ?>
-		Ticket <?= $ticket['id'] ?>
-		<?php if ($show_quick_switch_buttons): ?>
-			<a href="/controllers/tickets/edit_ticket.php?id=<?= $right_ticket_id ?>">&rarr;</a>
-		<? endif; ?>
+        <?php if ($show_quick_switch_buttons) : ?>
+            <a href="/controllers/tickets/edit_ticket.php?id=<?= $left_ticket_id ?>">&larr;</a>
+        <? endif; ?>
+        Ticket <?= $ticket['id'] ?>
+        <?php if ($show_quick_switch_buttons) : ?>
+            <a href="/controllers/tickets/edit_ticket.php?id=<?= $right_ticket_id ?>">&rarr;</a>
+        <? endif; ?>
     </div>
     <?php
     if (isset($ticket['parent_ticket']) && $ticket['parent_ticket'] != null) {
@@ -1191,9 +1191,8 @@ if (strtolower($ticket["employee"]) == strtolower($username)) {
         }
     });
 </script>
-
 <?php if ($_SESSION['permissions']['is_tech']) : ?>
-    <script src="/includes/js/note_time.js" type="text/javascript"></script>
+
     <script>
         function updateTimeSinceLastNote() {
             // Loop over each element with the class 'created_date'
@@ -1234,10 +1233,18 @@ if (strtolower($ticket["employee"]) == strtolower($username)) {
         setInterval(updateTimeSinceLastNote, 60000); // 60000 milliseconds
     </script>
 <?php endif; ?>
-
+<script src="/includes/js/note_submit.js?v=?v=1.0.04" type="text/javascript"></script>
 <script src="/includes/js/pages/edit_ticket.js?v=1.0.04" type="text/javascript"></script>
 <?php include("footer.php"); ?>
+
+
 <script>
+    // Pass the user's role from PHP to JavaScript
+    var isTechUser = <?php echo $_SESSION['permissions']['is_tech'] ? 'true' : 'false'; ?>;
+
+    // Pass the note order from PHP to JavaScript
+    var noteOrder = "<?php echo $note_order; ?>";
+
     $(document).ready(function() {
         $('#close-ticket-button').click(function() {
             $.ajax({
@@ -1316,3 +1323,40 @@ if (strtolower($ticket["employee"]) == strtolower($username)) {
         });
     }
 </script>
+<!-- <script>
+    $(document).ready(function() {
+        $('#note-submit').on('submit', function(e) {
+            e.preventDefault();
+
+            $.ajax({
+                type: 'POST',
+                url: 'add_note_handler.php',
+                data: $(this).serialize(),
+                success: function(response) {
+                    // Reload the notes section
+                    $('#note-table').load(location.href + ' #note-table', function() {
+                        // Scroll to the new note
+                        var newNote = $('#note-table .note').first(); // or .last() depending on user settings
+                        $('html, body').animate({
+                            scrollTop: newNote.offset().top
+                        }, 200); // 2000 milliseconds
+                    });
+
+                    // Close the modal
+                    $('#new-note-form-background').hide();
+                    $('#new-note-form').hide();
+                    // Clear the TinyMCE editor
+                    tinymce.get('note').setContent('');
+                    // clear time input fields
+                    $('#work_minutes').val(0);
+                    $('#work_hours').val(0);
+                    $('#travel_hours').val(0);
+                    $('#travel_minutes').val(0);
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus, errorThrown);
+                }
+            });
+        });
+    });
+</script> -->

@@ -14,8 +14,6 @@ function get_note_time_for_days(string $user, array $days)
     for ($i = 0; $i < count($days); $i++)
         $times[$i] = 0;
 
-
-    // Hasn't been fully battle tested but should work fine
     $query =
         <<<STR
     SELECT 

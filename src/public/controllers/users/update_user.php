@@ -2,6 +2,14 @@
 require_once('init.php');
 require_once('helpdbconnect.php');
 require_once('functions.php');
+
+if ($_SESSION['permissions']['is_supervisor'] != 1) {
+    // User is not an supervisor
+
+    echo 'You do not have permission to use this form.';
+    exit;
+}
+
 // Check if the user ID is set
 if (!isset($_POST['id'])) {
     die("User ID not set");

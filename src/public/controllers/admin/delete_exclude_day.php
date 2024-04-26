@@ -3,6 +3,11 @@ require_once("block_file.php");
 require_once('init.php');
 require_once('helpdbconnect.php');
 
+if ($_SESSION['permissions']['is_admin'] != 1) {
+    echo 'You do not have permission to use this form.';
+    exit;
+}
+
 // Get the exclude day ID from the query string
 $id = trim(htmlspecialchars($_GET['id']));
 

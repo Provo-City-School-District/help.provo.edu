@@ -2,9 +2,6 @@
 include("header.php");
 
 if ($_SESSION['permissions']['is_supervisor'] != 1) {
-    // User is not an supervisor
-
-    // need to add a permission for "edit users"
     echo 'You do not have permission to view this page.';
     exit;
 }

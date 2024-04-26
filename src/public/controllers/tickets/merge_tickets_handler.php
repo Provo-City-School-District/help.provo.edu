@@ -129,7 +129,7 @@ if (!$result) {
 $username = $_SESSION["username"];
 
 // Create note on host ticket
-add_note_with_filters(
+create_note(
     $ticket_id_host,
     "System",
     "This ticket ($ticket_id_host) was merged from WO#$ticket_id_source by $username",
@@ -141,7 +141,7 @@ add_note_with_filters(
 );
 
 // Create note on source ticket
-add_note_with_filters(
+create_note(
     $ticket_id_source,
     "System",
     "This ticket ($ticket_id_source) was merged into WO#$ticket_id_host by $username",

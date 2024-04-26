@@ -40,7 +40,7 @@ if (isset($_POST["visible_to_client"])) {
 }
 
 
-$add_note_result = add_note_with_filters(
+$add_note_result = create_note(
     $ticket_id,
     $username,
     $note_content,

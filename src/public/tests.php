@@ -37,7 +37,7 @@ function test_note_creation(int $ticket_id)
 
 
 	// Add a note on the ticket
-	$res = add_note_with_filters($ticket_id, $username, "Note test", 1, 32, 0, 14, true);
+	$res = create_note($ticket_id, $username, "Note test", 1, 32, 0, 14, true);
 	assert($res);
 
 	// Test reading from note

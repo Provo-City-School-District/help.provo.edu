@@ -93,7 +93,7 @@ function formatFieldName($str)
     return $str;
 }
 
-function add_note_with_filters(
+function create_note(
     string $ticket_id,
     string $username,
     string $note_content,

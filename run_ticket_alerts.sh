@@ -6,4 +6,4 @@ set -o allexport
 set +o allexport
 
 # Run PHP script
-/usr/local/bin/php /var/www/html/public/scripts/ticket_alerts.php
+/usr/local/bin/php /var/www/html/scripts/ticket_alerts.php

@@ -166,7 +166,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
             $existing_ticket_id = intval($email_exists_data["id"]);
             $operating_ticket = $existing_ticket_id;
             // add note on existing ticket
-            add_note_with_filters($existing_ticket_id, $sender_username, $message, 0, 0, 0, 0, true, null, $email_msg_id);
+            create_note($existing_ticket_id, $sender_username, $message, 0, 0, 0, 0, true, null, $email_msg_id);
         } else {
             $ticket_exists_result = $database->execute_query("SELECT linked_id FROM notes WHERE email_msg_id = ?", [$email_ancestor_id]);
             $ticket_exists_data = mysqli_fetch_assoc($ticket_exists_result);
@@ -174,7 +174,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
             if (isset($ticket_exists_data["linked_id"])) {
                 $existing_ticket_id = intval($ticket_exists_data["linked_id"]);
                 $operating_ticket = $existing_ticket_id;
-                add_note_with_filters($existing_ticket_id, $sender_username, $message, 0, 0, 0, 0, true, null, $email_msg_id);
+                create_note($existing_ticket_id, $sender_username, $message, 0, 0, 0, 0, true, null, $email_msg_id);
             } else {
                 $failed_email_ids[] = $i;
                 log_app(LOG_ERR, "Failed to find ancestor id in database for message \"$email_msg_id\". This shouldn't happen on a receipt email we sent out.");
@@ -214,7 +214,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
         } else {
             $operating_ticket = $subject_ticket_id;
             // ticket syntax is valid, add a note on that ticket
-            add_note_with_filters($subject_ticket_id, $sender_username, $message, 0, 0, 0, 0, true, null);
+            create_note($subject_ticket_id, $sender_username, $message, 0, 0, 0, 0, true, null);
         }
     }
 
@@ -332,7 +332,7 @@ function find_and_upload_attachments(int $ticket_id, IMAP\Connection $mbox, int 
             else
                 $filename = date('Ymd_Hi') . $attachment['name'];
 
-            $uploadPath = "/uploads/" . $ticket_id . "-" . $filename;
+            $uploadPath = "/../uploads/" . $ticket_id . "-" . $filename;
             log_app(LOG_INFO, "Uploading image to " . from_root($uploadPath));
             $fp = fopen(from_root($uploadPath), "w+");
             fwrite($fp, $attachment['attachment']);

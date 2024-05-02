@@ -3,7 +3,8 @@
 src/vendor
 src/twig-cache
 .DS_Store
-src/info.php
+src/public/info.php
 src/uploads/*
+src/public/uploads/*
 !.gitkeep
 session/sess_*

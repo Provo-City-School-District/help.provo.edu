@@ -44,6 +44,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		}
 	}
 
+	$master_send_emails = true;
+	if (isset($_POST["update_ticket"])) {
+		$master_send_emails = false;
+	}
+
 	// Prevent ticket from being closed in any way if tasks are not complete
 	if ($updatedStatus == "resolved" || $updatedStatus == "closed") {
 		$tasks_result = $database->execute_query("SELECT COUNT(*) as count FROM ticket_tasks WHERE (ticket_id = ? AND required = 1 AND completed != 1)", [$ticket_id]);
@@ -363,8 +368,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		}
 	}
 
-
-	log_app(LOG_INFO, "Sending email on ticket update");
 	if ($updatedStatus == "resolved") {
 		$template_path = "ticket_resolved";
 		$subject_status = "Resolved";
@@ -415,6 +418,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$sent_tech_email_log_msg = "Sent tech-privileged emails to: ";
 	$sent_client_email_log_msg = "Sent non-tech emails to: ";
 
+	// Force reassigned ticket email regardless of master_send_emails status
 	$send_errors = [];
 	if (isset($old_assigned_email)) {
 		$res = send_email_and_add_to_ticket($ticket_id, $old_assigned_email, $ticket_subject, $template_tech, [], [], $attachment_paths);
@@ -425,94 +429,94 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		}
 	}
 
-	if ($updatedSendClientEmail && ($updatedClient != $updatedEmployee)) {
-		$res = send_email_and_add_to_ticket($ticket_id, $client_email, $ticket_subject, $template_client, [], [], $attachment_paths);
-		if (!$res) {
-			$send_errors[] = "Client";
+	if ($master_send_emails) {
+		if ($updatedSendClientEmail && ($updatedClient != $updatedEmployee)) {
+			$res = send_email_and_add_to_ticket($ticket_id, $client_email, $ticket_subject, $template_client, [], [], $attachment_paths);
+			if (!$res) {
+				$send_errors[] = "Client";
+			} else {
+				$sent_client_email_log_msg .= $client_email . ", ";
+			}
+		}
+
+		if ($updatedSendTechEmail) {
+			$res = send_email_and_add_to_ticket($ticket_id, $assigned_tech_email, $ticket_subject, $template_tech, [], [], $attachment_paths);
+			if (!$res) {
+				$send_errors[] = "Tech";
+			} else {
+				$sent_tech_email_log_msg .= $assigned_tech_email . ", ";
+			}
+		}
+
+		if ($updatedSendCCEmails) {
+			$res = send_email_and_add_to_ticket($ticket_id, getenv("GMAIL_USER"), $ticket_subject, $template_tech, $tech_cc_emails, [], $attachment_paths);
+			if (!$res) {
+				$send_errors[] = "Tech CC Emails";
+			} else {
+				$sent_tech_email_log_msg .= implode(',', $tech_cc_emails) . ", ";
+			}
+
+			$res = send_email_and_add_to_ticket($ticket_id, getenv("GMAIL_USER"), $ticket_subject, $template_client, $client_cc_emails, [], $attachment_paths);
+			if (!$res) {
+				$send_errors[] = "Client CC Emails";
+			} else {
+				$sent_client_email_log_msg .= implode(',', $client_cc_emails) . ", ";
+			}
+		}
+
+		if ($updatedSendBCCEmails) {
+			$res = send_email_and_add_to_ticket($ticket_id, getenv("GMAIL_USER"), $ticket_subject, $template_tech, [], $tech_bcc_emails, $attachment_paths);
+			if (!$res) {
+				$send_errors[] = "Tech BCC Emails";
+			} else {
+				$sent_tech_email_log_msg .= implode(',', $tech_bcc_emails) . ", ";
+			}
+			$res = send_email_and_add_to_ticket($ticket_id, getenv("GMAIL_USER"), $ticket_subject, $template_client, [], $client_bcc_emails, $attachment_paths);
+			if (!$res) {
+				$send_errors[] = "Client BCC Emails";
+			} else {
+				$sent_client_email_log_msg .= implode(',', $client_bcc_emails) . ", ";
+			}
+		}
+
+		if (count($send_errors) > 0) {
+			log_app(LOG_INFO, "Email errors found");
+			$error_str = "Error sending email(s) to: ";
+			foreach ($send_errors as $error) {
+				$error_str .= $error . ", ";
+			}
+
+			$_SESSION['current_status'] = $error_str;
+			$_SESSION['status_type'] = 'error';
+
+			$formData = http_build_query($_POST);
+			log_app(LOG_ERR, "$error \n\n $formData");
+			header("Location: edit_ticket.php?$formData&id=$ticket_id");
+			exit;
 		} else {
-			$sent_client_email_log_msg .= $client_email . ", ";
+			$send_to_msg_states = [
+				"",
+				"An email was sent to the BCC emails",
+				"An email was sent to the CC emails",
+				"An email was sent to the CC emails and BCC emails",
+				"An email was sent to the tech",
+				"An email was sent to the tech and BCC emails",
+				"An email was sent to the tech and CC emails",
+				"An email was sent to the tech, CC emails, and BCC emails",
+				"An email was sent to the client",
+				"An email was sent to the client and BCC emails",
+				"An email was sent to the client and CC emails",
+				"An email was sent to the client, CC emails, and BCC emails",
+				"An email was sent to the client and the tech",
+				"An email was sent to the client, tech, and BCC emails",
+				"An email was sent to the client, tech, and CC emails",
+				"An email was sent to the client, tech, CC emails, and BCC emails",
+			];
+			$state_idx = ($updatedSendClientEmail << 3) | ($updatedSendTechEmail << 2) | ($updatedSendCCEmails << 1) | $updatedSendBCCEmails;
+			assert($state_idx < 16, "Expected state_idx to be < 16");
+			$msg .= " " . $send_to_msg_states[$state_idx];
 		}
 	}
-
-	if ($updatedSendTechEmail) {
-		$res = send_email_and_add_to_ticket($ticket_id, $assigned_tech_email, $ticket_subject, $template_tech, [], [], $attachment_paths);
-		if (!$res) {
-			$send_errors[] = "Tech";
-		} else {
-			$sent_tech_email_log_msg .= $assigned_tech_email . ", ";
-		}
-	}
-
-	if ($updatedSendCCEmails) {
-		$res = send_email_and_add_to_ticket($ticket_id, getenv("GMAIL_USER"), $ticket_subject, $template_tech, $tech_cc_emails, [], $attachment_paths);
-		if (!$res) {
-			$send_errors[] = "Tech CC Emails";
-		} else {
-			$sent_tech_email_log_msg .= implode(',', $tech_cc_emails) . ", ";
-		}
-
-		$res = send_email_and_add_to_ticket($ticket_id, getenv("GMAIL_USER"), $ticket_subject, $template_client, $client_cc_emails, [], $attachment_paths);
-		if (!$res) {
-			$send_errors[] = "Client CC Emails";
-		} else {
-			$sent_client_email_log_msg .= implode(',', $client_cc_emails) . ", ";
-		}
-	}
-
-	if ($updatedSendBCCEmails) {
-		$res = send_email_and_add_to_ticket($ticket_id, getenv("GMAIL_USER"), $ticket_subject, $template_tech, [], $tech_bcc_emails, $attachment_paths);
-		if (!$res) {
-			$send_errors[] = "Tech BCC Emails";
-		} else {
-			$sent_tech_email_log_msg .= implode(',', $tech_bcc_emails) . ", ";
-		}
-		$res = send_email_and_add_to_ticket($ticket_id, getenv("GMAIL_USER"), $ticket_subject, $template_client, [], $client_bcc_emails, $attachment_paths);
-		if (!$res) {
-			$send_errors[] = "Client BCC Emails";
-		} else {
-			$sent_client_email_log_msg .= implode(',', $client_bcc_emails) . ", ";
-		}
-	}
-
-	if (count($send_errors) > 0) {
-		log_app(LOG_INFO, "Email errors found");
-		$error_str = "Error sending email(s) to: ";
-		foreach ($send_errors as $error) {
-			$error_str .= $error . ", ";
-		}
-
-		$_SESSION['current_status'] = $error_str;
-		$_SESSION['status_type'] = 'error';
-
-		$formData = http_build_query($_POST);
-		log_app(LOG_ERR, "$error \n\n $formData");
-		header("Location: edit_ticket.php?$formData&id=$ticket_id");
-		exit;
-	} else {
-		$send_to_msg_states = [
-			"",
-			"An email was sent to the BCC emails",
-			"An email was sent to the CC emails",
-			"An email was sent to the CC emails and BCC emails",
-			"An email was sent to the tech",
-			"An email was sent to the tech and BCC emails",
-			"An email was sent to the tech and CC emails",
-			"An email was sent to the tech, CC emails, and BCC emails",
-			"An email was sent to the client",
-			"An email was sent to the client and BCC emails",
-			"An email was sent to the client and CC emails",
-			"An email was sent to the client, CC emails, and BCC emails",
-			"An email was sent to the client and the tech",
-			"An email was sent to the client, tech, and BCC emails",
-			"An email was sent to the client, tech, and CC emails",
-			"An email was sent to the client, tech, CC emails, and BCC emails",
-		];
-		$state_idx = ($updatedSendClientEmail << 3) | ($updatedSendTechEmail << 2) | ($updatedSendCCEmails << 1) | $updatedSendBCCEmails;
-		assert($state_idx < 16, "Expected state_idx to be < 16");
-		$msg .= " " . $send_to_msg_states[$state_idx];
-	}
-
-
 
 	logTicketChange($database, $ticket_id, $_SESSION["username"], "sent_emails", "N/A", $sent_tech_email_log_msg . " " . $sent_client_email_log_msg);
 

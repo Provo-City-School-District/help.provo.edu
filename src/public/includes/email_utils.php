@@ -78,8 +78,10 @@ function send_email(
             foreach ($attachments as $attachment) {
                 // Takes direct path as argument
                 if ($attachment) {
-                    $mailer->addAttachment(from_root($attachment));
-                    log_app(LOG_INFO, "attachment: $attachment");
+					$attachment_base = basename($attachment);
+					$real_path = from_root("/../uploads/$attachment_base");
+                    $mailer->addAttachment($real_path);
+                    log_app(LOG_INFO, "attachment: $attachment_base at $real_path");
                 }
             }
         }

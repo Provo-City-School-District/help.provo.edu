@@ -6,7 +6,6 @@ require_once("ticket_utils.php");
 require_once("email_utils.php");
 require_once("template.php");
 
-
 $blacklisted_emails = [
     "dev@provo.edu",
     "help@provo.edu",
@@ -63,11 +62,15 @@ for ($i = 1; $i <= $msg_count; $i++) {
         log_app(LOG_ERR, "Failed to get header info for email");
     }
     $email_msg_id = $header->message_id;
-    $email_ancestor_id = $header->in_reply_to;
     $from_host = strtolower($header->from[0]->host);
     $sender_username = $header->from[0]->mailbox;
     $sender_email = strtolower($sender_username . '@' . $from_host);
     $subject = isset($header->subject) ? $header->subject : "";
+
+	$email_ancestor_id = null;
+	if (property_exists($header, "in_reply_to")) {
+		$email_ancestor_id = $header->in_reply_to;
+	}
 
     // Get incoming cc emails from email
     $incoming_cc_emails = [];
@@ -220,7 +223,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
 
     // Add any attachments on operating_ticket
     if ($operating_ticket != -1) {
-        find_and_upload_attachments($operating_ticket, $mbox, $i, $sender_username, $filename);
+        find_and_upload_attachments($operating_ticket, $mbox, $i, $sender_username);
     }
     if (in_array($i, $failed_email_ids)) {
         log_app(LOG_INFO, "Failed to parse email from $sender_email");

@@ -43,7 +43,7 @@ function send_email(
         // 2 = client and server messages
         $mailer->SMTPDebug = 0;
 
-        $mailer->Host = 'smtp.provo.edu';
+        $mailer->Host = getenv("SMTP_HOST");
         $mailer->Port = 25;
         $mailer->setFrom(getenv("GMAIL_USER"), 'help.provo.edu');
        

@@ -7,7 +7,6 @@ src/uploads/*
 !.gitkeep
 session/sess_*
 
-src/public/uploads/*
 src/public/info.php
 src/public/tests.php
 src/public/test_email.php

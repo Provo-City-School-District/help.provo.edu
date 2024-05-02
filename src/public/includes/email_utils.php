@@ -43,7 +43,7 @@ function send_email(
         // 2 = client and server messages
         $mailer->SMTPDebug = 0;
 
-        $mailer->Host = 'smtp.provo.edu';
+        $mailer->Host = getenv("SMTP_HOST");
         $mailer->Port = 25;
         $mailer->setFrom(getenv("GMAIL_USER"), 'help.provo.edu');
        
@@ -78,8 +78,10 @@ function send_email(
             foreach ($attachments as $attachment) {
                 // Takes direct path as argument
                 if ($attachment) {
-                    $mailer->addAttachment(from_root($attachment));
-                    log_app(LOG_INFO, "attachment: $attachment");
+					$attachment_base = basename($attachment);
+					$real_path = from_root("/../uploads/$attachment_base");
+                    $mailer->addAttachment($real_path);
+                    log_app(LOG_INFO, "attachment: $attachment_base at $real_path");
                 }
             }
         }

@@ -57,8 +57,6 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 COPY /src/composer.json /var/www/html/
 COPY /src/composer.lock /var/www/html/
 
-COPY /src/public/boot.php /var/www/html/public/boot.php
-
 # since .env variables aren't available by default to CLI scripts, we need to copy the .env file to the root directory so it can be loaded for them
 COPY .env /root/.env
 

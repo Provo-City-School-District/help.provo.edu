@@ -1,5 +1,5 @@
 <?php
-require_once from_root('/includes/time_utils.php');
+require_once 'time_utils.php';
 
 if (!session_id()) {
     session_start();

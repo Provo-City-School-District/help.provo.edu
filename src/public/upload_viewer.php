@@ -20,6 +20,30 @@ if (!$content_type) {
 	exit;
 }
 
+$allowed_mime_types = [
+	'image/jpeg', 
+	'image/png', 
+	'application/pdf',
+	'application/msword',
+	'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+	'application/vnd.ms-excel',
+	'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+	'text/plain',
+	'text/csv',
+	'application/zip',
+	'application/vnd.rar',
+	'application/x-7z-compressed',
+	'application/x-tar',
+	'audio/mpeg',
+	'video/mp4',
+	'image/svg+xml'
+];
+
+if (!in_array($content_type, $allowed_mime_types)) {
+	echo "Error parsing file request (invalid MIME type)";
+	exit;
+}
+
 $content_size = filesize($real_user_path);
 
 header("Content-Type: $content_type");

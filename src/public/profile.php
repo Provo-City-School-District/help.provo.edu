@@ -4,7 +4,7 @@ require_once from_root("/new-controllers/base_variables.php");
 
 session_start();
 
-$loader = new \Twig\Loader\FilesystemLoader(from_root('/views'));
+$loader = new \Twig\Loader\FilesystemLoader(from_root('/../views'));
 $twig = new \Twig\Environment($loader, [
     'cache' => from_root('/../twig-cache')
 ]);

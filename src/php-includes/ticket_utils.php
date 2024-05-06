@@ -301,11 +301,11 @@ function removeAlert($database, $message, $ticket_id)
 function request_name_for_type($request_type)
 {
     global $database;
-    
+
     if ($request_type === '0') {
         return "Other";
     } else {
-        $request_type_query_result = $database->execute_query("SELECT request_name FROM request_type WHERE request_id = ?", [$row['request_type_id']]);
+        $request_type_query_result = $database->execute_query("SELECT request_name FROM request_type WHERE request_id = ?", [$request_type]);
         return mysqli_fetch_assoc($request_type_query_result)['request_name'];
     }
 

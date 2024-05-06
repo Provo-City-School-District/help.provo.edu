@@ -48,12 +48,14 @@ function hasExcludedDate($start_date, $end_date)
     $count = mysqli_fetch_array($exclude_result)[0];
     return $count;
 }
+
 // Function to check if a date falls on a weekend
 function isWeekend($date)
 {
     $dayOfWeek = $date->format('N');
     return ($dayOfWeek == 6 || $dayOfWeek == 7);
 }
+
 function isExcludedDate($date)
 {
     global $database;
@@ -84,6 +86,7 @@ function sanitize_numeric_input($input)
 
     return $input;
 }
+
 function formatFieldName($str)
 {
     // Remove underscores and replace with spaces

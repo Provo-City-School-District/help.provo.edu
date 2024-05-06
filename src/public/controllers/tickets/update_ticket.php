@@ -201,7 +201,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 	if (isset($old_ticket_data['request_type_id'], $updatedRequestType) && $old_ticket_data['request_type_id'] != $updatedRequestType) {
 		logTicketChange($database, $ticket_id, $updatedby, $requestTypeColumn, $old_ticket_data['request_type_id'], $updatedRequestType);
-		$changesMessage .= "<li>Changed Request Type from " . request_name_for_type($old_ticket_data['request_type_id']) . " to " . request_name_for_type($updatedRequestType) . "</li>";
+		$changesMessage .= "<li>Changed Requestf Type from " . request_name_for_type($old_ticket_data['request_type_id']) . " to " . request_name_for_type($updatedRequestType) . "</li>";
 	}
 
 	if (isset($old_ticket_data['client'], $updatedClient) && $old_ticket_data['client'] != $updatedClient) {

@@ -298,6 +298,19 @@ function removeAlert($database, $message, $ticket_id)
     mysqli_stmt_close($alert_stmt);
 }
 
+function request_name_for_type($request_type)
+{
+    global $database;
+    
+    if ($request_type === '0') {
+        return "Other";
+    } else {
+        $request_type_query_result = $database->execute_query("SELECT request_name FROM request_type WHERE request_id = ?", [$row['request_type_id']]);
+        return mysqli_fetch_assoc($request_type_query_result)['request_name'];
+    }
+
+}
+
 function get_ticket_notes($ticket_id, $limit)
 {
     global $database;

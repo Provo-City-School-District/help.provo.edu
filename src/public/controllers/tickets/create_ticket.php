@@ -197,5 +197,5 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
 		});
 	});
 </script>
-<script src="/includes/js/pages/create_ticket.js?v=0.0.1"></script>
+<script src="/includes/js/pages/create_ticket.js?v=0.0.2"></script>
 <?php include("footer.php"); ?>

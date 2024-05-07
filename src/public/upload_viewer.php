@@ -1,7 +1,7 @@
 <?php
 require "block_file.php";
 
-$file_path = urldecode($_GET["file"]);
+$file_path = urldecode(basename($_GET["file"]));
 
 $real_user_path = realpath(from_root("/../uploads/$file_path"));
 $real_base_path = realpath(from_root("/../uploads/")).DIRECTORY_SEPARATOR;

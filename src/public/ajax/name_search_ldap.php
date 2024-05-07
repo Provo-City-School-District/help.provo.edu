@@ -4,8 +4,8 @@ require("block_file.php");
 require("functions.php");
 require("ticket_utils.php");
 
-$input_username = isset($_GET['username']) ? ldapspecialchars($_GET['username']) : '';
-log_app(LOG_INFO, "input username: ".$input_username);
+$input = isset($_GET['name']) ? ldapspecialchars($_GET['name']) : '';
+log_app(LOG_INFO, "input: ".$input);
 
 
 $ldap_host = getenv('LDAPHOST');
@@ -23,7 +23,19 @@ if (!$ldap_bind) {
 }
 
 
-$search = "(&(objectCategory=person)(objectClass=user)(samaccountname=$input_username*))";
+$input_split = explode(' ', $input);
+
+if (count($input_split) == 2) {
+    $input_first_name = $input_split[0];
+    $input_last_name = $input_split[1];
+    $search = "(&(objectCategory=person)(objectClass=user)(givenname=$input_first_name*)(sn=$input_last_name*))";
+} else if (count($input_split) == 1) {
+    $search = "(&(objectCategory=person)(objectClass=user)(|(givenname=$input*)(sn=$input*)))";
+} else {
+    die;
+}
+
+
 $ldap_result = ldap_search($ldap_conn, $ldap_dn, $search);
 $entries = ldap_get_entries($ldap_conn, $ldap_result);
 
@@ -32,7 +44,11 @@ for ($i = 0; $i < $entries['count']; $i++) {
     $samaccountname = $entries[$i]['samaccountname'][0] ?: null;
     $firstname = $entries[$i]['givenname'][0] ?: null;
     $lastname = $entries[$i]['sn'][0] ?: null;
-    $location_code = intval($entries[$i]["ou"][0] ?: 38);
+
+    $location_code = 38;
+    if (array_key_exists("ou", $entries[$i])) {
+        $location_code = intval($entries[$i]['ou'][0] ?: 38);
+    }
 
     // Hacky mapping for aux services, should be 1896 internally
     if ($location_code == 1892)

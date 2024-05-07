@@ -14,7 +14,7 @@ $("#cc_emails").on("input", function () {
         url: "/ajax/email_matches_ldap.php",
         method: "GET",
         data: {
-          email: new_value,
+          input: new_value,
         },
         success: function (data, textStatus, xhr) {
           let mappedResults = $.map(data, function (item) {
@@ -70,7 +70,7 @@ $("#bcc_emails").on("input", function () {
         url: "/ajax/email_matches_ldap.php",
         method: "GET",
         data: {
-          email: new_value,
+          input: new_value,
         },
         success: function (data, textStatus, xhr) {
           let mappedResults = $.map(data, function (item) {

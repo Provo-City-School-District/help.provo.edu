@@ -48,12 +48,14 @@ function hasExcludedDate($start_date, $end_date)
     $count = mysqli_fetch_array($exclude_result)[0];
     return $count;
 }
+
 // Function to check if a date falls on a weekend
 function isWeekend($date)
 {
     $dayOfWeek = $date->format('N');
     return ($dayOfWeek == 6 || $dayOfWeek == 7);
 }
+
 function isExcludedDate($date)
 {
     global $database;
@@ -84,6 +86,7 @@ function sanitize_numeric_input($input)
 
     return $input;
 }
+
 function formatFieldName($str)
 {
     // Remove underscores and replace with spaces
@@ -293,6 +296,19 @@ function removeAlert($database, $message, $ticket_id)
         mysqli_stmt_close($delete_stmt);
     }
     mysqli_stmt_close($alert_stmt);
+}
+
+function request_name_for_type($request_type)
+{
+    global $database;
+
+    if ($request_type === '0') {
+        return "Other";
+    } else {
+        $request_type_query_result = $database->execute_query("SELECT request_name FROM request_type WHERE request_id = ?", [$request_type]);
+        return mysqli_fetch_assoc($request_type_query_result)['request_name'];
+    }
+
 }
 
 function get_ticket_notes($ticket_id, $limit)
@@ -581,4 +597,23 @@ function get_parsed_alert_data($alerts_result)
 		$data[] = $tmp;
     }
     return $data;
+}
+
+/**
+ * Sanitizes ldap search strings.
+ * See rfc2254
+ * @link http://www.faqs.org/rfcs/rfc2254.html
+ * @since 1.5.1 and 1.4.5
+ * @param string $string
+ * @return string sanitized string
+ * @author Squirrelmail Team
+ */
+function ldapspecialchars($string) {
+    $sanitized=array('\\' => '\5c',
+                     '*' => '\2a',
+                     '(' => '\28',
+                     ')' => '\29',
+                     "\x00" => '\00');
+
+    return str_replace(array_keys($sanitized),array_values($sanitized),$string);
 }

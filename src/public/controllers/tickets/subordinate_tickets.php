@@ -1,14 +1,14 @@
 <?php
 require_once('helpdbconnect.php');
-require_once(from_root("/includes/block_file.php"));
-require_once(from_root("/includes/ticket_utils.php"));
+require_once "block_file.php";
+require_once "ticket_utils.php";
 require from_root("/../vendor/autoload.php");
 require from_root("/new-controllers/ticket_base_variables.php");
 
 if (!session_id())
 	session_start();
 
-$loader = new \Twig\Loader\FilesystemLoader(from_root('/views'));
+$loader = new \Twig\Loader\FilesystemLoader(from_root('/../views'));
 $twig = new \Twig\Environment($loader, [
 	'cache' => from_root('/../twig-cache')
 ]);

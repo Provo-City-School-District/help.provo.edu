@@ -81,9 +81,9 @@ $("#search_client").on("input", function() {
     $("#search_client").autocomplete({
         source: function (request, response) {
             $.ajax({
-                url: "/ajax/username_search_ldap.php",
+                url: "/ajax/name_search_ldap.php",
                 method: "GET",
-                data: {username: new_value},
+                data: {name: new_value},
                 success: function(data, textStatus, xhr) {
                     let mappedResults = $.map(data, function (item) {
                         let itemLocation = item.location ? item.location : "unknown";

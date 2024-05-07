@@ -466,4 +466,4 @@ function sortByDate($x, $y)
     } ?>
 </article>
 <?php include("footer.php"); ?>
-<script src="/includes/js/pages/search_tickets.js?v=1.0.0" type="text/javascript"></script>
+<script src="/includes/js/pages/search_tickets.js?v=1.0.1" type="text/javascript"></script>

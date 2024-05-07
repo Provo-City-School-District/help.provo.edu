@@ -1245,7 +1245,7 @@ if (strtolower($ticket["employee"]) == strtolower($username)) {
     </script>
 <?php endif; ?>
 <script src="/includes/js/note_submit.js?v=?v=1.0.04" type="text/javascript"></script>
-<script src="/includes/js/pages/edit_ticket.js?v=1.0.04" type="text/javascript"></script>
+<script src="/includes/js/pages/edit_ticket.js?v=1.0.05" type="text/javascript"></script>
 <?php include("footer.php"); ?>
 
 

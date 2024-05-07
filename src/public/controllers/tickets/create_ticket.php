@@ -168,10 +168,10 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
 		$("#client").autocomplete({
 			source: function(request, response) {
 				$.ajax({
-					url: "/ajax/username_search_ldap.php",
+					url: "/ajax/name_search_ldap.php",
 					method: "GET",
 					data: {
-						username: new_value,
+						name: new_value,
 					},
 					success: function(data, textStatus, xhr) {
 						let mappedResults = $.map(data, function(item) {

@@ -4,7 +4,7 @@ require("block_file.php");
 require("functions.php");
 require("ticket_utils.php");
 
-$input = isset($_GET['input']) ? $_GET['input'] : '';
+$input = isset($_GET['name']) ? $_GET['name'] : '';
 log_app(LOG_INFO, "input: ".$input);
 
 
@@ -22,6 +22,7 @@ if (!$ldap_bind) {
     die('Could not bind to LDAP server.');
 }
 
+
 $input_split = explode(' ', $input);
 
 if (count($input_split) == 2) {
@@ -34,15 +35,16 @@ if (count($input_split) == 2) {
     die;
 }
 
+
 $ldap_result = ldap_search($ldap_conn, $ldap_dn, $search);
 $entries = ldap_get_entries($ldap_conn, $ldap_result);
 
 $results = [];
 for ($i = 0; $i < $entries['count']; $i++) {
-    $email = $entries[$i]['mail'][0] ?: null;
+    $samaccountname = $entries[$i]['samaccountname'][0] ?: null;
     $firstname = $entries[$i]['givenname'][0] ?: null;
     $lastname = $entries[$i]['sn'][0] ?: null;
-
+    
     $location_code = 38;
     if (array_key_exists("ou", $entries[$i])) {
         $location_code = intval($entries[$i]['ou'][0] ?: 38);
@@ -52,7 +54,7 @@ for ($i = 0; $i < $entries['count']; $i++) {
     if ($location_code == 1892)
         $location_code = 1896;
 
-    $results[] = ['email' => $email, 'firstName' => $firstname, 'lastName' => $lastname, 'location' => location_name_from_id($location_code)];
+    $results[] = ['username' => $samaccountname, 'firstName' => $firstname, 'lastName' => $lastname, 'location' => location_name_from_id($location_code)];
 }
 
 header('Content-Type: application/json');

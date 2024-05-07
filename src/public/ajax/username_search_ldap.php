@@ -4,7 +4,7 @@ require("block_file.php");
 require("functions.php");
 require("ticket_utils.php");
 
-$input_username = isset($_GET['username']) ? $_GET['username'] : '';
+$input_username = isset($_GET['username']) ? ldapspecialchars($_GET['username']) : '';
 log_app(LOG_INFO, "input username: ".$input_username);
 
 

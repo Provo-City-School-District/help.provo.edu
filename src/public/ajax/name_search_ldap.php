@@ -4,7 +4,7 @@ require("block_file.php");
 require("functions.php");
 require("ticket_utils.php");
 
-$input = isset($_GET['name']) ? $_GET['name'] : '';
+$input = isset($_GET['name']) ? ldapspecialchars($_GET['name']) : '';
 log_app(LOG_INFO, "input: ".$input);
 
 
@@ -44,7 +44,7 @@ for ($i = 0; $i < $entries['count']; $i++) {
     $samaccountname = $entries[$i]['samaccountname'][0] ?: null;
     $firstname = $entries[$i]['givenname'][0] ?: null;
     $lastname = $entries[$i]['sn'][0] ?: null;
-    
+
     $location_code = 38;
     if (array_key_exists("ou", $entries[$i])) {
         $location_code = intval($entries[$i]['ou'][0] ?: 38);

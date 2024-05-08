@@ -268,7 +268,7 @@ if (searchForm) {
     var lastname = document.getElementById("lastname").value;
 
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", "../../includes/client_search.php", true);
+    xhr.open("POST", "/ajax/client_search.php", true);
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     xhr.onload = function () {
       if (this.status == 200) {

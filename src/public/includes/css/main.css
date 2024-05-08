@@ -463,6 +463,10 @@ select {
 	width: 200px;
 }
 
+.child-ticket-details p {
+	display: inline-block;
+}
+
 /* =============================== Alerts Styles =============================== */
 .alerts_wrapper {
 	margin: 0 auto;

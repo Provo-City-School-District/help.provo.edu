@@ -779,7 +779,7 @@ if (strtolower($ticket["employee"]) == strtolower($username)) {
                         <td data-cell="Status"><?= $child_ticket['status'] ?></td>
                         <td data-cell="Tech"><?= $child_ticket['employee'] ?></td>
                         <td data-cell="Ticket Title"><?= $child_ticket['name'] ?></td>
-                        <td data-cell="Request Detail" class="child-ticket-details"><?= mb_substr(html_entity_decode($child_ticket['description']), 0, 100) ?>...</td>
+                        <td data-cell="Request Detail" class="child-ticket-details"><?= mb_substr(strip_tags(html_entity_decode($child_ticket['description'])), 0, 100) ?>...</td>
                     </tr>
                 <?php
                 }

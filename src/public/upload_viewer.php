@@ -47,6 +47,9 @@ if (!in_array($content_type, $allowed_mime_types)) {
 
 $content_size = filesize($real_user_path);
 
+// Set the Content-Disposition header
+header("Content-Disposition: attachment; filename=\"$file_path\"");
+
 header("Content-Type: $content_type");
 header("Content-Length: $content_size");
 readfile("$real_user_path");

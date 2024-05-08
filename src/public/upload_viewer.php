@@ -21,8 +21,9 @@ if (!$content_type) {
 }
 
 $allowed_mime_types = [
-	'image/jpeg', 
-	'image/png', 
+	'image/jpeg',
+	'image/png',
+    'image/heic',
 	'application/pdf',
 	'application/msword',
 	'application/vnd.openxmlformats-officedocument.wordprocessingml.document',

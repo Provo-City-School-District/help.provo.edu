@@ -24,13 +24,13 @@ require_once("status_popup.php");
 
 $ticket_exists_res = $database->execute_query("SELECT 1 FROM help.tickets WHERE id = ?", [$ticket_id]);
 if (!$ticket_exists_res) {
-	log_app(LOG_ERR, "Failed to check existence of $ticket_id");
+    log_app(LOG_ERR, "Failed to check existence of $ticket_id");
 }
 $ticket_exists = $ticket_exists_res->num_rows > 0;
 
 if (!$ticket_exists) {
-	echo "Ticket $ticket_id does not exist";
-	exit;
+    echo "Ticket $ticket_id does not exist";
+    exit;
 }
 
 $username = $_SESSION['username'];
@@ -728,7 +728,7 @@ if (strtolower($ticket["employee"]) == strtolower($username)) {
         <ul>
             <?php
             foreach ($attachmentPaths as $attachmentPath) {
-				$path = basename($attachmentPath);
+                $path = basename($attachmentPath);
                 $path_encoded = urlencode($path);
                 echo "<li><a href=\"/upload_viewer.php?file=$path_encoded\">$path</a></li>";
             }

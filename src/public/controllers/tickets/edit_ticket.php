@@ -730,7 +730,7 @@ if (strtolower($ticket["employee"]) == strtolower($username)) {
             foreach ($attachmentPaths as $attachmentPath) {
                 $path = basename($attachmentPath);
                 $path_encoded = urlencode($path);
-                echo "<li><a href=\"/upload_viewer.php?file=$path_encoded\">$path</a></li>";
+                echo "<li><a href=\"/upload_viewer.php?file=$path_encoded\">$path</a> <a onclick=\"confirmDeleteAttachment('$attachmentPath')\">&times;</a></li>";
             }
             ?>
         </ul>
@@ -744,13 +744,13 @@ if (strtolower($ticket["employee"]) == strtolower($username)) {
 
     <div id="file-upload-form" style="display: none;">
         <h3>Upload Files</h3>
-        <p class="help-message">When you click 'Choose Files', a dialog box will appear. You can select either one file or multiple files at once from your computer. After making your selection, remember to click 'Attach Files' to attach the files to the ticket.</p>
+        <p class="help-message">When you click 'Choose Files', a dialog box will appear. You can select either one file or multiple files at once from your computer. After making your selection, remember to click 'Upload' to attach the files to the ticket.</p>
         <form method="post" action="upload_files_handler.php" enctype="multipart/form-data">
             <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
             <input type="hidden" name="username" value="<?= $_SESSION['username'] ?>">
             <label for="attachment">Attachment:</label>
             <input id="attachment" name="attachment[]" type="file" multiple>
-            <input type="submit" value="Attach Files">
+            <input type="submit" value="Upload">
         </form>
         <div id="maximum-file-size-text">
             Maximum of 50MB
@@ -1330,6 +1330,34 @@ if (strtolower($ticket["employee"]) == strtolower($username)) {
             },
             error: function() {
                 alert("Error: Ticket task deletion AJAX call failed");
+            },
+        });
+    }
+
+    function confirmDeleteAttachment(attachmentPath) {
+        const basename = attachmentPath.split(/[\\/]/).pop();
+        const result = confirm("Are you sure you want to delete attachment \'" + basename + "\'?");
+        if (result) {
+            deleteAttachment(attachmentPath);
+        }
+    }
+
+    function deleteAttachment(attachmentPath) {
+        const ticket_id = <?= $ticket_id ?>;
+
+        $.ajax({
+            url: "/ajax/delete_attachment.php",
+            method: "POST",
+            data: {
+                attachment_path: attachmentPath,
+                ticket_id: ticket_id
+            },
+            success: function(data, textStatus, xhr) {
+               // alert("Attachment deleted successfully");
+                location.reload();
+            },
+            error: function() {
+                alert("Error: Attachment deletion AJAX call failed");
             },
         });
     }

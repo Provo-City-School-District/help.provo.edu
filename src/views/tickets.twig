@@ -35,7 +35,7 @@
 		{% for ticket in my_tickets %}
 		<tr class="{{ ticket.row_color }}">
 			<td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id={{ ticket.id }}">{{ ticket.id }}</a></td>
-			<td class="details" data-cell="Request Detail"><a href="/controllers/tickets/edit_ticket.php?id={{ ticket.id }}">{{ ticket.title|replace({'&quot;': '"','&#039;':"'",'&#39;':"'"}) }}</a>{{ ticket.description|raw }}</td>
+			<td class="details" data-cell="Request Detail"><a href="/controllers/tickets/edit_ticket.php?id={{ ticket.id }}">{{ ticket.title|replace({'&quot;': '"',"&#039;":"'","&#39;":"'","&amp;":"&"}) }}</a>{{ ticket.description|raw }}</td>
 			{% if ticket.latest_note is defined and ticket.latest_note is not null %}
 				<td class="latestNote" data-cell="Latest Note:"><strong>{{ ticket.latest_note_author }}: </strong> {{ ticket.latest_note|raw }}</td>
 			{% else %}

@@ -43,7 +43,7 @@
 			{% else %}
 				<td class="latestNote" data-cell="Latest Note:"></td>
 			{% endif %}
-			<td data-cell="Client: ">{{ ticket.client_first_name }} {{ ticket.client_last_name }} ({{ ticket.client_username }})</td>
+			<td data-cell="Client: ">{{ ticket.client_first_name }} {{ ticket.client_last_name }}</td>
 			<td data-cell="Location">
 				{{ ticket.location_name }}
 				{% if ticket.room is defined and ticket.room is not null and ticket.room is not empty %}

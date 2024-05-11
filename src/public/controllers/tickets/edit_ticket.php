@@ -725,12 +725,12 @@ if (strtolower($ticket["employee"]) == strtolower($username)) {
     if (!empty($attachmentPaths) && array_key_exists(0, $attachmentPaths)) {
     ?>
         <h2>Attachments:</h2>
-        <ul>
+        <ul id="file_list">
             <?php
             foreach ($attachmentPaths as $attachmentPath) {
                 $path = basename($attachmentPath);
                 $path_encoded = urlencode($path);
-                echo "<li><a href=\"/upload_viewer.php?file=$path_encoded\">$path</a> <a onclick=\"confirmDeleteAttachment('$attachmentPath')\">&times;</a></li>";
+                echo "<li><a href=\"/upload_viewer.php?file=$path_encoded\">$path</a> <a class='file_del' onclick=\"confirmDeleteAttachment('$attachmentPath')\">&times;</a></li>";
             }
             ?>
         </ul>
@@ -1353,7 +1353,7 @@ if (strtolower($ticket["employee"]) == strtolower($username)) {
                 ticket_id: ticket_id
             },
             success: function(data, textStatus, xhr) {
-               // alert("Attachment deleted successfully");
+                // alert("Attachment deleted successfully");
                 location.reload();
             },
             error: function() {

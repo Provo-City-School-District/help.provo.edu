@@ -554,6 +554,17 @@ select {
 	grid-area: input;
 }
 
+/* =============================== Attachment Styles =============================== */
+#file_list {
+	list-style: none;
+}
+
+#file_list .file_del {
+	color: red;
+	cursor: pointer;
+
+}
+
 /* =============================== Responsive Styles =============================== */
 @media(min-width: 800px) {
 	#mainHeader {

@@ -1,6 +1,6 @@
 <?php
 //included in twig base_variables and in functions.php while transitioning to twig
-$app_version = "1.1.01";
+$app_version = "1.1.02";
 // handle 500 error
 register_shutdown_function("handleFatalError");
 

@@ -1029,7 +1029,7 @@ if (strtolower($ticket["employee"]) == strtolower($username)) {
                             <input type="checkbox" id="visible_to_client" name="visible_to_client" checked="checked">
                         </div>
                         <h4>Work Time</h4>
-                        <div>
+                        <div class="time_input">
                             <label for="work_hours">Hours:</label>
                             <input id="work_hours" name="work_hours" type="number" value="0" required>
 
@@ -1037,7 +1037,7 @@ if (strtolower($ticket["employee"]) == strtolower($username)) {
                             <input id="work_minutes" name="work_minutes" type="number" value="0" required>
                         </div>
                         <h4>Travel Time</h4>
-                        <div>
+                        <div class="time_input">
                             <label for="travel_hours">Hours:</label>
                             <input id="travel_hours" name="travel_hours" type="number" value="0" required>
 

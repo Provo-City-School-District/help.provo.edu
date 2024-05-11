@@ -167,7 +167,20 @@ input[type=submit] {
 #delete-note {
 	margin-top: unset;
 	display: inline-block;
+}
 
+.time_input {
+	width: 100px;
+}
+
+.time_input input {
+	font-size: 1.5em;
+	padding: 15px;
+	margin-bottom: 1em;
+}
+
+#date_override_input {
+	height: 2em;
 }
 
 /*
@@ -593,6 +606,16 @@ select {
 	#headerNav nav a {
 		display: unset;
 		padding: 1em;
+	}
+
+	.time_input {
+		width: unset;
+	}
+
+	.time_input input {
+		font-size: unset;
+		padding: unset;
+
 	}
 
 	.totalTime {

@@ -1,4 +1,5 @@
 # help.provo.edu
+Version: 1.1.02
 ## Default Ports
 these are the default ports that the containers will use. If you need to change them, you can do so in the docker-compose.yml file.
 - 8080 - HTTP

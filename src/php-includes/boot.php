@@ -2,5 +2,5 @@
 
 function from_root(string $path)
 {
-    return __DIR__ . "$path";
+    return __DIR__ . "/../public/$path";
 }

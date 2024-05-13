@@ -70,7 +70,7 @@ $current_page = $_SERVER['REQUEST_URI'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Help For Provo City School District</title>
     <meta http-equiv="refresh" content="3600">
-    <link rel="stylesheet" href="/includes/js/dataTables-2.0.5/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="/includes/js/dataTables/jquery.dataTables.min.css">
     <link rel="stylesheet" href="/includes/css/main.css?v=<?= $app_version; ?>">
     <link rel="icon" type="image/png" href="/includes/img/favicons/favicon-16x16.png" sizes="16x16">
     <link rel="stylesheet" href="/includes/css/jquery-ui.min.css">

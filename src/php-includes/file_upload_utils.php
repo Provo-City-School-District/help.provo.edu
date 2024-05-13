@@ -73,7 +73,6 @@ function handleFileUploads($files, $ticket_id = null)
 
         $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
         $fileType = mime_content_type($tmpFilePath);
-
         // Filesize in bytes
         $fileSize = filesize($tmpFilePath);
 
@@ -136,4 +135,28 @@ function handleFileUploads($files, $ticket_id = null)
     }
 
     return [$failed_files, $uploaded_files];
+}
+
+
+function get_allowed_mime_types()
+{
+    return [
+        'image/jpeg',
+        'image/png',
+        'image/heic',
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'text/plain',
+        'text/csv',
+        'application/zip',
+        'application/vnd.rar',
+        'application/x-7z-compressed',
+        'application/x-tar',
+        'audio/mpeg',
+        'video/mp4',
+        'image/svg+xml'
+    ];
 }

@@ -51,7 +51,6 @@ if ($is_ticket_shared_res->num_rows > 0) {
     }
 }
 
-
 // Update active ticket for user
 $active_ticket_res = $database->execute_query("UPDATE help.users SET active_ticket = ?, active_ticket_updated = NOW() WHERE username = ?", [$ticket_id, $username]);
 if (!$active_ticket_res) {
@@ -60,8 +59,22 @@ if (!$active_ticket_res) {
 
 if (count($ticket_shared_usernames) > 0) {
     $shared_ticket_username = $ticket_shared_usernames[0];
+    $msg_str = "This ticket is currently being edited by ";
+    $user_count = count($ticket_shared_usernames);
+
+    for ($i = 0; $i < $user_count; $i++) {
+        $user_name = get_client_name($ticket_shared_usernames[$i]);
+        $firstname = $user_name['firstname'];
+        $lastname = $user_name['lastname'];
+
+        if ($i == $user_count - 1)
+            $msg_str .= "{$firstname} {$lastname}";
+        else
+            $msg_str .= "{$firstname} {$lastname}, ";
+    }
+
     $status = [
-        "message" => "This ticket is currently being edited by {$shared_ticket_username}",
+        "message" => $msg_str,
         "type" => "info"
     ];
     $_SESSION["user_notifications"][] = $status;

@@ -67,10 +67,10 @@ for ($i = 1; $i <= $msg_count; $i++) {
     $sender_email = strtolower($sender_username . '@' . $from_host);
     $subject = isset($header->subject) ? $header->subject : "";
 
-	$email_ancestor_id = null;
-	if (property_exists($header, "in_reply_to")) {
-		$email_ancestor_id = $header->in_reply_to;
-	}
+    $email_ancestor_id = null;
+    if (property_exists($header, "in_reply_to")) {
+        $email_ancestor_id = $header->in_reply_to;
+    }
 
     // Get incoming cc emails from email
     $incoming_cc_emails = [];

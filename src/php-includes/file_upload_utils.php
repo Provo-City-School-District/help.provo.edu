@@ -1,11 +1,4 @@
 <?php
-// Define max filesize
-// TODO: make 100, however POST length needs to be increased
-$maxFileSize = MiB(50);
-
-// Define the allowed file extensions
-$allowed_extensions = ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'csv', 'zip', 'rar', '7z', 'tar', 'mp3', 'mp4', 'svg'];
-
 function KiB(int $bytes)
 {
     return $bytes * 1024;
@@ -14,6 +7,39 @@ function KiB(int $bytes)
 function MiB(int $bytes)
 {
     return KiB($bytes) * 1024;
+}
+
+function get_max_file_size()
+{
+    return MiB(100);
+}
+
+function get_allowed_extensions()
+{
+    return ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'csv', 'zip', 'rar', '7z', 'tar', 'mp3', 'mp4', 'svg'];
+}
+
+function get_allowed_mime_types()
+{
+    return [
+        'image/jpeg',
+        'image/png',
+        'image/heic',
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'text/plain',
+        'text/csv',
+        'application/zip',
+        'application/vnd.rar',
+        'application/x-7z-compressed',
+        'application/x-tar',
+        'audio/mpeg',
+        'video/mp4',
+        'image/svg+xml'
+    ];
 }
 
 function compress_and_resize_image(string $image_path, string $image_type)
@@ -51,9 +77,10 @@ function compress_and_resize_image(string $image_path, string $image_type)
 
 function handleFileUploads($files, $ticket_id = null)
 {
-    global $maxFileSize;
     global $database;
-    global $allowed_extensions;
+
+    $allowed_extensions = get_allowed_extensions();
+    $max_file_size = get_max_file_size();
     $failed_files = [];
     $uploaded_files = [];
 
@@ -82,7 +109,7 @@ function handleFileUploads($files, $ticket_id = null)
         // Check if the file was uploaded successfully and has an allowed extension / file type
         // Will also check the file to validate the file is what it claims (eg: cant rename .exe to .png)
         if ($tmpFilePath != "") {
-            if ($fileSize <= $maxFileSize) {
+            if ($fileSize <= $max_file_size) {
                 if (in_array($fileExtension, $allowed_extensions)) {
                     // Generate a unique file name
 					// TODO: Move uploads to ../uploads (outside of public)
@@ -123,7 +150,7 @@ function handleFileUploads($files, $ticket_id = null)
             } else {
                 $failed_files[] = [
                     "filename" => $fileName,
-                    "fail_reason" => "File size is too large ($fileSize MiB > $maxFileSize MiB)"
+                    "fail_reason" => "File size is too large ($fileSize MiB > $max_file_size MiB)"
                 ];
             }
         } else {
@@ -135,28 +162,4 @@ function handleFileUploads($files, $ticket_id = null)
     }
 
     return [$failed_files, $uploaded_files];
-}
-
-
-function get_allowed_mime_types()
-{
-    return [
-        'image/jpeg',
-        'image/png',
-        'image/heic',
-        'application/pdf',
-        'application/msword',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'application/vnd.ms-excel',
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'text/plain',
-        'text/csv',
-        'application/zip',
-        'application/vnd.rar',
-        'application/x-7z-compressed',
-        'application/x-tar',
-        'audio/mpeg',
-        'video/mp4',
-        'image/svg+xml'
-    ];
 }

@@ -31,17 +31,17 @@ if (isset($_GET['code'])) {
         // store access token
         $_SESSION['access_token'] = $token['access_token'];
 /*
-		Could potentially be used to resolve login issues (7 day cache)
+        Could potentially be used to resolve login issues (7 day cache)
 
-		// refresh token
-		log_app(LOG_INFO, $token['refresh_token']);
-		setcookie("sso_refresh_token", 
-			$token["refresh_token"],
-			time() + 60 * 60 * 24 * 7, // 7 days
-			"",
-			"",
-			true,
-			true);
+        // refresh token
+        log_app(LOG_INFO, $token['refresh_token']);
+        setcookie("sso_refresh_token", 
+            $token["refresh_token"],
+            time() + 60 * 60 * 24 * 7, // 7 days
+            "",
+            "",
+            true,
+            true);
 */
         // Get Account Profile using Google Service
         $gservice = new Google_Service_Oauth2($client);

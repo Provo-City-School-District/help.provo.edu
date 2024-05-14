@@ -15,18 +15,18 @@ $client->setAccessType('offline');
 $client->addScope('https://mail.google.com/');
 
 if ($_GET["code"]) {
-	$response = $client->fetchAccessTokenWithAuthCode($_GET['code']);
-	$access_token = $response["access_token"];
-	$refresh_token = $response["refresh_token"];
-	$has_token = true;
+    $response = $client->fetchAccessTokenWithAuthCode($_GET['code']);
+    $access_token = $response["access_token"];
+    $refresh_token = $response["refresh_token"];
+    $has_token = true;
 } else {
-	$has_token = false;
-	$authUrl = $client->createAuthUrl();
-	header('Location: ' . filter_var($authUrl, FILTER_SANITIZE_URL));
+    $has_token = false;
+    $authUrl = $client->createAuthUrl();
+    header('Location: ' . filter_var($authUrl, FILTER_SANITIZE_URL));
 }
 
 if (!$has_token) {
-	die("Token is not set");
+    die("Token is not set");
 }
 
 $blacklisted_emails = [

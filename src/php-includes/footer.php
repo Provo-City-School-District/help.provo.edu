@@ -21,6 +21,10 @@
     </div>
 </div>
 </div>
+
+<!-- Testing intro.js for Rob for helpdesk user guide -->
+<script src="https://cdn.jsdelivr.net/npm/intro.js@7.2.0/intro.min.js"></script>
+
 <script src="/includes/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 <script src="/includes/js/jquery-ui.min.js" type="text/javascript"></script>
 <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>

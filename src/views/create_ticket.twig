@@ -5,7 +5,7 @@
 <article id="ticketWrapper">
     <h1>Create Ticket</h1>
     <form method="POST" action="insert_ticket.php" enctype="multipart/form-data">
-        <input type="hidden" name="client" value="<?= $_SESSION['username'] ?>">
+        <input type="hidden" name="client" value="{{ username }}">
         <div class="ticketGrid">
             <div>
                 <label for="location">Department/Location:</label>

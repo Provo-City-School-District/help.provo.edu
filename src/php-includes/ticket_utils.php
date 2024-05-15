@@ -157,31 +157,31 @@ function create_note(
 
     // Send email to assigned tech on update if the client updates ticket
     $client = client_for_ticket($ticket_id_clean);
-	$cc_emails = explode(',', emails_for_ticket($ticket_id_clean, false));
-	$bcc_emails = explode(',', emails_for_ticket($ticket_id_clean, true));
+    $cc_emails = explode(',', emails_for_ticket($ticket_id_clean, false));
+    $bcc_emails = explode(',', emails_for_ticket($ticket_id_clean, true));
 
-	$user_email = email_address_from_username(strtolower($username));
+    $user_email = email_address_from_username(strtolower($username));
 
-	log_app(LOG_INFO, "username: $username, client: $client");
+    log_app(LOG_INFO, "username: $username, client: $client");
 
-	// Allow pseudo-clients to update ticket status if in CC/BCC field
-    if ((strtolower($username) == strtolower($client) || 
-		in_array($user_email, $cc_emails) || 
-		in_array($user_email, $bcc_emails)) && !user_is_tech($username) ) {
-		// set priority to standard
+    // Allow pseudo-clients to update ticket status if in CC/BCC field
+    if ((strtolower($username) == strtolower($client) ||
+        in_array($user_email, $cc_emails) ||
+        in_array($user_email, $bcc_emails)) && !user_is_tech($username)) {
+        // set priority to standard
         $result = $database->execute_query("UPDATE tickets SET tickets.priority = 10 WHERE tickets.id = ?", [$ticket_id_clean]);
         if (!$result) {
             log_app(LOG_ERR, "Failed to update ticket priority for id=$operating_ticket");
-			return false;
+            return false;
         }
 
-		if (status_for_ticket($ticket_id_clean) == "resolved") {
-			$result = $database->execute_query("UPDATE tickets SET tickets.status = 'open' WHERE tickets.id = ?", [$ticket_id_clean]);
-			if (!$result) {
-				log_app(LOG_ERR, "Failed to update ticket status for id=$operating_ticket");
-				return false;
-			}
-		}
+        if (status_for_ticket($ticket_id_clean) == "resolved") {
+            $result = $database->execute_query("UPDATE tickets SET tickets.status = 'open' WHERE tickets.id = ?", [$ticket_id_clean]);
+            if (!$result) {
+                log_app(LOG_ERR, "Failed to update ticket status for id=$operating_ticket");
+                return false;
+            }
+        }
 
         // Email tech if client has updated ticket
         $email_subject = "Ticket $ticket_id_clean (Updated)";
@@ -308,7 +308,6 @@ function request_name_for_type($request_type)
         $request_type_query_result = $database->execute_query("SELECT request_name FROM request_type WHERE request_id = ?", [$request_type]);
         return mysqli_fetch_assoc($request_type_query_result)['request_name'];
     }
-
 }
 
 function get_ticket_notes($ticket_id, $limit)
@@ -433,20 +432,20 @@ function emails_for_ticket(int $ticket_id, bool $bcc)
 {
     global $database;
 
-	if ($bcc) {
-		$email_type = "bcc_emails";
-		$query = "SELECT bcc_emails FROM help.tickets WHERE tickets.id = ?";
-	} else {
-		$email_type = "cc_emails";
-		$query = "SELECT cc_emails FROM help.tickets WHERE tickets.id = ?";
-	}
+    if ($bcc) {
+        $email_type = "bcc_emails";
+        $query = "SELECT bcc_emails FROM help.tickets WHERE tickets.id = ?";
+    } else {
+        $email_type = "cc_emails";
+        $query = "SELECT cc_emails FROM help.tickets WHERE tickets.id = ?";
+    }
 
     $email_result = $database->execute_query($query, [$ticket_id]);
     if (!isset($email_result)) {
         log_app(LOG_ERR, "[emails_for_ticket] Failed to get result");
     }
 
-    $email_data = $email_result->fetch_assoc();	
+    $email_data = $email_result->fetch_assoc();
     if (!isset($email_data)) {
         log_app(LOG_ERR, "[emails_for_ticket] Failed to get data");
     }
@@ -456,7 +455,7 @@ function emails_for_ticket(int $ticket_id, bool $bcc)
 
 function status_for_ticket(int $ticket_id)
 {
-	global $database;
+    global $database;
 
     $status_result = $database->execute_query("SELECT status FROM help.tickets WHERE tickets.id = ?", [$ticket_id]);
     if (!isset($status_result)) {
@@ -489,16 +488,16 @@ function generateUpdateHTML($type, $old_value, $new_value, $action, $id)
 
 function get_parsed_ticket_data($ticket_data)
 {
-	global $database;
+    global $database;
 
-	$priorityTypes = [1 => "Critical", 3 => "Urgent", 5 => "High", 10 => "Standard", 15 => "Client Response", 30 => "Project", 60 => "Meeting Support"];
+    $priorityTypes = [1 => "Critical", 3 => "Urgent", 5 => "High", 10 => "Standard", 15 => "Client Response", 30 => "Project", 60 => "Meeting Support"];
 
-	$tickets = [];
-	while ($row = $ticket_data->fetch_assoc()) {
-		$tmp = [];
-		$tmp["id"] = $row["id"];
+    $tickets = [];
+    while ($row = $ticket_data->fetch_assoc()) {
+        $tmp = [];
+        $tmp["id"] = $row["id"];
 
-		$row_color = '';
+        $row_color = '';
         if (isset($row["alert_levels"])) {
             $alert_levels = explode(',', $row["alert_levels"]);
             foreach ($alert_levels as $alert_level) {
@@ -506,44 +505,44 @@ function get_parsed_ticket_data($ticket_data)
             }
         }
 
-		$tmp["row_color"] =  $row_color;
-		$tmp["title"] = $row["name"];
-		$tmp["description"] = limitChars(strip_tags(html_entity_decode($row["description"])), 100);
+        $tmp["row_color"] =  $row_color;
+        $tmp["title"] = $row["name"];
+        $tmp["description"] = limitChars(strip_tags(html_entity_decode($row["description"])), 100);
 
-		$notes_query = "SELECT creator, note FROM help.notes WHERE linked_id = ? ORDER BY
+        $notes_query = "SELECT creator, note FROM help.notes WHERE linked_id = ? ORDER BY
 			(CASE WHEN date_override IS NULL THEN created ELSE date_override END) DESC
 		";
-		$notes_stmt = mysqli_prepare($database, $notes_query);
-		$creator = null;
-		$note_data = null;
-		if ($notes_stmt) {
-			mysqli_stmt_bind_param($notes_stmt, "i", $row["id"]);
-			mysqli_stmt_execute($notes_stmt);
+        $notes_stmt = mysqli_prepare($database, $notes_query);
+        $creator = null;
+        $note_data = null;
+        if ($notes_stmt) {
+            mysqli_stmt_bind_param($notes_stmt, "i", $row["id"]);
+            mysqli_stmt_execute($notes_stmt);
 
-			mysqli_stmt_bind_result($notes_stmt, $creator, $note_data);
-			// Fetch the result
-			mysqli_stmt_fetch($notes_stmt);
+            mysqli_stmt_bind_result($notes_stmt, $creator, $note_data);
+            // Fetch the result
+            mysqli_stmt_fetch($notes_stmt);
 
-			// Use $location_name as needed
-			mysqli_stmt_close($notes_stmt);
-		}
-		$latest_note_str = "";
-		if ($creator != null && $note_data != null) {
-			$tmp["latest_note_author"] = $creator;
-			$tmp["latest_note"] = limitChars(strip_tags(html_entity_decode($note_data)), 150);
-		}
+            // Use $location_name as needed
+            mysqli_stmt_close($notes_stmt);
+        }
+        $latest_note_str = "";
+        if ($creator != null && $note_data != null) {
+            $tmp["latest_note_author"] = $creator;
+            $tmp["latest_note"] = limitChars(strip_tags(html_entity_decode($note_data)), 150);
+        }
 
-		$tmp["client_username"] = $row["client"];
-		if (isset($row["client"])) {
+        $tmp["client_username"] = $row["client"];
+        if (isset($row["client"])) {
             $result = get_client_name($row["client"]);
         }
 
-		$tmp["client_first_name"] = $result['firstname'] ?: "";
-		$tmp["client_last_name"] = $result['lastname'] ?: "";
+        $tmp["client_first_name"] = $result['firstname'] ?: "";
+        $tmp["client_last_name"] = $result['lastname'] ?: "";
 
         $location_query = "SELECT location_name FROM locations WHERE sitenumber = ?";
         $loc_stmt = mysqli_prepare($database, $location_query);
-		$location_name = "";
+        $location_name = "";
         if ($loc_stmt) {
             mysqli_stmt_bind_param($loc_stmt, "s", $row["location"]);
             mysqli_stmt_execute($loc_stmt);
@@ -556,47 +555,47 @@ function get_parsed_ticket_data($ticket_data)
             mysqli_stmt_close($loc_stmt);
         }
 
-		$tmp["room"] = $row["room"];
-		$tmp["location_name"] = $location_name;
+        $tmp["room"] = $row["room"];
+        $tmp["location_name"] = $location_name;
 
-		if ($row['request_type_id'] === '0') {
+        if ($row['request_type_id'] === '0') {
             $request_type_name = "Other";
         } else {
             $request_type_query_result = $database->execute_query("SELECT request_name FROM request_type WHERE request_id = ?", [$row['request_type_id']]);
             $request_type_name = mysqli_fetch_assoc($request_type_query_result)['request_name'];
         }
 
-		$tmp["request_category"] = $request_type_name;
-		$tmp["status"] = $row["status"];
+        $tmp["request_category"] = $request_type_name;
+        $tmp["status"] = $row["status"];
 
-		$priority = $row["priority"];
-		$tmp["priority"] = $priorityTypes[$priority];
-		$tmp["sort_value"] = $priority;
+        $priority = $row["priority"];
+        $tmp["priority"] = $priorityTypes[$priority];
+        $tmp["sort_value"] = $priority;
         $tmp["created"] = $row["created"];
-		$tmp["last_updated"] = $row["last_updated"];
-		$tmp["due_date"] = $row["due_date"];
+        $tmp["last_updated"] = $row["last_updated"];
+        $tmp["due_date"] = $row["due_date"];
         if ($row["employee"] == null) {
             $tmp["assigned_tech"] = "Unassigned";
         } else {
             $tmp["assigned_tech"] = $row["employee"];
         }
-		$tmp["alert_level"] = isset($row["alert_levels"]) ? $row["alert_levels"] : '';
-		$tickets[] = $tmp;
-
-	return $tickets;
+        $tmp["alert_level"] = isset($row["alert_levels"]) ? $row["alert_levels"] : '';
+        $tickets[] = $tmp;
+    }
+    return $tickets;
 }
 
 function get_parsed_alert_data($alerts_result)
 {
-	$data = [];
-	while ($row = $alerts_result->fetch_assoc()) {
-		$tmp = [];
-		$tmp["alert_level"] = $row["alert_level"];
-		$tmp["ticket_id"] = $row["ticket_id"];
-		$tmp["message"] = $row["message"];
-		$tmp["employee"] = $row["employee"];
-		$tmp["id"] = $row["id"];
-		$data[] = $tmp;
+    $data = [];
+    while ($row = $alerts_result->fetch_assoc()) {
+        $tmp = [];
+        $tmp["alert_level"] = $row["alert_level"];
+        $tmp["ticket_id"] = $row["ticket_id"];
+        $tmp["message"] = $row["message"];
+        $tmp["employee"] = $row["employee"];
+        $tmp["id"] = $row["id"];
+        $data[] = $tmp;
     }
     return $data;
 }
@@ -610,14 +609,17 @@ function get_parsed_alert_data($alerts_result)
  * @return string sanitized string
  * @author Squirrelmail Team
  */
-function ldapspecialchars($string) {
-    $sanitized=array('\\' => '\5c',
-                     '*' => '\2a',
-                     '(' => '\28',
-                     ')' => '\29',
-                     "\x00" => '\00');
+function ldapspecialchars($string)
+{
+    $sanitized = array(
+        '\\' => '\5c',
+        '*' => '\2a',
+        '(' => '\28',
+        ')' => '\29',
+        "\x00" => '\00'
+    );
 
-    return str_replace(array_keys($sanitized),array_values($sanitized),$string);
+    return str_replace(array_keys($sanitized), array_values($sanitized), $string);
 }
 
 function get_tech_usernames()

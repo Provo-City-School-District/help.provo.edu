@@ -26,12 +26,12 @@ $my_tickets = get_parsed_ticket_data($tech_ticket_result);
 
 
 $client_ticket_query = <<<STR
-	SELECT *
-	FROM tickets
-	WHERE status NOT IN ('Closed', 'Resolved')
-	AND client = ?
-	AND employee != ?
-	ORDER BY id ASC
+    SELECT *
+    FROM tickets
+    WHERE status NOT IN ('Closed', 'Resolved')
+    AND client = ?
+    AND (employee != ? OR employee IS NULL)
+    ORDER BY id ASC
 STR;
 
 $client_ticket_result = $database->execute_query($client_ticket_query, [$username, $username]);

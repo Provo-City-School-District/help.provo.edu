@@ -30,7 +30,7 @@ $client_ticket_query = <<<STR
     FROM tickets
     WHERE status NOT IN ('Closed', 'Resolved')
     AND client = ?
-    AND employee != ?
+    AND (employee != ? OR employee IS NULL)
     ORDER BY id ASC
 STR;
 

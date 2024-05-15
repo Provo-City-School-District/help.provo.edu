@@ -4,7 +4,6 @@
 
 <article id="ticketWrapper">
     <h1>Create Ticket</h1>
-    <!-- Form for updating ticket information -->
     <form method="POST" action="insert_ticket.php" enctype="multipart/form-data">
         <input type="hidden" name="client" value="<?= $_SESSION['username'] ?>">
         <div class="ticketGrid">
@@ -54,9 +53,9 @@
                     <option value="unassigned">Unassigned</option>
                 {% for tech_username in tech_usernames %}
                     {% if tech_username == username %}
-                    <option value="{{ tech_username }}" selected>{{tech_username }}</option>
+                    <option value="{{ tech_username }}" selected>{{ tech_username }}</option>
                     {% else %}
-                    <option value="{{ tech_username }}">{{tech_username }}</option>
+                    <option value="{{ tech_username }}">{{ tech_username }}</option>
                     {% endif %}
                 {% endfor %}
                 </select>

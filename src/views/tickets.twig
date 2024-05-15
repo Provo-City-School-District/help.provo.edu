@@ -12,6 +12,7 @@
 	{% endfor %}
 </div>
 {% endif %}
+{% if user_permissions.is_tech %}
 <h1>My Assigned Tickets</h1>
 <table class="ticketsTable data-table">
 	<thead>
@@ -64,6 +65,8 @@
 		{% endfor %}
 	</tbody>
 	</table>
+{% endif %}
+
 
 	<h1>My Open Tickets</h1>
 	<table class="ticketsTable data-table">

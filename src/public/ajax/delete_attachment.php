@@ -15,9 +15,9 @@ $ticket_id = $post_filtered["ticket_id"];
 $username = $_SESSION["username"];
 
 if (!user_is_tech($username)) {
-	log_app(LOG_INFO, "[delete_attachment.php] User is not a tech. Ignoring ajax request...");
-	http_response_code(401);
-	exit;
+    log_app(LOG_INFO, "[delete_attachment.php] User is not a tech. Ignoring ajax request...");
+    http_response_code(401);
+    exit;
 }
 
 log_app(LOG_INFO, "[delete_attachment.php] Deleting attachment $attachment_path on ticket=$ticket_id");
@@ -39,7 +39,7 @@ $real_base_path = realpath(from_root("/../uploads/")).DIRECTORY_SEPARATOR;
 if ($real_user_path === false || (substr($real_user_path, 0, strlen($real_base_path)) != $real_base_path)) {
     log_app(LOG_ERR, "[delete_attachment.php] Attemped to delete a file that was not in /uploads/");
     http_response_code(401);
-	exit;
+    exit;
 }
 
 $file_deleted = false;

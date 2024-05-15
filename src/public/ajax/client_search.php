@@ -38,10 +38,10 @@ for ($i = 0; $i < $entries['count']; $i++) {
     $username = $entries[$i]['samaccountname'][0];
     $firstname = $entries[$i]['givenname'][0];
     $lastname = $entries[$i]['sn'][0];
-	$location = $entries[$i]['ou'][0] ?: "";
-	if ($location == 1892)
-		$location = 1896;
-	$title = $entries[$i]['title'][0];
+    $location = $entries[$i]['ou'][0] ?: "";
+    if ($location == 1892)
+        $location = 1896;
+    $title = $entries[$i]['title'][0];
     $results[] = ['username' => $username, 'firstname' => $firstname, 'lastname' => $lastname, "location_name" => location_name_from_id($location), "title" => $title];
 }
 

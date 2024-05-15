@@ -35,13 +35,13 @@ $updatedStatus = "closed";
 $res = $database->execute_query("UPDATE tickets SET status = ? WHERE tickets.id = ?", [$updatedStatus, $ticket_id]);
 
 if (isset($old_ticket_data['status']) && $old_ticket_data['status'] != $updatedStatus) {
-	logTicketChange($database, $ticket_id, $_SESSION['username'], "status", $old_ticket_data['status'], $updatedStatus);
+    logTicketChange($database, $ticket_id, $_SESSION['username'], "status", $old_ticket_data['status'], $updatedStatus);
 
-	// Check if the ticket has an alert about not being updated in last 48 hours and clear it since the ticket was just updated.
-	removeAlert($database, $alert48Message, $ticket_id);
-	removeAlert($database, $alert7DayMessage, $ticket_id);
-	removeAlert($database, $alert15DayMessage, $ticket_id);
-	removeAlert($database, $alert20DayMessage, $ticket_id);
+    // Check if the ticket has an alert about not being updated in last 48 hours and clear it since the ticket was just updated.
+    removeAlert($database, $alert48Message, $ticket_id);
+    removeAlert($database, $alert7DayMessage, $ticket_id);
+    removeAlert($database, $alert15DayMessage, $ticket_id);
+    removeAlert($database, $alert20DayMessage, $ticket_id);
 }
 
 if (!$res) {

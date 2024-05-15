@@ -572,14 +572,16 @@ function get_parsed_ticket_data($ticket_data)
 		$priority = $row["priority"];
 		$tmp["priority"] = $priorityTypes[$priority];
 		$tmp["sort_value"] = $priority;
-
-		$tmp["created"] = $row["created"];
+        $tmp["created"] = $row["created"];
 		$tmp["last_updated"] = $row["last_updated"];
 		$tmp["due_date"] = $row["due_date"];
-		$tmp["assigned_tech"] = $row["employee"];
+        if ($row["employee"] == null) {
+            $tmp["assigned_tech"] = "Unassigned";
+        } else {
+            $tmp["assigned_tech"] = $row["employee"];
+        }
 		$tmp["alert_level"] = isset($row["alert_levels"]) ? $row["alert_levels"] : '';
 		$tickets[] = $tmp;
-	}
 
 	return $tickets;
 }

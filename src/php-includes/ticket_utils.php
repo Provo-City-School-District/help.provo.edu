@@ -617,3 +617,24 @@ function ldapspecialchars($string) {
 
     return str_replace(array_keys($sanitized),array_values($sanitized),$string);
 }
+
+function get_tech_usernames()
+{
+    global $database;
+
+    $usernamesResult = $database->execute_query("SELECT username, is_tech FROM users WHERE is_tech = 1 ORDER BY username ASC");
+    if (!$usernamesResult) {
+        log_app(LOG_ERR, "[get_tech_usernames] Failed to query database");
+        return [];
+    }
+
+    // Store the usernames in an array
+    $tmp = [];
+    while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
+        if ($usernameRow['is_tech']) {
+            $tmp[] = strtolower($usernameRow['username']);
+        }
+    }
+
+    return $tmp;
+}

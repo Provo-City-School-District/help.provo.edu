@@ -115,3 +115,50 @@ $("#bcc_emails").on("input", function () {
 	},
 	});
 });
+
+// Prevent Double Submits
+document.querySelectorAll("form").forEach((form) => {
+    form.addEventListener("submit", (e) => {
+        // Prevent if already submitting
+        if (form.classList.contains("is-submitting")) {
+            e.preventDefault();
+        }
+
+        // Add class to hook our visual indicator on
+        form.classList.add("is-submitting");
+    });
+});
+
+$("#client").on("input", function() {
+    const new_value = extractLast($(this).val());
+    $("#client").autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: "/ajax/name_search_ldap.php",
+                method: "GET",
+                data: {
+                    name: new_value,
+                },
+                success: function(data, textStatus, xhr) {
+                    let mappedResults = $.map(data, function(item) {
+                        let itemLocation = item.location ? item.location : "unknown";
+                        return $.extend(item, {
+                            label: item.firstName +
+                                " " +
+                                item.lastName +
+                                " (" +
+                                itemLocation +
+                                ")",
+                            value: item.username,
+                        });
+                    });
+                    response(mappedResults);
+                },
+                error: function() {
+                    alert("Error: Autocomplete AJAX call failed");
+                },
+            });
+        },
+        minLength: 3
+    });
+});

@@ -1,0 +1,90 @@
+{% extends "base.twig" %}
+
+{% block content %}
+
+<article id="ticketWrapper">
+    <h1>Create Ticket</h1>
+    <!-- Form for updating ticket information -->
+    <form method="POST" action="insert_ticket.php" enctype="multipart/form-data">
+        <input type="hidden" name="client" value="<?= $_SESSION['username'] ?>">
+        <div class="ticketGrid">
+            <div>
+                <label for="location">Department/Location:</label>
+                <select id="location" name="location">
+                    <optgroup label="Department">
+                    {% for dept in depts %}
+                        {% if dept.select %}
+                        <option value="{{ dept.site_number }}" selected>{{ dept.site_name }}</option>
+                        {% else %}
+                        <option value="{{ dept.site_number }}">{{ dept.site_name }}</option>
+                        {% endif %}
+                    {% endfor %}
+                    </optgroup>
+                    <optgroup label="Locations">
+                    {% for location in locations %}
+                        {% if location.select %}
+                        <option value="{{ location.site_number }}" selected>{{ location.site_name }}</option>
+                        {% else %}
+                        <option value="{{ location.site_number }}">{{ location.site_name }}</option>
+                        {% endif %}
+                    {% endfor %}
+                    </optgroup>
+                </select required>
+            </div>
+            <div>
+                <label for="room">Room:</label>
+                <input type="text" id="room" name="room" value="{{ _get['room']|escape }}">
+            </div>
+            <div>
+                <label for="phone">Phone:</label>
+                <input type="tel" id="phone" name="phone">
+            </div>
+            <div>
+                <label for="cc_emails">CC</label>
+                <input type="text" id="cc_emails" name="cc_emails" value="{{ _get['cc_emails']|escape }}">
+            </div>
+            <div>
+                <label for="bcc_emails">BCC</label>
+                <input type="text" id="bcc_emails" name="bcc_emails" value="{{ _get['bcc_emails']|escape }}">
+            </div>
+        {% if user_permissions.is_tech %}
+            <div>
+                <label for="assigned">Assigned to</label>
+                <select id="assigned" name="assigned">
+                    <option value="unassigned">Unassigned</option>
+                {% for tech_username in tech_usernames %}
+                    {% if tech_username == username %}
+                    <option value="{{ tech_username }}" selected>{{tech_username }}</option>
+                    {% else %}
+                    <option value="{{ tech_username }}">{{tech_username }}</option>
+                    {% endif %}
+                {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="client">Client:</label>
+                <input type="text" id="client" name="client" value="{{ _get['client']|escape }}">
+            </div>
+        {% endif %}
+        </div>
+
+        <div class="detailContainer">
+            <div class="grid2 ticketSubject">
+                <label for="ticket_name">Ticket Title:</label>
+                <input type="text" id="ticket_name" name="ticket_name" value="{{ _get['ticket_name']|escape }}" maxlength="100">
+            </div>
+
+            <label for="description" class="heading2">Ticket Description:</label>
+            <textarea id="description" name="description" class="tinyMCEtextarea">{{ _get['description']|escape }}</textarea>
+        </div>
+
+        <div id="attachment-fields">
+            <label for="attachment">Attachment:</label>
+            <input type="file" id="attachment" name="attachment[]" type="file" multiple>
+        </div>
+        <input type="submit" value="Create Ticket">
+    </form>
+</article>
+<script src="/includes/js/jquery-3.7.1.min.js"></script>
+<script src="/includes/js/pages/create_ticket.js?v=0.0.2"></script>
+{% endblock %}

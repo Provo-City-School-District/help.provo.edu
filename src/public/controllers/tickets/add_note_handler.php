@@ -3,7 +3,7 @@ require_once("block_file.php");
 require_once('init.php');
 require_once('helpdbconnect.php');
 require_once('ticket_utils.php');
-// Return true on success, false otherwise
+
 
 $ticket_id = $_POST['ticket_id'];
 

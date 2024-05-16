@@ -31,7 +31,12 @@ $travel_minutes = filter_var($_POST['travel_minutes'], FILTER_SANITIZE_NUMBER_IN
 // $note_content = filter_input(INPUT_POST, 'note', FILTER_SANITIZE_SPECIAL_CHARS);
 $note_content = $_POST['note'];
 $username = $_POST['username'];
+$session_user = $_SESSION["username"];
 
+if (strtolower($username) != strtolower($session_user)) {
+    log_app(LOG_INFO, "[add_note_handler.php] Cannot add a note for $username when logged in as $session_user");
+    exit;
+}
 
 // Get visible to client state
 $visible_to_client = false;

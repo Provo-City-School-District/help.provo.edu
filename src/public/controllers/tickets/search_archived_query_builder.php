@@ -15,7 +15,7 @@ if (!empty($search_name)) {
 
     $old_ticket_query .= " AND JOB_TICKET_ID IN (SELECT JOB_TICKET_ID FROM tech_note WHERE ";
     for ($i = 0; $i < $wordCount; $i++) {
-        $old_ticket_query .= "QUESTION_TEXT LIKE '%" . mysqli_real_escape_string($database, $words[$i]) . "%' OR SUBJECT LIKE '%" . mysqli_real_escape_string($database, $words[$i]) . "%' OR NOTE_TEXT LIKE '%" . mysqli_real_escape_string($database, $words[$i]) . "%'";
+        $old_ticket_query .= "QUESTION_TEXT LIKE '%" . mysqli_real_escape_string(HelpDB::get(), $words[$i]) . "%' OR SUBJECT LIKE '%" . mysqli_real_escape_string(HelpDB::get(), $words[$i]) . "%' OR NOTE_TEXT LIKE '%" . mysqli_real_escape_string(HelpDB::get(), $words[$i]) . "%'";
         if ($i != $wordCount - 1) {
             $old_ticket_query .= " AND ";
         }
@@ -37,7 +37,7 @@ if (!empty($search_employee)) {
     }
     // First, perform a query to get the CURRENT_DASHBOARD_ID for the given USERNAME
     $employee_query = "SELECT CURRENT_DASHBOARD_ID FROM whd.tech WHERE USER_NAME = ?";
-    $employee_stmt = $swdb->prepare($employee_query);
+    $employee_stmt = SolarWindsDB::get()->prepare($employee_query);
     $employee_stmt->bind_param('s', $search_employee);
     $employee_stmt->execute();
     $employee_result = $employee_stmt->get_result();

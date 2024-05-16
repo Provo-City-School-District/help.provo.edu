@@ -13,7 +13,7 @@ $id = trim(htmlspecialchars($_GET['id']));
 
 // Delete the exclude day from the database
 $query = "DELETE FROM exclude_days WHERE id = ?";
-$stmt = mysqli_prepare($database, $query);
+$stmt = mysqli_prepare(HelpDB::get(), $query);
 mysqli_stmt_bind_param($stmt, "i", $id);
 mysqli_stmt_execute($stmt);
 mysqli_stmt_close($stmt);

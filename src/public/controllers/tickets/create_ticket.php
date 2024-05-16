@@ -16,7 +16,7 @@ $twig = new \Twig\Environment($loader, [
 
 $tech_usernames = get_tech_usernames();
 
-$department_result = $database->execute_query("SELECT * FROM locations WHERE is_department = TRUE ORDER BY location_name ASC");
+$department_result = HelpDB::get()->execute_query("SELECT * FROM locations WHERE is_department = TRUE ORDER BY location_name ASC");
 $depts = [];
 while ($row = mysqli_fetch_assoc($department_result)) {
     $select = false;
@@ -32,7 +32,7 @@ while ($row = mysqli_fetch_assoc($department_result)) {
     $depts[] = ["site_number" => $row["sitenumber"], "site_name" => $row["location_name"], "select" => $select];
 }
 
-$location_result = $database->execute_query("SELECT * FROM locations WHERE is_department = FALSE ORDER BY location_name ASC");
+$location_result = HelpDB::get()->execute_query("SELECT * FROM locations WHERE is_department = FALSE ORDER BY location_name ASC");
 $locations = [];
 while ($row = mysqli_fetch_assoc($location_result)) {
     $select = false;

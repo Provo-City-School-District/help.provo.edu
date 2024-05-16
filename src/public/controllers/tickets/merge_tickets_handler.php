@@ -32,7 +32,7 @@ if ($ticket_id_host == $ticket_id_source) {
     return_to_ticket_with_status("Tickets cannot be merged into themselves", "error", $ticket_id_source);
 }
 
-$source_has_merged_result = $database->execute_query("SELECT merged_into_id FROM tickets WHERE id = ?", [$ticket_id_source]);
+$source_has_merged_result = HelpDB::get()->execute_query("SELECT merged_into_id FROM tickets WHERE id = ?", [$ticket_id_source]);
 $source_merged = mysqli_fetch_assoc($source_has_merged_result);
 
 if ($source_merged["merged_into_id"] != null) {
@@ -42,7 +42,7 @@ if ($source_merged["merged_into_id"] != null) {
 
 // disallow merging a ticket into a ticket that the other ticket merged into (loop)
 
-$host_has_merged_result = $database->execute_query("SELECT merged_into_id FROM tickets WHERE id = ?", [$ticket_id_host]);
+$host_has_merged_result = HelpDB::get()->execute_query("SELECT merged_into_id FROM tickets WHERE id = ?", [$ticket_id_host]);
 $host_merged = mysqli_fetch_assoc($host_has_merged_result);
 
 if ($host_merged["merged_into_id"] != null) {
@@ -60,14 +60,14 @@ $query = <<<STR
             WHERE linked_id = ?)
 STR;
 
-$result = $database->execute_query($query, [$ticket_id_host, $ticket_id_source]);
+$result = HelpDB::get()->execute_query($query, [$ticket_id_host, $ticket_id_source]);
 if (!$result) {
     return_to_ticket_with_status("failed to update notes", "error", $ticket_id_source);
 }
 
 // Log the creation of merged ticket in the ticket_logs table for the host ticket
 $field_name = "Ticket merged ";
-logTicketChange($database, $ticket_id_host, $username, $field_name, $ticket_id_source, $ticket_id_host);
+logTicketChange(HelpDB::get(), $ticket_id_host, $username, $field_name, $ticket_id_source, $ticket_id_host);
 
 if (!$result) {
     return_to_ticket_with_status("failed to update host ticket merge status", "error", $ticket_id_source);
@@ -76,7 +76,7 @@ if (!$result) {
 
 // Log the creation of merged ticket in the ticket_logs table for the source ticket
 $field_name = "Ticket merged ";
-logTicketChange($database, $ticket_id_source, $username, $field_name, $ticket_id_source, $ticket_id_host);
+logTicketChange(HelpDB::get(), $ticket_id_source, $username, $field_name, $ticket_id_source, $ticket_id_host);
 
 if (!$result) {
     return_to_ticket_with_status("failed to update source ticket merge status", "error", $ticket_id_source);
@@ -84,7 +84,7 @@ if (!$result) {
 
 // Point old ticket towards new one
 $complete_merge_query = "UPDATE tickets SET merged_into_id = ?, status = 'closed' WHERE id = ?";
-$complete_merge_stmt = mysqli_prepare($database, $complete_merge_query);
+$complete_merge_stmt = mysqli_prepare(HelpDB::get(), $complete_merge_query);
 mysqli_stmt_bind_param($complete_merge_stmt, "ii", $ticket_id_host, $ticket_id_source);
 $result = mysqli_stmt_execute($complete_merge_stmt);
 if (!$result) {
@@ -94,7 +94,7 @@ if (!$result) {
 // Copy attachments from old ticket to new one
 
 $attachment_source_query = "SELECT attachment_path FROM tickets WHERE id = ?";
-$attachment_source_stmt = mysqli_prepare($database, $attachment_source_query);
+$attachment_source_stmt = mysqli_prepare(HelpDB::get(), $attachment_source_query);
 mysqli_stmt_bind_param($attachment_source_stmt, "i", $ticket_id_source);
 $result = mysqli_stmt_execute($attachment_source_stmt);
 if (!$result) {
@@ -103,7 +103,7 @@ if (!$result) {
 $data_source = mysqli_fetch_assoc(mysqli_stmt_get_result($attachment_source_stmt));
 
 $attachment_host_query = "SELECT attachment_path FROM tickets WHERE id = ?";
-$attachment_host_stmt = mysqli_prepare($database, $attachment_host_query);
+$attachment_host_stmt = mysqli_prepare(HelpDB::get(), $attachment_host_query);
 mysqli_stmt_bind_param($attachment_host_stmt, "i", $ticket_id_host);
 $result = mysqli_stmt_execute($attachment_host_stmt);
 if (!$result) {
@@ -119,7 +119,7 @@ $attachment_path_new = implode(',', $attachment_path_total);
 
 
 $attachment_insert_query = "UPDATE tickets SET attachment_path = ? WHERE id = ?";
-$attachment_insert_stmt = mysqli_prepare($database, $attachment_insert_query);
+$attachment_insert_stmt = mysqli_prepare(HelpDB::get(), $attachment_insert_query);
 mysqli_stmt_bind_param($attachment_insert_stmt, "si", $attachment_path_new, $ticket_id_host);
 $result = mysqli_stmt_execute($attachment_insert_stmt);
 if (!$result) {

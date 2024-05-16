@@ -28,7 +28,7 @@ WHERE tickets.location = ?
 AND alerts.supervisor_alert IN (0, 1)
 alerts_query;
 
-$alerts_result = $database->execute_query($alerts_query, [$managed_location]);
+$alerts_result = HelpDB::get()->execute_query($alerts_query, [$managed_location]);
 
 
 //location tickets query
@@ -40,7 +40,7 @@ AND tickets.status NOT IN ('closed', 'resolved')
 AND (employee IS NOT NULL AND employee != 'unassigned')
 location_tickets;
 
-$location_ticket_result = $database->execute_query($location_tickets_query, [$managed_location]);
+$location_ticket_result = HelpDB::get()->execute_query($location_tickets_query, [$managed_location]);
 
 //query for unassigned tickets for location
 $unassigned_ticket_query = <<<unassigned_tickets
@@ -51,7 +51,7 @@ AND (employee IS NULL OR employee = 'unassigned')
 AND location = ?
 unassigned_tickets;
 
-$unassigned_ticket_result = $database->execute_query($unassigned_ticket_query, [$managed_location]);
+$unassigned_ticket_result = HelpDB::get()->execute_query($unassigned_ticket_query, [$managed_location]);
 
 ?>
 <!-- Display Front End -->
@@ -63,14 +63,14 @@ display_ticket_alerts($alerts_result); ?>
 <h1>Tickets For Location: <?= location_name_from_id($managed_location) ?></h1>
 <?php
 //display location tickets
-display_tickets_table($location_ticket_result, $database);
+display_tickets_table($location_ticket_result, HelpDB::get());
 ?>
 
 
 <h2>Unassigned Tickets For Location: <?= location_name_from_id($managed_location) ?> </h2>
 <?php
 //display unassigned tickets
-display_tickets_table($unassigned_ticket_result, $database);
+display_tickets_table($unassigned_ticket_result, HelpDB::get());
 ?>
 
 <?php include("footer.php"); ?>

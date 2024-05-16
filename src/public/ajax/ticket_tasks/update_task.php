@@ -32,7 +32,7 @@ if ($update_type == "completed_change") {
     exit;
 }
 
-$task_result = $database->execute_query("SELECT description, ticket_id, completed, required FROM help.ticket_tasks WHERE id = ?", [$task_id]);
+$task_result = HelpDB::get()->execute_query("SELECT description, ticket_id, completed, required FROM help.ticket_tasks WHERE id = ?", [$task_id]);
 if (!$task_result) {
     log_app(LOG_INFO, "[update_task.php] Failed to fetch result for old task");
     exit;
@@ -50,15 +50,15 @@ $completed = $task_data["completed"];
 $required = $task_data["required"];
 
 if ($update_type == "completed_change") {
-    logTicketChange($database, $ticket_id, $username, "Task \"$description\" (id=$task_id) Completed", $completed, $new_status);
+    logTicketChange(HelpDB::get(), $ticket_id, $username, "Task \"$description\" (id=$task_id) Completed", $completed, $new_status);
 } else if ($update_type == "required_change") {
-    logTicketChange($database, $ticket_id, $username, "Task \"$description\" (id=$task_id) Required", $required, $new_status);
+    logTicketChange(HelpDB::get(), $ticket_id, $username, "Task \"$description\" (id=$task_id) Required", $required, $new_status);
 } else {
     log_app(LOG_INFO, "[update_task.php] Update type is not supported. Ignoring log request...");
     exit;
 }
 
-$update_status_res = $database->execute_query($query, [$new_status, $task_id]);
+$update_status_res = HelpDB::get()->execute_query($query, [$new_status, $task_id]);
 
 if (!$update_status_res) {
     log_app(LOG_ERR, "[update_task.php] Failed to execute query");

@@ -77,8 +77,6 @@ function compress_and_resize_image(string $image_path, string $image_type)
 
 function handleFileUploads($files, $ticket_id = null)
 {
-    global $database;
-
     $allowed_extensions = get_allowed_extensions();
     $max_file_size = get_max_file_size();
     $failed_files = [];
@@ -129,7 +127,7 @@ function handleFileUploads($files, $ticket_id = null)
                         $query = "UPDATE tickets SET attachment_path = 
                         (CASE WHEN attachment_path IS null OR attachment_path = '' THEN ? ELSE CONCAT(attachment_path, ',', ?) END)
                         WHERE id = ?";
-                        $stmt = mysqli_prepare($database, $query);
+                        $stmt = mysqli_prepare(HelpDB::get(), $query);
                         mysqli_stmt_bind_param($stmt, "ssi", $newFilePath, $newFilePath, $ticket_id);
                         mysqli_stmt_execute($stmt);
 

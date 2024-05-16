@@ -12,7 +12,7 @@ $twig = new \Twig\Environment($loader, [
 
 
 $user_query = "SELECT * FROM users WHERE username = ?";
-$user_result = $database->execute_query($user_query, [$username]);
+$user_result = HelpDB::get()->execute_query($user_query, [$username]);
 // Check if the query was successful
 if (!$user_result) {
     die("Query failed: " . mysqli_error($conn));

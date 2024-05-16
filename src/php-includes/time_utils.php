@@ -7,8 +7,6 @@ Output: array of note totals for in the same indexing order as the input array (
 */
 function get_note_time_for_days(string $user, array $days)
 {
-    global $database;
-
     $times = [];
     // set times to 0
     for ($i = 0; $i < count($days); $i++)
@@ -28,7 +26,7 @@ function get_note_time_for_days(string $user, array $days)
         )   
     STR;
 
-    $query_result = $database->execute_query($query, [$user]);
+    $query_result = HelpDB::get()->execute_query($query, [$user]);
     while ($row = mysqli_fetch_assoc($query_result)) {
         $created = $row["created"];
         $date_override = $row["date_override"];

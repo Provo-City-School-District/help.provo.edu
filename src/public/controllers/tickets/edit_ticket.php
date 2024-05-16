@@ -22,7 +22,7 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
 require_once('helpdbconnect.php');
 require_once("status_popup.php");
 
-$ticket_exists_res = $database->execute_query("SELECT 1 FROM help.tickets WHERE id = ?", [$ticket_id]);
+$ticket_exists_res = HelpDB::get()->execute_query("SELECT 1 FROM help.tickets WHERE id = ?", [$ticket_id]);
 if (!$ticket_exists_res) {
     log_app(LOG_ERR, "Failed to check existence of $ticket_id");
 }
@@ -36,7 +36,7 @@ if (!$ticket_exists) {
 $username = $_SESSION['username'];
 $ticket_shared_usernames = [];
 
-$is_ticket_shared_res = $database->execute_query("SELECT username FROM help.users WHERE active_ticket = ?", [$ticket_id]);
+$is_ticket_shared_res = HelpDB::get()->execute_query("SELECT username FROM help.users WHERE active_ticket = ?", [$ticket_id]);
 if (!$is_ticket_shared_res) {
     log_app(LOG_ERR, "Failed to get active_ticket status for ticket $ticket_id");
 }
@@ -52,7 +52,7 @@ if ($is_ticket_shared_res->num_rows > 0) {
 }
 
 // Update active ticket for user
-$active_ticket_res = $database->execute_query("UPDATE help.users SET active_ticket = ?, active_ticket_updated = NOW() WHERE username = ?", [$ticket_id, $username]);
+$active_ticket_res = HelpDB::get()->execute_query("UPDATE help.users SET active_ticket = ?, active_ticket_updated = NOW() WHERE username = ?", [$ticket_id, $username]);
 if (!$active_ticket_res) {
     log_app(LOG_ERR, "Failed to update active_ticket for user $username on ticket $ticket_id");
 }
@@ -110,9 +110,9 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         )
         STR;
 
-        $insert_flagged_ticket_result = $database->execute_query($query, [$username, $ticket_id]);
+        $insert_flagged_ticket_result = HelpDB::get()->execute_query($query, [$username, $ticket_id]);
         if (!$insert_flagged_ticket_result) {
-            die('Error inserting ticket flag status: ' . mysqli_error($database));
+            die('Error inserting ticket flag status: ' . mysqli_error(HelpDB::get()));
         }
     } else if (isset($_POST['unflag_ticket'])) {
         $query = <<<STR
@@ -122,9 +122,9 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
             flagged_tickets.ticket_id = ?
         STR;
 
-        $insert_flagged_ticket_result = $database->execute_query($query, [$username, $ticket_id]);
+        $insert_flagged_ticket_result = HelpDB::get()->execute_query($query, [$username, $ticket_id]);
         if (!$insert_flagged_ticket_result) {
-            die('Error inserting ticket flag status: ' . mysqli_error($database));
+            die('Error inserting ticket flag status: ' . mysqli_error(HelpDB::get()));
         }
     }
 
@@ -146,9 +146,9 @@ SELECT user_id, ticket_id FROM flagged_tickets
         user_id in (SELECT users.id FROM users WHERE users.username = ?)
 STR;
 
-$insert_flagged_ticket_result = $database->execute_query($ticket_flagged_query, [$ticket_id, $username]);
+$insert_flagged_ticket_result = HelpDB::get()->execute_query($ticket_flagged_query, [$ticket_id, $username]);
 if (!$insert_flagged_ticket_result) {
-    die('Error getting ticket flag status: ' . mysqli_error($database));
+    die('Error getting ticket flag status: ' . mysqli_error(HelpDB::get()));
 }
 
 $is_ticket_flagged = false;
@@ -215,11 +215,11 @@ tickets.id = ?
 GROUP BY
 tickets.id
 ";
-$result = $database->execute_query($query, [$ticket_id]);
+$result = HelpDB::get()->execute_query($query, [$ticket_id]);
 
 // Check if the query was successful
 if (!$result) {
-    die('Error: ' . mysqli_error($database));
+    die('Error: ' . mysqli_error(HelpDB::get()));
 }
 
 // Fetch the ticket and notes from the result set
@@ -235,10 +235,10 @@ ob_end_flush();
 
 // Fetch the list of usernames from the users table
 $usernamesQuery = "SELECT username, is_tech FROM users WHERE is_tech = 1 ORDER BY username ASC";
-$usernamesResult = $database->execute_query($usernamesQuery);
+$usernamesResult = HelpDB::get()->execute_query($usernamesQuery);
 
 if (!$usernamesResult) {
-    die('Error fetching usernames: ' . mysqli_error($database));
+    die('Error fetching usernames: ' . mysqli_error(HelpDB::get()));
 }
 
 // Store the usernames in an array
@@ -251,7 +251,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
 
 //fetch child tickets
 $child_ticket_query = "SELECT * FROM tickets WHERE parent_ticket = ?";
-$child_ticket_stmt = $database->prepare($child_ticket_query);
+$child_ticket_stmt = HelpDB::get()->prepare($child_ticket_query);
 $child_ticket_stmt->bind_param("i", $ticket_id);
 $child_ticket_stmt->execute();
 
@@ -271,7 +271,7 @@ $show_quick_switch_buttons = false;
 if (strtolower($ticket["employee"]) == strtolower($username)) {
     $show_quick_switch_buttons = true;
 
-    $assigned_tickets_result = $database->execute_query("SELECT id FROM tickets WHERE (status NOT IN ('Closed', 'Resolved') AND employee = ?) ORDER BY id ASC", [$username]);
+    $assigned_tickets_result = HelpDB::get()->execute_query("SELECT id FROM tickets WHERE (status NOT IN ('Closed', 'Resolved') AND employee = ?) ORDER BY id ASC", [$username]);
 
     $assigned_ticket_ids = [];
     while ($row = $assigned_tickets_result->fetch_assoc()) {
@@ -485,7 +485,7 @@ if (strtolower($ticket["employee"]) == strtolower($username)) {
                         <?php
                         // Query the locations table to get the departments
                         $department_query = "SELECT sitenumber, location_name FROM locations WHERE is_department = TRUE ORDER BY location_name ASC";
-                        $department_result = $database->execute_query($department_query);
+                        $department_result = HelpDB::get()->execute_query($department_query);
 
                         // Create a "Department" optgroup and create an option for each department
                         echo '<optgroup label="Department">';
@@ -500,7 +500,7 @@ if (strtolower($ticket["employee"]) == strtolower($username)) {
 
                         // Query the locations table to get the locations
                         $location_query = "SELECT sitenumber, location_name FROM locations WHERE is_department = FALSE ORDER BY location_name ASC";
-                        $location_result = $database->execute_query($location_query);
+                        $location_result = HelpDB::get()->execute_query($location_query);
 
                         // Create a "Location" optgroup and create an option for each location
                         echo '<optgroup label="Location">';
@@ -522,7 +522,7 @@ if (strtolower($ticket["employee"]) == strtolower($username)) {
                         <?php
                         // Fetch the top-level request types
                         $topLevelQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_parent IS NULL ORDER BY request_name";
-                        $topLevelResult = $database->query($topLevelQuery);
+                        $topLevelResult = HelpDB::get()->query($topLevelQuery);
 
                         // Add the top-level request types as options
                         while ($topLevelRow = $topLevelResult->fetch_assoc()) {
@@ -532,15 +532,15 @@ if (strtolower($ticket["employee"]) == strtolower($username)) {
                             } else {
                                 // Check if the ticket's request type is a child or grandchild of this top-level request type
                                 $childQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_id = " . $ticket['request_type_id'] . " AND request_parent = " . $topLevelRow['request_id'];
-                                $childResult = $database->query($childQuery);
+                                $childResult = HelpDB::get()->query($childQuery);
                                 if ($childResult->num_rows > 0) {
                                     $selected = 'selected';
                                 } else {
                                     $grandchildQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_id = " . $ticket['request_type_id'];
-                                    $grandchildResult = $database->query($grandchildQuery);
+                                    $grandchildResult = HelpDB::get()->query($grandchildQuery);
                                     while ($grandchildRow = $grandchildResult->fetch_assoc()) {
                                         $childQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_id = " . $grandchildRow['request_parent'] . " AND request_parent = " . $topLevelRow['request_id'];
-                                        $childResult = $database->query($childQuery);
+                                        $childResult = HelpDB::get()->query($childQuery);
                                         if ($childResult->num_rows > 0) {
                                             $selected = 'selected';
                                         }
@@ -551,7 +551,7 @@ if (strtolower($ticket["employee"]) == strtolower($username)) {
 
                             // Fetch the child request types
                             $childQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_parent = " . $topLevelRow['request_id'] . " ORDER BY request_name";
-                            $childResult = $database->query($childQuery);
+                            $childResult = HelpDB::get()->query($childQuery);
 
                             // Add the child request types as options
                             while ($childRow = $childResult->fetch_assoc()) {
@@ -561,7 +561,7 @@ if (strtolower($ticket["employee"]) == strtolower($username)) {
                                 } else {
                                     // Check if the ticket's request type is a grandchild of this child request type
                                     $grandchildQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_id = " . $ticket['request_type_id'] . " AND request_parent = " . $childRow['request_id'];
-                                    $grandchildResult = $database->query($grandchildQuery);
+                                    $grandchildResult = HelpDB::get()->query($grandchildQuery);
                                     if ($grandchildResult->num_rows > 0) {
                                         $selected = 'selected';
                                     }
@@ -570,7 +570,7 @@ if (strtolower($ticket["employee"]) == strtolower($username)) {
 
                                 // Fetch the grandchild request types
                                 $grandchildQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_parent = " . $childRow['request_id'] . " ORDER BY request_name";
-                                $grandchildResult = $database->query($grandchildQuery);
+                                $grandchildResult = HelpDB::get()->query($grandchildQuery);
 
                                 // Add the grandchild request types as options
                                 while ($grandchildRow = $grandchildResult->fetch_assoc()) {
@@ -806,7 +806,7 @@ if (strtolower($ticket["employee"]) == strtolower($username)) {
     <h2>Tasks</h2>
     <?php
     // Show existing tasks on ticket
-    $tasks_res = $database->execute_query("SELECT id, description, completed, required FROM help.ticket_tasks WHERE ticket_id = ?", [$ticket_id]);
+    $tasks_res = HelpDB::get()->execute_query("SELECT id, description, completed, required FROM help.ticket_tasks WHERE ticket_id = ?", [$ticket_id]);
     $task_rows = $tasks_res->fetch_all(MYSQLI_ASSOC);
 
     if (count($task_rows) > 0) {
@@ -1097,7 +1097,7 @@ if (strtolower($ticket["employee"]) == strtolower($username)) {
         <?php
         // Fetch the ticket logs for the current ticket
         $log_query = "SELECT * FROM ticket_logs WHERE ticket_id = ? ORDER BY created_at DESC";
-        $log_stmt = mysqli_prepare($database, $log_query);
+        $log_stmt = mysqli_prepare(HelpDB::get(), $log_query);
         mysqli_stmt_bind_param($log_stmt, "i", $ticket_id);
         mysqli_stmt_execute($log_stmt);
         $log_result = mysqli_stmt_get_result($log_stmt);

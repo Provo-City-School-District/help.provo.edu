@@ -23,7 +23,7 @@ $ticket_query = <<<STR
 		ORDER BY last_updated DESC
 STR;
 
-$ticket_result = $database->execute_query($ticket_query, [$username, $username]);
+$ticket_result = HelpDB::get()->execute_query($ticket_query, [$username, $username]);
 $ticket_data = get_parsed_ticket_data($ticket_result);
 
 echo $twig->render('ticket_history.twig', [

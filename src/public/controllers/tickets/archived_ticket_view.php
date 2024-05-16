@@ -16,9 +16,7 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
 // TODO could cache these
 function get_client_name_from_id(string $client_sw_id)
 {
-    global $swdb;
-
-    $client_name_result = $swdb->execute_query("SELECT FIRST_NAME, LAST_NAME FROM client WHERE CLIENT_ID = ?", [$client_sw_id]);
+    $client_name_result = SolarWindsDB::get()->execute_query("SELECT FIRST_NAME, LAST_NAME FROM client WHERE CLIENT_ID = ?", [$client_sw_id]);
     $client_name_data = mysqli_fetch_assoc($client_name_result);
     $client_name = trim($client_name_data["FIRST_NAME"])." ".trim($client_name_data["LAST_NAME"]);
 
@@ -28,9 +26,7 @@ function get_client_name_from_id(string $client_sw_id)
 // TODO could cache these
 function get_tech_name_from_id(string $tech_sw_id)
 {
-    global $swdb;
-
-    $tech_name_result = $swdb->execute_query("SELECT FIRST_NAME, LAST_NAME FROM tech WHERE CLIENT_ID = ?", [$tech_sw_id]);
+    $tech_name_result = SolarWindsDB::get()->execute_query("SELECT FIRST_NAME, LAST_NAME FROM tech WHERE CLIENT_ID = ?", [$tech_sw_id]);
     $tech_name_data = mysqli_fetch_assoc($tech_name_result);
     $tech_name = trim($tech_name_data["FIRST_NAME"])." ".trim($tech_name_data["LAST_NAME"]);
 
@@ -40,9 +36,7 @@ function get_tech_name_from_id(string $tech_sw_id)
 // TODO could cache these
 function get_location_name_from_id(string $location_sw_id)
 {
-    global $swdb;
-
-    $location_name_result = $swdb->execute_query("SELECT LOCATION_NAME FROM location WHERE LOCATION_ID = ?", [$location_sw_id]);
+    $location_name_result = SolarWindsDB::get()->execute_query("SELECT LOCATION_NAME FROM location WHERE LOCATION_ID = ?", [$location_sw_id]);
     $location_name_data = mysqli_fetch_assoc($location_name_result);
     $location_name = trim($location_name_data["LOCATION_NAME"]);
 
@@ -61,7 +55,7 @@ if (($ticket_id_split[0] != 'A') ||
 }
 
 $old_ticket_query = "SELECT JOB_TICKET_ID,PROBLEM_TYPE_ID,SUBJECT,QUESTION_TEXT,REPORT_DATE,LAST_UPDATED,JOB_TIME,ASSIGNED_TECH_ID,ROOM,LOCATION_ID,DEPARTMENT_ID,CLOSE_DATE,CLIENT_ID,CLIENT_CREATOR_ID FROM whd.job_ticket WHERE JOB_TICKET_ID = ?";
-$stmt = mysqli_prepare($swdb, $old_ticket_query);
+$stmt = mysqli_prepare(SolarWindsDB::get(), $old_ticket_query);
 mysqli_stmt_bind_param($stmt, "i", $query_ticket_id);
 mysqli_stmt_execute($stmt);
 
@@ -88,19 +82,18 @@ if ($location_sw_id != null)
 /*
 $creator_id = $arch_ticket_data["CLIENT_CREATOR_ID"];
 $creator_name_query = "SELECT FIRST_NAME, LAST_NAME FROM client WHERE CLIENT_ID = '$creator_id'";
-$creator_name_result = mysqli_query($swdb, $creator_name_query);
+$creator_name_result = mysqli_query(SolarWindsDB::get(), $creator_name_query);
 $creator_name_data = mysqli_fetch_assoc($creator_name_result);
 $creator_name = trim($creator_name_data["FIRST_NAME"])." ".trim($creator_name_data["LAST_NAME"]);
 */
 $all_notes = [];
 
 $tech_notes_query = "SELECT TECHNICIAN_ID, NOTE_TEXT, CREATION_DATE, HIDDEN, TECH_NOTE_DATE, BILLING_MINUTES FROM TECH_NOTE WHERE JOB_TICKET_ID = ?";
-$stmt = mysqli_prepare($swdb, $tech_notes_query);
+$stmt = mysqli_prepare(SolarWindsDB::get(), $tech_notes_query);
 mysqli_stmt_bind_param($stmt, "i", $query_ticket_id);
 mysqli_stmt_execute($stmt);
 
 $stmt_res = $stmt->get_result();
-
 
 while ($tech_note_row = $stmt_res->fetch_array(MYSQLI_ASSOC)) {
     $note_text = $tech_note_row["NOTE_TEXT"];
@@ -129,7 +122,7 @@ while ($tech_note_row = $stmt_res->fetch_array(MYSQLI_ASSOC)) {
 mysqli_stmt_close($stmt);
 
 $client_notes_query = "SELECT CLIENT_ID, TICKET_DATE, NOTE_TEXT FROM CLIENT_NOTE WHERE JOB_TICKET_ID = ?";
-$stmt = mysqli_prepare($swdb, $client_notes_query);
+$stmt = mysqli_prepare(SolarWindsDB::get(), $client_notes_query);
 mysqli_stmt_bind_param($stmt, "i", $query_ticket_id);
 mysqli_stmt_execute($stmt);
 

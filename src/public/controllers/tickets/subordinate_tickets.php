@@ -31,7 +31,7 @@ $ticket_query = <<<STR
 	ORDER BY tickets.last_updated DESC
 STR;
 
-$ticket_result = $database->execute_query($ticket_query, [$username]);
+$ticket_result = HelpDB::get()->execute_query($ticket_query, [$username]);
 $ticket_data = get_parsed_ticket_data($ticket_result);
 
 // Alerts query
@@ -43,7 +43,7 @@ $alerts_query = <<<STR
 	AND alerts.supervisor_alert IN (0, 1)
 STR;
 
-$alerts_result = $database->execute_query($alerts_query, [$username]);
+$alerts_result = HelpDB::get()->execute_query($alerts_query, [$username]);
 $alerts = get_parsed_alert_data($alerts_result);
 
 echo $twig->render('subordinate_tickets.twig', [

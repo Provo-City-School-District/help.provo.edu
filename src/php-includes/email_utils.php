@@ -108,7 +108,6 @@ function send_email_and_add_to_ticket(
     array $attachments = []
 )
 {
-    global $database;
     $res1 = false;
     $res2 = false;
     

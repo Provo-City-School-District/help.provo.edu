@@ -6,7 +6,7 @@ require_once('swdbconnect.php');
 include("ticket_utils.php");
 // Query the locations table to get the location information
 $location_query = "SELECT sitenumber, location_name FROM locations ORDER BY location_name ASC";
-$location_result = $database->execute_query($location_query);
+$location_result = HelpDB::get()->execute_query($location_query);
 $search_id = '';
 $search_name = '';
 $search_location = '';
@@ -23,23 +23,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if (!empty($_GET)) {
 
         // Get the search terms from the form
-        $search_id = isset($_GET['search_id']) ? mysqli_real_escape_string($database, $_GET['search_id']) : '';
-        $search_name = isset($_GET['search_name']) ? mysqli_real_escape_string($database, $_GET['search_name']) : '';
-        $search_location = isset($_GET['search_location']) ? mysqli_real_escape_string($database, $_GET['search_location']) : '';
-        $search_employee = isset($_GET['search_employee']) ? mysqli_real_escape_string($database, $_GET['search_employee']) : '';
-        $search_client = isset($_GET['search_client']) ? mysqli_real_escape_string($database, $_GET['search_client']) : '';
-        $search_status = isset($_GET['search_status']) ? mysqli_real_escape_string($database, $_GET['search_status']) : '';
-        $search_priority = isset($_GET['priority']) ? mysqli_real_escape_string($database, $_GET['priority']) : '';
-        $search_start_date = isset($_GET['start_date']) ? mysqli_real_escape_string($database, $_GET['start_date']) : '';
-        $search_end_date = isset($_GET['end_date']) ? mysqli_real_escape_string($database, $_GET['end_date']) : '';
+        $search_id = isset($_GET['search_id']) ? mysqli_real_escape_string(HelpDB::get(), $_GET['search_id']) : '';
+        $search_name = isset($_GET['search_name']) ? mysqli_real_escape_string(HelpDB::get(), $_GET['search_name']) : '';
+        $search_location = isset($_GET['search_location']) ? mysqli_real_escape_string(HelpDB::get(), $_GET['search_location']) : '';
+        $search_employee = isset($_GET['search_employee']) ? mysqli_real_escape_string(HelpDB::get(), $_GET['search_employee']) : '';
+        $search_client = isset($_GET['search_client']) ? mysqli_real_escape_string(HelpDB::get(), $_GET['search_client']) : '';
+        $search_status = isset($_GET['search_status']) ? mysqli_real_escape_string(HelpDB::get(), $_GET['search_status']) : '';
+        $search_priority = isset($_GET['priority']) ? mysqli_real_escape_string(HelpDB::get(), $_GET['priority']) : '';
+        $search_start_date = isset($_GET['start_date']) ? mysqli_real_escape_string(HelpDB::get(), $_GET['start_date']) : '';
+        $search_end_date = isset($_GET['end_date']) ? mysqli_real_escape_string(HelpDB::get(), $_GET['end_date']) : '';
         $dates_searched = isset($_GET['dates']) ? $_GET['dates'] : [];
-        $search_archived = isset($_GET['search_archived']) ? mysqli_real_escape_string($database, $_GET['search_archived']) : '';
+        $search_archived = isset($_GET['search_archived']) ? mysqli_real_escape_string(HelpDB::get(), $_GET['search_archived']) : '';
 
 
         // Query the archived_location_id values for the given sitenumber
         $archived_location_ids = array();
         $arch_location_query = "SELECT archived_location_id FROM locations WHERE sitenumber = '$search_location'";
-        $arch_location_result = $database->query($arch_location_query);
+        $arch_location_result = HelpDB::get()->query($arch_location_query);
         if ($arch_location_result->num_rows > 0) {
             while ($arch_row = $arch_location_result->fetch_assoc()) {
                 $archived_location_ids[] = $arch_row['archived_location_id'];
@@ -47,11 +47,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         }
         require_once('search_query_builder.php');
         // Execute the SQL query to search for matching tickets
-        $ticket_result = mysqli_query($database, $ticket_query);
+        $ticket_result = mysqli_query(HelpDB::get(), $ticket_query);
         if ($search_archived == 1) {
             //include archived tickets in search
             require_once('search_archived_query_builder.php');
-            $old_ticket_result = mysqli_query($swdb, $old_ticket_query);
+            $old_ticket_result = mysqli_query(SolarWindsDB::get(), $old_ticket_query);
         }
 
         // Combine the results from both queries into a single array
@@ -70,10 +70,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
 // Fetch the list of usernames from the users table
 $usernamesQuery = "SELECT username,is_tech FROM users ORDER BY username ASC";
-$usernamesResult = $database->execute_query($usernamesQuery);
+$usernamesResult = HelpDB::get()->execute_query($usernamesQuery);
 
 if (!$usernamesResult) {
-    die('Error fetching usernames: ' . mysqli_error($database));
+    die('Error fetching usernames: ' . mysqli_error(HelpDB::get()));
 }
 
 // Store the usernames in an array
@@ -93,9 +93,7 @@ asort($techusernames);
 // TODO could cache these
 function get_client_name_from_id(string $client_sw_id)
 {
-    global $swdb;
-
-    $client_name_result = $swdb->execute_query("SELECT FIRST_NAME, LAST_NAME FROM client WHERE CLIENT_ID = ?", [$client_sw_id]);
+    $client_name_result = SolarWindsDB::get()->execute_query("SELECT FIRST_NAME, LAST_NAME FROM client WHERE CLIENT_ID = ?", [$client_sw_id]);
     $client_name_data = mysqli_fetch_assoc($client_name_result);
     $client_name = trim($client_name_data["FIRST_NAME"]) . " " . trim($client_name_data["LAST_NAME"]);
 
@@ -105,9 +103,7 @@ function get_client_name_from_id(string $client_sw_id)
 // TODO could cache these
 function get_tech_name_from_id(string $tech_sw_id)
 {
-    global $swdb;
-
-    $tech_name_result = $swdb->execute_query("SELECT FIRST_NAME, LAST_NAME FROM tech WHERE CLIENT_ID = ?", [$tech_sw_id]);
+    $tech_name_result = SolarWindsDB::get()->execute_query("SELECT FIRST_NAME, LAST_NAME FROM tech WHERE CLIENT_ID = ?", [$tech_sw_id]);
     $tech_name_data = mysqli_fetch_assoc($tech_name_result);
     $tech_name = trim($tech_name_data["FIRST_NAME"]) . " " . trim($tech_name_data["LAST_NAME"]);
 
@@ -117,13 +113,12 @@ function get_tech_name_from_id(string $tech_sw_id)
 // TODO could cache these
 function get_location_name_from_id(int $location_sw_id, $archived)
 {
-    global $database;
     $location_name = "";
 
     if ($archived) {
-        $location_name_result = $database->execute_query("SELECT location_name FROM locations WHERE archived_location_id = ?", [$location_sw_id]);
+        $location_name_result = HelpDB::get()->execute_query("SELECT location_name FROM locations WHERE archived_location_id = ?", [$location_sw_id]);
     } else {
-        $location_name_result = $database->execute_query("SELECT location_name FROM locations WHERE sitenumber = ?", [$location_sw_id]);
+        $location_name_result = HelpDB::get()->execute_query("SELECT location_name FROM locations WHERE sitenumber = ?", [$location_sw_id]);
     }
 
     $location_name_data = mysqli_fetch_assoc($location_name_result);
@@ -174,7 +169,7 @@ function sortByDate($x, $y)
                 <?php
                 // Query the locations table to get the departments
                 $department_query = "SELECT * FROM locations WHERE is_department = TRUE ORDER BY location_name ASC";
-                $department_result = $database->execute_query($department_query);
+                $department_result = HelpDB::get()->execute_query($department_query);
 
                 // Create a "Department" optgroup and create an option for each department
                 echo '<optgroup label="Department">';
@@ -189,7 +184,7 @@ function sortByDate($x, $y)
 
                 // Query the locations table to get the locations
                 $location_query = "SELECT * FROM locations WHERE is_department = FALSE ORDER BY location_name ASC";
-                $location_result = $database->execute_query($location_query);
+                $location_result = HelpDB::get()->execute_query($location_query);
 
                 // Create a "Location" optgroup and create an option for each location
                 echo '<optgroup label="Location">';
@@ -285,7 +280,7 @@ function sortByDate($x, $y)
                         $notes_query = "SELECT creator, note FROM help.notes WHERE linked_id = ? ORDER BY
                         (CASE WHEN date_override IS NULL THEN created ELSE date_override END) DESC
                     ";
-                        $notes_stmt = mysqli_prepare($database, $notes_query);
+                        $notes_stmt = mysqli_prepare(HelpDB::get(), $notes_query);
                         $creator = null;
                         $note_data = null;
                         if ($notes_stmt) {
@@ -330,7 +325,7 @@ function sortByDate($x, $y)
                                 } else {
                                     $request_type_id = $row['request_type_id'];
                                     $request_type_query = "SELECT request_name FROM request_type WHERE request_id = ?";
-                                    $request_type_query_result = $database->execute_query($request_type_query, [$request_type_id]);
+                                    $request_type_query_result = HelpDB::get()->execute_query($request_type_query, [$request_type_id]);
                                     $request_type_name = mysqli_fetch_assoc($request_type_query_result)['request_name'];
                                     echo $request_type_name;
                                 }
@@ -354,7 +349,7 @@ function sortByDate($x, $y)
                                 $all_notes = [];
 
                                 $tech_notes_query = "SELECT TECHNICIAN_ID, NOTE_TEXT, CREATION_DATE, HIDDEN, TECH_NOTE_DATE, BILLING_MINUTES FROM TECH_NOTE WHERE JOB_TICKET_ID = ?";
-                                $stmt = mysqli_prepare($swdb, $tech_notes_query);
+                                $stmt = mysqli_prepare(SolarWindsDB::get(), $tech_notes_query);
                                 mysqli_stmt_bind_param($stmt, "i", $archived_ticket_id);
                                 mysqli_stmt_execute($stmt);
 
@@ -388,7 +383,7 @@ function sortByDate($x, $y)
                                 mysqli_stmt_close($stmt);
 
                                 $client_notes_query = "SELECT CLIENT_ID, TICKET_DATE, NOTE_TEXT FROM CLIENT_NOTE WHERE JOB_TICKET_ID = ?";
-                                $stmt = mysqli_prepare($swdb, $client_notes_query);
+                                $stmt = mysqli_prepare(SolarWindsDB::get(), $client_notes_query);
                                 mysqli_stmt_bind_param($stmt, "i", $archived_ticket_id);
                                 mysqli_stmt_execute($stmt);
 
@@ -431,7 +426,7 @@ function sortByDate($x, $y)
                             <td data-cell="Category">
                                 <?php
                                 // $request_type_query = "SELECT request_name FROM request_type WHERE archived_request_ID = " . $row['PROBLEM_TYPE_ID'];
-                                // $request_type_query_result = mysqli_query($database, $request_type_query);
+                                // $request_type_query_result = mysqli_query(HelpDB::get(), $request_type_query);
                                 // $request_type_name = mysqli_fetch_assoc($request_type_query_result)['request_name'];
                                 //if ($request_type_name != null)
                                 //    echo $request_type_name;

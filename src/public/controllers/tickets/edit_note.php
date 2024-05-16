@@ -10,7 +10,7 @@ $ticket_id = trim(htmlspecialchars($_GET['ticket_id']));
 
 // Fetch the note from the database
 $query = "SELECT * FROM notes WHERE note_id = ?";
-$stmt = mysqli_prepare($database, $query);
+$stmt = mysqli_prepare(HelpDB::get(), $query);
 mysqli_stmt_bind_param($stmt, "i", $note_id);
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
@@ -78,13 +78,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Update the note in the database
     $query = "UPDATE notes SET note = ?, work_hours = ?, work_minutes = ?, travel_hours = ?, travel_minutes = ?, visible_to_client = ?, date_override = ? WHERE note_id = ?";
-    $stmt = mysqli_prepare($database, $query);
+    $stmt = mysqli_prepare(HelpDB::get(), $query);
     mysqli_stmt_bind_param($stmt, "siiiiisi", $updated_note, $work_hours, $work_minutes, $travel_hours, $travel_minutes, $visible_to_client, $updated_date_override, $note_id);
     mysqli_stmt_execute($stmt);
 
     // Log the note update in the ticket_logs table
     $noteColumn = "note";
-    logTicketChange($database, $ticket_id, $_SESSION['username'], $noteColumn, $note['note'], $updated_note);
+    logTicketChange(HelpDB::get(), $ticket_id, $_SESSION['username'], $noteColumn, $note['note'], $updated_note);
 
     // Redirect back to the edit ticket page
     $_SESSION['current_status'] = "Note edited successfully";

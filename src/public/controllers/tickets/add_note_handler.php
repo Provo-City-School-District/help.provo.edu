@@ -66,15 +66,15 @@ if ($add_note_result) {
 }
 
 // Update the last_updated field on the tickets table
-$update_stmt = mysqli_prepare($database, "UPDATE tickets SET last_updated = NOW() WHERE id = ?");
+$update_stmt = mysqli_prepare(HelpDB::get(), "UPDATE tickets SET last_updated = NOW() WHERE id = ?");
 mysqli_stmt_bind_param($update_stmt, "i", $ticket_id);
 mysqli_stmt_execute($update_stmt);
 mysqli_stmt_close($update_stmt);
 
 // Check if the ticket has an alert about not being updated in last 48 hours and clear it since the ticket was just updated.
 
-removeAlert($database, $alert48Message, $ticket_id);
-removeAlert($database, $alert7DayMessage, $ticket_id);
+removeAlert(HelpDB::get(), $alert48Message, $ticket_id);
+removeAlert(HelpDB::get(), $alert7DayMessage, $ticket_id);
 
 // Redirect back to the edit ticket page
 header("Location: edit_ticket.php?id=$ticket_id");

@@ -41,7 +41,7 @@ if (isset($_FILES['attachment'])) {
 foreach ($uploaded_files as $fileName) {
     $field_name = 'Attachment';
     $oldValue = 'NA';
-    logTicketChange($database, $ticket_id, $username, $field_name, $oldValue, $fileName);
+    logTicketChange(HelpDB::get(), $ticket_id, $username, $field_name, $oldValue, $fileName);
 }
 // check for errors
 $failed_files_count = count($failed_files);

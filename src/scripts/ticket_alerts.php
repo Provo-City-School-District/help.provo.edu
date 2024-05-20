@@ -6,7 +6,7 @@ require_once('ticket_utils.php');
 $today = new DateTime();
 
 // insert an alert into the alerts table if it doesn't already exist
-function insertAlertIfNotExists(HelpDB::get(), $ticket, $alertMessage, $alertLevel, $superVisorAlert)
+function insertAlertIfNotExists($database, $ticket, $alertMessage, $alertLevel, $superVisorAlert)
 {
     // Prepare a SQL statement to select alerts with the same ticket_id, employee, and message
     $selectAlertsQuery = "SELECT 1 FROM alerts WHERE ticket_id = ? AND employee = ? AND message = ?";

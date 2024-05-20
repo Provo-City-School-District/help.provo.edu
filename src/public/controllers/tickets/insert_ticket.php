@@ -117,8 +117,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 	if (isset($assigned_tech)) {
 		$techusernames = get_tech_usernames();
-        
-        log_app(LOG_INFO, $assigned_tech);
 		if ($assigned_tech != "unassigned" && !in_array($assigned_tech, $techusernames)) {
 			log_app(LOG_ERR, "Assigned tech was not an actual tech. Aborting ticket creation...");
 			die;

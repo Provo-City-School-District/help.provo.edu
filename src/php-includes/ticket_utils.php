@@ -120,6 +120,10 @@ function create_note(
         return false;
     }
 
+    if ($work_hours < 0 || $work_minutes < 0 || $travel_hours < 0 || $travel_minutes < 0) {
+        return false;
+    }
+
     $visible_to_client_intval = intval($visible_to_client);
 
     // Insert the new note into the database

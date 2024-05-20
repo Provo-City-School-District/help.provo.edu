@@ -163,5 +163,3 @@ foreach ($oldTickets as $oldTicket) {
         insertAlertIfNotExists(HelpDB::get(), $oldTicket, $pastDueMessage, 'crit', 0);
     }
 }
-
-HelpDB::get()->close();

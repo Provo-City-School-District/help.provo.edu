@@ -26,7 +26,7 @@ if (isset($form_task_required)) {
     $task_required = 1;
 }
 
-$res = $database->execute_query("INSERT INTO help.ticket_tasks (ticket_id, description, required, completed) VALUES (?, ?, ?, ?)", [$ticket_id, $ticket_desc, $task_required, $task_complete]);
-logTicketChange($database, $ticket_id, $username, "Task \"$ticket_desc\" created", "", "");
+$res = HelpDB::get()->execute_query("INSERT INTO help.ticket_tasks (ticket_id, description, required, completed) VALUES (?, ?, ?, ?)", [$ticket_id, $ticket_desc, $task_required, $task_complete]);
+logTicketChange(HelpDB::get(), $ticket_id, $username, "Task \"$ticket_desc\" created", "", "");
 header("Location: edit_ticket.php?id=$ticket_id");
 exit();

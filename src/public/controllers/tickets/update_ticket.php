@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $updatedSendBCCEmails = isset($_POST['send_bcc_emails']) ? 1 : 0;
 
     if ($updatedStatus == "resolved") {
-        $notes_result = $database->execute_query("SELECT COUNT(*) as count FROM notes WHERE linked_id = ?", [$ticket_id]);
+        $notes_result = HelpDB::get()->execute_query("SELECT COUNT(*) as count FROM notes WHERE linked_id = ?", [$ticket_id]);
         $row = mysqli_fetch_assoc($notes_result);
         if ($row['count'] == 0) {
             // Stop the resolving process and display an error message
@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Prevent ticket from being closed in any way if tasks are not complete
     if ($updatedStatus == "resolved" || $updatedStatus == "closed") {
-        $tasks_result = $database->execute_query("SELECT COUNT(*) as count FROM ticket_tasks WHERE (ticket_id = ? AND required = 1 AND completed != 1)", [$ticket_id]);
+        $tasks_result = HelpDB::get()->execute_query("SELECT COUNT(*) as count FROM ticket_tasks WHERE (ticket_id = ? AND required = 1 AND completed != 1)", [$ticket_id]);
         $row = mysqli_fetch_assoc($tasks_result);
         if ($row['count'] != 0) {
             // Stop the resolving process and display an error message
@@ -112,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Get the old ticket data
     $old_ticket_query = "SELECT * FROM tickets WHERE id = ?";
-    $old_ticket_stmt = mysqli_prepare($database, $old_ticket_query);
+    $old_ticket_stmt = mysqli_prepare(HelpDB::get(), $old_ticket_query);
     mysqli_stmt_bind_param($old_ticket_stmt, "i", $ticket_id);
     mysqli_stmt_execute($old_ticket_stmt);
     $old_ticket_result = mysqli_stmt_get_result($old_ticket_stmt);
@@ -172,10 +172,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ];
 
     // Execute the update queries
-    $updateTicketResult = $database->execute_query($update_ticket_query, $update_ticket_query_vars);
+    $updateTicketResult = HelpDB::get()->execute_query($update_ticket_query, $update_ticket_query_vars);
 
     if (!$updateTicketResult) {
-        die('Error updating ticket: ' . mysqli_error($database));
+        die('Error updating ticket: ' . mysqli_error(HelpDB::get()));
     }
 
     // Columns for the ticket_logs table
@@ -196,23 +196,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Log the ticket changes and build message of changes for email
     if (isset($old_ticket_data['priority'], $updatedPriority) && $old_ticket_data['priority'] != $updatedPriority) {
-        logTicketChange($database, $ticket_id, $updatedby, $priorityColumn, $old_ticket_data['priority'], $updatedPriority);
+        logTicketChange(HelpDB::get(), $ticket_id, $updatedby, $priorityColumn, $old_ticket_data['priority'], $updatedPriority);
         $changesMessage .= "<li>Changed Priority from " . $priorityTypes[$old_ticket_data['priority']] . " to " . $priorityTypes[$updatedPriority] . "</li>";
     }
 
     if (isset($old_ticket_data['request_type_id'], $updatedRequestType) && $old_ticket_data['request_type_id'] != $updatedRequestType) {
-        logTicketChange($database, $ticket_id, $updatedby, $requestTypeColumn, $old_ticket_data['request_type_id'], $updatedRequestType);
+        logTicketChange(HelpDB::get(), $ticket_id, $updatedby, $requestTypeColumn, $old_ticket_data['request_type_id'], $updatedRequestType);
         $changesMessage .= "<li>Changed Request Type from '" . request_name_for_type($old_ticket_data['request_type_id']) . "' to '" . request_name_for_type($updatedRequestType) . "'</li>";
     }
 
     if (isset($old_ticket_data['client'], $updatedClient) && $old_ticket_data['client'] != $updatedClient) {
-        logTicketChange($database, $ticket_id, $updatedby, $clientColumn, $old_ticket_data['client'], $updatedClient);
+        logTicketChange(HelpDB::get(), $ticket_id, $updatedby, $clientColumn, $old_ticket_data['client'], $updatedClient);
         $changesMessage .= "<li>Changed Client from " . $old_ticket_data['client'] . " to " . $updatedClient . "</li>";
         $old_client = email_address_from_username($old_ticket_data['client']);
     }
 
     if (isset($old_ticket_data['employee'], $updatedEmployee) && $old_ticket_data['employee'] != $updatedEmployee) {
-        logTicketChange($database, $ticket_id, $updatedby, $employeeColumn, $old_ticket_data['employee'], $updatedEmployee);
+        logTicketChange(HelpDB::get(), $ticket_id, $updatedby, $employeeColumn, $old_ticket_data['employee'], $updatedEmployee);
 
         $assigned_tech_changed = true;
 
@@ -226,59 +226,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $changesMessage .= "<li>Changed Employee from " . $old_ticket_data['employee'] . " to " . $updatedEmployee . "</li>";
         // If the ticket was re-assigned, remove the alert
-        removeAlert($database, $pastDueMessage, $ticket_id);
-        removeAlert($database, $alert48Message, $ticket_id);
-        removeAlert($database, $alert7DayMessage, $ticket_id);
-        removeAlert($database, $alert15DayMessage, $ticket_id);
-        removeAlert($database, $alert20DayMessage, $ticket_id);
+        removeAlert(HelpDB::get(), $pastDueMessage, $ticket_id);
+        removeAlert(HelpDB::get(), $alert48Message, $ticket_id);
+        removeAlert(HelpDB::get(), $alert7DayMessage, $ticket_id);
+        removeAlert(HelpDB::get(), $alert15DayMessage, $ticket_id);
+        removeAlert(HelpDB::get(), $alert20DayMessage, $ticket_id);
     }
 
     if (isset($old_ticket_data['location'], $updatedLocation) && $old_ticket_data['location'] != $updatedLocation) {
-        logTicketChange($database, $ticket_id, $updatedby, $locationColumn, $old_ticket_data['location'], $updatedLocation);
+        logTicketChange(HelpDB::get(), $ticket_id, $updatedby, $locationColumn, $old_ticket_data['location'], $updatedLocation);
         $changesMessage .= "<li>Changed Location from " . $old_ticket_data['location'] . " to " . $updatedLocation . "</li>";
     }
 
     if (isset($old_ticket_data['room'], $updatedRoom) && $old_ticket_data['room'] != $updatedRoom) {
-        logTicketChange($database, $ticket_id, $updatedby, $roomColumn, $old_ticket_data['room'], $updatedRoom);
+        logTicketChange(HelpDB::get(), $ticket_id, $updatedby, $roomColumn, $old_ticket_data['room'], $updatedRoom);
         $changesMessage .= "<li>Changed Room from " . $old_ticket_data['room'] . " to " . $updatedRoom . "</li>";
     }
 
     if (isset($old_ticket_data['name'], $updatedName) && $old_ticket_data['name'] != $updatedName) {
-        logTicketChange($database, $ticket_id, $updatedby, $nameColumn, $old_ticket_data['name'], $updatedName);
+        logTicketChange(HelpDB::get(), $ticket_id, $updatedby, $nameColumn, $old_ticket_data['name'], $updatedName);
         $changesMessage .= "<li>Changed Subject from " . $old_ticket_data['name'] . " to " . $updatedName . "</li>";
     }
 
     if (isset($old_ticket_data['description'], $updatedDescription) && html_entity_decode($old_ticket_data['description']) != html_entity_decode($updatedDescription)) {
-        logTicketChange($database, $ticket_id, $updatedby, $descriptionColumn, $old_ticket_data['description'], $updatedDescription);
+        logTicketChange(HelpDB::get(), $ticket_id, $updatedby, $descriptionColumn, $old_ticket_data['description'], $updatedDescription);
         $changesMessage .= "<li>Changed Description from " . html_entity_decode($old_ticket_data['description']) . " to " . html_entity_decode($updatedDescription) . "</li>";
     }
 
     if (isset($old_ticket_data['due_date'], $updatedDueDate) && $old_ticket_data['due_date'] != $updatedDueDate) {
-        logTicketChange($database, $ticket_id, $updatedby, $dueDateColumn, $old_ticket_data['due_date'], $updatedDueDate);
-        removeAlert($database, $pastDueMessage, $ticket_id);
+        logTicketChange(HelpDB::get(), $ticket_id, $updatedby, $dueDateColumn, $old_ticket_data['due_date'], $updatedDueDate);
+        removeAlert(HelpDB::get(), $pastDueMessage, $ticket_id);
         $changesMessage .= "<li>Changed Due Date from " . $old_ticket_data['due_date'] . " to " . $updatedDueDate . "</li>";
     }
 
     if (isset($old_ticket_data['status'], $updatedStatus) && $old_ticket_data['status'] != $updatedStatus) {
-        logTicketChange($database, $ticket_id, $updatedby, $statusColumn, $old_ticket_data['status'], $updatedStatus);
+        logTicketChange(HelpDB::get(), $ticket_id, $updatedby, $statusColumn, $old_ticket_data['status'], $updatedStatus);
         $changesMessage .= "<li>Changed Status from " . $old_ticket_data['status'] . " to " . $updatedStatus . "</li>";
         if ($updatedStatus == "resolved" || $updatedStatus == "closed") {
             // Check if the ticket has an alert about not being updated in last 48 hours and clear it since the ticket was just updated.
-            removeAlert($database, $alert48Message, $ticket_id);
-            removeAlert($database, $alert7DayMessage, $ticket_id);
-            removeAlert($database, $alert15DayMessage, $ticket_id);
-            removeAlert($database, $alert20DayMessage, $ticket_id);
-            removeAlert($database, $pastDueMessage, $ticket_id);
+            removeAlert(HelpDB::get(), $alert48Message, $ticket_id);
+            removeAlert(HelpDB::get(), $alert7DayMessage, $ticket_id);
+            removeAlert(HelpDB::get(), $alert15DayMessage, $ticket_id);
+            removeAlert(HelpDB::get(), $alert20DayMessage, $ticket_id);
+            removeAlert(HelpDB::get(), $pastDueMessage, $ticket_id);
         }
     }
 
     if (isset($old_ticket_data['phone'], $updatedPhone) && $old_ticket_data['phone'] != $updatedPhone) {
-        logTicketChange($database, $ticket_id, $updatedby, $phoneColumn, $old_ticket_data['phone'], $updatedPhone);
+        logTicketChange(HelpDB::get(), $ticket_id, $updatedby, $phoneColumn, $old_ticket_data['phone'], $updatedPhone);
         $changesMessage .= "<li>Changed Phone from " . $old_ticket_data['phone'] . " to " . $updatedPhone . "</li>";
     }
 
     if (isset($old_ticket_data['cc_emails'], $updatedCCEmails) && $old_ticket_data['cc_emails'] != $updatedCCEmails) {
-        logTicketChange($database, $ticket_id, $updatedby, $ccEmailsColumn, $old_ticket_data['cc_emails'], $updatedCCEmails);
+        logTicketChange(HelpDB::get(), $ticket_id, $updatedby, $ccEmailsColumn, $old_ticket_data['cc_emails'], $updatedCCEmails);
         if ($old_ticket_data['cc_emails'] == "") {
             $changesMessage .= "<li>Added CC Emails " . $updatedCCEmails . "</li>";
         } else {
@@ -287,7 +287,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (isset($old_ticket_data['bcc_emails'], $updatedBCCEmails) && $old_ticket_data['bcc_emails'] != $updatedBCCEmails) {
-        logTicketChange($database, $ticket_id, $updatedby, $bccEmailsColumn, $old_ticket_data['bcc_emails'], $updatedBCCEmails);
+        logTicketChange(HelpDB::get(), $ticket_id, $updatedby, $bccEmailsColumn, $old_ticket_data['bcc_emails'], $updatedBCCEmails);
         if ($old_ticket_data['bcc_emails']) {
             $changesMessage .= "<li>Added BCC Emails " . $updatedBCCEmails . "</li>";
         } else {
@@ -296,16 +296,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (isset($old_ticket_data['parent_ticket'], $updatedParentTicket) && $old_ticket_data['parent_ticket'] != $updatedParentTicket) {
-        logTicketChange($database, $ticket_id, $updatedby, $parentTicketColumn, $old_ticket_data['parent_ticket'], $updatedParentTicket);
+        logTicketChange(HelpDB::get(), $ticket_id, $updatedby, $parentTicketColumn, $old_ticket_data['parent_ticket'], $updatedParentTicket);
         $changesMessage .= "<li>Changed Parent Ticket from " . $old_ticket_data['parent_ticket'] . " to " . $updatedParentTicket . "</li>";
     }
 
 
     // Check if the ticket has an alert about not being updated in last 48 hours and clear it since the ticket was just updated.
-    removeAlert($database, $alert48Message, $ticket_id);
-    removeAlert($database, $alert7DayMessage, $ticket_id);
-    removeAlert($database, $alert15DayMessage, $ticket_id);
-    removeAlert($database, $alert20DayMessage, $ticket_id);
+    removeAlert(HelpDB::get(), $alert48Message, $ticket_id);
+    removeAlert(HelpDB::get(), $alert7DayMessage, $ticket_id);
+    removeAlert(HelpDB::get(), $alert15DayMessage, $ticket_id);
+    removeAlert(HelpDB::get(), $alert20DayMessage, $ticket_id);
 
 
     // After successfully updating the ticket, set a success message;
@@ -407,7 +407,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $template_client->description = html_entity_decode($updatedDescription);
 
     $select_attachments_query = "SELECT attachment_path from help.tickets WHERE id = ?";
-    $stmt = mysqli_prepare($database, $select_attachments_query);
+    $stmt = mysqli_prepare(HelpDB::get(), $select_attachments_query);
     mysqli_stmt_bind_param($stmt, "i", $ticket_id);
     mysqli_stmt_execute($stmt);
     $result = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
@@ -538,7 +538,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $msg .= " " . $send_to_msg_states[$state_idx];
     }
 
-    logTicketChange($database, $ticket_id, $_SESSION["username"], "sent_emails", "N/A", $sent_tech_email_log_msg . " " . $sent_client_email_log_msg);
+    logTicketChange(HelpDB::get(), $ticket_id, $_SESSION["username"], "sent_emails", "N/A", $sent_tech_email_log_msg . " " . $sent_client_email_log_msg);
 
 
     $_SESSION['current_status'] = $msg;

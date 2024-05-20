@@ -57,7 +57,7 @@ if (isset($_GET['code'])) {
         $email = $_SESSION['login_email'];
         $email = strtolower($email);
         $email = trim($email);
-        $username = str_replace('@provo.edu', '', $email);
+        $username = strtolower(str_replace('@provo.edu', '', $email));
 
         $_SESSION['username'] = $username;
         $_SESSION['last_timestamp'] = time();
@@ -83,7 +83,7 @@ if (isset($_GET['code'])) {
             create_user_in_local_db($username);
         }
         // Query Local user information
-        $local_query_results = $database->execute_query("SELECT * FROM users WHERE username = ?", [$_SESSION["username"]]);
+        $local_query_results = HelpDB::get()->execute_query("SELECT * FROM users WHERE username = ?", [$_SESSION["username"]]);
         $local_query_data = mysqli_fetch_assoc($local_query_results);
 
         // if user is still not found, LDAP failed to insert user into local database
@@ -127,13 +127,13 @@ if (isset($_GET['code'])) {
 
         $loc = get_client_location($username);
         // Update login timestamp and add google sso code to user record.
-        $update_stmt = $database->prepare("UPDATE users SET last_login = NOW(), gsso = ?, ldap_location = ? WHERE email = ?");
+        $update_stmt = HelpDB::get()->prepare("UPDATE users SET last_login = NOW(), gsso = ?, ldap_location = ? WHERE email = ?");
         $update_stmt->bind_param("sis", $user_ucode, $loc, $email);
         $update_stmt->execute();
         // Store the last login time in the session
         $_SESSION['last_login'] = date("Y-m-d H:i:s");
         if ($update_stmt === false) {
-            $error_message = 'Prepare failed: (' . $database->errno . ') ' . $database->error;
+            $error_message = 'Prepare failed: (' . HelpDB::get()->errno . ') ' . HelpDB::get()->error;
             error_log($error_message, 0);
         } else {
             $update_stmt->bind_param("sis", $user_ucode, $loc, $email);

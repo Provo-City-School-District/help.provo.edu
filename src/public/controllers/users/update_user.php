@@ -34,17 +34,17 @@ $man_location = trim(htmlspecialchars($_POST['man_location']));
 
 // Update the user data in the database
 $query = "UPDATE users SET firstname = ?, lastname = ?, email = ?, ifasid = ?, is_admin = ?, is_tech = ?,is_supervisor = ?,is_location_manager = ?,location_manager_sitenumber = ?, can_view_tickets = ?, can_create_tickets = ?, can_edit_tickets = ?,can_delete_tickets = ?,supervisor_username = ? WHERE id = ?";
-$stmt = mysqli_prepare($database, $query);
+$stmt = mysqli_prepare(HelpDB::get(), $query);
 mysqli_stmt_bind_param($stmt, "ssssiiiiiiiiisi", $firstname, $lastname, $email, $ifasid, $is_admin, $is_tech, $is_supervisor, $is_loc_man, $man_location, $can_view_tickets, $can_create_tickets, $can_edit_tickets, $can_delete_tickets, $supervisor_username, $user_id);
 mysqli_stmt_execute($stmt);
 
 // Check if the query was successful
 if (!$stmt) {
-    die("Query failed: " . mysqli_error($database));
+    die("Query failed: " . mysqli_error(HelpDB::get()));
 }
 
 // Close the database connection
-mysqli_close($database);
+mysqli_close(HelpDB::get());
 
 // Redirect back to the manage user page
 $_SESSION['user_updated'] = 'User updated successfully';

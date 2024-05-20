@@ -22,14 +22,14 @@ if (!user_is_tech($username)) {
 
 log_app(LOG_INFO, "[delete_attachment.php] Deleting attachment $attachment_path on ticket=$ticket_id");
 
-$fetch_attachment_res = $database->execute_query("SELECT attachment_path FROM help.tickets WHERE id = ?", [$ticket_id]);
+$fetch_attachment_res = HelpDB::get()->execute_query("SELECT attachment_path FROM help.tickets WHERE id = ?", [$ticket_id]);
 
 $old_attachment_path = $fetch_attachment_res->fetch_assoc()["attachment_path"];
 $split_old_attachment_path = explode(',', $old_attachment_path);
 $split_new_attachment_path = array_diff($split_old_attachment_path, [$attachment_path]);
 $new_attachment_path = implode(',', $split_new_attachment_path);
 
-$update_attachment_res = $database->execute_query("UPDATE help.tickets SET attachment_path = ? WHERE id = ?", [$new_attachment_path, $ticket_id]);
+$update_attachment_res = HelpDB::get()->execute_query("UPDATE help.tickets SET attachment_path = ? WHERE id = ?", [$new_attachment_path, $ticket_id]);
 
 $real_filename = basename($attachment_path);
 $real_user_path = realpath(from_root("/../uploads/$real_filename"));

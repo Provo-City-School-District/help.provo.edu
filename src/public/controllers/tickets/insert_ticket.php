@@ -116,20 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 	if (isset($assigned_tech)) {
-		$usernamesResult = $database->execute_query("SELECT username,is_tech FROM users WHERE is_tech = 1");
-
-		if (!$usernamesResult) {
-			die('Error fetching usernames: ' . mysqli_error($database));
-		}
-
-		// Store the usernames in an array
-		$techusernames = [];
-		while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
-			if ($usernameRow['is_tech'] == 1) {
-				$techusernames[] = $usernameRow['username'];
-			}
-		}
-
+		$techusernames = get_tech_usernames();
 		if ($assigned_tech != "unassigned" && !in_array($assigned_tech, $techusernames)) {
 			log_app(LOG_ERR, "Assigned tech was not an actual tech. Aborting ticket creation...");
 			die;
@@ -142,10 +129,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				VALUES (?, ?, ?, ?, ?, ?, ?,'open', ?, ?, ?, ?, ?,0,10,?)";
 
 	// Prepare the SQL statement
-	$stmt = mysqli_prepare($database, $insertQuery);
+	$stmt = mysqli_prepare(HelpDB::get(), $insertQuery);
 
 	if ($stmt === false) {
-		die('Error preparing insert query: ' . mysqli_error($database));
+		die('Error preparing insert query: ' . mysqli_error(HelpDB::get()));
 	}
 
 	$uploadPaths_final = [];
@@ -224,7 +211,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$_SESSION['current_status'] = "Ticket created successfully.";
 		$_SESSION['status_type'] = "success";
 		// After successfully inserting the ticket, fetch the ID of the new ticket
-		$ticketId = mysqli_insert_id($database);
+		$ticketId = mysqli_insert_id(HelpDB::get());
 		$template = new Template(from_root("/includes/templates/ticket_creation_receipt.phtml"));
 		$template->ticket_id = $ticketId;
 		$template->site_url = getenv('ROOTDOMAIN');

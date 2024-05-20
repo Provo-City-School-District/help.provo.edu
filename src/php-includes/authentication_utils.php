@@ -3,10 +3,9 @@ require_once("helpdbconnect.php");
 require_once("functions.php");
 function user_exists_locally(string $username)
 {
-    global $database;
 
     $check_query = "SELECT * FROM users WHERE username = ?";
-    $result = $database->execute_query($check_query, [$username]);
+    $result = HelpDB::get()->execute_query($check_query, [$username]);
 
     // If a row is returned, the user exists
     return mysqli_num_rows($result) > 0;
@@ -27,7 +26,6 @@ enum CreateLocalUserStatus
 // Returns CreateLocalUserStatus depending on error (or success)
 function create_user_in_local_db($username)
 {
-    global $database;
 
     $ldap_dn = getenv('LDAP_DN');
     $ldap_user = getenv('LDAP_USER');
@@ -78,10 +76,10 @@ function create_user_in_local_db($username)
         return CreateLocalUserStatus::UserAlreadyExists;
 
     $insert_query = "INSERT INTO users (username, email, lastname, firstname, ifasid) VALUES (?, ?, ?, ?, ?)";
-    $insert_result = $database->execute_query($insert_query, [$username, $email, $lastname, $firstname, $employee_id]);
+    $insert_result = HelpDB::get()->execute_query($insert_query, [$username, $email, $lastname, $firstname, $employee_id]);
 
     if (!$insert_result) {
-        $current_mysqli_error = mysqli_error($database);
+        $current_mysqli_error = mysqli_error(HelpDB::get());
         log_app(LOG_ERR, "Insert query error: $current_mysqli_error");
         return CreateLocalUserStatus::InsertQueryFailed;
     }

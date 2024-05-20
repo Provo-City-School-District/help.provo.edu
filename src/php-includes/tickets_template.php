@@ -37,7 +37,7 @@ function display_tickets_table($tickets, $database)
 
         // Query the sites table to get the location name
         $location_query = "SELECT location_name FROM locations WHERE sitenumber = ?";
-        $loc_stmt = mysqli_prepare($database, $location_query);
+        $loc_stmt = mysqli_prepare(HelpDB::get(), $location_query);
 
         if ($loc_stmt) {
             mysqli_stmt_bind_param($loc_stmt, "s", $ticket["location"]);
@@ -54,14 +54,14 @@ function display_tickets_table($tickets, $database)
         if ($ticket['request_type_id'] === '0') {
             $request_type_name = "Other";
         } else {
-            $request_type_query_result = $database->execute_query("SELECT request_name FROM request_type WHERE request_id = ?", [$ticket['request_type_id']]);
+            $request_type_query_result = HelpDB::get()->execute_query("SELECT request_name FROM request_type WHERE request_id = ?", [$ticket['request_type_id']]);
             $request_type_name = mysqli_fetch_assoc($request_type_query_result)['request_name'];
         }
 
         $notes_query = "SELECT creator, note FROM help.notes WHERE linked_id = ? ORDER BY
             (CASE WHEN date_override IS NULL THEN created ELSE date_override END) DESC
         ";
-        $notes_stmt = mysqli_prepare($database, $notes_query);
+        $notes_stmt = mysqli_prepare(HelpDB::get(), $notes_query);
         $creator = null;
         $note_data = null;
         if ($notes_stmt) {

@@ -13,7 +13,7 @@ require_once('helpdbconnect.php');
 
 
 // Execute the SELECT query to retrieve all users from the users table
-$user_result = $database->execute_query("SELECT * FROM users ORDER BY username ASC");
+$user_result = HelpDB::get()->execute_query("SELECT * FROM users ORDER BY username ASC");
 // Check if the query was successful
 if (!$user_result) {
     die("Query failed: " . mysqli_error($conn));
@@ -46,8 +46,8 @@ GROUP BY tickets.id
 ORDER BY tickets.id ASC
 STR;
 
-$ticket_result = $database->execute_query($ticket_query);
-display_tickets_table($ticket_result, $database);
+$ticket_result = HelpDB::get()->execute_query($ticket_query);
+display_tickets_table($ticket_result, HelpDB::get());
 ?>
 
 <h2>All Users</h2>
@@ -101,7 +101,7 @@ display_tickets_table($ticket_result, $database);
 <h1>Exclude Days</h1>
 <?php
 // Fetch the exclude days from the database. only displaying current and future exclude days
-$exclude_result = $database->execute_query("SELECT * FROM exclude_days WHERE exclude_day >= CURDATE() ORDER BY exclude_day");
+$exclude_result = HelpDB::get()->execute_query("SELECT * FROM exclude_days WHERE exclude_day >= CURDATE() ORDER BY exclude_day");
 ?>
 <table class="exclude_days nst">
     <thead>

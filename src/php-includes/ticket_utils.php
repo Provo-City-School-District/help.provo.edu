@@ -43,8 +43,7 @@ function split_email_string_to_arr(string $email_str)
 // Function to check if there is an excluded date between two dates
 function hasExcludedDate($start_date, $end_date)
 {
-    global $database;
-    $exclude_result = $database->execute_query("SELECT COUNT(*) FROM exclude_days WHERE exclude_day BETWEEN ? AND ?", [$start_date, $end_date]);
+    $exclude_result = HelpDB::get()->execute_query("SELECT COUNT(*) FROM exclude_days WHERE exclude_day BETWEEN ? AND ?", [$start_date, $end_date]);
     $count = mysqli_fetch_array($exclude_result)[0];
     return $count;
 }
@@ -58,8 +57,7 @@ function isWeekend($date)
 
 function isExcludedDate($date)
 {
-    global $database;
-    $exclude_result = $database->query("SELECT COUNT(*) as count FROM exclude_days WHERE exclude_day = '$date'");
+    $exclude_result = HelpDB::get()->query("SELECT COUNT(*) as count FROM exclude_days WHERE exclude_day = '$date'");
     $row = $exclude_result->fetch_assoc();
 
     if ($row['count'] > 0) {
@@ -108,8 +106,7 @@ function create_note(
     string $date_override = null,
     string $email_msg_id = null,
 ) {
-    global $database;
-
+    
     $ticket_id_clean = trim(htmlspecialchars($ticket_id));
     $note_content_clean = trim(htmlspecialchars($note_content));
     $username_clean = trim(htmlspecialchars($username));
@@ -127,7 +124,7 @@ function create_note(
 
     // Insert the new note into the database
     $query = "INSERT INTO notes (linked_id, created, creator, note, work_hours, work_minutes, travel_hours, travel_minutes, visible_to_client, date_override, email_msg_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?)";
-    $insert_stmt = mysqli_prepare($database, $query);
+    $insert_stmt = mysqli_prepare(HelpDB::get(), $query);
     mysqli_stmt_bind_param(
         $insert_stmt,
         "isssiiiiiss",
@@ -148,7 +145,7 @@ function create_note(
 
     // Log the creation of the new note in the ticket_logs table
     $log_query = "INSERT INTO ticket_logs (ticket_id, user_id, field_name, old_value, new_value, created_at) VALUES (?, ?, ?, NULL, ?, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'))";
-    $log_stmt = mysqli_prepare($database, $log_query);
+    $log_stmt = mysqli_prepare(HelpDB::get(), $log_query);
 
     $notecolumn = "note";
     mysqli_stmt_bind_param($log_stmt, "isss", $ticket_id, $username, $notecolumn, $note_content_clean);
@@ -169,14 +166,14 @@ function create_note(
         in_array($user_email, $cc_emails) ||
         in_array($user_email, $bcc_emails)) && !user_is_tech($username)) {
         // set priority to standard
-        $result = $database->execute_query("UPDATE tickets SET tickets.priority = 10 WHERE tickets.id = ?", [$ticket_id_clean]);
+        $result = HelpDB::get()->execute_query("UPDATE tickets SET tickets.priority = 10 WHERE tickets.id = ?", [$ticket_id_clean]);
         if (!$result) {
             log_app(LOG_ERR, "Failed to update ticket priority for id=$operating_ticket");
             return false;
         }
 
         if (status_for_ticket($ticket_id_clean) == "resolved") {
-            $result = $database->execute_query("UPDATE tickets SET tickets.status = 'open' WHERE tickets.id = ?", [$ticket_id_clean]);
+            $result = HelpDB::get()->execute_query("UPDATE tickets SET tickets.status = 'open' WHERE tickets.id = ?", [$ticket_id_clean]);
             if (!$result) {
                 log_app(LOG_ERR, "Failed to update ticket status for id=$operating_ticket");
                 return false;
@@ -200,8 +197,7 @@ function create_note(
 // Returns true on success, false on failure
 function create_ticket(string $client, string $subject, string $content, string $email_msg_id, int $location_code, int &$created_ticket_id)
 {
-    global $database;
-
+    
     $client_clean = trim(htmlspecialchars($client));
     $subject_clean = limitChars(trim(htmlspecialchars($subject)), 100);
     $content_clean = trim(htmlspecialchars($content));
@@ -211,10 +207,10 @@ function create_ticket(string $client, string $subject, string $content, string 
                 VALUES (?, NULL, ?, ?, ?, ?, ?, 'open', ?, '', '', '', '', 0, 10)";
 
     // Prepare the SQL statement
-    $create_stmt = mysqli_prepare($database, $insertQuery);
+    $create_stmt = mysqli_prepare(HelpDB::get(), $insertQuery);
 
     if ($create_stmt === false) {
-        log_app(LOG_ERR, 'Error preparing insert query: ' . mysqli_error($database));
+        log_app(LOG_ERR, 'Error preparing insert query: ' . mysqli_error(HelpDB::get()));
         return false;
     }
 
@@ -254,7 +250,7 @@ function create_ticket(string $client, string $subject, string $content, string 
     if (mysqli_stmt_execute($create_stmt)) {
         log_app(LOG_INFO, "create_ticket success");
 
-        $created_ticket_id = mysqli_insert_id($database);
+        $created_ticket_id = mysqli_insert_id(HelpDB::get());
         add_ticket_msg_id_mapping($email_msg_id, $created_ticket_id);
         return true;
     } else {
@@ -300,21 +296,19 @@ function removeAlert($database, $message, $ticket_id)
 
 function request_name_for_type($request_type)
 {
-    global $database;
-
+    
     if ($request_type === '0') {
         return "Other";
     } else {
-        $request_type_query_result = $database->execute_query("SELECT request_name FROM request_type WHERE request_id = ?", [$request_type]);
+        $request_type_query_result = HelpDB::get()->execute_query("SELECT request_name FROM request_type WHERE request_id = ?", [$request_type]);
         return mysqli_fetch_assoc($request_type_query_result)['request_name'];
     }
 }
 
 function get_ticket_notes($ticket_id, $limit)
 {
-    global $database;
-
-    $note_stmt = $database->prepare("SELECT * FROM notes WHERE linked_id = ? ORDER BY created DESC LIMIT ?");
+    
+    $note_stmt = HelpDB::get()->prepare("SELECT * FROM notes WHERE linked_id = ? ORDER BY created DESC LIMIT ?");
     $note_stmt->bind_param("ii", $ticket_id, $limit);
     $note_stmt->execute();
 
@@ -324,7 +318,7 @@ function get_ticket_notes($ticket_id, $limit)
     $note_stmt->close();
     // Josh commented out to fix erroring and dying when trying to email from ticket. on 2-5-24
     // Work being done on this issue when things started happening https://github.com/Provo-City-School-District/help.provo.edu/issues/78
-    // $database->close();
+    // HelpDB::get()->close();
 
     return $notes;
 }
@@ -373,9 +367,8 @@ function location_name_from_id(string $site_id)
     if ($site_id == "")
         return "Unknown";
 
-    global $database;
-
-    $location_result = $database->execute_query("SELECT location_name FROM help.locations WHERE sitenumber = ?", [$site_id]);
+    
+    $location_result = HelpDB::get()->execute_query("SELECT location_name FROM help.locations WHERE sitenumber = ?", [$site_id]);
     if (!isset($location_result)) {
         log_app(LOG_ERR, "[location_name_from_id] Failed to get location query result");
     }
@@ -391,9 +384,8 @@ function location_name_from_id(string $site_id)
 
 function assigned_tech_for_ticket(int $ticket_id)
 {
-    global $database;
-
-    $assigned_result = $database->execute_query("SELECT employee FROM help.tickets WHERE tickets.id = ?", [$ticket_id]);
+    
+    $assigned_result = HelpDB::get()->execute_query("SELECT employee FROM help.tickets WHERE tickets.id = ?", [$ticket_id]);
     if (!isset($assigned_result)) {
         log_app(LOG_ERR, "[assigned_tech_for_ticket] Failed to get location query result");
     }
@@ -408,9 +400,8 @@ function assigned_tech_for_ticket(int $ticket_id)
 
 function client_for_ticket(int $ticket_id)
 {
-    global $database;
-
-    $client_result = $database->execute_query("SELECT client FROM help.tickets WHERE tickets.id = ?", [$ticket_id]);
+    
+    $client_result = HelpDB::get()->execute_query("SELECT client FROM help.tickets WHERE tickets.id = ?", [$ticket_id]);
     if (!isset($client_result)) {
         log_app(LOG_ERR, "[client_for_ticket] Failed to get location query result");
     }
@@ -430,8 +421,7 @@ Output: The result set of cc or bcc emails on the ticket
 */
 function emails_for_ticket(int $ticket_id, bool $bcc)
 {
-    global $database;
-
+    
     if ($bcc) {
         $email_type = "bcc_emails";
         $query = "SELECT bcc_emails FROM help.tickets WHERE tickets.id = ?";
@@ -440,7 +430,7 @@ function emails_for_ticket(int $ticket_id, bool $bcc)
         $query = "SELECT cc_emails FROM help.tickets WHERE tickets.id = ?";
     }
 
-    $email_result = $database->execute_query($query, [$ticket_id]);
+    $email_result = HelpDB::get()->execute_query($query, [$ticket_id]);
     if (!isset($email_result)) {
         log_app(LOG_ERR, "[emails_for_ticket] Failed to get result");
     }
@@ -455,9 +445,8 @@ function emails_for_ticket(int $ticket_id, bool $bcc)
 
 function status_for_ticket(int $ticket_id)
 {
-    global $database;
-
-    $status_result = $database->execute_query("SELECT status FROM help.tickets WHERE tickets.id = ?", [$ticket_id]);
+    
+    $status_result = HelpDB::get()->execute_query("SELECT status FROM help.tickets WHERE tickets.id = ?", [$ticket_id]);
     if (!isset($status_result)) {
         log_app(LOG_ERR, "[status_for_ticket] Failed to get status query result");
     }
@@ -488,8 +477,7 @@ function generateUpdateHTML($type, $old_value, $new_value, $action, $id)
 
 function get_parsed_ticket_data($ticket_data)
 {
-    global $database;
-
+    
     $priorityTypes = [1 => "Critical", 3 => "Urgent", 5 => "High", 10 => "Standard", 15 => "Client Response", 30 => "Project", 60 => "Meeting Support"];
 
     $tickets = [];
@@ -512,7 +500,7 @@ function get_parsed_ticket_data($ticket_data)
         $notes_query = "SELECT creator, note FROM help.notes WHERE linked_id = ? ORDER BY
 			(CASE WHEN date_override IS NULL THEN created ELSE date_override END) DESC
 		";
-        $notes_stmt = mysqli_prepare($database, $notes_query);
+        $notes_stmt = mysqli_prepare(HelpDB::get(), $notes_query);
         $creator = null;
         $note_data = null;
         if ($notes_stmt) {
@@ -541,7 +529,7 @@ function get_parsed_ticket_data($ticket_data)
         $tmp["client_last_name"] = $result['lastname'] ?: "";
 
         $location_query = "SELECT location_name FROM locations WHERE sitenumber = ?";
-        $loc_stmt = mysqli_prepare($database, $location_query);
+        $loc_stmt = mysqli_prepare(HelpDB::get(), $location_query);
         $location_name = "";
         if ($loc_stmt) {
             mysqli_stmt_bind_param($loc_stmt, "s", $row["location"]);
@@ -561,7 +549,7 @@ function get_parsed_ticket_data($ticket_data)
         if ($row['request_type_id'] === '0') {
             $request_type_name = "Other";
         } else {
-            $request_type_query_result = $database->execute_query("SELECT request_name FROM request_type WHERE request_id = ?", [$row['request_type_id']]);
+            $request_type_query_result = HelpDB::get()->execute_query("SELECT request_name FROM request_type WHERE request_id = ?", [$row['request_type_id']]);
             $request_type_name = mysqli_fetch_assoc($request_type_query_result)['request_name'];
         }
 
@@ -624,9 +612,8 @@ function ldapspecialchars($string)
 
 function get_tech_usernames()
 {
-    global $database;
-
-    $usernamesResult = $database->execute_query("SELECT username, is_tech FROM users WHERE is_tech = 1 ORDER BY username ASC");
+    
+    $usernamesResult = HelpDB::get()->execute_query("SELECT username, is_tech FROM users WHERE is_tech = 1 ORDER BY username ASC");
     if (!$usernamesResult) {
         log_app(LOG_ERR, "[get_tech_usernames] Failed to query database");
         return [];
@@ -639,6 +626,5 @@ function get_tech_usernames()
             $tmp[] = strtolower($usernameRow['username']);
         }
     }
-
     return $tmp;
 }

@@ -24,7 +24,7 @@ if ($_POST['referer'] == 'profile.php') {
 
     // Update the color_scheme in the database
     $update_user_query = "UPDATE users SET color_scheme = ?, note_order = ?, hide_alerts = ?, ticket_limit = ? WHERE id = ?";
-    $update_user_stmt = mysqli_prepare($database, $update_user_query);
+    $update_user_stmt = mysqli_prepare(HelpDB::get(), $update_user_query);
     mysqli_stmt_bind_param($update_user_stmt, "ssiii", $color_scheme, $note_order, $hide_alerts, $ticket_limit, $user_id);
 
     $res = mysqli_stmt_execute($update_user_stmt);

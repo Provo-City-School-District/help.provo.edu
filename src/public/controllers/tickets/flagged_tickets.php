@@ -26,7 +26,7 @@ $ticket_query = <<<STR
 	GROUP BY tickets.id
 STR;
 
-$ticket_result = $database->execute_query($ticket_query, [$username]);
+$ticket_result = HelpDB::get()->execute_query($ticket_query, [$username]);
 $tickets = get_parsed_ticket_data($ticket_result);
 
 echo $twig->render('flagged_tickets.twig', [

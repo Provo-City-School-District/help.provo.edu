@@ -24,7 +24,7 @@ if (isset($_SESSION['username'])) {
 
 
 $subord_query = "SELECT count(supervisor_username) as supervisor_username FROM users WHERE supervisor_username = ?";
-$subord_stmt = $database->prepare($subord_query);
+$subord_stmt = HelpDB::get()->prepare($subord_query);
 $subord_stmt->bind_param("s", $userId);
 $subord_stmt->execute();
 $subord_result = $subord_stmt->get_result();
@@ -189,7 +189,7 @@ $current_page = $_SERVER['REQUEST_URI'];
                             )
                         STR;
 
-                        $assigned_stmt = mysqli_prepare($database, $num_assigned_tickets_query);
+                        $assigned_stmt = mysqli_prepare(HelpDB::get(), $num_assigned_tickets_query);
                         mysqli_stmt_bind_param($assigned_stmt, "s", $username);
                         $assigned_stmt_succeeded = mysqli_stmt_execute($assigned_stmt);
                         $assigned_res = mysqli_stmt_get_result($assigned_stmt);
@@ -198,7 +198,7 @@ $current_page = $_SERVER['REQUEST_URI'];
                             $num_assigned_tickets = mysqli_num_rows($assigned_res);
 
 
-                        $flagged_stmt = mysqli_prepare($database, $num_flagged_tickets_query);
+                        $flagged_stmt = mysqli_prepare(HelpDB::get(), $num_flagged_tickets_query);
                         mysqli_stmt_bind_param($flagged_stmt, "s", $username);
                         $flagged_stmt_succeeded = mysqli_stmt_execute($flagged_stmt);
                         $flagged_res = mysqli_stmt_get_result($flagged_stmt);

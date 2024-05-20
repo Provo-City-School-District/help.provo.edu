@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     // Insert the exclude day into the database
     $query = "INSERT INTO exclude_days (exclude_day) VALUES (?)";
-    $stmt = mysqli_prepare($database, $query);
+    $stmt = mysqli_prepare(HelpDB::get(), $query);
     mysqli_stmt_bind_param($stmt, "s", $exclude_day);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);

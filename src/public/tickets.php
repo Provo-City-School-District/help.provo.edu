@@ -21,7 +21,7 @@ $tech_ticket_query = <<<STR
     ORDER BY tickets.id ASC
     STR;
 
-$tech_ticket_result = $database->execute_query($tech_ticket_query, [$username]);
+$tech_ticket_result = HelpDB::get()->execute_query($tech_ticket_query, [$username]);
 $my_tickets = get_parsed_ticket_data($tech_ticket_result);
 
 
@@ -34,10 +34,10 @@ $client_ticket_query = <<<STR
     ORDER BY id ASC
 STR;
 
-$client_ticket_result = $database->execute_query($client_ticket_query, [$username, $username]);
+$client_ticket_result = HelpDB::get()->execute_query($client_ticket_query, [$username, $username]);
 $client_tickets = get_parsed_ticket_data($client_ticket_result);
 
-$alert_result = $database->execute_query("SELECT * FROM alerts WHERE employee = ? AND supervisor_alert = 0", [$username]);
+$alert_result = HelpDB::get()->execute_query("SELECT * FROM alerts WHERE employee = ? AND supervisor_alert = 0", [$username]);
 $alerts = get_parsed_alert_data($alert_result);
 
 echo $twig->render('tickets.twig', [

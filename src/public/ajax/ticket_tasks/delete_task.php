@@ -19,7 +19,7 @@ if (!user_is_tech($username)) {
 
 log_app(LOG_INFO, "[delete_task.php] Deleting task id=$task_id");
 
-$update_status_res = $database->execute_query("DELETE FROM help.ticket_tasks WHERE id = ?", [$task_id]);
+$update_status_res = HelpDB::get()->execute_query("DELETE FROM help.ticket_tasks WHERE id = ?", [$task_id]);
 
 if (!$update_status_res) {
     log_app(LOG_ERR, "[delete_task.php] Failed to execute query");

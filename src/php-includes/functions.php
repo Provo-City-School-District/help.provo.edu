@@ -39,11 +39,9 @@ function test_input($data)
 
 function add_ticket_msg_id_mapping(string $message_id, int $ticket_id)
 {
-    global $database;
-
     if (isset($message_id)) {
         $insert_email_id_query = "INSERT INTO ticket_email_ids (email_id, ticket_id) VALUES (?, ?)";
-        $insert_email_id_stmt = mysqli_prepare($database, $insert_email_id_query);
+        $insert_email_id_stmt = mysqli_prepare(HelpDB::get(), $insert_email_id_query);
 
         mysqli_stmt_bind_param($insert_email_id_stmt, "si", $message_id, $ticket_id);
         mysqli_stmt_execute($insert_email_id_stmt);
@@ -237,9 +235,7 @@ function find_clients(string $name)
 
 function get_local_name_for_user(string $username)
 {
-    global $database;
-
-    $name_result = $database->execute_query("SELECT firstname, lastname FROM help.users WHERE username = ?", [$username]);
+    $name_result = HelpDB::get()->execute_query("SELECT firstname, lastname FROM help.users WHERE username = ?", [$username]);
     if (!isset($name_result)) {
         log_app(LOG_ERR, "[get_local_name_for_user] Failed to get name result");
         return null;
@@ -256,9 +252,7 @@ function get_local_name_for_user(string $username)
 
 function get_fast_client_location(string $name)
 {
-    global $database;
-
-    $location_result = $database->execute_query("SELECT ldap_location FROM help.users WHERE username = ?", [$name]);
+    $location_result = HelpDB::get()->execute_query("SELECT ldap_location FROM help.users WHERE username = ?", [$name]);
     if (!isset($location_result)) {
         log_app(LOG_ERR, "[get_fast_client_location] Failed to get location query result");
         return null;
@@ -272,9 +266,9 @@ function get_fast_client_location(string $name)
 
     return $location_data["ldap_location"];
 }
-// function isUserATech($usernameToCheck, $databaseConnection)
+// function isUserATech($usernameToCheck, HelpDB::get()Connection)
 // {
-//     $sqlQuery = $databaseConnection->prepare("SELECT is_tech FROM users WHERE username = ?");
+//     $sqlQuery = HelpDB::get()Connection->prepare("SELECT is_tech FROM users WHERE username = ?");
 //     $sqlQuery->bind_param("s", $usernameToCheck);
 //     $sqlQuery->execute();
 //     $queryResult = $sqlQuery->get_result();
@@ -291,9 +285,8 @@ function log_app(int $priority, string $message)
 }
 function get_last_login_time($username)
 {
-    global $database;
     // Prepare a SQL statement
-    $query_stmt = $database->prepare('SELECT last_login FROM users WHERE username = ?');
+    $query_stmt = HelpDB::get()->prepare('SELECT last_login FROM users WHERE username = ?');
 
     // Bind the username parameter
     $query_stmt->bind_param('s', $username);
@@ -332,9 +325,7 @@ function calculateTimeSinceLastLogin()
 
 function user_is_tech(string $username)
 {
-    global $database;
-
-    $userPermissionsResult = $database->execute_query("SELECT is_tech FROM users WHERE username = ?", [$username]);
+    $userPermissionsResult = HelpDB::get()->execute_query("SELECT is_tech FROM users WHERE username = ?", [$username]);
     $userPermissionsData = mysqli_fetch_assoc($userPermissionsResult);
     if (isset($userPermissionsResult) && isset($userPermissionsData))
         return $userPermissionsData["is_tech"] != 0;

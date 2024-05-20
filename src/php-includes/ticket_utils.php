@@ -626,6 +626,5 @@ function get_tech_usernames()
             $tmp[] = strtolower($usernameRow['username']);
         }
     }
-
     return $tmp;
 }

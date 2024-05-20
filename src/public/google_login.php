@@ -57,7 +57,7 @@ if (isset($_GET['code'])) {
         $email = $_SESSION['login_email'];
         $email = strtolower($email);
         $email = trim($email);
-        $username = str_replace('@provo.edu', '', $email);
+        $username = strtolower(str_replace('@provo.edu', '', $email));
 
         $_SESSION['username'] = $username;
         $_SESSION['last_timestamp'] = time();

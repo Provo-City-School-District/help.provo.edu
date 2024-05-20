@@ -8,7 +8,7 @@ log_app(LOG_INFO, "alert_client_response.php running");
 
 try {
     $client_response_tickets_query = "SELECT * FROM tickets WHERE priority = 15 AND status = 'open'";
-    $client_response_tickets_results = $database->execute_query($client_response_tickets_query);
+    $client_response_tickets_results = HelpDB::get()->execute_query($client_response_tickets_query);
     $client_response_tickets = $client_response_tickets_results->fetch_all(MYSQLI_ASSOC);
 
     foreach ($client_response_tickets as $ticket) {
@@ -80,7 +80,7 @@ try {
         // can be used in debugging log mode later
         log_app(LOG_INFO, "Sending client reminder email for Ticket ID: " . $ticket['id'] . " Title: " . $ticket['name']);
         send_email_and_add_to_ticket($ticket['id'], $ticket_client, $ticket_subject, $template_client, $ticket['cc_emails'], $ticket['bcc_emails'], $ticket['attachment_path']);
-        logTicketChange($database, $ticket['id'], "system", "sent_emails", "N/A", "Client Reminder Email Sent to " . $ticket['client'] . " ");
+        logTicketChange(HelpDB::get(), $ticket['id'], "system", "sent_emails", "N/A", "Client Reminder Email Sent to " . $ticket['client'] . " ");
     }
 } catch (Exception $e) {
     echo 'Caught exception: ',  $e->getMessage(), "\n";

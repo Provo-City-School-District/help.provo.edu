@@ -162,7 +162,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
             JOIN ticket_email_ids ON ticket_email_ids.ticket_id = tickets.id
             WHERE ticket_email_ids.email_id = ?
         STR;
-        $email_exists_result = $database->execute_query($email_exists_query, [$email_ancestor_id]);
+        $email_exists_result = HelpDB::get()->execute_query($email_exists_query, [$email_ancestor_id]);
         $email_exists_data = mysqli_fetch_assoc($email_exists_result);
 
         if (isset($email_exists_data["id"])) {
@@ -171,7 +171,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
             // add note on existing ticket
             create_note($existing_ticket_id, $sender_username, $message, 0, 0, 0, 0, true, null, $email_msg_id);
         } else {
-            $ticket_exists_result = $database->execute_query("SELECT linked_id FROM notes WHERE email_msg_id = ?", [$email_ancestor_id]);
+            $ticket_exists_result = HelpDB::get()->execute_query("SELECT linked_id FROM notes WHERE email_msg_id = ?", [$email_ancestor_id]);
             $ticket_exists_data = mysqli_fetch_assoc($ticket_exists_result);
 
             if (isset($ticket_exists_data["linked_id"])) {
@@ -211,8 +211,8 @@ for ($i = 1; $i <= $msg_count; $i++) {
                 $operating_ticket = $receipt_ticket_id;
 
 
-                $incoming_cc_emails_str = mysqli_real_escape_string($database, implode(',', $incoming_cc_emails));
-                $res = $database->execute_query("UPDATE help.tickets SET cc_emails = ? WHERE id = ?", [$incoming_cc_emails_str, $receipt_ticket_id]);
+                $incoming_cc_emails_str = mysqli_real_escape_string(HelpDB::get(), implode(',', $incoming_cc_emails));
+                $res = HelpDB::get()->execute_query("UPDATE help.tickets SET cc_emails = ? WHERE id = ?", [$incoming_cc_emails_str, $receipt_ticket_id]);
             }
         } else {
             $operating_ticket = $subject_ticket_id;
@@ -255,8 +255,6 @@ imap_close($mbox);
 
 function find_and_upload_attachments(int $ticket_id, IMAP\Connection $mbox, int $msg_num, $sender_username)
 {
-    global $database;
-
     /* get mail structure */
     $structure = imap_fetchstructure($mbox, $msg_num);
 
@@ -306,7 +304,7 @@ function find_and_upload_attachments(int $ticket_id, IMAP\Connection $mbox, int 
 
 
     $insertQuery = "SELECT attachment_path from help.tickets WHERE id = ?";
-    $stmt = mysqli_prepare($database, $insertQuery);
+    $stmt = mysqli_prepare(HelpDB::get(), $insertQuery);
     mysqli_stmt_bind_param($stmt, "i", $ticket_id);
     mysqli_stmt_execute($stmt);
     $result = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
@@ -347,7 +345,7 @@ function find_and_upload_attachments(int $ticket_id, IMAP\Connection $mbox, int 
     $attachmentPath = count($uploadPaths) > 0 ? implode(',', $uploadPaths) : "";
 
     $insertQuery = "UPDATE help.tickets SET attachment_path = ? WHERE id = ?";
-    $stmt = mysqli_prepare($database, $insertQuery);
+    $stmt = mysqli_prepare(HelpDB::get(), $insertQuery);
     mysqli_stmt_bind_param($stmt, "si", $attachmentPath, $ticket_id);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
@@ -358,7 +356,7 @@ function find_and_upload_attachments(int $ticket_id, IMAP\Connection $mbox, int 
     foreach ($wrote_filenames as $filename) {
         $changed_string .= $filename . ", ";
     }
-    logTicketChange($database, $ticket_id, $sender_username, $field_name, $old_value, $changed_string);
+    logTicketChange(HelpDB::get(), $ticket_id, $sender_username, $field_name, $old_value, $changed_string);
 }
 ?>
 Successfully parsed <?= $parsed_emails ?> emails, and moved <?= $moved_emails ?> emails. (These should be the same)<br>

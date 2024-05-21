@@ -70,11 +70,12 @@ If you're setting up a fresh development instance the database should initialize
 - PHP: https://www.php.net/
 - PHPMyAdmin: https://www.phpmyadmin.net/
 - MariaDB: https://mariadb.org/
-- Data Tables: https://datatables.net/
-- TinyMCE: https://www.tiny.cloud/docs/tinymce/6/
 - CanvasJS: https://canvasjs.com/php-charts/
-- PHPMailer: https://github.com/PHPMailer/PHPMailer
 - Composer: https://getcomposer.org/
-- Twig: https://twig.symfony.com/
-- Jquery: https://jquery.com/
-- Jquery UI: https://jqueryui.com/
+- Twig (3.x): https://twig.symfony.com/
+- PHPMailer (6.9.1): https://github.com/PHPMailer/PHPMailer
+- Data Tables (2.0.7): https://datatables.net/
+- TinyMCE (7.1): https://www.tiny.cloud/docs/tinymce/6/
+- HTMLPurifier (4.17): https://htmlpurifier.org/
+- Jquery (3.7.1): https://jquery.com/
+- Jquery UI (1.13.3): https://jqueryui.com/

@@ -8,5 +8,5 @@ src/uploads/*
 session/sess_*
 
 src/public/info.php
-src/public/tests.php
+src/public/run_tests.php
 src/public/test_email.php

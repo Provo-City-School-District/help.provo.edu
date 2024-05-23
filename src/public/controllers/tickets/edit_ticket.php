@@ -743,7 +743,11 @@ if (strtolower($ticket["employee"]) == strtolower($username)) {
             foreach ($attachmentPaths as $attachmentPath) {
                 $path = basename($attachmentPath);
                 $path_encoded = urlencode($path);
-                echo "<li><a href=\"/upload_viewer.php?file=$path_encoded\">$path</a> <a class='file_del' onclick=\"confirmDeleteAttachment('$attachmentPath')\">&times;</a></li>";
+                if ($_SESSION["permissions"]["is_tech"]) {
+                    echo "<li><a href=\"/upload_viewer.php?file=$path_encoded\">$path</a> <a class='file_del' onclick=\"confirmDeleteAttachment('$attachmentPath')\">&times;</a></li>";
+                } else {
+                    echo "<li><a href=\"/upload_viewer.php?file=$path_encoded\">$path</a></li>";
+                }
             }
             ?>
         </ul>
@@ -1257,7 +1261,7 @@ if (strtolower($ticket["employee"]) == strtolower($username)) {
         setInterval(updateTimeSinceLastNote, 60000); // 60000 milliseconds
     </script>
 <?php endif; ?>
-<script src="/includes/js/note_submit.js?v=?v=1.0.04" type="text/javascript"></script>
+<script src="/includes/js/note_submit.js?v=?v=1.0.05" type="text/javascript"></script>
 <script src="/includes/js/pages/edit_ticket.js?v=1.0.05" type="text/javascript"></script>
 <?php include("footer.php"); ?>
 

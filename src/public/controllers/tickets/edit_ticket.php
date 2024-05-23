@@ -1033,7 +1033,6 @@ if (strtolower($ticket["employee"]) == strtolower($username)) {
                 <h3>New Note</h3>
                 <form id="note-submit" method="post" action="add_note_handler.php">
                     <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
-                    <input type="hidden" name="username" value="<?= $_SESSION['username'] ?>">
                     <div>
                         <label for="note">Note:</label>
                         <textarea id="note" name="note" class="tinyMCEtextarea"></textarea>

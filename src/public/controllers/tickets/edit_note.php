@@ -144,12 +144,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <input id="work_minutes" name="work_minutes" type="hidden" value="0" required>
         <input id="work_hours" name="work_hours" type="hidden" value="0" required>
     <?php endif; ?>
-    <!-- TODO: Hide the visible to client option for non admins,
-                forms make this a pain because it needs to submit a value if false, system currentlyelies on not receiving
-                a value to assume no (thus hiding it from client) 
-            
-                Although non admins maybe shouldn't be able to edit notes anyway?
-            -->
     <input type="submit" value="Save Note" class="button">
     <button onclick="window.location.href='edit_ticket.php?id=<?= $ticket_id ?>'" class="button">Cancel</button>
 

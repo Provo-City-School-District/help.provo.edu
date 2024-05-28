@@ -449,7 +449,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($master_send_emails) {
-        if ($updatedSendClientEmail && ($updatedClient != $updatedEmployee)) {
+        $noDuplicateTechEmail = ($updatedClient != $updatedEmployee) || !$updatedSendTechEmail;
+        if ($updatedSendClientEmail && $noDuplicateTechEmail) {
             $res = send_email_and_add_to_ticket($ticket_id, $client_email, $ticket_subject, $template_client, [], [], $attachment_paths);
             if (!$res) {
                 $send_errors[] = "Client";
@@ -514,7 +515,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         log_app(LOG_ERR, "$error \n\n $formData");
         header("Location: edit_ticket.php?$formData&id=$ticket_id");
         exit;
-    } else {
+    } else if ($master_send_emails) {
+        /* 
+            Only modify the client's message if they explicitly updated ticket with emails sent
+            (even though some emails always get sent)
+        */
         $send_to_msg_states = [
             "",
             "An email was sent to the BCC emails",

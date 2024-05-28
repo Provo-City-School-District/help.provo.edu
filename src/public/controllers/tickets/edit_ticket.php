@@ -295,7 +295,20 @@ if (strtolower($ticket["employee"]) == strtolower($username)) {
     $right_ticket_id = $assigned_ticket_ids[$right_idx];
 }
 
+$alerts_res = HelpDB::get()->execute_query("SELECT * FROM alerts WHERE alerts.ticket_id = ?", [$ticket_id]);
+$alert_data = [];
+while ($row = $alerts_res->fetch_assoc()) {
+    $alert_data[] = $row;
+}
 ?>
+<div class="alerts_wrapper">
+<?php foreach ($alert_data as $alert): ?>
+    <p class="<?= $alert["alert_level"] ?>">
+        <a><?= $alert["message"] ?></a>
+        <a class="close-alert" href="/controllers/tickets/alert_delete.php?id=<?= $alert["id"] ?>">&times;</a>
+    </p>
+<?php endforeach; ?>
+</div>
 <article id="ticketWrapper">
     <div id="ticket-title-container">
         <?php if ($show_quick_switch_buttons) : ?>

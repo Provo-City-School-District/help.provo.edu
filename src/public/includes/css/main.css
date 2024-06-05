@@ -332,7 +332,8 @@ table.dataTable .details {
 	overflow-wrap: break-word;
 }
 
-.latestNote strong {
+.latestNote strong,
+.tableLocation strong {
 	display: block;
 
 }

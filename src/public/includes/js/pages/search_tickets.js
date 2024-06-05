@@ -2,7 +2,7 @@
 var resetBtn = document.getElementById("resetBtn");
 if (resetBtn) {
   resetBtn.addEventListener("click", function () {
-    document.getElementById("searchForm").reset();
+    document.getElementById("searchTickets").reset();
     window.location.href = "search_tickets.php";
   });
 }

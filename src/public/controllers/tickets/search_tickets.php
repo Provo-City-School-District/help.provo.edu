@@ -186,7 +186,7 @@ echo $twig->render('search_tickets.twig', [
 //====================================================================================================
 // TODO could cache these
 // TODO2: similar function in ticket_utils.php. lets consolidate
-function get_location_name_from_id(int $location_sw_id, $archived = false)
+function get_location_name_from_id($location_sw_id, $archived = false)
 {
     $location_name = "";
     if ($location_sw_id === null || $location_sw_id === "") {

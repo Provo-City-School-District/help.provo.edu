@@ -321,8 +321,7 @@ function calculateTimeSinceLastLogin()
     // Return null if last_login is not set in the session
     return null;
 }
-
-
+//TODO: have session_is_tech and user_is_tech which might be used as the same thing
 function user_is_tech(string $username)
 {
     $userPermissionsResult = HelpDB::get()->execute_query("SELECT is_tech FROM users WHERE username = ?", [$username]);

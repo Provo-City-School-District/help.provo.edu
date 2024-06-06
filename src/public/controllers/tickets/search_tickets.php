@@ -207,7 +207,14 @@ function get_tech_name_from_id(string $tech_sw_id)
 {
     $tech_name_result = SolarWindsDB::get()->execute_query("SELECT FIRST_NAME, LAST_NAME FROM tech WHERE CLIENT_ID = ?", [$tech_sw_id]);
     $tech_name_data = mysqli_fetch_assoc($tech_name_result);
+
+    // Check if $tech_name_data is not null and is an array before accessing its elements
+    if (is_array($tech_name_data)) {
     $tech_name = trim($tech_name_data["FIRST_NAME"]) . " " . trim($tech_name_data["LAST_NAME"]);
+    } else {
+        // Handle the case where no data is found or $tech_name_data is null
+        $tech_name = "Unknown Technician";
+    }
 
     return $tech_name;
 }
@@ -217,7 +224,15 @@ function get_request_type_by_id(int $request_type_id)
 {
     $request_type_result = HelpDB::get()->execute_query("SELECT request_name FROM request_type WHERE request_id = ?", [$request_type_id]);
     $request_type_data = mysqli_fetch_assoc($request_type_result);
+
+    // Correctly placed check if $request_type_data is not null and is an array before accessing its elements
+    if (is_array($request_type_data) && isset($request_type_data["request_name"])) {
     $request_type = trim($request_type_data["request_name"]);
+    } else {
+        // Handle the case where no data is found or $request_type_data is null
+        $request_type = "Unknown Request Type";
+    }
+
     return $request_type;
 }
 

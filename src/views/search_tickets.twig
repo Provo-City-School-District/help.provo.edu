@@ -157,7 +157,10 @@
                     <td data-cell="Created">{{ result.created }}</td>
                     <td data-cell="Last Updated">{{ result.last_updated }}</td>
                     <td data-cell="Due">{{ result.due_date }}</td>
-                    <td data-cell="Assigned">{{ result.employee }}</td>
+                    <td data-cell="Assigned">
+                        {# {{ result.employee }} #}
+                        {{ get_tech_name_from_id_user(result.employee|default('')|e,false) }}
+                    </td>
                 </tr>
             {% elseif result.a_id is defined %}
                 <tr>
@@ -178,7 +181,10 @@
                     <td data-cell="Created">{{ result.REPORT_DATE }}</td>
                     <td data-cell="Last Updated">{{ result.LAST_UPDATED }}</td>
                     <td data-cell="Due">{{ result.CLOSE_DATE }}</td>
-                    <td data-cell="Assigned Employee">{{ get_tech_name_from_id(result.ASSIGNED_TECH_ID|default('')|e) }}</td>
+                    <td data-cell="Assigned Employee">
+                        {{ get_tech_name_from_id_user(result.ASSIGNED_TECH_ID|default('')|e,true) }}
+                        {# {{ result.ASSIGNED_TECH_ID }} #}
+                    </td>
                 </tr>
             {% endif %}
         {% endfor %}

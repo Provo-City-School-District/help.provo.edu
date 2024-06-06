@@ -128,8 +128,8 @@ $twig = new \Twig\Environment($loader, [
     'auto_reload' => true
 ]);
 // Add custom functions and filters to twig
-$fetchTechFunc = new Twig\TwigFunction('get_tech_name_from_id', function ($tech_sw_id) {
-    return get_tech_name_from_id($tech_sw_id);
+$fetchTechFunc = new Twig\TwigFunction('get_tech_name_from_id_user', function ($tech_sw_id, $archived = false) {
+    return get_tech_name_from_id_user($tech_sw_id, $archived);
 });
 $fetchLocFunc = new Twig\TwigFunction('get_location_name_from_id', function ($location_sw_id, $archived = false) {
     return get_location_name_from_id($location_sw_id, $archived);
@@ -186,7 +186,7 @@ echo $twig->render('search_tickets.twig', [
 //====================================================================================================
 // TODO could cache these
 // TODO2: similar function in ticket_utils.php. lets consolidate
-function get_location_name_from_id($location_sw_id, $archived = false)
+function get_location_name_from_id(int $location_sw_id, $archived = false)
 {
     $location_name = "";
     if ($location_sw_id === null || $location_sw_id === "") {
@@ -208,18 +208,31 @@ function get_location_name_from_id($location_sw_id, $archived = false)
 
 // TODO could cache these
 // TODO2: similar function in ticket_utils.php. lets consolidate
-function get_tech_name_from_id(string $tech_sw_id)
+function get_tech_name_from_id_user(string $tech_sw_id, $archived = false)
 {
-    $tech_name_result = SolarWindsDB::get()->execute_query("SELECT FIRST_NAME, LAST_NAME FROM tech WHERE CLIENT_ID = ?", [$tech_sw_id]);
-    $tech_name_data = mysqli_fetch_assoc($tech_name_result);
-
-    // Check if $tech_name_data is not null and is an array before accessing its elements
-    if (is_array($tech_name_data)) {
-        $tech_name = trim($tech_name_data["FIRST_NAME"]) . " " . trim($tech_name_data["LAST_NAME"]);
+    if ($archived) {
+        $tech_name_result = SolarWindsDB::get()->execute_query("SELECT FIRST_NAME, LAST_NAME FROM tech WHERE CLIENT_ID = ?", [$tech_sw_id]);
+        $tech_name_data = mysqli_fetch_assoc($tech_name_result);
+        // Check if $tech_name_data is not null and is an array before accessing its elements
+        if (is_array($tech_name_data)) {
+            $tech_name = trim($tech_name_data["FIRST_NAME"]) . " " . trim($tech_name_data["LAST_NAME"]);
+        } else {
+            // Handle the case where no data is found or $tech_name_data is null
+            $tech_name = "Unknown Technician";
+        }
     } else {
-        // Handle the case where no data is found or $tech_name_data is null
-        $tech_name = "Unknown Technician";
+        // $location_name_result = HelpDB::get()->execute_query("SELECT location_name FROM locations WHERE sitenumber = ?", [$location_sw_id]);
+        $tech_name_result = HelpDB::get()->execute_query("SELECT firstname, lastname FROM users WHERE username = ?", [$tech_sw_id]);
+        $tech_name_data = mysqli_fetch_assoc($tech_name_result);
+        // Check if $tech_name_data is not null and is an array before accessing its elements
+        if (is_array($tech_name_data)) {
+            $tech_name = trim($tech_name_data["firstname"]) . " " . trim($tech_name_data["lastname"]);
+        } else {
+            // Handle the case where no data is found or $tech_name_data is null
+            $tech_name = "Unknown Technician";
+        }
     }
+
 
     return $tech_name;
 }

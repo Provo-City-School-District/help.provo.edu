@@ -147,7 +147,8 @@
                     
                     <td data-cell="Location" class="tableLocation">
                         {% if result.location is defined %}
-                            <strong>{{ result.location|get_location_name_from_id }}</strong> RM {{ result.room }}
+                            <strong>{{ get_location_name_from_id(result.location) }}</strong> RM {{ result.room }}
+
                         {% endif %}
                     </td>
                     <td data-cell="Request Category">{{ result.request_type_id|get_request_type_by_id }}</td>
@@ -168,7 +169,7 @@
                     {# <td class="latestNote" data-cell="Latest Note:"><strong></td> #}
                     <td data-cell="Location">
                         {% if result.LOCATION_ID is defined %}
-                            {{ result.LOCATION_ID|get_location_name_from_id('true')}}
+                            {{ get_location_name_from_id(result.LOCATION_ID, true) }}
                         {% endif %}
                     </td>
                     <td data-cell="Request Category"></td>

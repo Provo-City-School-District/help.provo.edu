@@ -131,10 +131,14 @@ $twig = new \Twig\Environment($loader, [
 $fetchTechFunc = new Twig\TwigFunction('get_tech_name_from_id', function ($tech_sw_id) {
     return get_tech_name_from_id($tech_sw_id);
 });
-$twig->addFilter(new \Twig\TwigFilter('get_location_name_from_id', 'get_location_name_from_id'));
+$fetchLocFunc = new Twig\TwigFunction('get_location_name_from_id', function ($location_sw_id, $archived = false) {
+    return get_location_name_from_id($location_sw_id, $archived);
+});
+// $twig->addFilter(new \Twig\TwigFilter('get_location_name_from_id', 'get_location_name_from_id'));
 $twig->addFilter(new \Twig\TwigFilter('priorityTypes', 'priorityTypes'));
 $twig->addFilter(new \Twig\TwigFilter('get_request_type_by_id', 'get_request_type_by_id'));
 $twig->addFunction($fetchTechFunc);
+$twig->addFunction($fetchLocFunc);
 
 // Render the template
 echo $twig->render('search_tickets.twig', [
@@ -182,10 +186,12 @@ echo $twig->render('search_tickets.twig', [
 // Functions
 //====================================================================================================
 // TODO could cache these
-function get_location_name_from_id(int $location_sw_id, $archived = false)
+function get_location_name_from_id($location_sw_id, $archived = false)
 {
     $location_name = "";
-
+    if ($location_sw_id === null || $location_sw_id === "") {
+        return "Unknown Location";
+    }
     if ($archived) {
         $location_name_result = HelpDB::get()->execute_query("SELECT location_name FROM locations WHERE archived_location_id = ?", [$location_sw_id]);
     } else {

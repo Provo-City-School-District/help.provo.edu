@@ -127,9 +127,11 @@ $twig = new \Twig\Environment($loader, [
     'cache' => from_root('/../twig-cache'),
     'auto_reload' => true
 ]);
-// Add custom functions to twig
+// Add custom functions and filters to twig
+$fetchTechFunc = new Twig\TwigFunction('get_tech_name_from_id', function ($tech_sw_id) {
+    return get_tech_name_from_id($tech_sw_id);
+});
 $twig->addFilter(new \Twig\TwigFilter('get_location_name_from_id', 'get_location_name_from_id'));
-$twig->addFilter(new \Twig\TwigFilter('get_tech_name_from_id', 'get_tech_name_from_id'));
 $twig->addFilter(new \Twig\TwigFilter('priorityTypes', 'priorityTypes'));
 $twig->addFilter(new \Twig\TwigFilter('get_request_type_by_id', 'get_request_type_by_id'));
 

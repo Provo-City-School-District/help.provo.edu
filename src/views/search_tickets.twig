@@ -177,7 +177,7 @@
                     <td data-cell="Created">{{ result.REPORT_DATE }}</td>
                     <td data-cell="Last Updated">{{ result.LAST_UPDATED }}</td>
                     <td data-cell="Due">{{ result.CLOSE_DATE }}</td>
-                    <td data-cell="Assigned Employee">{{ result.ASSIGNED_TECH_ID|get_tech_name_from_id }}</td>
+                    <td data-cell="Assigned Employee">{{ get_tech_name_from_id(result.ASSIGNED_TECH_ID|default('')|e) }}</td>
                 </tr>
             {% endif %}
         {% endfor %}

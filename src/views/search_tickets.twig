@@ -31,7 +31,7 @@
             {# <option value="cancelled" {{ search_status is same as('cancelled') ? 'selected' : '' }}>Cancelled</option> #}
             <option value="pending" {{ search_status is same as('pending') ? 'selected' : '' }}>Pending</option>
             <option value="vendor" {{ search_status is same as('vendor') ? 'selected' : '' }}>Vendor</option>
-            <option value="maintenance">Maintenance</option>
+            <option value="maintenance" {{ search_status is same as('maintenance') ? 'selected' : '' }}>Maintenance</option>
         </select>
     </div>
     <div>

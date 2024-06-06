@@ -68,6 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         while ($row = mysqli_fetch_assoc($ticket_result)) {
             $combined_results[] = $row;
         }
+
         //add in archived tickets if the checkbox is checked
         if ($search_archived == 1) {
             while ($row = mysqli_fetch_assoc($old_ticket_result)) {

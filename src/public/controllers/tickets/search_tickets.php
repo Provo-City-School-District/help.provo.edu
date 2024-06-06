@@ -250,7 +250,7 @@ function get_request_type_by_id(int $request_type_id)
         $request_type = trim($request_type_data["request_name"]);
     } else {
         // Handle the case where no data is found or $request_type_data is null
-        $request_type = "Unknown Request Type";
+        $request_type = "Other";
     }
 
     return $request_type;

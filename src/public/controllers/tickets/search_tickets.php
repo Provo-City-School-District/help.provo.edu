@@ -134,7 +134,6 @@ $fetchTechFunc = new Twig\TwigFunction('get_tech_name_from_id', function ($tech_
 $fetchLocFunc = new Twig\TwigFunction('get_location_name_from_id', function ($location_sw_id, $archived = false) {
     return get_location_name_from_id($location_sw_id, $archived);
 });
-// $twig->addFilter(new \Twig\TwigFilter('get_location_name_from_id', 'get_location_name_from_id'));
 $twig->addFilter(new \Twig\TwigFilter('priorityTypes', 'priorityTypes'));
 $twig->addFilter(new \Twig\TwigFilter('get_request_type_by_id', 'get_request_type_by_id'));
 $twig->addFunction($fetchTechFunc);

@@ -134,9 +134,7 @@ $fetchTechFunc = new Twig\TwigFunction('get_tech_name_from_id', function ($tech_
 $twig->addFilter(new \Twig\TwigFilter('get_location_name_from_id', 'get_location_name_from_id'));
 $twig->addFilter(new \Twig\TwigFilter('priorityTypes', 'priorityTypes'));
 $twig->addFilter(new \Twig\TwigFilter('get_request_type_by_id', 'get_request_type_by_id'));
-
-//// pre delete, may not be needed on this page.
-// $twig->addFilter(new \Twig\TwigFilter('get_client_name_from_id', 'get_client_name_from_id'));
+$twig->addFunction($fetchTechFunc);
 
 // Render the template
 echo $twig->render('search_tickets.twig', [
@@ -210,7 +208,7 @@ function get_tech_name_from_id(string $tech_sw_id)
 
     // Check if $tech_name_data is not null and is an array before accessing its elements
     if (is_array($tech_name_data)) {
-    $tech_name = trim($tech_name_data["FIRST_NAME"]) . " " . trim($tech_name_data["LAST_NAME"]);
+        $tech_name = trim($tech_name_data["FIRST_NAME"]) . " " . trim($tech_name_data["LAST_NAME"]);
     } else {
         // Handle the case where no data is found or $tech_name_data is null
         $tech_name = "Unknown Technician";
@@ -227,7 +225,7 @@ function get_request_type_by_id(int $request_type_id)
 
     // Correctly placed check if $request_type_data is not null and is an array before accessing its elements
     if (is_array($request_type_data) && isset($request_type_data["request_name"])) {
-    $request_type = trim($request_type_data["request_name"]);
+        $request_type = trim($request_type_data["request_name"]);
     } else {
         // Handle the case where no data is found or $request_type_data is null
         $request_type = "Unknown Request Type";
@@ -235,14 +233,3 @@ function get_request_type_by_id(int $request_type_id)
 
     return $request_type;
 }
-
-//// pre delete, may not be needed on this page.
-// TODO could cache these
-// function get_client_name_from_id(string $client_sw_id)
-// {
-//     $client_name_result = SolarWindsDB::get()->execute_query("SELECT FIRST_NAME, LAST_NAME FROM client WHERE CLIENT_ID = ?", [$client_sw_id]);
-//     $client_name_data = mysqli_fetch_assoc($client_name_result);
-//     $client_name = trim($client_name_data["FIRST_NAME"]) . " " . trim($client_name_data["LAST_NAME"]);
-
-//     return $client_name;
-// }

@@ -110,84 +110,87 @@
  {% endblock %}
 
 {% block content %}
-
-    <table id="DataTables_Table_0" class="search-data-table ticketsTable">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th class="details">Request Detail</th>
-            {# <th class="tLatestNote">Latest Note</th> #}
-			{# <th class="client">Client</th> #}
-			<th class="tLocation">Location</th>
-			<th class="category">Request Category</th>
-			<th class="status">Current Status</th>
-			<th class="priority">Priority</th>
-			<th class="tDate">Created Date</th>
-			<th class="tDate">Last Updated</th>
-			<th class="date">Due</th>
-			<th class="">Assigned</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for result in results %}
-            {% if result.id is defined %}
+    {% if results|length > 0 %}
+         <table id="DataTables_Table_0" class="search-data-table ticketsTable">
+            <thead>
                 <tr>
-                    <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id={{ result.id }}">{{ result.id }}</a></td>
-                    <td class="details" data-cell="Request Detail"><a href="/controllers/tickets/edit_ticket.php?id={{ result.id }}">{{ result.name }}</a><br>{{ result.description|slice(0, 150) }}</td>
-                    
-                        {# TODO: Ommited the latest note section #}
-                    
-                    {# <td class="latestNote" data-cell="Latest Note:">
-                    {% if result.latest_note is defined %}
-                         <strong>{{ result.latest_note_author }}: </strong> {{ ticket.latest_note }}</td> 
-                    {% else %}
+                    <th>ID</th>
+                    <th class="details">Request Detail</th>
+                    {# <th class="tLatestNote">Latest Note</th> #}
+                    {# <th class="client">Client</th> #}
+                    <th class="tLocation">Location</th>
+                    <th class="category">Request Category</th>
+                    <th class="status">Current Status</th>
+                    <th class="priority">Priority</th>
+                    <th class="tDate">Created Date</th>
+                    <th class="tDate">Last Updated</th>
+                    <th class="date">Due</th>
+                    <th class="">Assigned</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                    {% if result.id is defined %}
+                        <tr>
+                            <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id={{ result.id }}">{{ result.id }}</a></td>
+                            <td class="details" data-cell="Request Detail"><a href="/controllers/tickets/edit_ticket.php?id={{ result.id }}">{{ result.name }}</a><br>{{ result.description|slice(0, 150) }}</td>
+                            
+                                {# TODO: Ommited the latest note section #}
+                            
+                            {# <td class="latestNote" data-cell="Latest Note:">
+                            {% if result.latest_note is defined %}
+                                <strong>{{ result.latest_note_author }}: </strong> {{ ticket.latest_note }}</td> 
+                            {% else %}
+                                
+                            {% endif %}
+                        </td> #}
+                            
+                            <td data-cell="Location" class="tableLocation">
+                                {% if result.location is defined %}
+                                    <strong>{{ get_location_name_from_id(result.location) }}</strong> RM {{ result.room }}
+
+                                {% endif %}
+                            </td>
+                            <td data-cell="Request Category">{{ result.request_type_id|get_request_type_by_id }}</td>
+                            <td data-cell="Current Status">{{ result.status }}</td>
+                            <td data-cell="Priority">{{ priorityTypes[result.priority] }}</td>
+                            <td data-cell="Created">{{ result.created }}</td>
+                            <td data-cell="Last Updated">{{ result.last_updated }}</td>
+                            <td data-cell="Due">{{ result.due_date }}</td>
+                            <td data-cell="Assigned">
+                                {# {{ result.employee }} #}
+                                {{ get_tech_name_from_id_user(result.employee|default('')|e,false) }}
+                            </td>
+                        </tr>
+                    {% elseif result.a_id is defined %}
+                        <tr>
+                            <td data-cell="ID"><a href="/controllers/tickets/archived_ticket_view.php?id={{ result.a_id }}">{{ result.a_id }}</a></td>
+                            <td data-cell="details"><a href="/controllers/tickets/archived_ticket_view.php?id={{ result.a_id }}">{{ result.SUBJECT }}</a><br>{{ result.QUESTION_TEXT|slice(0, 150) }}</td>
                         
+                                {# TODO: Ommited the latest note section #}
+                        
+                            {# <td class="latestNote" data-cell="Latest Note:"><strong></td> #}
+                            <td data-cell="Location">
+                                {% if result.LOCATION_ID is defined %}
+                                    {{ get_location_name_from_id(result.LOCATION_ID, true) }}
+                                {% endif %}
+                            </td>
+                            <td data-cell="Request Category"></td>
+                            <td data-cell="Current Status"></td>
+                            <td data-cell="Priority"></td>
+                            <td data-cell="Created">{{ result.REPORT_DATE }}</td>
+                            <td data-cell="Last Updated">{{ result.LAST_UPDATED }}</td>
+                            <td data-cell="Due">{{ result.CLOSE_DATE }}</td>
+                            <td data-cell="Assigned Employee">
+                                {{ get_tech_name_from_id_user(result.ASSIGNED_TECH_ID|default('')|e,true) }}
+                                {# {{ result.ASSIGNED_TECH_ID }} #}
+                            </td>
+                        </tr>
                     {% endif %}
-                   </td> #}
-                    
-                    <td data-cell="Location" class="tableLocation">
-                        {% if result.location is defined %}
-                            <strong>{{ get_location_name_from_id(result.location) }}</strong> RM {{ result.room }}
-
-                        {% endif %}
-                    </td>
-                    <td data-cell="Request Category">{{ result.request_type_id|get_request_type_by_id }}</td>
-                    <td data-cell="Current Status">{{ result.status }}</td>
-                    <td data-cell="Priority">{{ priorityTypes[result.priority] }}</td>
-                    <td data-cell="Created">{{ result.created }}</td>
-                    <td data-cell="Last Updated">{{ result.last_updated }}</td>
-                    <td data-cell="Due">{{ result.due_date }}</td>
-                    <td data-cell="Assigned">
-                        {# {{ result.employee }} #}
-                        {{ get_tech_name_from_id_user(result.employee|default('')|e,false) }}
-                    </td>
-                </tr>
-            {% elseif result.a_id is defined %}
-                <tr>
-                    <td data-cell="ID"><a href="/controllers/tickets/archived_ticket_view.php?id={{ result.a_id }}">{{ result.a_id }}</a></td>
-                    <td data-cell="details"><a href="/controllers/tickets/archived_ticket_view.php?id={{ result.a_id }}">{{ result.SUBJECT }}</a><br>{{ result.QUESTION_TEXT|slice(0, 150) }}</td>
-                   
-                           {# TODO: Ommited the latest note section #}
-                   
-                    {# <td class="latestNote" data-cell="Latest Note:"><strong></td> #}
-                    <td data-cell="Location">
-                        {% if result.LOCATION_ID is defined %}
-                            {{ get_location_name_from_id(result.LOCATION_ID, true) }}
-                        {% endif %}
-                    </td>
-                    <td data-cell="Request Category"></td>
-                    <td data-cell="Current Status"></td>
-                    <td data-cell="Priority"></td>
-                    <td data-cell="Created">{{ result.REPORT_DATE }}</td>
-                    <td data-cell="Last Updated">{{ result.LAST_UPDATED }}</td>
-                    <td data-cell="Due">{{ result.CLOSE_DATE }}</td>
-                    <td data-cell="Assigned Employee">
-                        {{ get_tech_name_from_id_user(result.ASSIGNED_TECH_ID|default('')|e,true) }}
-                        {# {{ result.ASSIGNED_TECH_ID }} #}
-                    </td>
-                </tr>
-            {% endif %}
-        {% endfor %}
-    </tbody>
-</table>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No Results To Display.</p>
+    {% endif %}
 {% endblock %}

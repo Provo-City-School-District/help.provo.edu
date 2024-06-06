@@ -186,6 +186,7 @@ echo $twig->render('search_tickets.twig', [
 // Functions
 //====================================================================================================
 // TODO could cache these
+// TODO2: similar function in ticket_utils.php. lets consolidate
 function get_location_name_from_id($location_sw_id, $archived = false)
 {
     $location_name = "";
@@ -207,6 +208,7 @@ function get_location_name_from_id($location_sw_id, $archived = false)
 }
 
 // TODO could cache these
+// TODO2: similar function in ticket_utils.php. lets consolidate
 function get_tech_name_from_id(string $tech_sw_id)
 {
     $tech_name_result = SolarWindsDB::get()->execute_query("SELECT FIRST_NAME, LAST_NAME FROM tech WHERE CLIENT_ID = ?", [$tech_sw_id]);
@@ -224,6 +226,7 @@ function get_tech_name_from_id(string $tech_sw_id)
 }
 
 // TODO could cache these
+// TODO2: similar function in ticket_utils.php. lets consolidate
 function get_request_type_by_id(int $request_type_id)
 {
     $request_type_result = HelpDB::get()->execute_query("SELECT request_name FROM request_type WHERE request_id = ?", [$request_type_id]);

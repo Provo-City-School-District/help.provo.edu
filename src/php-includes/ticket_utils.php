@@ -2,6 +2,7 @@
 require_once("email_utils.php");
 // DB connection can fail if not included first, TODO fix maybe
 
+//TODO: have session_is_tech and user_is_tech which might be used as the same thing
 function session_is_tech()
 {
     return $_SESSION["permissions"]["is_tech"] != 0;
@@ -106,7 +107,7 @@ function create_note(
     string $date_override = null,
     string $email_msg_id = null,
 ) {
-    
+
     $ticket_id_clean = trim(htmlspecialchars($ticket_id));
     $note_content_clean = trim(htmlspecialchars($note_content));
     $username_clean = trim(htmlspecialchars($username));
@@ -201,7 +202,7 @@ function create_note(
 // Returns true on success, false on failure
 function create_ticket(string $client, string $subject, string $content, string $email_msg_id, int $location_code, int &$created_ticket_id)
 {
-    
+
     $client_clean = trim(htmlspecialchars($client));
     $subject_clean = limitChars(trim(htmlspecialchars($subject)), 100);
     $content_clean = trim(htmlspecialchars($content));
@@ -300,7 +301,7 @@ function removeAlert($database, $message, $ticket_id)
 
 function request_name_for_type($request_type)
 {
-    
+
     if ($request_type === '0') {
         return "Other";
     } else {
@@ -311,7 +312,7 @@ function request_name_for_type($request_type)
 
 function get_ticket_notes($ticket_id, $limit)
 {
-    
+
     $note_stmt = HelpDB::get()->prepare("SELECT * FROM notes WHERE linked_id = ? ORDER BY created DESC LIMIT ?");
     $note_stmt->bind_param("ii", $ticket_id, $limit);
     $note_stmt->execute();
@@ -371,7 +372,7 @@ function location_name_from_id(string $site_id)
     if ($site_id == "")
         return "Unknown";
 
-    
+
     $location_result = HelpDB::get()->execute_query("SELECT location_name FROM help.locations WHERE sitenumber = ?", [$site_id]);
     if (!isset($location_result)) {
         log_app(LOG_ERR, "[location_name_from_id] Failed to get location query result");
@@ -388,7 +389,7 @@ function location_name_from_id(string $site_id)
 
 function assigned_tech_for_ticket(int $ticket_id)
 {
-    
+
     $assigned_result = HelpDB::get()->execute_query("SELECT employee FROM help.tickets WHERE tickets.id = ?", [$ticket_id]);
     if (!isset($assigned_result)) {
         log_app(LOG_ERR, "[assigned_tech_for_ticket] Failed to get location query result");
@@ -404,7 +405,7 @@ function assigned_tech_for_ticket(int $ticket_id)
 
 function client_for_ticket(int $ticket_id)
 {
-    
+
     $client_result = HelpDB::get()->execute_query("SELECT client FROM help.tickets WHERE tickets.id = ?", [$ticket_id]);
     if (!isset($client_result)) {
         log_app(LOG_ERR, "[client_for_ticket] Failed to get location query result");
@@ -425,7 +426,7 @@ Output: The result set of cc or bcc emails on the ticket
 */
 function emails_for_ticket(int $ticket_id, bool $bcc)
 {
-    
+
     if ($bcc) {
         $email_type = "bcc_emails";
         $query = "SELECT bcc_emails FROM help.tickets WHERE tickets.id = ?";
@@ -449,7 +450,7 @@ function emails_for_ticket(int $ticket_id, bool $bcc)
 
 function status_for_ticket(int $ticket_id)
 {
-    
+
     $status_result = HelpDB::get()->execute_query("SELECT status FROM help.tickets WHERE tickets.id = ?", [$ticket_id]);
     if (!isset($status_result)) {
         log_app(LOG_ERR, "[status_for_ticket] Failed to get status query result");
@@ -481,7 +482,7 @@ function generateUpdateHTML($type, $old_value, $new_value, $action, $id)
 
 function get_parsed_ticket_data($ticket_data)
 {
-    
+
     $priorityTypes = [1 => "Critical", 3 => "Urgent", 5 => "High", 10 => "Standard", 15 => "Client Response", 30 => "Project", 60 => "Meeting Support"];
 
     $tickets = [];
@@ -616,7 +617,7 @@ function ldapspecialchars($string)
 
 function get_tech_usernames()
 {
-    
+
     $usernamesResult = HelpDB::get()->execute_query("SELECT username, is_tech FROM users WHERE is_tech = 1 ORDER BY username ASC");
     if (!$usernamesResult) {
         log_app(LOG_ERR, "[get_tech_usernames] Failed to query database");

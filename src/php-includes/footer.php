@@ -23,6 +23,7 @@
 </div>
 <script src="/includes/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 <script src="/includes/js/jquery-ui.min.js" type="text/javascript"></script>
+<script src="/includes/js/lightbox.js"></script>
 <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
 <script src="/includes/js/dataTables/jquery.dataTables.min.js" type="text/javascript"></script>
 <script src="/includes/js/tinymce/tinymce.min.js" referrerpolicy="origin"></script>

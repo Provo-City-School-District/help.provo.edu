@@ -16,7 +16,7 @@ function get_max_file_size()
 
 function get_allowed_extensions()
 {
-    return ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'csv', 'zip', 'rar', '7z', 'tar', 'mp3', 'mp4', 'svg'];
+    return ['jpg', 'jpeg', 'png', 'heic', 'webp', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'csv', 'zip', 'rar', '7z', 'tar', 'mp3', 'mp4', 'svg'];
 }
 
 function get_allowed_mime_types()
@@ -25,6 +25,7 @@ function get_allowed_mime_types()
         'image/jpeg',
         'image/png',
         'image/heic',
+        'image/webp',
         'application/pdf',
         'application/msword',
         'application/vnd.openxmlformats-officedocument.wordprocessingml.document',

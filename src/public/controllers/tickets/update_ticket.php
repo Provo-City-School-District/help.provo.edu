@@ -5,7 +5,7 @@ require_once('helpdbconnect.php');
 
 require("ticket_utils.php");
 require_once("email_utils.php");
-require("template.php");
+require_once("template.php");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $old_client = null;

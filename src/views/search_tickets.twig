@@ -4,15 +4,27 @@
  {% block pre_content %}
 <h1>Search Tickets</h1>
 <form method="get" action="" id="searchTickets">
-    <!-- Fields for all users go here -->
-    <div>
-        <label for="search_archived">Search Archived Tickets:</label>
-        <input type="checkbox" id="search_archived" name="search_archived"  value="1" {{ search_archived is same as(1) ? 'checked' : '' }}>
-    </div>
+    <div class="ticketGrid">
     {# <div>
         <label for="search_notes_only">Search Notes Only:</label>
         <input type="checkbox" id="search_notes_only" name="search_notes_only" value="1">
     </div> #}
+    <div class="form-group-span2">
+
+        <div class="dateInputs">
+            <label for="start_date">Start Date:</label>
+            <input type="date" id="start_date" name="start_date" value="{{ search_start_date }}">
+
+            <label for="end_date">End Date:</label>
+            <input type="date" id="end_date" name="end_date" value="{{ search_end_date }}">
+        </div>
+  
+        <div class="checkbox">
+            <input type="checkbox" name="dates[]" value="created" {{ 'created' in dates_searched ? 'checked' : '' }}> Created Date
+            <input type="checkbox" name="dates[]" value="last_updated" {{ 'last_updated' in dates_searched ? 'checked' : '' }}> Last Updated
+            <input type="checkbox" name="dates[]" value="due_date" {{ 'due_date' in dates_searched ? 'checked' : '' }}> Due Date
+        </div>
+    </div>
     <div class="form-group">
         <label for="search_id">Ticket ID:</label>
         <input type="number" class="form-control" id="search_id" name="search_id" value="{{ search_id }}">
@@ -34,18 +46,7 @@
             <option value="maintenance" {{ search_status is same as('maintenance') ? 'selected' : '' }}>Maintenance</option>
         </select>
     </div>
-    <div>
-
-        <label for="start_date">Start Date:</label>
-        <input type="date" id="start_date" name="start_date" value="{{ search_start_date }}">
-
-        <label for="end_date">End Date:</label>
-        <input type="date" id="end_date" name="end_date" value="{{ search_end_date }}">
-
-        <input type="checkbox" name="dates[]" value="created" {{ 'created' in dates_searched ? 'checked' : '' }}> Created Date
-        <input type="checkbox" name="dates[]" value="last_updated" {{ 'last_updated' in dates_searched ? 'checked' : '' }}> Last Updated
-        <input type="checkbox" name="dates[]" value="due_date" {{ 'due_date' in dates_searched ? 'checked' : '' }}> Due Date
-    </div>
+    
 
     {% if isTech %}
     <!-- Fields for tech users go here -->
@@ -95,11 +96,16 @@
 
     {% endif %}
 
-    <div class="form-group">
+    
+    </div>
+    <div>
+        <label for="search_archived">Search Archived Tickets:</label>
+        <input type="checkbox" id="search_archived" name="search_archived"  value="1" {{ search_archived is same as(1) ? 'checked' : '' }}>
+    </div>
+    <div class="submit-group">
         <button type="submit" class="btn btn-primary">Search</button>
         <button type="reset" id="resetBtn" class="btn btn-secondary">Reset</button>
     </div>
-
 </form>
 {% endblock %}
 

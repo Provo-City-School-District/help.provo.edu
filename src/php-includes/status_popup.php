@@ -1,5 +1,5 @@
 <?php
-require("template.php");
+require_once("template.php");
 // https://www.reddit.com/r/PHP/comments/v0041/comment/c503yed/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
 
 

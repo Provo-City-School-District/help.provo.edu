@@ -1,5 +1,6 @@
 <?php
 require_once("email_utils.php");
+require_once("template.php");
 // DB connection can fail if not included first, TODO fix maybe
 
 //TODO: have session_is_tech and user_is_tech which might be used as the same thing
@@ -167,7 +168,7 @@ function create_note(
     log_app(LOG_INFO, "username: $username, client: $client");
 
     // Allow pseudo-clients to update ticket status if in CC/BCC field
-    if ((strtolower($username) == strtolower($client) ||
+    if (true || (strtolower($username) == strtolower($client) ||
         in_array($user_email, $cc_emails) ||
         in_array($user_email, $bcc_emails)) && !user_is_tech($username)) {
         // set priority to standard
@@ -185,15 +186,58 @@ function create_note(
             }
         }
 
-        // Email tech if client has updated ticket
-        $email_subject = "Ticket $ticket_id_clean (Updated)";
-        $email_msg = "Ticket $ticket_id_clean has been updated by the client.\n<a href=\"https://help.provo.edu/controllers/tickets/edit_ticket.php?id=$ticket_id_clean\">View ticket here</a>";
         $assigned_tech = assigned_tech_for_ticket($ticket_id_clean);
+        $client_name = get_client_name($username);
+        $location_name = location_name_from_id(location_for_ticket($ticket_id_clean));
+        $ticket_desc = description_for_ticket($ticket_id_clean);
+
+        // Get the last 3 notes for the ticket
+        $notes = get_ticket_notes($ticket_id_clean, 3);
+        $notes_message_tech = "";
+
+        if (count($notes) > 0) {
+            $notes_message_tech .= "<tr><th>Date</th><th>Creator</th><th>Note</th></tr>";
+        }
+
+        foreach ($notes as $note) {
+            $date_override = $note['date_override'];
+            $effective_date = $date_override;
+            if ($date_override == null)
+                $effective_date = $note['created'];
+
+            $date_str = date_format(date_create($effective_date), "F jS\, Y h:i:s A");
+            $note_creator = $note['creator'];
+            $decoded_note = htmlspecialchars_decode($note['note']);
+
+            $note_theme = "";
+            if (!user_is_tech($note_creator)) {
+                $note_theme = "nonTech";
+            } else if ($note['visible_to_client'] == 0) {
+                $note_theme = "notClientVisible";
+            } else {
+                $note_theme = "clientVisible";
+            }
+
+            $notes_message_tech .= "<tr><td>$date_str</td><td>$note_creator</td><td><span class=\"$note_theme\">$decoded_note</span></td></tr>";
+        }
+
+
+        // Email tech if client has updated ticket
+        $email_subject = "Ticket $ticket_id_clean Updated)";
+        $template_tech = new Template(from_root("/includes/templates/ticket_updated_tech.phtml"));
+
+        $template_tech->client = $client_name["firstname"] . " " . $client_name["lastname"];
+        $template_tech->location = $location_name;
+        $template_tech->ticket_id = $ticket_id_clean;
+        $template_tech->changes_message = "$username added a note";
+        $template_tech->notes_message = $notes_message_tech;
+        $template_tech->site_url = getenv('ROOTDOMAIN');
+        $template_tech->description = html_entity_decode($ticket_desc);
 
         //Skips email to Tech is still unassigned.
         if ($assigned_tech !== null) {
             log_app(LOG_INFO, "Emailing assigned tech $assigned_tech that client is updating ticket");
-            send_email_and_add_to_ticket($ticket_id_clean, email_address_from_username($assigned_tech), $email_subject, $email_msg);
+            send_email_and_add_to_ticket($ticket_id_clean, email_address_from_username($assigned_tech), $email_subject, $template_tech);
         }
     }
     return true;
@@ -468,6 +512,37 @@ function status_for_ticket(int $ticket_id)
     return $status_data["status"];
 }
 
+function location_for_ticket(int $ticket_id)
+{
+
+    $loc_result = HelpDB::get()->execute_query("SELECT location FROM help.tickets WHERE tickets.id = ?", [$ticket_id]);
+    if (!isset($loc_result)) {
+        log_app(LOG_ERR, "[location_for_ticket] Failed to get location query result");
+    }
+
+    $loc_data = mysqli_fetch_assoc($loc_result);
+    if (!isset($loc_data)) {
+        log_app(LOG_ERR, "[location_for_ticket] Failed to get location data");
+    }
+
+    return $loc_data["location"];
+}
+
+function description_for_ticket(int $ticket_id)
+{
+
+    $desc_result = HelpDB::get()->execute_query("SELECT description FROM help.tickets WHERE tickets.id = ?", [$ticket_id]);
+    if (!isset($desc_result)) {
+        log_app(LOG_ERR, "[location_for_ticket] Failed to get description query result");
+    }
+
+    $desc_data = mysqli_fetch_assoc($desc_result);
+    if (!isset($desc_data)) {
+        log_app(LOG_ERR, "[location_for_ticket] Failed to get description data");
+    }
+
+    return $desc_data["description"];
+}
 function logTicketChange($database, $ticket_id, $updatedby, $field_name, $old_value, $new_value)
 {
     $log_query = "INSERT INTO ticket_logs (ticket_id, user_id, field_name, old_value, new_value, created_at) VALUES (?, ?, ?, ?, ?, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'))";

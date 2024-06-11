@@ -168,7 +168,7 @@ function create_note(
     log_app(LOG_INFO, "username: $username, client: $client");
 
     // Allow pseudo-clients to update ticket status if in CC/BCC field
-    if (true || (strtolower($username) == strtolower($client) ||
+    if ((strtolower($username) == strtolower($client) ||
         in_array($user_email, $cc_emails) ||
         in_array($user_email, $bcc_emails)) && !user_is_tech($username)) {
         // set priority to standard

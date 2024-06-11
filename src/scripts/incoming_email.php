@@ -22,6 +22,7 @@ $mbox = imap_open($imap_path, $username, $password) or die('Cannot connect to Gm
 $msg_count = imap_num_msg($mbox);
 if ($msg_count == false) {
     log_app(LOG_ERR, "IMAP message count failed to query: " . imap_last_error());
+    exit;
 }
 
 // Sort by msg date
@@ -180,7 +181,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
                 create_note($existing_ticket_id, $sender_username, $message, 0, 0, 0, 0, true, null, $email_msg_id);
             } else {
                 $failed_email_ids[] = $i;
-                log_app(LOG_ERR, "Failed to find ancestor id in database for message \"$email_msg_id\". This shouldn't happen on a receipt email we sent out.");
+                log_app(LOG_ERR, "Failed to find ancestor id ( \"$email_ancestor_id\" ) in database for message \"$email_msg_id\". This shouldn't happen on a receipt email we sent out.");
             }
         }
     } else {

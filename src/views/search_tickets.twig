@@ -1,0 +1,202 @@
+{% extends "ticket_base.twig" %}
+
+
+ {% block pre_content %}
+<h1>Search Tickets</h1>
+<form method="get" action="" id="searchTickets">
+    <div class="ticketGrid">
+    {# <div>
+        <label for="search_notes_only">Search Notes Only:</label>
+        <input type="checkbox" id="search_notes_only" name="search_notes_only" value="1">
+    </div> #}
+    <div class="form-group-span2">
+
+        <div class="dateInputs">
+            <label for="start_date">Start Date:</label>
+            <input type="date" id="start_date" name="start_date" value="{{ search_start_date }}">
+
+            <label for="end_date">End Date:</label>
+            <input type="date" id="end_date" name="end_date" value="{{ search_end_date }}">
+        </div>
+  
+        <div class="checkbox">
+            <input type="checkbox" name="dates[]" value="created" {{ 'created' in dates_searched ? 'checked' : '' }}> Created Date
+            <input type="checkbox" name="dates[]" value="last_updated" {{ 'last_updated' in dates_searched ? 'checked' : '' }}> Last Updated
+            <input type="checkbox" name="dates[]" value="due_date" {{ 'due_date' in dates_searched ? 'checked' : '' }}> Due Date
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="search_id">Ticket ID:</label>
+        <input type="number" class="form-control" id="search_id" name="search_id" value="{{ search_id }}">
+    </div>
+    <div class="form-group">
+        <label for="search_name">Keywords:</label>
+        <input type="text" class="form-control" id="search_name" name="search_name" value="{{ search_name }}">
+    </div>
+    <div class="form-group">
+        <label for="search_status">Status:</label>
+        <select id="search_status" name="search_status">
+            <option value="" selected></option>
+            <option value="open" {{ search_status is same as('open') ? 'selected' : '' }}>Open</option>
+            <option value="closed" {{ search_status is same as('closed') ? 'selected' : '' }}>Closed</option>
+            <option value="resolved" {{ search_status is same as('resolved') ? 'selected' : '' }}>Resolved</option>
+            {# <option value="cancelled" {{ search_status is same as('cancelled') ? 'selected' : '' }}>Cancelled</option> #}
+            <option value="pending" {{ search_status is same as('pending') ? 'selected' : '' }}>Pending</option>
+            <option value="vendor" {{ search_status is same as('vendor') ? 'selected' : '' }}>Vendor</option>
+            <option value="maintenance" {{ search_status is same as('maintenance') ? 'selected' : '' }}>Maintenance</option>
+        </select>
+    </div>
+    
+
+    {% if isTech %}
+    <!-- Fields for tech users go here -->
+    <div class="form-group">
+        <label for="priority">Priority:</label>
+        <select id="priority" name="priority">
+            <option value="" selected></option>
+            <option value="1" {{ search_priority is same as ("1") ? 'selected' : '' }}>Critical</option>
+            <option value="3" {{ search_priority is same as ("3") ? 'selected' : '' }}>Urgent</option>
+            <option value="5" {{ search_priority is same as ("5") ? 'selected' : '' }}>High</option>
+            <option value="10" {{ search_priority is same as ("10") ? 'selected' : '' }}>Standard</option>
+            <option value="15" {{ search_priority is same as ("15") ? 'selected' : '' }}>Client Response</option>
+            <option value="30" {{ search_priority is same as ("30") ? 'selected' : '' }}>Project</option>
+            <option value="60" {{ search_priority is same as ("60") ? 'selected' : '' }}>Meeting Support</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="search_location">Department/Location:</label>
+        <select id="search_location" name="search_location">
+            <option value="" selected></option>
+            <optgroup label="Department">
+                {% for department in departments %}
+                <option value="{{ department.sitenumber }}" {{ department.sitenumber == search_location ? 'selected' : '' }}>{{ department.location_name }}</option>
+                {% endfor %}
+            </optgroup>
+            <optgroup label="Location">
+                {% for location in locations %}
+                <option value="{{ location.sitenumber }}" {{ location.sitenumber == search_location ? 'selected' : '' }}>{{ location.location_name }}</option>
+                {% endfor %}
+            </optgroup>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="search_employee">Tech:</label>
+        <select id="search_employee" name="search_employee">
+            <option value="" selected></option>
+            <option value="Unassigned" {{ search_employee == 'helpdesk' ? 'selected' : '' }}>Unassigned</option>
+            {% for techuser in techusernames %}
+            <option value="{{ techuser }}" {{ search_employee == techuser ? 'selected' : '' }}>{{ techuser }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="search_client">Client:</label>
+        <input type="text" class="form-control" id="search_client" name="search_client" value="{{ search_client }}">
+    </div>
+
+    {% endif %}
+
+    
+    </div>
+    <div>
+        <label for="search_archived">Search Archived Tickets:</label>
+        <input type="checkbox" id="search_archived" name="search_archived"  value="1" {{ search_archived is same as(1) ? 'checked' : '' }}>
+    </div>
+    <div class="submit-group">
+        <button type="submit" class="btn btn-primary">Search</button>
+        <button type="reset" id="resetBtn" class="btn btn-secondary">Reset</button>
+    </div>
+</form>
+{% endblock %}
+
+
+ {% block page_scripts %}
+<script src="{{ page_scripts }}?v={{ app_version }}" type="text/javascript"></script>
+
+ {% endblock %}
+
+{% block content %}
+    {% if results|length > 0 %}
+         <table id="DataTables_Table_0" class="search-data-table ticketsTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th class="details">Request Detail</th>
+                    {# <th class="tLatestNote">Latest Note</th> #}
+                    {# <th class="client">Client</th> #}
+                    <th class="tLocation">Location</th>
+                    <th class="category">Request Category</th>
+                    <th class="status">Current Status</th>
+                    <th class="priority">Priority</th>
+                    <th class="tDate">Created Date</th>
+                    <th class="tDate">Last Updated</th>
+                    <th class="date">Due</th>
+                    <th class="">Assigned</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                    {% if result.id is defined %}
+                        <tr>
+                            <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id={{ result.id }}">{{ result.id }}</a></td>
+                            <td class="details" data-cell="Request Detail"><a href="/controllers/tickets/edit_ticket.php?id={{ result.id }}">{{ result.name }}</a><br>{{ result.description|slice(0, 150) }}</td>
+                            
+                                {# TODO: Ommited the latest note section #}
+                            
+                            {# <td class="latestNote" data-cell="Latest Note:">
+                            {% if result.latest_note is defined %}
+                                <strong>{{ result.latest_note_author }}: </strong> {{ ticket.latest_note }}</td> 
+                            {% else %}
+                                
+                            {% endif %}
+                        </td> #}
+                            
+                            <td data-cell="Location" class="tableLocation">
+                                {% if result.location is defined %}
+                                    <strong>{{ get_location_name_from_id(result.location) }}</strong> RM {{ result.room }}
+
+                                {% endif %}
+                            </td>
+                            <td data-cell="Request Category">{{ result.request_type_id|get_request_type_by_id }}</td>
+                            <td data-cell="Current Status">{{ result.status }}</td>
+                            <td data-cell="Priority">{{ priorityTypes[result.priority] }}</td>
+                            <td data-cell="Created">{{ result.created }}</td>
+                            <td data-cell="Last Updated">{{ result.last_updated }}</td>
+                            <td data-cell="Due">{{ result.due_date }}</td>
+                            <td data-cell="Assigned">
+                                {# {{ result.employee }} #}
+                                {{ get_tech_name_from_id_user(result.employee|default('')|e,false) }}
+                            </td>
+                        </tr>
+                    {% elseif result.a_id is defined %}
+                        <tr>
+                            <td data-cell="ID"><a href="/controllers/tickets/archived_ticket_view.php?id={{ result.a_id }}">{{ result.a_id }}</a></td>
+                            <td data-cell="details"><a href="/controllers/tickets/archived_ticket_view.php?id={{ result.a_id }}">{{ result.SUBJECT }}</a><br>{{ result.QUESTION_TEXT|slice(0, 150) }}</td>
+                        
+                                {# TODO: Ommited the latest note section #}
+                        
+                            {# <td class="latestNote" data-cell="Latest Note:"><strong></td> #}
+                            <td data-cell="Location">
+                                {% if result.LOCATION_ID is defined %}
+                                    {{ get_location_name_from_id(result.LOCATION_ID, true) }}
+                                {% endif %}
+                            </td>
+                            <td data-cell="Request Category"></td>
+                            <td data-cell="Current Status"></td>
+                            <td data-cell="Priority"></td>
+                            <td data-cell="Created">{{ result.REPORT_DATE }}</td>
+                            <td data-cell="Last Updated">{{ result.LAST_UPDATED }}</td>
+                            <td data-cell="Due">{{ result.CLOSE_DATE }}</td>
+                            <td data-cell="Assigned Employee">
+                                {{ get_tech_name_from_id_user(result.ASSIGNED_TECH_ID|default('')|e,true) }}
+                                {# {{ result.ASSIGNED_TECH_ID }} #}
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No Results To Display.</p>
+    {% endif %}
+{% endblock %}

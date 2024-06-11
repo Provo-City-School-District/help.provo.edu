@@ -2,6 +2,7 @@
 require_once("email_utils.php");
 // DB connection can fail if not included first, TODO fix maybe
 
+//TODO: have session_is_tech and user_is_tech which might be used as the same thing
 function session_is_tech()
 {
     return $_SESSION["permissions"]["is_tech"] != 0;

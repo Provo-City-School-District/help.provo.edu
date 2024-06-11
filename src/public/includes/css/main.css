@@ -332,7 +332,8 @@ table.dataTable .details {
 	overflow-wrap: break-word;
 }
 
-.latestNote strong {
+.latestNote strong,
+.tableLocation strong {
 	display: block;
 
 }
@@ -436,6 +437,17 @@ select {
 
 .ticket_log {
 	font-size: 70%;
+}
+
+.dateInputs {
+	display: flex;
+	align-items: center;
+}
+
+.submit-group {
+	display: flex;
+	justify-content: space-between;
+
 }
 
 .ticket_log td:nth-child(1),
@@ -549,6 +561,7 @@ select {
 .ticket_log tr {
 	height: 45px;
 }
+
 
 /* =============================== User Management Screen =============================== */
 .userPermissions div {
@@ -684,13 +697,23 @@ select {
 
 @media (min-width:800px) {
 	.ticketGrid>* {
-		/* display: grid;
-		grid-template-columns: 200px 1fr; */
 		display: flex;
-		/* justify-content: space-between; */
 		align-items: center;
 
 	}
+
+	.form-group {
+		display: flex;
+	}
+
+	.form-group-span2 {
+		display: grid;
+		gap: 1em;
+		grid-column: span 2;
+		grid-template-columns: 1fr 375px;
+	}
+
+
 
 	.ticketGrid span,
 	.ticketGrid label {

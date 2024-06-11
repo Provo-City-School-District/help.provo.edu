@@ -298,7 +298,11 @@ function removeAlert($database, $message, $ticket_id)
     }
     mysqli_stmt_close($alert_stmt);
 }
-
+function removeAllAlertsByTicketId($ticket_id)
+{
+    $deleteAlertsQuery = HelpDB::get()->execute_query("DELETE FROM alerts WHERE ticket_id = ?", [$ticket_id]);
+    return $deleteAlertsQuery;
+}
 function request_name_for_type($request_type)
 {
 

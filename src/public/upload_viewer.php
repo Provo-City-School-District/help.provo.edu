@@ -30,7 +30,7 @@ if (!in_array($content_type, $allowed_mime_types)) {
 $content_size = filesize($real_user_path);
 
 // Some files can be previewed directly by browser, conditionally set the HTTP header and download attachment if not
-$embeddable_types = ['image/jpeg', 'image/png', 'image/svg+xml', 'application/pdf', 'text/plain', 'audio/mpeg', 'video/mp4'];
+$embeddable_types = ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml', 'application/pdf', 'text/plain', 'audio/mpeg', 'video/mp4'];
 
 if (!in_array($content_type, $embeddable_types)) {
     header("Content-Disposition: attachment; filename=\"$file_path\"");

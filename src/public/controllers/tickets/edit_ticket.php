@@ -300,6 +300,26 @@ $alert_data = [];
 while ($row = $alerts_res->fetch_assoc()) {
     $alert_data[] = $row;
 }
+
+
+function get_attachment_data(string $file_path) {
+    $real_user_path = realpath(from_root("/../uploads/$file_path"));
+    $real_base_path = realpath(from_root("/../uploads/")).DIRECTORY_SEPARATOR;
+
+
+    // Validate that the file is being accessed in ${PROJECT_ROOT}/uploads
+    if ($real_user_path === false || (substr($real_user_path, 0, strlen($real_base_path)) != $real_base_path)) {
+        return null;
+    }
+
+    $data = file_get_contents($real_user_path);
+    $content_type = mime_content_type($real_user_path);
+
+    $b64_data = base64_encode($data);
+    $base64 = "data:image/$content_type;base64,$b64_data";
+
+    return $base64;
+}
 ?>
 <div class="alerts_wrapper">
 <?php foreach ($alert_data as $alert): ?>
@@ -756,10 +776,21 @@ while ($row = $alerts_res->fetch_assoc()) {
             foreach ($attachmentPaths as $attachmentPath) {
                 $path = basename($attachmentPath);
                 $path_encoded = urlencode($path);
+                $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+                $shouldUseLightbox = $extension == "jpeg" || $extension == "jpg" || $extension == "png" || $extension == "webp" || $extension == "heic";
+                
                 if ($_SESSION["permissions"]["is_tech"]) {
-                    echo "<li><a href=\"/upload_viewer.php?file=$path_encoded\">$path</a> <a class='file_del' onclick=\"confirmDeleteAttachment('$attachmentPath')\">&times;</a></li>";
-                } else {
-                    echo "<li><a href=\"/upload_viewer.php?file=$path_encoded\">$path</a></li>";
+                    if ($shouldUseLightbox && $data = get_attachment_data($path)) {
+                        echo "<li><a href=\"$data\" data-lightbox=\"image-1\" data-gallery=\"multiimages\" data-toggle=\"lightbox\">$path</a> <a class='file_del' onclick=\"confirmDeleteAttachment('$attachmentPath')\">&times;</a></li>";
+                    } else {
+                        echo "<li><a href=\"/upload_viewer.php?file=$path_encoded\">$path</a> <a class='file_del' onclick=\"confirmDeleteAttachment('$attachmentPath')\">&times;</a></li>";
+                    }
+                 } else {
+                    if ($shouldUseLightbox && $data = get_attachment_data($path)) {
+                        echo "<li><a href=\"$data\" data-lightbox=\"image-1\" data-gallery=\"multiimages\" data-toggle=\"lightbox\">$path</a></li>";
+                    } else {
+                        echo "<li><a href=\"/upload_viewer.php?file=$path_encoded\">$path</a></li>";
+                    }
                 }
             }
             ?>

@@ -382,6 +382,8 @@ function get_attachment_data(string $file_path)
             <div class="horizontalContainerCell">
                 <input id="green-button" type="submit" name="update_ticket_with_email" value="Update Ticket & Email">
                 <?php if ($readonly) : ?>
+                    <input type="hidden" name="send_client_email" value="send_client_email" checked>
+                    <input type="hidden" name="send_tech_email" value="send_tech_email" checked>
                 <?php endif; ?>
             </div>
         </div>

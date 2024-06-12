@@ -384,6 +384,14 @@ function get_attachment_data(string $file_path)
                 <?php if ($readonly) : ?>
                     <input type="hidden" name="send_client_email" value="send_client_email" checked>
                     <input type="hidden" name="send_tech_email" value="send_tech_email" checked>
+                    <?php
+                    if (isset($ticket['cc_emails']) && $ticket['cc_emails'] !== '') {
+                        echo '<input type="hidden" name="send_cc_emails" value="send_cc_emails" checked>';
+                    }
+                    if (isset($ticket['bcc_emails']) && $ticket['bcc_emails'] !== '') {
+                        echo '<input type="hidden" name="send_bcc_emails" value="send_bcc_emails" checked>';
+                    }
+                    ?>
                 <?php endif; ?>
             </div>
         </div>

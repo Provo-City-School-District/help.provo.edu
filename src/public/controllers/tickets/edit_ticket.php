@@ -465,7 +465,7 @@ function get_attachment_data(string $file_path)
                 <input type="hidden" id="status" name="status" value="<?= $ticket['status'] ?>">
 
                 <div>
-                    <span>Priority:</span> <?= $ticket['priority'] ?>
+                    <span>Priority:</span> <?= getPriorityName($ticket['priority']) ?>
                 </div>
                 <input type="hidden" id="priority" name="priority" value="<?= $ticket['priority'] ?>">
 

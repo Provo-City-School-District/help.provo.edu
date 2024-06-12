@@ -79,3 +79,4 @@ If you're setting up a fresh development instance the database should initialize
 - HTMLPurifier (4.17): https://htmlpurifier.org/
 - Jquery (3.7.1): https://jquery.com/
 - Jquery UI (1.13.3): https://jqueryui.com/
+- Lightbox2 (2.11.4) - https://github.com/lokesh/lightbox2

@@ -55,6 +55,9 @@
                 {% block menu %}
                 
                 {% endblock %}
+                {% block pre_content %}
+                
+                {% endblock %}
                 {% block content %}
 
                 {% endblock %}
@@ -77,5 +80,8 @@
         <script src="/includes/js/tinyMCE-conf.js?v={{ app_version }}" type="text/javascript"></script>
         <script src="/includes/js/dataTables-conf.js?v={{ app_version }}" type="text/javascript"></script>
         <script src="/includes/js/global.js?v={{ app_version }}" type="text/javascript"></script>
+        {% block page_scripts %}
+
+        {% endblock %}
     </body>
 </html>

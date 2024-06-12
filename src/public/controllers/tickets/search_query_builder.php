@@ -38,7 +38,7 @@ if (!empty($search_employee)) {
     if ($search_employee == 'Unassigned') {
         $ticket_query .= " AND (employee IS NULL OR employee = 'unassigned' OR employee = '')";
     } else {
-        $ticket_query .= " AND employee LIKE '%$search_employee%'";
+        $ticket_query .= " AND employee LIKE '$search_employee'";
     }
 }
 if (!empty($search_priority)) {
@@ -48,7 +48,7 @@ if (!empty($search_client)) {
     $ticket_query .= " AND client LIKE '$search_client'";
 }
 if (!empty($search_status)) {
-    $ticket_query .= " AND status LIKE '%$search_status%'";
+    $ticket_query .= " AND status LIKE '$search_status'";
 }
 if (!empty($search_start_date) && !empty($search_end_date) && !empty($dates_searched)) {
     $search_end_date = date('Y-m-d', strtotime($search_end_date . ' +1 day'));

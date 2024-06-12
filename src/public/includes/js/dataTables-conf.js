@@ -56,7 +56,7 @@ $(document).ready(function () {
     pageLength: 50, // Set the number of rows per page
     stateSave: true, // Enable state saving
     ordering: true, // Enable sorting
-    autoWidth: false, // Disable auto width calculation
+    autoWidth: true, // Disable auto width calculation
   });
 });
 

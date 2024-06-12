@@ -300,14 +300,35 @@ $alert_data = [];
 while ($row = $alerts_res->fetch_assoc()) {
     $alert_data[] = $row;
 }
+
+
+function get_attachment_data(string $file_path)
+{
+    $real_user_path = realpath(from_root("/../uploads/$file_path"));
+    $real_base_path = realpath(from_root("/../uploads/")) . DIRECTORY_SEPARATOR;
+
+
+    // Validate that the file is being accessed in ${PROJECT_ROOT}/uploads
+    if ($real_user_path === false || (substr($real_user_path, 0, strlen($real_base_path)) != $real_base_path)) {
+        return null;
+    }
+
+    $data = file_get_contents($real_user_path);
+    $content_type = mime_content_type($real_user_path);
+
+    $b64_data = base64_encode($data);
+    $base64 = "data:image/$content_type;base64,$b64_data";
+
+    return $base64;
+}
 ?>
 <div class="alerts_wrapper">
-<?php foreach ($alert_data as $alert): ?>
-    <p class="<?= $alert["alert_level"] ?>">
-        <a><?= $alert["message"] ?></a>
-        <a class="close-alert" href="/controllers/tickets/alert_delete.php?id=<?= $alert["id"] ?>">&times;</a>
-    </p>
-<?php endforeach; ?>
+    <?php foreach ($alert_data as $alert) : ?>
+        <p class="<?= $alert["alert_level"] ?>">
+            <a><?= $alert["message"] ?></a>
+            <a class="close-alert" href="/controllers/tickets/alert_delete.php?id=<?= $alert["id"] ?>">&times;</a>
+        </p>
+    <?php endforeach; ?>
 </div>
 <article id="ticketWrapper">
     <div id="ticket-title-container">
@@ -353,13 +374,28 @@ while ($row = $alerts_res->fetch_assoc()) {
     <form id="updateTicketForm" method="POST" action="update_ticket.php">
         <!-- Add a submit button to update the information -->
         <div class="horizontalContainer">
+            <?php if (!$readonly) : ?>
             <div class="horizontalContainerCell">
                 <input id="green-button" type="submit" name="update_ticket" value="Update Ticket">
             </div>
+            <?php endif; ?>
             <div class="horizontalContainerCell">
                 <input id="green-button" type="submit" name="update_ticket_with_email" value="Update Ticket & Email">
+                <?php if ($readonly) : ?>
+                    <input type="hidden" name="send_client_email" value="send_client_email" checked>
+                    <input type="hidden" name="send_tech_email" value="send_tech_email" checked>
+                    <?php
+                    if (isset($ticket['cc_emails']) && $ticket['cc_emails'] !== '') {
+                        echo '<input type="hidden" name="send_cc_emails" value="send_cc_emails" checked>';
+                    }
+                    if (isset($ticket['bcc_emails']) && $ticket['bcc_emails'] !== '') {
+                        echo '<input type="hidden" name="send_bcc_emails" value="send_bcc_emails" checked>';
+                    }
+                    ?>
+                <?php endif; ?>
             </div>
         </div>
+        <?php if (!$readonly) : ?>
         <div class="horizontalContainer">
             <div class="horizontalContainerCell">
                 Client:<input type="checkbox" name="send_client_email" value="send_client_email" <?= $ticket["send_client_email"] != 0 ? "checked" : "" ?>>
@@ -374,6 +410,7 @@ while ($row = $alerts_res->fetch_assoc()) {
                 BCC:<input type="checkbox" name="send_bcc_emails" value="send_bcc_emails" <?= $ticket["send_bcc_emails"] != 0 ? "checked" : "" ?>>
             </div>
         </div>
+        <?php endif; ?>
         <div class="ticketGrid">
             <input type="hidden" name="ticket_create_date" value="<?= $ticket['created'] ?>">
             <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
@@ -420,31 +457,7 @@ while ($row = $alerts_res->fetch_assoc()) {
             <?php
             // If the user is not a tech, display read only form fields if is client
             if ($readonly) {
-                // Switch Priority ID to String
-                switch ($ticket['priority']) {
-                    case 1:
-                        $ticket['priority'] = "Critical";
-                        break;
-                    case 3:
-                        $ticket['priority'] = "Urgent";
-                        break;
-                    case 5:
-                        $ticket['priority'] = "High";
-                        break;
-                    case 10:
-                        $ticket['priority'] = "Standard";
-                        break;
-                    case 15:
-                        $ticket['priority'] = "Client Response";
-                        break;
-                    case 30:
-                        $$ticket['priority'] = "Project";
-                        break;
-                    case 60:
-                        $ticket['priority'] = "Meeting Support";
-                        break;
-                }
-                // Display Fields that client can see
+                // Display Fields that client can edit
             ?>
 
                 <div>
@@ -468,7 +481,7 @@ while ($row = $alerts_res->fetch_assoc()) {
                 <input type="hidden" id="status" name="status" value="<?= $ticket['status'] ?>">
 
                 <div>
-                    <span>Priority:</span> <?= $ticket['priority'] ?>
+                    <span>Priority:</span> <?= getPriorityName($ticket['priority']) ?>
                 </div>
                 <input type="hidden" id="priority" name="priority" value="<?= $ticket['priority'] ?>">
 
@@ -668,7 +681,7 @@ while ($row = $alerts_res->fetch_assoc()) {
         <div class="detailContainer">
             <div class="grid2 ticketSubject">
                 <label for="ticket_name">Ticket Title:</label>
-                <input type="text" id="ticket_name" name="ticket_name" value="<?= $ticket['name'] ?>">
+                <input type="text" id="ticket_name" name="ticket_name" value="<?= $ticket['name'] ?>" maxlength="100">
             </div>
             <label for="description" class="heading2">Request Detail:</label>
             <div class="ticket-description">
@@ -756,10 +769,21 @@ while ($row = $alerts_res->fetch_assoc()) {
             foreach ($attachmentPaths as $attachmentPath) {
                 $path = basename($attachmentPath);
                 $path_encoded = urlencode($path);
+                $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+                $shouldUseLightbox = $extension == "jpeg" || $extension == "jpg" || $extension == "png" || $extension == "webp" || $extension == "heic";
+
                 if ($_SESSION["permissions"]["is_tech"]) {
-                    echo "<li><a href=\"/upload_viewer.php?file=$path_encoded\">$path</a> <a class='file_del' onclick=\"confirmDeleteAttachment('$attachmentPath')\">&times;</a></li>";
+                    if ($shouldUseLightbox && $data = get_attachment_data($path)) {
+                        echo "<li><a href=\"$data\" data-lightbox=\"image-1\" data-gallery=\"multiimages\" data-toggle=\"lightbox\">$path</a> <a class='file_del' onclick=\"confirmDeleteAttachment('$attachmentPath')\">&times;</a></li>";
+                    } else {
+                        echo "<li><a href=\"/upload_viewer.php?file=$path_encoded\">$path</a> <a class='file_del' onclick=\"confirmDeleteAttachment('$attachmentPath')\">&times;</a></li>";
+                    }
                 } else {
-                    echo "<li><a href=\"/upload_viewer.php?file=$path_encoded\">$path</a></li>";
+                    if ($shouldUseLightbox && $data = get_attachment_data($path)) {
+                        echo "<li><a href=\"$data\" data-lightbox=\"image-1\" data-gallery=\"multiimages\" data-toggle=\"lightbox\">$path</a></li>";
+                    } else {
+                        echo "<li><a href=\"/upload_viewer.php?file=$path_encoded\">$path</a></li>";
+                    }
                 }
             }
             ?>

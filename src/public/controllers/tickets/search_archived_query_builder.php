@@ -50,32 +50,25 @@ if (!empty($search_employee)) {
 if (!empty($search_client)) {
     $old_ticket_query .= " AND CLIENT_ID LIKE '%$search_client%'";
 }
+$statusMap = [
+    'open' => 1,
+    'closed' => 3,
+    'resolved' => 5,
+    'pending' => 7,
+    'maintenance' => 11,
+    'vendor' => 12
+];
+
 // map old system status ids to our current system
-switch ($search_status) {
-    case 'open':
-        $search_status = 1;
-        break;
-    case 'closed':
-        $search_status = 3;
-        break;
-    case 'resolved':
-        $search_status = 5;
-        break;
-    case 'pending':
-        $search_status = 7;
-        break;
-    case 'maintenance':
-        $search_status = 11;
-        break;
-    case 'vendor':
-        $search_status = 12;
-        break;
-    default:
-        $search_status = null;
-}
+$search_status_id = $statusMap[$search_status] ?? null;
+
+
 if (!empty($search_status)) {
-    $old_ticket_query .= " AND STATUS_TYPE_ID  LIKE '%$search_status%'";
+    $old_ticket_query .= " AND STATUS_TYPE_ID  LIKE '%$search_status_id%'";
 }
+// switch them back to the new system status names
+$search_status = array_search($search_status_id, $statusMap);
+
 if (!empty($search_start_date) && !empty($search_end_date) && !empty($dates_searched)) {
 
     $date_conditions = array();

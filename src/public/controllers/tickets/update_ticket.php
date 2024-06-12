@@ -5,7 +5,7 @@ require_once('helpdbconnect.php');
 
 require("ticket_utils.php");
 require_once("email_utils.php");
-require("template.php");
+require_once("template.php");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $old_client = null;
@@ -126,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $new_due_date = clone $today;
 
         // Add the priority days to the due date, skipping weekends
-        $days_to_add = $updatedPriority;
+        $days_to_add = intval($updatedPriority);
         // echo "Days to add: " . $days_to_add . "<br>";
         while ($days_to_add > 0) {
             $new_due_date->modify('+1 day');
@@ -225,12 +225,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $old_ticket_data['employee'] = "unassigned";
         }
         $changesMessage .= "<li>Changed Employee from " . $old_ticket_data['employee'] . " to " . $updatedEmployee . "</li>";
-        // If the ticket was re-assigned, remove the alert
-        removeAlert(HelpDB::get(), $pastDueMessage, $ticket_id);
-        removeAlert(HelpDB::get(), $alert48Message, $ticket_id);
-        removeAlert(HelpDB::get(), $alert7DayMessage, $ticket_id);
-        removeAlert(HelpDB::get(), $alert15DayMessage, $ticket_id);
-        removeAlert(HelpDB::get(), $alert20DayMessage, $ticket_id);
+        // If the ticket was re-assigned, remove the alerts, they will be re-added within an hour for the new user.
+        removeAllAlertsByTicketId($ticket_id);
     }
 
     if (isset($old_ticket_data['location'], $updatedLocation) && $old_ticket_data['location'] != $updatedLocation) {
@@ -263,12 +259,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         logTicketChange(HelpDB::get(), $ticket_id, $updatedby, $statusColumn, $old_ticket_data['status'], $updatedStatus);
         $changesMessage .= "<li>Changed Status from " . $old_ticket_data['status'] . " to " . $updatedStatus . "</li>";
         if ($updatedStatus == "resolved" || $updatedStatus == "closed") {
-            // Check if the ticket has an alert about not being updated in last 48 hours and clear it since the ticket was just updated.
-            removeAlert(HelpDB::get(), $alert48Message, $ticket_id);
-            removeAlert(HelpDB::get(), $alert7DayMessage, $ticket_id);
-            removeAlert(HelpDB::get(), $alert15DayMessage, $ticket_id);
-            removeAlert(HelpDB::get(), $alert20DayMessage, $ticket_id);
-            removeAlert(HelpDB::get(), $pastDueMessage, $ticket_id);
+            // Status was changed, purge all alerts, they will get pushed back in within an hour for the new status
+            removeAllAlertsByTicketId($ticket_id);
         }
     }
 

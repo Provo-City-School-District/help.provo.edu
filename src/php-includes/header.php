@@ -91,7 +91,8 @@ $current_page = $_SERVER['REQUEST_URI'];
         <link rel="stylesheet" type="text/css" href="/includes/css/login-styles.css?v=<?= $app_version; ?>">
     <?php
     }
-    ?>
+?>
+    <link href="/includes/css/lightbox.css" rel="stylesheet" />
 </head>
 
 <body>

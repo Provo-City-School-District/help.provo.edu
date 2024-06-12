@@ -9,6 +9,7 @@ if (strpos($user_agent, 'InterMapper') === false && !session_id()) {
 include_once('functions.php');
 include_once('helpdbconnect.php');
 
+//removed for now because its not working and i'm tired of hearing about it
 
 // Set the inactivity time
 // $inactivity_time = 60 * 60; // 60 minutes

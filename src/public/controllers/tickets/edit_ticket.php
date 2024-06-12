@@ -374,13 +374,18 @@ function get_attachment_data(string $file_path)
     <form id="updateTicketForm" method="POST" action="update_ticket.php">
         <!-- Add a submit button to update the information -->
         <div class="horizontalContainer">
+            <?php if (!$readonly) : ?>
             <div class="horizontalContainerCell">
                 <input id="green-button" type="submit" name="update_ticket" value="Update Ticket">
             </div>
+            <?php endif; ?>
             <div class="horizontalContainerCell">
                 <input id="green-button" type="submit" name="update_ticket_with_email" value="Update Ticket & Email">
+                <?php if ($readonly) : ?>
+                <?php endif; ?>
             </div>
         </div>
+        <?php if (!$readonly) : ?>
         <div class="horizontalContainer">
             <div class="horizontalContainerCell">
                 Client:<input type="checkbox" name="send_client_email" value="send_client_email" <?= $ticket["send_client_email"] != 0 ? "checked" : "" ?>>
@@ -395,6 +400,7 @@ function get_attachment_data(string $file_path)
                 BCC:<input type="checkbox" name="send_bcc_emails" value="send_bcc_emails" <?= $ticket["send_bcc_emails"] != 0 ? "checked" : "" ?>>
             </div>
         </div>
+        <?php endif; ?>
         <div class="ticketGrid">
             <input type="hidden" name="ticket_create_date" value="<?= $ticket['created'] ?>">
             <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">

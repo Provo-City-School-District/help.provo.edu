@@ -712,3 +712,24 @@ function get_tech_usernames()
     }
     return $tmp;
 }
+function getPriorityName(int $priority)
+{
+    switch ($priority) {
+        case 1:
+            return "Critical";
+        case 3:
+            return "Urgent";
+        case 5:
+            return "High";
+        case 10:
+            return "Standard";
+        case 15:
+            return "Client Response";
+        case 30:
+            return "Project";
+        case 60:
+            return "Meeting Support";
+        default:
+            return "Unknown";
+    }
+}

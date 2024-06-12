@@ -126,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $new_due_date = clone $today;
 
         // Add the priority days to the due date, skipping weekends
-        $days_to_add = $updatedPriority;
+        $days_to_add = intval($updatedPriority);
         // echo "Days to add: " . $days_to_add . "<br>";
         while ($days_to_add > 0) {
             $new_due_date->modify('+1 day');

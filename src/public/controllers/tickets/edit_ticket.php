@@ -688,7 +688,7 @@ function get_attachment_data(string $file_path) {
         <div class="detailContainer">
             <div class="grid2 ticketSubject">
                 <label for="ticket_name">Ticket Title:</label>
-                <input type="text" id="ticket_name" name="ticket_name" value="<?= $ticket['name'] ?>">
+                <input type="text" id="ticket_name" name="ticket_name" value="<?= $ticket['name'] ?>" maxlength="100">
             </div>
             <label for="description" class="heading2">Request Detail:</label>
             <div class="ticket-description">

@@ -3,6 +3,8 @@ require from_root("/../vendor/autoload.php");
 require from_root("/new-controllers/ticket_base_variables.php");
 require "ticket_utils.php";
 require_once from_root('/../php-includes/swdbconnect.php');
+require "sanitization_utils.php";
+
 //====================================================================================================
 // init variables
 //====================================================================================================
@@ -66,6 +68,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         // Combine the results from both queries into a single array
         $combined_results = array();
         while ($row = mysqli_fetch_assoc($ticket_result)) {
+            // fix '&quot' and other things appearing
+            $row["name"] = strip_tags(html_entity_decode($row["name"]));
+            $row["description"] = strip_tags(html_entity_decode($row["description"]));
             $combined_results[] = $row;
         }
 

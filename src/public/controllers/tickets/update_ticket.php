@@ -231,6 +231,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $changesMessage .= "<li>Changed Employee from " . $old_ticket_data['employee'] . " to " . $updatedEmployee . "</li>";
         // If the ticket was re-assigned, remove the alerts, they will be re-added within an hour for the new user.
         removeAllAlertsByTicketId($ticket_id);
+    } else if (!isset($old_ticket_data['employee'])) {
+        $assigned_tech_changed = true;
     }
 
     if (isset($old_ticket_data['location'], $updatedLocation) && $old_ticket_data['location'] != $updatedLocation) {

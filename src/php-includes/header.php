@@ -225,6 +225,9 @@ $current_page = $_SERVER['REQUEST_URI'];
                     <?php
                     } else {
                     ?>
+                        <?php if ($_SESSION["permissions"]["is_intern"]): ?>
+                        <li><a href="/controllers/tickets/intern_tickets.php">Intern Tickets</a></li>
+                        <?php endif; ?>
                         <li><a href="/tickets.php">My Tickets</a></li>
                         <li><a href="/controllers/tickets/ticket_history.php">Ticket History</a></li>
                     <?php

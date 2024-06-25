@@ -29,6 +29,8 @@ $lastname = $row['lastname'];
 $email = $row['email'];
 $is_admin = $row['is_admin'];
 $is_tech = $row['is_tech'];
+$is_intern = $row['is_intern'];
+$intern_site = $row['intern_site'];
 $is_supervisor = $row['is_supervisor'];
 $is_loc_man = $row['is_location_manager'];
 $ifasid = $row['ifasid'];
@@ -84,6 +86,8 @@ if ($_SESSION['permissions']['is_admin'] == 1) {
         <input type="email" id="email" name="email" value="<?= $email ?>"><br>
         <label for="ifasid">Employee ID:</label>
         <input type="text" id="ifasid" name="ifasid" value="<?= $ifasid ?>"><br>
+        <label for="intern_site">Intern Site:</label>
+        <input type="text" id="intern_site" name="intern_site" value="<?= $intern_site ?>"><br>
         <!-- Supervisor dropdown -->
         <label for="supervisor">Supervisor:</label>
         <select name="supervisor" id="supervisor">
@@ -113,6 +117,11 @@ if ($_SESSION['permissions']['is_admin'] == 1) {
             <div>
                 <label for="is_tech">Is Tech - Can Be Assigned Tickets</label>
                 <input type="checkbox" id="is_tech" name="is_tech" <?= $is_tech == 1 ? 'checked' : '' ?>>
+            </div>
+
+            <div>
+                <label for="is_intern">Is Intern - Can Work On Intern Marked Tickets</label>
+                <input type="checkbox" id="is_intern" name="is_intern" <?= $is_intern == 1 ? 'checked' : '' ?>>
             </div>
 
             <div>
@@ -218,9 +227,6 @@ $client_tickets = mysqli_fetch_all($ticket_result, MYSQLI_ASSOC);
 <?php
 // display tickets that are assigned to the user.
 display_tickets_table($client_tickets, HelpDB::get());
-
-// Close the database connection
-mysqli_close(HelpDB::get());
 ?>
 
 <?php include("footer.php"); ?>

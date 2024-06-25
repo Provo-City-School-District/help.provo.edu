@@ -110,7 +110,7 @@ if ($_SESSION['permissions']['is_admin'] == 1) {
             </div>
 
             <div>
-                <label for="is_supervisor">Is Supervisor- Has Dashboard Screen, Can Be Assigned Subordinates</label>
+                <label for="is_supervisor">Is Supervisor - Has Dashboard Screen, Can Be Assigned Subordinates</label>
                 <input type="checkbox" id="is_supervisor" name="is_supervisor" <?= $is_supervisor == 1 ? 'checked' : '' ?>>
             </div>
 

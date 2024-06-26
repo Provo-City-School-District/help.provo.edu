@@ -220,10 +220,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$receipt_subject = "Ticket $ticketId - $name";
 		send_email(email_address_from_username($username), $receipt_subject, $template);
 
-        // Send email to assigned tech on ticket creation
-        if ($username != $assigned_tech) {
-            $assigned_tech_subject = "Ticket $ticketId has been assigned to $assigned_tech";
-            send_email(email_address_from_username($assigned_tech), $assigned_tech_subject, $template);
+        if (isset($assigned_tech)) {
+            // Send email to assigned tech on ticket creation
+            if ($username != $assigned_tech) {
+                $assigned_tech_subject = "Ticket $ticketId has been assigned to $assigned_tech";
+                send_email(email_address_from_username($assigned_tech), $assigned_tech_subject, $template);
+            }
         }
 		// Redirect to the edit page for the new ticket
 		header("Location: edit_ticket.php?id=$ticketId");

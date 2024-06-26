@@ -23,9 +23,16 @@ while ($row = mysqli_fetch_assoc($department_result)) {
     if (isset($_GET['location']) && $row['sitenumber'] == $_GET['location']) {
         $select = true;
     } else {
-        $loc = get_fast_client_location($_SESSION["username"]);
-        if ($row['sitenumber'] == $loc) {
-            $select = true;
+        if (session_is_tech()) {
+            // Check if row == Technology
+            if ($row['sitenumber'] == 1897) {
+                $select = true;
+            }
+        } else {
+            $loc = get_fast_client_location($_SESSION["username"]);
+            if ($row['sitenumber'] == $loc) {
+                $select = true;
+            }
         }
     }
 
@@ -38,7 +45,7 @@ while ($row = mysqli_fetch_assoc($location_result)) {
     $select = false;
     if (isset($_GET['location']) && $row['sitenumber'] == $_GET['location']) {
         $select = true;
-    } else {
+    } else if (!session_is_tech()) {
         $loc = get_fast_client_location($_SESSION["username"]);
         if ($row['sitenumber'] == $loc) {
             $select = true;

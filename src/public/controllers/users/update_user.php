@@ -23,6 +23,8 @@ $email = trim(htmlspecialchars($_POST['email']));
 $ifasid = trim(htmlspecialchars($_POST['ifasid']));
 $is_admin = isset($_POST['is_admin']) ? 1 : 0;
 $is_tech = isset($_POST['is_tech']) ? 1 : 0;
+$is_intern = isset($_POST['is_intern']) ? 1 : 0;
+$intern_site = trim(htmlspecialchars($_POST['intern_site']));
 $is_supervisor = isset($_POST['is_supervisor']) ? 1 : 0;
 $can_view_tickets = isset($_POST['can_view_tickets']) ? 1 : 0;
 $can_create_tickets = isset($_POST['can_create_tickets']) ? 1 : 0;
@@ -33,18 +35,15 @@ $supervisor_username = trim(htmlspecialchars($_POST['supervisor']));
 $man_location = trim(htmlspecialchars($_POST['man_location']));
 
 // Update the user data in the database
-$query = "UPDATE users SET firstname = ?, lastname = ?, email = ?, ifasid = ?, is_admin = ?, is_tech = ?,is_supervisor = ?,is_location_manager = ?,location_manager_sitenumber = ?, can_view_tickets = ?, can_create_tickets = ?, can_edit_tickets = ?,can_delete_tickets = ?,supervisor_username = ? WHERE id = ?";
+$query = "UPDATE users SET firstname = ?, lastname = ?, email = ?, ifasid = ?, is_admin = ?, is_tech = ?, is_intern = ?, intern_site = ?, is_supervisor = ?,is_location_manager = ?,location_manager_sitenumber = ?, can_view_tickets = ?, can_create_tickets = ?, can_edit_tickets = ?,can_delete_tickets = ?,supervisor_username = ? WHERE id = ?";
 $stmt = mysqli_prepare(HelpDB::get(), $query);
-mysqli_stmt_bind_param($stmt, "ssssiiiiiiiiisi", $firstname, $lastname, $email, $ifasid, $is_admin, $is_tech, $is_supervisor, $is_loc_man, $man_location, $can_view_tickets, $can_create_tickets, $can_edit_tickets, $can_delete_tickets, $supervisor_username, $user_id);
+mysqli_stmt_bind_param($stmt, "ssssiiiiiiiiiiisi", $firstname, $lastname, $email, $ifasid, $is_admin, $is_tech, $is_intern, $intern_site, $is_supervisor, $is_loc_man, $man_location, $can_view_tickets, $can_create_tickets, $can_edit_tickets, $can_delete_tickets, $supervisor_username, $user_id);
 mysqli_stmt_execute($stmt);
 
 // Check if the query was successful
 if (!$stmt) {
     die("Query failed: " . mysqli_error(HelpDB::get()));
 }
-
-// Close the database connection
-mysqli_close(HelpDB::get());
 
 // Redirect back to the manage user page
 $_SESSION['user_updated'] = 'User updated successfully';

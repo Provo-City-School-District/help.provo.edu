@@ -16,7 +16,7 @@ function get_max_file_size()
 
 function get_allowed_extensions()
 {
-    return ['jpg', 'jpeg', 'png', 'heic', 'webp', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'csv', 'zip', 'rar', '7z', 'tar', 'mp3', 'mp4', 'svg'];
+    return ['jpg', 'jpeg', 'png', 'heic', 'webp', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'csv', 'zip', 'rar', '7z', 'tar', 'mp3', 'mp4', 'svg', 'mov'];
 }
 
 function get_allowed_mime_types()
@@ -39,6 +39,7 @@ function get_allowed_mime_types()
         'application/x-tar',
         'audio/mpeg',
         'video/mp4',
+        'video/quicktime',
         'image/svg+xml'
     ];
 }
@@ -111,7 +112,7 @@ function handleFileUploads($files, $ticket_id = null)
             if ($fileSize <= $max_file_size) {
                 if (in_array($fileExtension, $allowed_extensions)) {
                     // Generate a unique file name
-					// TODO: Move uploads to ../uploads (outside of public)
+                    // TODO: Move uploads to ../uploads (outside of public)
                     if ($ticket_id != null) {
                         $newFilePath = "/../uploads/" . $ticket_id . "-" . $fileName;
                     } else {

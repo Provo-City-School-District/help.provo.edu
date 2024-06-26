@@ -30,6 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $updatedSendTechEmail = isset($_POST['send_tech_email']) ? 1 : 0;
     $updatedSendCCEmails = isset($_POST['send_cc_emails']) ? 1 : 0;
     $updatedSendBCCEmails = isset($_POST['send_bcc_emails']) ? 1 : 0;
+    $updatedInternTicketStatus = isset($_POST['intern_ticket_status']) ? 1 : 0;
+
 
     if ($updatedStatus == "resolved") {
         $notes_result = HelpDB::get()->execute_query("SELECT COUNT(*) as count FROM notes WHERE linked_id = ?", [$ticket_id]);
@@ -161,14 +163,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         send_client_email = ?,
         send_tech_email = ?,
         send_cc_emails = ?,
-        send_bcc_emails = ?
+        send_bcc_emails = ?,
+        intern_visible = ?
         WHERE id = ?";
 
     $update_ticket_query_vars = [
         $updatedClient, $updatedEmployee, $updatedLocation, $updatedRoom, $updatedName,
         $updatedDescription, $updatedDueDate, $updatedStatus, $updatedPhone, $updatedCCEmails,
         $updatedBCCEmails, $updatedPriority, $updatedRequestType, $updatedParentTicket,
-        $updatedSendClientEmail, $updatedSendTechEmail, $updatedSendCCEmails, $updatedSendBCCEmails, $ticket_id
+        $updatedSendClientEmail, $updatedSendTechEmail, $updatedSendCCEmails, $updatedSendBCCEmails, 
+        $updatedInternTicketStatus, $ticket_id
     ];
 
     // Execute the update queries
@@ -227,6 +231,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $changesMessage .= "<li>Changed Employee from " . $old_ticket_data['employee'] . " to " . $updatedEmployee . "</li>";
         // If the ticket was re-assigned, remove the alerts, they will be re-added within an hour for the new user.
         removeAllAlertsByTicketId($ticket_id);
+    } else if (!isset($old_ticket_data['employee'])) {
+        $assigned_tech_changed = true;
     }
 
     if (isset($old_ticket_data['location'], $updatedLocation) && $old_ticket_data['location'] != $updatedLocation) {

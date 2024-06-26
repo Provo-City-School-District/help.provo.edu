@@ -15,6 +15,8 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
     // User is not an admin
     if ($_SESSION['permissions']['can_view_tickets'] == 0) {
         // User does not have permission to view tickets
+
+        // TODO: Fix intern viewing permissions (Right now all intern accounts have can_view_tickets=1. Eventually I think we want that off)
         echo 'You do not have permission to view tickets.';
         exit;
     }
@@ -183,6 +185,7 @@ tickets.send_client_email,
 tickets.send_tech_email,
 tickets.send_cc_emails,
 tickets.send_bcc_emails,
+tickets.intern_visible,
 tickets.parent_ticket,
 JSON_ARRAYAGG(
     JSON_OBJECT(
@@ -677,6 +680,12 @@ function get_attachment_data(string $file_path)
                 <input type="text" id="bcc_emails" name="bcc_emails" value="<?= $ticket['bcc_emails'] ?>">
             </div>
         </div>
+        <label for="intern_ticket_status">Intern Ticket:</label>
+        <?php if ($ticket['intern_visible']): ?>
+        <input type="checkbox" id="intern_ticket_status" name="intern_ticket_status" checked>
+        <? else: ?>
+        <input type="checkbox" id="intern_ticket_status" name="intern_ticket_status">
+        <? endif; ?>
 
         <div class="detailContainer">
             <div class="grid2 ticketSubject">

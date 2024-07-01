@@ -697,13 +697,12 @@ function get_attachment_data(string $file_path)
                 <?php
                 $ticket_pattern = "/WO#\\d{1,6}/";
                 $archived_ticket_pattern = "/WO#A-\\d{1,6}/";
-                $asset_tag_pattern = "/BC#\\d{6}/";
+                $asset_tag_pattern = "/BC#([\w]*)(\s|$|)/";
                 if ($ticket['description'] !== null) {
                     $request_detail = sanitize_html($ticket['description']);
                 }
                 $ticket_matches = [];
                 $ticket_match_result = preg_match_all($ticket_pattern, $request_detail, $ticket_matches, PREG_OFFSET_CAPTURE);
-
                 if ($ticket_match_result) {
                     foreach ($ticket_matches[0] as $match) {
                         $match_str = $match[0];
@@ -728,7 +727,7 @@ function get_attachment_data(string $file_path)
 
                 $asset_tag_matches = [];
                 $asset_tag_match_result = preg_match_all($asset_tag_pattern, $request_detail, $asset_tag_matches, PREG_OFFSET_CAPTURE);
-
+                echo $asset_tag_match_result;
                 if ($asset_tag_match_result) {
                     foreach ($asset_tag_matches[0] as $match) {
                         $match_str = $match[0];
@@ -963,9 +962,9 @@ function get_attachment_data(string $file_path)
                             <?php
                             $ticket_pattern = "/WO#\\d{1,6}/";
                             $archived_ticket_pattern = "/WO#A-\\d{1,6}/";
-                            $asset_tag_pattern = "/BC#\\d{6}/";
+                            $asset_tag_pattern = "/BC#([\w]*)(\s|$|)/";
                             if ($note['note'] !== null) {
-                                $note_data = sanitize_html($note['note']);
+                                $note_data = strip_tags(sanitize_html($note['note']));
                             }
                             if (isset($note_data)) {
 

@@ -368,7 +368,7 @@ function get_attachment_data(string $file_path)
     <!-- Form for updating ticket information -->
     <div class="right">
         <div style="display: flex; gap: 1em;">
-            <?php if ($readonly) : ?>
+            <?php if ($readonly && !session_is_intern()) : ?>
                 <button id="close-ticket-button" class="button">Close Ticket</button>
             <?php endif; ?>
             <button class="new-note-button button">New Note</button>
@@ -681,11 +681,11 @@ function get_attachment_data(string $file_path)
             </div>
         </div>
         <label for="intern_ticket_status">Intern Ticket:</label>
-        <?php if ($ticket['intern_visible']): ?>
-        <input type="checkbox" id="intern_ticket_status" name="intern_ticket_status" checked>
-        <? else: ?>
-        <input type="checkbox" id="intern_ticket_status" name="intern_ticket_status">
-        <? endif; ?>
+        <input type="checkbox" id="intern_ticket_status" name="intern_ticket_status"
+            <?php if ($ticket['intern_visible']) echo "checked"; ?>
+            <?php if ($readonly) echo "onclick='return false;'"; ?>
+        >
+
 
         <div class="detailContainer">
             <div class="grid2 ticketSubject">
@@ -697,13 +697,12 @@ function get_attachment_data(string $file_path)
                 <?php
                 $ticket_pattern = "/WO#\\d{1,6}/";
                 $archived_ticket_pattern = "/WO#A-\\d{1,6}/";
-                $asset_tag_pattern = "/BC#\\d{6}/";
+                $asset_tag_pattern = "/BC#([\w]*)(\s|$|)/";
                 if ($ticket['description'] !== null) {
                     $request_detail = sanitize_html($ticket['description']);
                 }
                 $ticket_matches = [];
                 $ticket_match_result = preg_match_all($ticket_pattern, $request_detail, $ticket_matches, PREG_OFFSET_CAPTURE);
-
                 if ($ticket_match_result) {
                     foreach ($ticket_matches[0] as $match) {
                         $match_str = $match[0];
@@ -728,7 +727,7 @@ function get_attachment_data(string $file_path)
 
                 $asset_tag_matches = [];
                 $asset_tag_match_result = preg_match_all($asset_tag_pattern, $request_detail, $asset_tag_matches, PREG_OFFSET_CAPTURE);
-
+                echo $asset_tag_match_result;
                 if ($asset_tag_match_result) {
                     foreach ($asset_tag_matches[0] as $match) {
                         $match_str = $match[0];
@@ -781,7 +780,7 @@ function get_attachment_data(string $file_path)
                 $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
                 $shouldUseLightbox = $extension == "jpeg" || $extension == "jpg" || $extension == "png" || $extension == "webp" || $extension == "heic";
 
-                if ($_SESSION["permissions"]["is_tech"]) {
+                if (session_is_tech()) {
                     if ($shouldUseLightbox && $data = get_attachment_data($path)) {
                         echo "<li><a href=\"$data\" data-lightbox=\"image-1\" data-gallery=\"multiimages\" data-toggle=\"lightbox\">$path</a> <a class='file_del' onclick=\"confirmDeleteAttachment('$attachmentPath')\">&times;</a></li>";
                     } else {
@@ -963,9 +962,9 @@ function get_attachment_data(string $file_path)
                             <?php
                             $ticket_pattern = "/WO#\\d{1,6}/";
                             $archived_ticket_pattern = "/WO#A-\\d{1,6}/";
-                            $asset_tag_pattern = "/BC#\\d{6}/";
+                            $asset_tag_pattern = "/BC#([\w]*)(\s|$|)/";
                             if ($note['note'] !== null) {
-                                $note_data = sanitize_html($note['note']);
+                                $note_data = strip_tags(sanitize_html($note['note']));
                             }
                             if (isset($note_data)) {
 

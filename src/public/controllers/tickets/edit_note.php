@@ -25,7 +25,7 @@ if ($note['work_hours'] === null && $note['work_minutes'] === null && $note['tra
 }
 
 // Check if the note belongs to the current user
-if ($note['creator'] !== $_SESSION['username']) {
+if (($note['creator'] !== $_SESSION['username']) && !session_is_admin()) {
     // Redirect to the edit ticket page if the note does not belong to the current user
 
     //need to make a message that "cant edit others' notes"

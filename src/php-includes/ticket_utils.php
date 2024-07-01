@@ -9,6 +9,21 @@ function session_is_tech()
     return $_SESSION["permissions"]["is_tech"] != 0;
 }
 
+function session_is_admin()
+{
+    return $_SESSION["permissions"]["is_admin"] != 0;
+}
+
+function session_is_intern()
+{
+    return $_SESSION["permissions"]["is_intern"] != 0;
+}
+
+function session_is_supervisor()
+{
+    return $_SESSION["permissions"]["is_supervisor"] != 0;
+}
+
 function email_if_valid(string $email)
 {
     $clean_email = filter_var($email, FILTER_SANITIZE_EMAIL);

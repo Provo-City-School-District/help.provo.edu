@@ -368,7 +368,7 @@ function get_attachment_data(string $file_path)
     <!-- Form for updating ticket information -->
     <div class="right">
         <div style="display: flex; gap: 1em;">
-            <?php if ($readonly && !$_SESSION["permissions"]["is_intern"]) : ?>
+            <?php if ($readonly && !session_is_intern()) : ?>
                 <button id="close-ticket-button" class="button">Close Ticket</button>
             <?php endif; ?>
             <button class="new-note-button button">New Note</button>
@@ -781,7 +781,7 @@ function get_attachment_data(string $file_path)
                 $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
                 $shouldUseLightbox = $extension == "jpeg" || $extension == "jpg" || $extension == "png" || $extension == "webp" || $extension == "heic";
 
-                if ($_SESSION["permissions"]["is_tech"]) {
+                if (session_is_tech()) {
                     if ($shouldUseLightbox && $data = get_attachment_data($path)) {
                         echo "<li><a href=\"$data\" data-lightbox=\"image-1\" data-gallery=\"multiimages\" data-toggle=\"lightbox\">$path</a> <a class='file_del' onclick=\"confirmDeleteAttachment('$attachmentPath')\">&times;</a></li>";
                     } else {

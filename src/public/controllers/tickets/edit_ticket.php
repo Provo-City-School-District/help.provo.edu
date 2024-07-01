@@ -368,7 +368,7 @@ function get_attachment_data(string $file_path)
     <!-- Form for updating ticket information -->
     <div class="right">
         <div style="display: flex; gap: 1em;">
-            <?php if ($readonly) : ?>
+            <?php if ($readonly && !$_SESSION["permissions"]["is_intern"]) : ?>
                 <button id="close-ticket-button" class="button">Close Ticket</button>
             <?php endif; ?>
             <button class="new-note-button button">New Note</button>
@@ -681,11 +681,11 @@ function get_attachment_data(string $file_path)
             </div>
         </div>
         <label for="intern_ticket_status">Intern Ticket:</label>
-        <?php if ($ticket['intern_visible']): ?>
-        <input type="checkbox" id="intern_ticket_status" name="intern_ticket_status" checked>
-        <? else: ?>
-        <input type="checkbox" id="intern_ticket_status" name="intern_ticket_status">
-        <? endif; ?>
+        <input type="checkbox" id="intern_ticket_status" name="intern_ticket_status"
+            <?php if ($ticket['intern_visible']) echo "checked"; ?>
+            <?php if ($readonly) echo "onclick='return false;'"; ?>
+        >
+
 
         <div class="detailContainer">
             <div class="grid2 ticketSubject">

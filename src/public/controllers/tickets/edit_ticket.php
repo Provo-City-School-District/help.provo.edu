@@ -423,7 +423,7 @@ function get_attachment_data(string $file_path)
                 <div>
                     <div class="fake-h3">Client Info </div>
                     <div id="client-display">
-                        <?= $clientFirstName . " " . $clientLastName . " — " . email_address_from_username(strtolower(($ticket['client']))) ?><br><br>
+                        <?= $clientFirstName . " " . $clientLastName . " — " . email_address_from_username(strtolower($ticket['client'])) ?><br><br>
                         <?php
                         $result = get_ldap_info($ticket['client'], LDAP_EMPLOYEE_ID | LDAP_EMPLOYEE_LOCATION | LDAP_EMPLOYEE_JOB_TITLE);
 

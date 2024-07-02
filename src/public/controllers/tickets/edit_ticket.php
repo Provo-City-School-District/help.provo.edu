@@ -378,9 +378,9 @@ function get_attachment_data(string $file_path)
         <!-- Add a submit button to update the information -->
         <div class="horizontalContainer">
             <?php if (!$readonly) : ?>
-            <div class="horizontalContainerCell">
-                <input id="green-button" type="submit" name="update_ticket" value="Update Ticket">
-            </div>
+                <div class="horizontalContainerCell">
+                    <input id="green-button" type="submit" name="update_ticket" value="Update Ticket">
+                </div>
             <?php endif; ?>
             <div class="horizontalContainerCell">
                 <input id="green-button" type="submit" name="update_ticket_with_email" value="Update Ticket & Email">
@@ -399,20 +399,20 @@ function get_attachment_data(string $file_path)
             </div>
         </div>
         <?php if (!$readonly) : ?>
-        <div class="horizontalContainer">
-            <div class="horizontalContainerCell">
-                Client:<input type="checkbox" name="send_client_email" value="send_client_email" <?= $ticket["send_client_email"] != 0 ? "checked" : "" ?>>
+            <div class="horizontalContainer">
+                <div class="horizontalContainerCell">
+                    Client:<input type="checkbox" name="send_client_email" value="send_client_email" <?= $ticket["send_client_email"] != 0 ? "checked" : "" ?>>
+                </div>
+                <div class="horizontalContainerCell">
+                    Tech:<input type="checkbox" name="send_tech_email" value="send_tech_email" <?= $ticket["send_tech_email"] != 0 ? "checked" : "" ?>>
+                </div>
+                <div class="horizontalContainerCell">
+                    CC:<input type="checkbox" name="send_cc_emails" value="send_cc_emails" <?= $ticket["send_cc_emails"] != 0 ? "checked" : "" ?>>
+                </div>
+                <div class="horizontalContainerCell">
+                    BCC:<input type="checkbox" name="send_bcc_emails" value="send_bcc_emails" <?= $ticket["send_bcc_emails"] != 0 ? "checked" : "" ?>>
+                </div>
             </div>
-            <div class="horizontalContainerCell">
-                Tech:<input type="checkbox" name="send_tech_email" value="send_tech_email" <?= $ticket["send_tech_email"] != 0 ? "checked" : "" ?>>
-            </div>
-            <div class="horizontalContainerCell">
-                CC:<input type="checkbox" name="send_cc_emails" value="send_cc_emails" <?= $ticket["send_cc_emails"] != 0 ? "checked" : "" ?>>
-            </div>
-            <div class="horizontalContainerCell">
-                BCC:<input type="checkbox" name="send_bcc_emails" value="send_bcc_emails" <?= $ticket["send_bcc_emails"] != 0 ? "checked" : "" ?>>
-            </div>
-        </div>
         <?php endif; ?>
         <div class="ticketGrid">
             <input type="hidden" name="ticket_create_date" value="<?= $ticket['created'] ?>">
@@ -681,10 +681,7 @@ function get_attachment_data(string $file_path)
             </div>
         </div>
         <label for="intern_ticket_status">Intern Ticket:</label>
-        <input type="checkbox" id="intern_ticket_status" name="intern_ticket_status"
-            <?php if ($ticket['intern_visible']) echo "checked"; ?>
-            <?php if ($readonly) echo "onclick='return false;'"; ?>
-        >
+        <input type="checkbox" id="intern_ticket_status" name="intern_ticket_status" <?php if ($ticket['intern_visible']) echo "checked"; ?> <?php if ($readonly) echo "onclick='return false;'"; ?>>
 
 
         <div class="detailContainer">
@@ -701,6 +698,7 @@ function get_attachment_data(string $file_path)
                 if ($ticket['description'] !== null) {
                     $request_detail = sanitize_html($ticket['description']);
                 }
+
                 $ticket_matches = [];
                 $ticket_match_result = preg_match_all($ticket_pattern, $request_detail, $ticket_matches, PREG_OFFSET_CAPTURE);
                 if ($ticket_match_result) {
@@ -714,7 +712,6 @@ function get_attachment_data(string $file_path)
 
                 $archived_ticket_matches = [];
                 $archived_ticket_match_result = preg_match_all($archived_ticket_pattern, $request_detail, $archived_ticket_matches, PREG_OFFSET_CAPTURE);
-
                 if ($archived_ticket_match_result) {
                     foreach ($archived_ticket_matches[0] as $match) {
                         $match_str = $match[0];
@@ -727,7 +724,6 @@ function get_attachment_data(string $file_path)
 
                 $asset_tag_matches = [];
                 $asset_tag_match_result = preg_match_all($asset_tag_pattern, $request_detail, $asset_tag_matches, PREG_OFFSET_CAPTURE);
-                echo $asset_tag_match_result;
                 if ($asset_tag_match_result) {
                     foreach ($asset_tag_matches[0] as $match) {
                         $match_str = $match[0];

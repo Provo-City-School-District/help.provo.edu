@@ -379,11 +379,11 @@ function get_attachment_data(string $file_path)
         <div class="horizontalContainer">
             <?php if (!$readonly) : ?>
                 <div class="horizontalContainerCell">
-                    <input id="green-button" type="submit" name="update_ticket" value="Update Ticket">
+                    <input id="green-button" type="submit" name="update_ticket" class="button" value="Update Ticket">
                 </div>
             <?php endif; ?>
             <div class="horizontalContainerCell">
-                <input id="green-button" type="submit" name="update_ticket_with_email" value="Update Ticket & Email">
+                <input id="green-button" type="submit" name="update_ticket_with_email" class="button" value="Update Ticket & Email">
                 <?php if ($readonly) : ?>
                     <input type="hidden" name="send_client_email" value="send_client_email" checked>
                     <input type="hidden" name="send_tech_email" value="send_tech_email" checked>
@@ -745,7 +745,7 @@ function get_attachment_data(string $file_path)
                 <?php
                 if ($_SESSION['permissions']['is_admin'] == 1) {
                 ?>
-                    <button id="edit-description-button" type="button">Edit Request Detail</button>
+                    <button id="edit-description-button" class="button" type="button">Edit Request Detail</button>
                 <?php
                 }
                 ?>
@@ -814,7 +814,7 @@ function get_attachment_data(string $file_path)
             Maximum of 50MB
         </div>
     </div>
-    <button id="toggle-file-upload-form">Attach <?= isset($hasfiles) && $hasfiles ? 'Additional' : '' ?> Files</button>
+    <button id="toggle-file-upload-form" class="button">Attach <?= isset($hasfiles) && $hasfiles ? 'Additional' : '' ?> Files</button>
 
     <?php
     if (count($child_tickets) > 0) {
@@ -886,7 +886,7 @@ function get_attachment_data(string $file_path)
     ?>
 
 
-    <button id="new-task-button">Add Task</button><br>
+    <button id="new-task-button" class="button">Add Task</button><br>
     <div id="new-task-form-background" class="modal-form-background">
         <div id="new-task-form" class="modal-form" style="display: none;">
             <div class="modal-form-header"><span id="new-task-form-close">&times;</span></div>
@@ -1067,7 +1067,7 @@ function get_attachment_data(string $file_path)
             </tr>
             </table>
         </div>
-        <button class="new-note-button" id="new-note-button" style="margin-top: 10px;">New Note</button>
+        <button class="new-note-button button" id="new-note-button" style="margin-top: 10px;">New Note</button>
         <div id="new-note-form-background">
             <div id="new-note-form" style="display: none;">
                 <div id="new-note-form-header"><span id="new-note-form-close">&times;</span></div>
@@ -1207,11 +1207,11 @@ function get_attachment_data(string $file_path)
         if ($is_ticket_flagged) :
         ?>
             <form id="flag-form" method="post">
-                <input type="submit" name="unflag_ticket" value="Unflag ticket" class="right">
+                <input type="submit" class="button right" name="unflag_ticket" value="Unflag ticket" class="right">
             </form>
         <?php else : ?>
             <form id="flag-form" method="post">
-                <input type="submit" name="flag_ticket" value="Flag ticket" class="right">
+                <input type="submit" class="button right" name="flag_ticket" value="Flag ticket" class="right">
             </form>
         <?php endif; ?>
 
@@ -1221,7 +1221,7 @@ function get_attachment_data(string $file_path)
                 <label for="merge_ticket_id">Merge this ticket into:</label>
                 <input type="hidden" name="ticket_id_source" value="<?= $ticket_id ?>">
                 <input type="text" name="ticket_id_host" value=""><br>
-                <input type="submit" value="Merge">
+                <input type="submit" class="button" value="Merge">
             </form>
         <?php endif; ?>
 </article>

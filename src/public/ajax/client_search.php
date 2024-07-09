@@ -3,8 +3,8 @@ require("block_file.php");
 require("ticket_utils.php");
 require("helpdbconnect.php");
 
-$firstname = isset($_POST['firstname']) ? $_POST['firstname'] : '';
-$lastname = isset($_POST['lastname']) ? $_POST['lastname'] : '';
+$firstname = isset($_POST['firstname']) ? ldapspecialchars($_POST['firstname']) : '';
+$lastname = isset($_POST['lastname']) ? ldapspecialchars($_POST['lastname']) : '';
 
 
 $ldap_host = getenv('LDAPHOST');

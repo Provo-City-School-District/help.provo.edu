@@ -58,7 +58,7 @@ for ($i = 0; $i < $entries['count']; $i++) {
     if ($location_code == 1892)
         $location_code = 1896;
 
-    $results[] = ['username' => $samaccountname, 'firstName' => $firstname, 'lastName' => $lastname, 'location' => location_name_from_id($location_code)];
+    $results[] = ['username' => strtolower($samaccountname), 'firstName' => $firstname, 'lastName' => $lastname, 'location' => location_name_from_id($location_code)];
 }
 
 for ($i = 0; $i < $entries_archived['count']; $i++) {
@@ -75,7 +75,7 @@ for ($i = 0; $i < $entries_archived['count']; $i++) {
     if ($location_code == 1892)
         $location_code = 1896;
 
-    $results[] = ['username' => $samaccountname, 'firstName' => $firstname, 'lastName' => $lastname, 'location' => "inactive"];
+    $results[] = ['username' => strtolower($samaccountname), 'firstName' => $firstname, 'lastName' => $lastname, 'location' => "inactive"];
 }
 
 header('Content-Type: application/json');

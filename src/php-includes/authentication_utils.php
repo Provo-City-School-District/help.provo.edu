@@ -23,10 +23,51 @@ enum CreateLocalUserStatus
     case Success;
 }
 
+function user_exists_remotely($username)
+{
+    $ldap_dn = getenv('LDAP_DN');
+    $ldap_user = getenv('LDAP_USER');
+    $ldap_password = getenv('LDAP_PASS');
+
+    $ldap_host = getenv('LDAPHOST');
+    $ldap_port = getenv('LDAPPORT');
+    $ldap_conn = ldap_connect($ldap_host, $ldap_port);
+    if (!$ldap_conn) {
+        log_app(LOG_ERR, "Failed to create LDAP connection");
+        return false;
+    }
+
+    // Use our credentials to add it
+    $ldap_bind = ldap_bind($ldap_conn, $ldap_user, $ldap_password);
+    if (!$ldap_bind) {
+        log_app(LOG_ERR, "LDAP bind failed.");
+        return false;
+    }
+
+    $search = "(&(objectCategory=person)(objectClass=user)(sAMAccountName=$username))";
+    $ldap_search_result = ldap_search($ldap_conn, $ldap_dn, $search);
+    if (!$ldap_search_result) {
+        log_app(LOG_ERR, 'LDAP search failed.');
+        return false;
+    }
+
+    $ldap_entries_result = ldap_get_entries($ldap_conn, $ldap_search_result);
+    if (!$ldap_entries_result) {
+        log_app(LOG_ERR, "LDAP get entries failed.");
+        return false;
+    }
+
+    if ($ldap_entries_result['count'] == 0) {
+        log_app(LOG_ERR, "User '$username' was not found in LDAP");
+        return false;
+    }
+
+    return true;
+}
+
 // Returns CreateLocalUserStatus depending on error (or success)
 function create_user_in_local_db($username)
 {
-
     $ldap_dn = getenv('LDAP_DN');
     $ldap_user = getenv('LDAP_USER');
     $ldap_password = getenv('LDAP_PASS');

@@ -3,8 +3,8 @@ require("block_file.php");
 require("ticket_utils.php");
 require("helpdbconnect.php");
 
-$firstname = isset($_POST['firstname']) ? $_POST['firstname'] : '';
-$lastname = isset($_POST['lastname']) ? $_POST['lastname'] : '';
+$firstname = isset($_POST['firstname']) ? ldapspecialchars($_POST['firstname']) : '';
+$lastname = isset($_POST['lastname']) ? ldapspecialchars($_POST['lastname']) : '';
 
 
 $ldap_host = getenv('LDAPHOST');
@@ -42,7 +42,7 @@ for ($i = 0; $i < $entries['count']; $i++) {
     if ($location == 1892)
         $location = 1896;
     $title = $entries[$i]['title'][0];
-    $results[] = ['username' => $username, 'firstname' => $firstname, 'lastname' => $lastname, "location_name" => location_name_from_id($location), "title" => $title];
+    $results[] = ['username' => strtolower($username), 'firstname' => $firstname, 'lastname' => $lastname, "location_name" => location_name_from_id($location), "title" => $title];
 }
 
 header('Content-Type: application/json');

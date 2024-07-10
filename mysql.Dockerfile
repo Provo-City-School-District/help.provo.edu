@@ -1,4 +1,4 @@
-FROM mariadb:11.3
+FROM mariadb:11.4.2
 
 # Set the timezone
 ENV TZ=America/Denver

@@ -79,8 +79,15 @@ function send_email(
                     $attachment_base = basename($attachment);
                     $real_path = from_root("/../uploads/$attachment_base");
                     $file_size = filesize($real_path);
-
-                    if ($file_size <= MAX_ATTACHMENT_EMAIL_SIZE) {
+                    $file_extension = pathinfo($real_path, PATHINFO_EXTENSION);
+                    $extension_is_valid = in_array(
+                        ["png", "jpg", "jpeg", "heic", "pdf"],
+                        $file_extension
+                    );
+                    if (
+                        $file_size <= MAX_ATTACHMENT_EMAIL_SIZE &&
+                        $extension_is_valid
+                    ) {
                         $mailer->addAttachment($real_path);
                     }
                 }

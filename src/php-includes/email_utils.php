@@ -4,7 +4,7 @@ require_once "functions.php";
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
-const MAX_ATTACHMENT_EMAIL_SIZE = 20 * 1024 * 1024;
+const MAX_ATTACHMENT_EMAIL_SIZE = 5 * 1024 * 1024;
 
 function email_address_from_username(string $username)
 {

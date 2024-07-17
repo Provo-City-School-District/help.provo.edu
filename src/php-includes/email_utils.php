@@ -80,10 +80,13 @@ function send_email(
                     $real_path = from_root("/../uploads/$attachment_base");
                     $file_size = filesize($real_path);
                     $file_extension = pathinfo($real_path, PATHINFO_EXTENSION);
-                    $extension_is_valid = in_array(
-                        ["png", "jpg", "jpeg", "heic", "pdf"],
-                        $file_extension
-                    );
+                    $extension_is_valid = in_array($file_extension, [
+                        "png",
+                        "jpg",
+                        "jpeg",
+                        "heic",
+                        "pdf",
+                    ]);
                     if (
                         $file_size <= MAX_ATTACHMENT_EMAIL_SIZE &&
                         $extension_is_valid

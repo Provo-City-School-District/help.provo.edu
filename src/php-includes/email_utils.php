@@ -1,14 +1,14 @@
 <?php
-require(from_root("/../vendor/autoload.php"));
-require_once("functions.php");
+require from_root("/../vendor/autoload.php");
+require_once "functions.php";
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
-
+const MAX_ATTACHMENT_EMAIL_SIZE = 5 * 1024 * 1024;
 
 function email_address_from_username(string $username)
 {
-    return $username."@provo.edu";
+    return $username . "@provo.edu";
 }
 
 function username_from_email_address(string $email)
@@ -27,9 +27,7 @@ function send_email(
     array $bcc_recipients = [],
     array $attachments = [],
     string &$messageID = null
-    )
-{
-
+) {
     // Create a new PHPMailer instance
     $mailer = new PHPMailer(true);
 
@@ -45,14 +43,14 @@ function send_email(
 
         $mailer->Host = getenv("SMTP_HOST");
         $mailer->Port = 25;
-        $mailer->setFrom(getenv("GMAIL_USER"), 'help.provo.edu');
-       
-       // handle multiple recipients
+        $mailer->setFrom(getenv("GMAIL_USER"), "help.provo.edu");
+
+        // handle multiple recipients
         $rec_emails = explode(",", $recipient);
         foreach ($rec_emails as $rec_email) {
             $mailer->addAddress($rec_email);
         }
-        
+
         $mailer->isHTML(true); // Set to true for HTML emails
 
         // Set the actual content of the email
@@ -66,7 +64,7 @@ function send_email(
             foreach ($cc_recipients as $cc_recipient) {
                 $mailer->addCC($cc_recipient);
             }
-        }   
+        }
 
         if ($bcc_recipients) {
             foreach ($bcc_recipients as $bcc_recipient) {
@@ -78,10 +76,23 @@ function send_email(
             foreach ($attachments as $attachment) {
                 // Takes direct path as argument
                 if ($attachment) {
-					$attachment_base = basename($attachment);
-					$real_path = from_root("/../uploads/$attachment_base");
-                    $mailer->addAttachment($real_path);
-                    log_app(LOG_INFO, "attachment: $attachment_base at $real_path");
+                    $attachment_base = basename($attachment);
+                    $real_path = from_root("/../uploads/$attachment_base");
+                    $file_size = filesize($real_path);
+                    $file_extension = pathinfo($real_path, PATHINFO_EXTENSION);
+                    $extension_is_valid = in_array($file_extension, [
+                        "png",
+                        "jpg",
+                        "jpeg",
+                        "heic",
+                        "pdf",
+                    ]);
+                    if (
+                        $file_size <= MAX_ATTACHMENT_EMAIL_SIZE &&
+                        $extension_is_valid
+                    ) {
+                        $mailer->addAttachment($real_path);
+                    }
                 }
             }
         }
@@ -89,7 +100,10 @@ function send_email(
         // Send the email
         $mailer->send();
         $messageID = $mailer->getLastMessageID();
-        log_app(LOG_INFO, "Successfully sent email to \"$recipient\" with messageID $messageID");
+        log_app(
+            LOG_INFO,
+            "Successfully sent email to \"$recipient\" with messageID $messageID"
+        );
     } catch (Exception $e) {
         log_app(LOG_ERR, "Caught exception when trying to send email: $e");
         return false;
@@ -106,18 +120,34 @@ function send_email_and_add_to_ticket(
     array $cc_recipients = [],
     array $bcc_recipients = [],
     array $attachments = []
-)
-{
+) {
     $res1 = false;
     $res2 = false;
-    
+
     $messageID = null;
-    $res1 = send_email($recipient, $subject, $message, $cc_recipients, $bcc_recipients, $attachments, $messageID);
-    if (isset($messageID))
+    $res1 = send_email(
+        $recipient,
+        $subject,
+        $message,
+        $cc_recipients,
+        $bcc_recipients,
+        $attachments,
+        $messageID
+    );
+    if (isset($messageID)) {
         $res2 = add_ticket_msg_id_mapping($messageID, $ticket_id);
+    }
 
     return $res1 && $res2;
 }
 
 //map for email use
-$priorityTypes = [1 => "Critical",3 => "Urgent", 5 => "High",10 => "Standard",15 => "Client Response",30 => "Project",60 => "Meeting Support"];
+$priorityTypes = [
+    1 => "Critical",
+    3 => "Urgent",
+    5 => "High",
+    10 => "Standard",
+    15 => "Client Response",
+    30 => "Project",
+    60 => "Meeting Support",
+];

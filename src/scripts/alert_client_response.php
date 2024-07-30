@@ -1,8 +1,8 @@
 <?php
-require_once('helpdbconnect.php');
-require_once('ticket_utils.php');
-require_once("email_utils.php");
-require("template.php");
+include_once('helpdbconnect.php');
+include_once('ticket_utils.php');
+include_once("email_utils.php");
+include_once("template.php");
 
 log_app(LOG_INFO, "alert_client_response.php running");
 

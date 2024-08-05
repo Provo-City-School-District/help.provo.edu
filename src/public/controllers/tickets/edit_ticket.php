@@ -324,6 +324,8 @@ function get_attachment_data(string $file_path)
 
     return $base64;
 }
+
+const MAX_VISIBLE_NOTE_COUNT = 3;
 ?>
 <div class="alerts_wrapper">
     <?php foreach ($alert_data as $alert) : ?>
@@ -930,21 +932,29 @@ function get_attachment_data(string $file_path)
                 <?php
                 $total_minutes = 0;
                 $total_hours = 0;
+                $num_notes = 0;
+                $notes = json_decode($ticket['notes'], true);
+                $total_note_count = count($notes);
 
-                foreach (json_decode($ticket['notes'], true) as $note) :
+                foreach ($notes as $note) :
                     // Hidden notes should only be viewable by admins
                     if (
                         $note['visible_to_client'] == 0 &&
                         !$_SESSION['permissions']['is_tech']
                     )
                         continue;
+                    $num_notes++;
+                    $should_hide_row = false;
 
                     // Add the total time for this note to the total time for all notes
                     $total_minutes += $note['work_minutes'] + $note['travel_minutes'];
                     $total_hours += $note['work_hours'] + $note['travel_hours'];
-                ?>
 
-                    <tr>
+                    if ($num_notes > MAX_VISIBLE_NOTE_COUNT)
+                        echo "<tr class='hidden-note-row' style='display:none;'>";
+                    else
+                        echo "<tr>";
+                ?>
                         <td data-cell="Date"><a href="edit_note.php?note_id=<?= $note['note_id'] ?>&ticket_id=<?= $ticket_id ?>">
                                 <?php
                                 $date_override = $note['date_override'];
@@ -1057,7 +1067,13 @@ function get_attachment_data(string $file_path)
                         </td>
                     </tr>
                 <?php endforeach; ?>
-            <?php endif; ?>
+            <?php endif; 
+            $remaining_note_count = $total_note_count - MAX_VISIBLE_NOTE_COUNT;
+            if ($remaining_note_count > 0): ?>
+            <tr id="expand-row">
+                <td colspan=4><a onclick="unhideRows();">Expand <?= $remaining_note_count ?> more items...</a></td>
+            </tr>
+            <? endif; ?>
             <tr class="totalTime">
                 <td data-cell="Total Time" colspan=4>
                     <?php
@@ -1416,6 +1432,18 @@ function get_attachment_data(string $file_path)
                 alert("Error: Attachment deletion AJAX call failed");
             },
         });
+    }
+    function unhideRows()
+    {
+        // show previously hidden rows
+        const rows = document.getElementsByClassName("hidden-note-row");
+        for (const row of rows) {
+            row.style = "display: revert;";
+        }
+
+        // hide expand row
+        const expand_row = document.getElementById("expand-row");
+        expand_row.style.display = "none";
     }
 </script>
 <!-- <script>

@@ -169,11 +169,18 @@ if (newTaskModalCloseButton) {
   };
 }
 
+function scrollIntoNoteForm()
+{
+    document.getElementById('new-note-form').scrollIntoView({behavior: 'smooth'});
+}
+
 // display/hide new note form
 var newNoteButtons = document.getElementsByClassName("new-note-button");
-var newNoteModalBackground = document.getElementById(
-  "new-note-form-background"
-);
+
+for (const button of newNoteButtons) {
+    button.onclick = scrollIntoNoteForm();
+}
+
 var newNoteForm = document.getElementById("new-note-form");
 var newNoteEditor = document.getElementById("new-note-form");
 
@@ -182,7 +189,6 @@ if (newNoteButtons && newNoteForm && newNoteEditor) {
     newNoteButtons[i].addEventListener("click", function () {
       if (newNoteForm.style.display === "none") {
         newNoteForm.style.display = "block";
-        newNoteModalBackground.style.display = "block";
         tinymce.activeEditor.focus(); // Set focus to the new note editor
         newNoteEditor.scrollIntoView({ behavior: "smooth" }); // Scroll the view to the new note editor
       } else {
@@ -193,10 +199,6 @@ if (newNoteButtons && newNoteForm && newNoteEditor) {
 }
 
 window.onclick = function (event) {
-  if (event.target == newNoteModalBackground) {
-    newNoteModalBackground.style.display = "none";
-    newNoteForm.style.display = "none";
-  }
   const newTaskModalBackground = document.getElementById(
     "new-task-form-background"
   );
@@ -320,3 +322,5 @@ if (searchResults) {
     }
   });
 }
+
+

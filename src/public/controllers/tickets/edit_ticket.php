@@ -1068,9 +1068,8 @@ function get_attachment_data(string $file_path)
             </table>
         </div>
         <button class="new-note-button button" id="new-note-button" style="margin-top: 10px;">New Note</button>
-        <div id="new-note-form-background">
+        <div>
             <div id="new-note-form" style="display: none;">
-                <div id="new-note-form-header"><span id="new-note-form-close">&times;</span></div>
                 <h3>New Note</h3>
                 <form id="note-submit" method="post" action="add_note_handler.php">
                     <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">

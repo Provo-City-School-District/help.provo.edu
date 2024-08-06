@@ -325,7 +325,7 @@ function get_attachment_data(string $file_path)
     return $base64;
 }
 
-const MAX_VISIBLE_NOTE_COUNT = 3;
+const MAX_VISIBLE_NOTE_COUNT = 10;
 ?>
 <div class="alerts_wrapper">
     <?php foreach ($alert_data as $alert) : ?>
@@ -935,7 +935,14 @@ const MAX_VISIBLE_NOTE_COUNT = 3;
                 $num_notes = 0;
                 $notes = json_decode($ticket['notes'], true);
                 $total_note_count = count($notes);
-
+                $hidden_note_count = $total_note_count - MAX_VISIBLE_NOTE_COUNT;
+                if ($total_note_count > MAX_VISIBLE_NOTE_COUNT):
+                ?>
+                <tr id="expand-row">
+                    <td colspan=4><a onclick="unhideRows();" id="expand-row-button">Expand <?= $hidden_note_count ?> more notes...</a></td>
+                </tr>
+                <?php
+                endif;
                 foreach ($notes as $note) :
                     // Hidden notes should only be viewable by admins
                     if (
@@ -950,7 +957,7 @@ const MAX_VISIBLE_NOTE_COUNT = 3;
                     $total_minutes += $note['work_minutes'] + $note['travel_minutes'];
                     $total_hours += $note['work_hours'] + $note['travel_hours'];
 
-                    if ($num_notes > MAX_VISIBLE_NOTE_COUNT)
+                    if ($num_notes <= $hidden_note_count)
                         echo "<tr class='hidden-note-row' style='display:none;'>";
                     else
                         echo "<tr>";
@@ -1067,13 +1074,7 @@ const MAX_VISIBLE_NOTE_COUNT = 3;
                         </td>
                     </tr>
                 <?php endforeach; ?>
-            <?php endif; 
-            $remaining_note_count = $total_note_count - MAX_VISIBLE_NOTE_COUNT;
-            if ($remaining_note_count > 0): ?>
-            <tr id="expand-row">
-                <td colspan=4><a onclick="unhideRows();">Expand <?= $remaining_note_count ?> more items...</a></td>
-            </tr>
-            <? endif; ?>
+            <?php endif; ?>
             <tr class="totalTime">
                 <td data-cell="Total Time" colspan=4>
                     <?php
@@ -1438,12 +1439,16 @@ const MAX_VISIBLE_NOTE_COUNT = 3;
         // show previously hidden rows
         const rows = document.getElementsByClassName("hidden-note-row");
         for (const row of rows) {
-            row.style = "display: revert;";
+            if (row.style.display == "none")
+                row.style.display = "revert";
+            else
+                row.style.display = "none";
         }
-
-        // hide expand row
-        const expand_row = document.getElementById("expand-row");
-        expand_row.style.display = "none";
+        const expand_row = document.getElementById("expand-row-button");
+        if (expand_row.textContent.includes("Expand"))
+            expand_row.textContent = "Collapse <?= $hidden_note_count ?> notes...";
+        else
+            expand_row.textContent = "Expand <?= $hidden_note_count ?> more items...";
     }
 </script>
 <!-- <script>

@@ -936,10 +936,11 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
                 $notes = json_decode($ticket['notes'], true);
                 $total_note_count = count($notes);
                 $hidden_note_count = $total_note_count - MAX_VISIBLE_NOTE_COUNT;
+                log_app(LOG_INFO, "Hello");
                 if ($total_note_count > MAX_VISIBLE_NOTE_COUNT):
                 ?>
                 <tr id="expand-row">
-                    <td colspan=4><a onclick="unhideRows();" id="expand-row-button">Expand <?= $hidden_note_count ?> more notes...</a></td>
+                    <td colspan=4><a onclick="toggleRowVisibility(<?= $hidden_note_count ?>);" id="expand-row-button">Expand <?= $hidden_note_count ?> more notes...</a></td>
                 </tr>
                 <?php
                 endif;
@@ -951,12 +952,12 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
                     )
                         continue;
                     $num_notes++;
-                    $should_hide_row = false;
 
                     // Add the total time for this note to the total time for all notes
                     $total_minutes += $note['work_minutes'] + $note['travel_minutes'];
                     $total_hours += $note['work_hours'] + $note['travel_hours'];
 
+                    // if $hidden_note_count < 0, always show
                     if ($num_notes <= $hidden_note_count)
                         echo "<tr class='hidden-note-row' style='display:none;'>";
                     else
@@ -1434,7 +1435,7 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
             },
         });
     }
-    function unhideRows()
+    function toggleRowVisibility(num_items)
     {
         // show previously hidden rows
         const rows = document.getElementsByClassName("hidden-note-row");
@@ -1444,11 +1445,12 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
             else
                 row.style.display = "none";
         }
+
         const expand_row = document.getElementById("expand-row-button");
         if (expand_row.textContent.includes("Expand"))
-            expand_row.textContent = "Collapse <?= $hidden_note_count ?> notes...";
+            expand_row.textContent = "Collapse " + num_items.toString() + " notes...";
         else
-            expand_row.textContent = "Expand <?= $hidden_note_count ?> more items...";
+            expand_row.textContent = "Expand " + num_items.toString() + " more items...";
     }
 </script>
 <!-- <script>

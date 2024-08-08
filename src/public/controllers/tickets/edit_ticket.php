@@ -936,11 +936,12 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
                 $notes = json_decode($ticket['notes'], true);
                 $total_note_count = count($notes);
                 $hidden_note_count = $total_note_count - MAX_VISIBLE_NOTE_COUNT;
+                $note_str = $hidden_note_count == 1 ? "note" : "notes";
                 log_app(LOG_INFO, "Hello");
                 if ($total_note_count > MAX_VISIBLE_NOTE_COUNT):
                 ?>
                 <tr id="expand-row">
-                    <td colspan=4><a onclick="toggleRowVisibility(<?= $hidden_note_count ?>);" id="expand-row-button">Expand <?= $hidden_note_count ?> more notes...</a></td>
+                    <td colspan=4><a onclick="toggleRowVisibility(<?= $hidden_note_count ?>);" id="expand-row-button">Expand <?= $hidden_note_count ?> more <?= $note_str ?>...</a></td>
                 </tr>
                 <?php
                 endif;
@@ -1446,11 +1447,14 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
                 row.style.display = "none";
         }
 
+        const num_items_str = num_items.toString();
+        let note_str = num_items == 1 ? "note" : "notes";
+
         const expand_row = document.getElementById("expand-row-button");
         if (expand_row.textContent.includes("Expand"))
-            expand_row.textContent = "Collapse " + num_items.toString() + " notes...";
+            expand_row.textContent = `Collapse ${num_items_str} ${note_str}...`;
         else
-            expand_row.textContent = "Expand " + num_items.toString() + " more items...";
+            expand_row.textContent = `Expand ${num_items_str} more ${note_str}...`;
     }
 </script>
 <!-- <script>

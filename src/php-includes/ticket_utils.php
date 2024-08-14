@@ -248,6 +248,8 @@ function create_note(
         $template_tech->notes_message = $notes_message_tech;
         $template_tech->site_url = getenv('ROOTDOMAIN');
         $template_tech->description = html_entity_decode($ticket_desc);
+        $template_tech->room = field_for_ticket($ticket_id_clean, "room");
+        $template_tech->phone = field_for_ticket($ticket_id_clean, "phone");
 
         //Skips email to Tech is still unassigned.
         if ($assigned_tech !== null) {
@@ -558,6 +560,28 @@ function description_for_ticket(int $ticket_id)
 
     return $desc_data["description"];
 }
+
+function field_for_ticket(int $ticket_id, string $field)
+{
+    // add to this later
+    $allowed_fields = ["room", "phone"];
+    if (!in_array($field, $allowed_fields, true)) {
+        return null;
+    }
+
+    $result = HelpDB::get()->execute_query("SELECT ? FROM help.tickets WHERE tickets.id = ?", [$field, $ticket_id]);
+    if (!isset($result)) {
+        log_app(LOG_ERR, "[field_for_ticket] Failed to get $field query result");
+    }
+
+    $data = mysqli_fetch_assoc($result);
+    if (!isset($data)) {
+        log_app(LOG_ERR, "[field_for_ticket] Failed to get $field data");
+    }
+
+    return $data[$field];
+}
+
 function logTicketChange($database, $ticket_id, $updatedby, $field_name, $old_value, $new_value)
 {
     $log_query = "INSERT INTO ticket_logs (ticket_id, user_id, field_name, old_value, new_value, created_at) VALUES (?, ?, ?, ?, ?, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'))";

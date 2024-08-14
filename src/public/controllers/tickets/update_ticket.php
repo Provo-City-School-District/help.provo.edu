@@ -394,6 +394,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $template_tech->notes_message = $notesMessageTech;
     $template_tech->site_url = getenv('ROOTDOMAIN');
     $template_tech->description = html_entity_decode($updatedDescription);
+    $template_tech->room = $updatedRoom;
+    $template_tech->phone = $updatedPhone;
 
     $template_client = new Template(from_root("/includes/templates/{$template_path}_client.phtml"));
 

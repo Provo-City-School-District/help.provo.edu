@@ -248,8 +248,8 @@ function create_note(
         $template_tech->notes_message = $notes_message_tech;
         $template_tech->site_url = getenv('ROOTDOMAIN');
         $template_tech->description = html_entity_decode($ticket_desc);
-        $template_tech->room = field_for_ticket($ticket_id_clean, "room");
-        $template_tech->phone = field_for_ticket($ticket_id_clean, "phone");
+        $template_tech->room = field_for_ticket($ticket_id_clean, "room") ?: "<empty>";
+        $template_tech->phone = field_for_ticket($ticket_id_clean, "phone") ?: "<empty>";
 
         //Skips email to Tech is still unassigned.
         if ($assigned_tech !== null) {

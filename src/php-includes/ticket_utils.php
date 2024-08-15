@@ -572,11 +572,13 @@ function field_for_ticket(int $ticket_id, string $field)
     $result = HelpDB::get()->execute_query("SELECT ? FROM help.tickets WHERE tickets.id = ?", [$field, $ticket_id]);
     if (!isset($result)) {
         log_app(LOG_ERR, "[field_for_ticket] Failed to get $field query result");
+        return null;
     }
 
     $data = mysqli_fetch_assoc($result);
     if (!isset($data)) {
         log_app(LOG_ERR, "[field_for_ticket] Failed to get $field data");
+        return null;
     }
 
     return $data[$field];

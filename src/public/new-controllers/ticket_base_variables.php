@@ -1,5 +1,6 @@
 <?php
 require_once from_root("/new-controllers/base_variables.php");
+require_once "ticket_utils.php";
 
 if (!session_id()) {
     session_start();
@@ -26,6 +27,21 @@ WHERE
         )
     )
 STR;
+
+$num_assigned_intern_tickets = 0;
+if (session_is_intern()) {
+    $num_assigned_intern_tickets_query = <<<QUERY
+        SELECT COUNT(1) FROM tickets WHERE intern_visible = 1 AND location = ?;
+    QUERY;
+
+    $intern_site = $_SESSION["permissions"]["intern_site"];
+    if (!isset($intern_site) || $intern_site == 0) {
+        log_app(LOG_INFO, "[header.php] intern_site not set. failed to get ticket count");
+    }
+    $ticket_result = HelpDB::get()->execute_query($num_assigned_intern_tickets_query, [$intern_site]);
+    $ticket_result_data = mysqli_fetch_assoc($ticket_result);
+    $num_assigned_intern_tickets = $ticket_result_data['COUNT(1)'];
+}
 
 $assigned_stmt = mysqli_prepare(HelpDB::get(), $num_assigned_tickets_query);
 mysqli_stmt_bind_param($assigned_stmt, "s", $username);

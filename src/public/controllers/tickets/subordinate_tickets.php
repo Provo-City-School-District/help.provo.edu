@@ -62,6 +62,7 @@ echo $twig->render('subordinate_tickets.twig', [
 	'subord_count' => $subord_count,
 	'num_assigned_tickets' => $num_assigned_tickets,
 	'num_flagged_tickets' => $num_flagged_tickets,
+    'num_assigned_intern_tickets' => $num_assigned_intern_tickets,
 
 	// tickets variables
 	'tickets' => $ticket_data,

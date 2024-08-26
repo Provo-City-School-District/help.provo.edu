@@ -1,7 +1,7 @@
 <?php
 require from_root("/../vendor/autoload.php");
 require from_root("/new-controllers/ticket_base_variables.php");
-require "ticket_utils.php";
+require_once "ticket_utils.php";
 
 session_start();
 
@@ -45,6 +45,7 @@ echo $twig->render('flagged_tickets.twig', [
 	'subord_count' => $subord_count,
 	'num_assigned_tickets' => $num_assigned_tickets,
 	'num_flagged_tickets' => $num_flagged_tickets,
+    'num_assigned_intern_tickets' => $num_assigned_intern_tickets,
 
 	// ticket_table_base variables
 	'tickets' => $tickets

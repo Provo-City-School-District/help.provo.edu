@@ -5,6 +5,7 @@ require_once('init.php');
 include_once('functions.php');
 include_once('helpdbconnect.php');
 require("time_utils.php");
+require_once("ticket_utils.php");
 
 // Function to check if the current URL matches any of the specified URLs
 function isCurrentPage($urls)
@@ -61,6 +62,23 @@ $current_page = $_SERVER['REQUEST_URI'];
 // $ticket_page_url = '/tickets.php';
 //$user_profile = '/profile.php';
 // $admin_page = '/admin.php';
+
+if (session_is_intern()) {
+    $num_assigned_intern_tickets = 0;
+
+    $num_assigned_intern_tickets_query = <<<QUERY
+        SELECT COUNT(1) FROM tickets WHERE intern_visible = 1 AND location = ?;
+    QUERY;
+
+    $intern_site = $_SESSION["permissions"]["intern_site"];
+    if (!isset($intern_site) || $intern_site == 0) {
+        log_app(LOG_INFO, "[header.php] intern_site not set. failed to get ticket count");
+    }
+    $ticket_result = HelpDB::get()->execute_query($num_assigned_intern_tickets_query, [$intern_site]);
+    $ticket_result_data = mysqli_fetch_assoc($ticket_result);
+    $num_assigned_intern_tickets = $ticket_result_data['COUNT(1)'];
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -225,10 +243,11 @@ $current_page = $_SERVER['REQUEST_URI'];
                     <?php
                     } else {
                     ?>
-                        <?php if ($_SESSION["permissions"]["is_intern"]): ?>
-                        <li><a href="/controllers/tickets/intern_tickets.php">Intern Tickets</a></li>
+                        <?php if (session_is_intern()): ?>
+                            <li><a href="/controllers/tickets/intern_tickets.php">Intern Tickets (<?= $num_assigned_intern_tickets ?>)</a></li>
+                        <?php else: ?>
+                            <li><a href="/tickets.php">My Tickets</a></li>
                         <?php endif; ?>
-                        <li><a href="/tickets.php">My Tickets</a></li>
                         <li><a href="/controllers/tickets/ticket_history.php">Ticket History</a></li>
                     <?php
                     }

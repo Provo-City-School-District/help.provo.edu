@@ -10,7 +10,7 @@ if ($_SESSION['permissions']['is_supervisor'] != 1) {
 }
 
 require_once('helpdbconnect.php');
-require("ticket_utils.php");
+require_once("ticket_utils.php");
 $managed_location = $_SESSION['permissions']['location_manager_sitenumber'];
 
 function process_query_result($query_result, $label_field)

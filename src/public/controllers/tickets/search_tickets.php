@@ -1,7 +1,7 @@
 <?php
 require from_root("/../vendor/autoload.php");
 require from_root("/new-controllers/ticket_base_variables.php");
-require "ticket_utils.php";
+require_once "ticket_utils.php";
 require_once from_root('/../php-includes/swdbconnect.php');
 require "sanitization_utils.php";
 

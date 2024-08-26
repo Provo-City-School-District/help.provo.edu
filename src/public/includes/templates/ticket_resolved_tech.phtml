@@ -36,8 +36,10 @@
     <body>
 
 Ticket <?= $this->ticket_id ?> has been resolved
-<p><strong>Client:</strong> <?= $this->client ?><p>
-<p><strong>Location:</strong> <?= $this->location ?><p>
+<p><strong>Client:</strong> <?= $this->client ?></p>
+<p><strong>Location:</strong> <?= $this->location ?></p>
+<p><strong>Room:</strong> <?= htmlspecialchars($this->room) ?></p>
+<p><strong>Phone:</strong> <?= htmlspecialchars($this->phone) ?></p>
 <p><strong>Request Detail:</strong></p>
 <div><?= $this->description ?></div>
 <?php

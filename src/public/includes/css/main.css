@@ -25,6 +25,10 @@ a:hover {
 	text-decoration: underline;
 }
 
+#expand-row {
+    font-size: 16px;
+}
+
 #green-button {
 	background-color: #3aa410;
 }

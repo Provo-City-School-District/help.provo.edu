@@ -324,6 +324,8 @@ function get_attachment_data(string $file_path)
 
     return $base64;
 }
+
+const MAX_VISIBLE_NOTE_COUNT = 10;
 ?>
 <div class="alerts_wrapper">
     <?php foreach ($alert_data as $alert) : ?>
@@ -930,21 +932,38 @@ function get_attachment_data(string $file_path)
                 <?php
                 $total_minutes = 0;
                 $total_hours = 0;
-
-                foreach (json_decode($ticket['notes'], true) as $note) :
+                $num_notes = 0;
+                $notes = json_decode($ticket['notes'], true);
+                $total_note_count = count($notes);
+                $hidden_note_count = $total_note_count - MAX_VISIBLE_NOTE_COUNT;
+                $note_str = $hidden_note_count == 1 ? "note" : "notes";
+                log_app(LOG_INFO, "Hello");
+                if ($total_note_count > MAX_VISIBLE_NOTE_COUNT):
+                ?>
+                <tr id="expand-row">
+                    <td colspan=4><a onclick="toggleRowVisibility(<?= $hidden_note_count ?>);" id="expand-row-button">Expand <?= $hidden_note_count ?> more <?= $note_str ?>...</a></td>
+                </tr>
+                <?php
+                endif;
+                foreach ($notes as $note) :
                     // Hidden notes should only be viewable by admins
                     if (
                         $note['visible_to_client'] == 0 &&
                         !$_SESSION['permissions']['is_tech']
                     )
                         continue;
+                    $num_notes++;
 
                     // Add the total time for this note to the total time for all notes
                     $total_minutes += $note['work_minutes'] + $note['travel_minutes'];
                     $total_hours += $note['work_hours'] + $note['travel_hours'];
-                ?>
 
-                    <tr>
+                    // if $hidden_note_count < 0, always show
+                    if ($num_notes <= $hidden_note_count)
+                        echo "<tr class='hidden-note-row' style='display:none;'>";
+                    else
+                        echo "<tr>";
+                ?>
                         <td data-cell="Date"><a href="edit_note.php?note_id=<?= $note['note_id'] ?>&ticket_id=<?= $ticket_id ?>">
                                 <?php
                                 $date_override = $note['date_override'];
@@ -1068,9 +1087,8 @@ function get_attachment_data(string $file_path)
             </table>
         </div>
         <button class="new-note-button button" id="new-note-button" style="margin-top: 10px;">New Note</button>
-        <div id="new-note-form-background">
+        <div>
             <div id="new-note-form" style="display: none;">
-                <div id="new-note-form-header"><span id="new-note-form-close">&times;</span></div>
                 <h3>New Note</h3>
                 <form id="note-submit" method="post" action="add_note_handler.php">
                     <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
@@ -1302,7 +1320,7 @@ function get_attachment_data(string $file_path)
     </script>
 <?php endif; ?>
 <script src="/includes/js/note_submit.js?v=?v=1.0.05" type="text/javascript"></script>
-<script src="/includes/js/pages/edit_ticket.js?v=1.0.05" type="text/javascript"></script>
+<script src="/includes/js/pages/edit_ticket.js?v=1.0.06" type="text/javascript"></script>
 <?php include("footer.php"); ?>
 
 
@@ -1417,6 +1435,26 @@ function get_attachment_data(string $file_path)
                 alert("Error: Attachment deletion AJAX call failed");
             },
         });
+    }
+    function toggleRowVisibility(num_items)
+    {
+        // show previously hidden rows
+        const rows = document.getElementsByClassName("hidden-note-row");
+        for (const row of rows) {
+            if (row.style.display == "none")
+                row.style.display = "revert";
+            else
+                row.style.display = "none";
+        }
+
+        const num_items_str = num_items.toString();
+        let note_str = num_items == 1 ? "note" : "notes";
+
+        const expand_row = document.getElementById("expand-row-button");
+        if (expand_row.textContent.includes("Expand"))
+            expand_row.textContent = `Collapse ${num_items_str} ${note_str}...`;
+        else
+            expand_row.textContent = `Expand ${num_items_str} more ${note_str}...`;
     }
 </script>
 <!-- <script>

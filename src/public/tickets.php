@@ -1,10 +1,18 @@
 <?php
-require from_root("/../vendor/autoload.php");
-require from_root("/new-controllers/ticket_base_variables.php");
-require "ticket_utils.php";
-
 if (!session_id())
     session_start();
+
+require "ticket_utils.php";
+if (session_is_intern()) {
+    require from_root("/controllers/tickets/intern_tickets.php");
+    exit;
+}
+
+require from_root("/../vendor/autoload.php");
+require from_root("/new-controllers/ticket_base_variables.php");
+
+
+
 
 $loader = new \Twig\Loader\FilesystemLoader(from_root('/../views'));
 $twig = new \Twig\Environment($loader, [
@@ -56,6 +64,7 @@ echo $twig->render('tickets.twig', [
     'subord_count' => $subord_count,
     'num_assigned_tickets' => $num_assigned_tickets,
     'num_flagged_tickets' => $num_flagged_tickets,
+    'num_assigned_intern_tickets' => $num_assigned_intern_tickets,
 
     // tickets variables
     'my_tickets' => $my_tickets,

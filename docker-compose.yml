@@ -47,7 +47,7 @@ services:
   help_myadmin:
     container_name: help-myadmin
     image: phpmyadmin:latest
-    restart: "no"
+    restart: unless-stopped
     ports:
       - 8085:80
     environment:

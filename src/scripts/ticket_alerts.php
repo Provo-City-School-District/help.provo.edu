@@ -119,7 +119,7 @@ foreach ($oldTickets as $oldTicket) {
             $oldTicket['status'] == 'maintenance' ||
             $oldTicket['priority'] == 15 ||
             ($oldTicket['priority'] == 30 && $oldTicket['client'] != $oldTicket['employee']) ||
-            $oldTicket['priority'] != 60)
+            $oldTicket['priority'] == 60)
     ) {
         insertAlertIfNotExists(HelpDB::get(), $oldTicket, $alert7DayMessage, 'warn', 0);
         //else if not updated in 48 hours

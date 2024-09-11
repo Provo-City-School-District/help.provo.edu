@@ -972,7 +972,15 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
                                 else
                                     echo $note['created'];
                                 ?></a></td>
-                        <td data-cell="Created By"><?= $note['creator'] ?></td>
+                        <td data-cell="Created By"><?php
+                        $creator = $note['creator'];
+                        if ($creator == 'System') {
+                            echo $creator;
+                        } else if (isset($creator)) {
+                            $name = get_local_name_for_user($creator);
+                            echo $name['firstname'].' '.$name['lastname'];
+                        }
+                        ?></td>
                         <td class="ticket_note" data-cell="Note Message">
                             <?php
                             $ticket_pattern = "/WO#\\d{1,6}/";

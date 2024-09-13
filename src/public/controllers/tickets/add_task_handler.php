@@ -14,6 +14,9 @@ if (!user_is_tech($username)) {
 $ticket_id = $_POST['ticket_id'];
 $ticket_desc = $_POST['task_description'];
 $assigned_tech = $_POST['assigned_tech'];
+if (empty($assigned_tech)) {
+    $assigned_tech = null;
+}
 $form_task_complete = $_POST['task_complete'];
 $form_task_required = $_POST['required'];
 

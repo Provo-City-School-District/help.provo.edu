@@ -768,7 +768,7 @@ select {
 
 	.taskTable tr {
 		display: grid;
-		grid-template-columns: minmax(150px, 1fr) minmax(125px, 1fr) 110px 110px 100px 100px;
+		grid-template-columns: minmax(150px, 1fr) minmax(125px, 1fr) 110px 110px 100px;
         word-wrap: break-word;
 	}
 }

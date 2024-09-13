@@ -865,7 +865,7 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
                 <th>Completed</th>
                 <th>Required</th>
                 <th>Remove Task</th>
-                <th>Edit Task</th>
+                <!-- <th>Edit Task</th> -->
             </tr>
             <?php
             foreach ($task_rows as $row) {
@@ -889,7 +889,7 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
                     <td data-cell="Completed"><input type="checkbox" onclick="taskStatusChanged(this, '<?= $task_id ?>');" <?= $checked_if_done ?> /></td>
                     <td data-cell="Required"><input type="checkbox" onclick="taskRequiredChanged(this, '<?= $task_id ?>');" <?= $checked_if_required ?> /></td>
                     <td data-cell="Remove Task"><button onclick="confirmDeleteTask('<?= $task_id ?>');">Delete Task</button></td>
-                    <td data-cell="Edit Task"><button onclick="location.href='edit_task.php?task_id=<?= $task_id ?>'">Edit Task</button></td>
+                    <!-- <td data-cell="Edit Task"><button onclick="location.href='edit_task.php?task_id=<?= "" // $task_id ?>'">Edit Task</button></td> -->
                 </tr>
             <?php
             }

@@ -853,31 +853,43 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
     <h2>Tasks</h2>
     <?php
     // Show existing tasks on ticket
-    $tasks_res = HelpDB::get()->execute_query("SELECT id, description, completed, required FROM help.ticket_tasks WHERE ticket_id = ?", [$ticket_id]);
+    $tasks_res = HelpDB::get()->execute_query("SELECT id, description, completed, required, assigned_tech FROM help.ticket_tasks WHERE ticket_id = ?", [$ticket_id]);
     $task_rows = $tasks_res->fetch_all(MYSQLI_ASSOC);
 
     if (count($task_rows) > 0) {
     ?>
         <table class="taskTable">
             <tr>
+                <th>Assigned Tech</th>
                 <th>Task Description</th>
                 <th>Completed</th>
                 <th>Required</th>
                 <th>Remove Task</th>
+                <th>Edit Task</th>
             </tr>
             <?php
             foreach ($task_rows as $row) {
                 $task_complete = isset($row['completed']) && $row['completed'] != 0;
                 $task_required = isset($row['required']) && $row['required'] != 0;
                 $task_id = $row['id'];
+                $assigned_tech = $row['assigned_tech'];
                 $checked_if_done = $task_complete ? "checked" : "";
                 $checked_if_required = $task_required ? "checked" : "";
+
+                if (isset($assigned_tech)) {
+                    $assigned_tech_name = get_local_name_for_user($assigned_tech);
+                    $assigned_tech_str = $assigned_tech_name["firstname"] . " " . $assigned_tech_name["lastname"];
+                } else {
+                    $assigned_tech_str = "Unassigned";
+                }
             ?>
                 <tr>
+                    <td data-cell="Assigned Tech"><?= $assigned_tech_str ?></td>
                     <td data-cell="Task Description"><?= htmlspecialchars($row['description']); ?></td>
-                    <td data-cell="Status"><input type="checkbox" onclick="taskStatusChanged(this, '<?= $task_id ?>');" <?= $checked_if_done ?> /></td>
+                    <td data-cell="Completed"><input type="checkbox" onclick="taskStatusChanged(this, '<?= $task_id ?>');" <?= $checked_if_done ?> /></td>
                     <td data-cell="Required"><input type="checkbox" onclick="taskRequiredChanged(this, '<?= $task_id ?>');" <?= $checked_if_required ?> /></td>
-                    <td data-cell="Delete Task"><button onclick="confirmDeleteTask('<?= $task_id ?>');">Delete Task</button></td>
+                    <td data-cell="Remove Task"><button onclick="confirmDeleteTask('<?= $task_id ?>');">Delete Task</button></td>
+                    <td data-cell="Edit Task"><button onclick="editTask('<?= $task_id ?>');">Edit Task</button></td>
                 </tr>
             <?php
             }
@@ -897,6 +909,21 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
                 <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
                 <input type="hidden" name="username" value="<?= $_SESSION['username'] ?>">
                 <div>
+                    <div>
+                        <label for="assigned_tech">Assigned Tech: </label>
+                        <select id="assigned-tech" name="assigned_tech">
+                            <option value="unassigned">Unassigned</option>
+                            <?php foreach ($techusernames as $username) : ?>
+                                <?php
+                                $name = get_local_name_for_user($username);
+                                $firstname = ucwords(strtolower($name["firstname"]));
+                                $lastname = ucwords(strtolower($name["lastname"]));
+                                $display_string = $firstname . " " . $lastname . " - " . location_name_from_id(get_fast_client_location($username) ?: "");
+                                ?>
+                                <option value="<?= $username ?>"><?= $display_string ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
                     <div>
                         <label for="task-description">Task description: </label>
                         <input type="text" name="task_description"></input>
@@ -1415,6 +1442,10 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
                 alert("Error: Ticket task deletion AJAX call failed");
             },
         });
+    }
+
+    function editTask(task_id) {
+        console.log(task_id);
     }
 
     function confirmDeleteAttachment(attachmentPath) {

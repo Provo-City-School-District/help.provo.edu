@@ -13,6 +13,7 @@ if (!user_is_tech($username)) {
 
 $ticket_id = $_POST['ticket_id'];
 $ticket_desc = $_POST['task_description'];
+$assigned_tech = $_POST['assigned_tech'];
 $form_task_complete = $_POST['task_complete'];
 $form_task_required = $_POST['required'];
 
@@ -26,7 +27,7 @@ if (isset($form_task_required)) {
     $task_required = 1;
 }
 
-$res = HelpDB::get()->execute_query("INSERT INTO help.ticket_tasks (ticket_id, description, required, completed) VALUES (?, ?, ?, ?)", [$ticket_id, $ticket_desc, $task_required, $task_complete]);
+$res = HelpDB::get()->execute_query("INSERT INTO help.ticket_tasks (ticket_id, description, required, completed, assigned_tech) VALUES (?, ?, ?, ?, ?)", [$ticket_id, $ticket_desc, $task_required, $task_complete, $assigned_tech]);
 logTicketChange(HelpDB::get(), $ticket_id, $username, "Task \"$ticket_desc\" created", "", "");
 header("Location: edit_ticket.php?id=$ticket_id");
 exit();

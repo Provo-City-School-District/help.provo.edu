@@ -16,6 +16,7 @@ tinymce.init({
   toolbar:
     "undo redo restoredraft | bold italic strikethrough | blockquote | paste pastetext removeformat | numlist bullist | code | link unlink | emoticons",
   menubar: false,
+  license_key: "gpl",
   paste_as_text: true,
   browser_spellcheck: true,
   contextmenu: false,

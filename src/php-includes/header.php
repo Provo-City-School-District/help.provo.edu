@@ -85,6 +85,17 @@ $num_assigned_tasks_result = HelpDB::get()->execute_query($num_assigned_tasks_qu
 
 $num_assigned_tasks = $num_assigned_tasks_result->fetch_column(0);
 
+$num_subordinate_tickets_query = <<<STR
+    SELECT COUNT(*) FROM tickets WHERE employee IN
+        (SELECT username FROM users WHERE supervisor_username = ?)
+    AND status NOT IN ('closed', 'resolved')
+STR;
+
+$num_subordinate_tickets_result = HelpDB::get()->execute_query($num_subordinate_tickets_query, [$username]);
+
+$num_subordinate_tickets = $num_subordinate_tickets_result->fetch_column(0);
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -178,7 +189,7 @@ $num_assigned_tasks = $num_assigned_tasks_result->fetch_column(0);
                     <?php
                     if ($_SESSION['permissions']['is_supervisor'] == 1 && $subord_count > 0) {
                     ?>
-                        <li><a href="/controllers/tickets/subordinate_tickets.php">Subordinate Tickets</a></li>
+                        <li><a href="/controllers/tickets/subordinate_tickets.php">Subordinate Tickets (<?= $num_subordinate_tickets ?>) </a></li>
                     <?php
                     }
                     if ($_SESSION['permissions']['is_location_manager'] == 1) {

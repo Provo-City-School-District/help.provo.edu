@@ -54,6 +54,7 @@ echo $twig->render('edit_task.twig', [
     'num_flagged_tickets' => $num_flagged_tickets,
     'num_assigned_intern_tickets' => $num_assigned_intern_tickets,
     'num_assigned_tasks' => $num_assigned_tasks,
+    'num_subordinate_tickets' => $num_subordinate_tickets,
 
     // edit_task variables
     'task' => $task,

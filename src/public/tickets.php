@@ -66,6 +66,7 @@ echo $twig->render('tickets.twig', [
     'num_flagged_tickets' => $num_flagged_tickets,
     'num_assigned_intern_tickets' => $num_assigned_intern_tickets,
     'num_assigned_tasks' => $num_assigned_tasks,
+    'num_subordinate_tickets' => $num_subordinate_tickets,
 
     // tickets variables
     'my_tickets' => $my_tickets,

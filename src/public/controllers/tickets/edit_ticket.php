@@ -863,9 +863,7 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
                 <th>Assigned Tech</th>
                 <th>Task Description</th>
                 <th>Completed</th>
-                <th>Required</th>
-                <th>Remove Task</th>
-                <!-- <th>Edit Task</th> -->
+                <th>Edit Task</th>
             </tr>
             <?php
             foreach ($task_rows as $row) {
@@ -887,9 +885,7 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
                     <td data-cell="Assigned Tech"><?= $assigned_tech_str ?></td>
                     <td data-cell="Task Description"><?= htmlspecialchars($row['description']); ?></td>
                     <td data-cell="Completed"><input type="checkbox" onclick="taskStatusChanged(this, '<?= $task_id ?>');" <?= $checked_if_done ?> /></td>
-                    <td data-cell="Required"><input type="checkbox" onclick="taskRequiredChanged(this, '<?= $task_id ?>');" <?= $checked_if_required ?> /></td>
-                    <td data-cell="Remove Task"><button onclick="confirmDeleteTask('<?= $task_id ?>');">Delete Task</button></td>
-                    <!-- <td data-cell="Edit Task"><button onclick="location.href='edit_task.php?task_id=<?= "" // $task_id ?>'">Edit Task</button></td> -->
+                    <td data-cell="Edit Task"><button onclick="location.href='/controllers/tasks/edit_task.php?task_id=<?= $task_id ?>'">Edit Task</button></td>
                 </tr>
             <?php
             }
@@ -1403,6 +1399,7 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
         });
     }
 
+    /*
     function taskRequiredChanged(obj, task_id) {
         $.ajax({
             url: "/ajax/ticket_tasks/update_task.php",
@@ -1420,6 +1417,7 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
             },
         });
     }
+    */
 
 
     function confirmDeleteTask(task_id) {

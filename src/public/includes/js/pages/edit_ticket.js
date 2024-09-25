@@ -169,16 +169,17 @@ if (newTaskModalCloseButton) {
   };
 }
 
-function scrollIntoNoteForm()
-{
-    document.getElementById('new-note-form').scrollIntoView({behavior: 'smooth'});
+function scrollIntoNoteForm() {
+  document
+    .getElementById("new-note-form")
+    .scrollIntoView({ behavior: "smooth" });
 }
 
 // display/hide new note form
 var newNoteButtons = document.getElementsByClassName("new-note-button");
 
 for (const button of newNoteButtons) {
-    button.onclick = scrollIntoNoteForm();
+  button.onclick = scrollIntoNoteForm();
 }
 
 var newNoteForm = document.getElementById("new-note-form");

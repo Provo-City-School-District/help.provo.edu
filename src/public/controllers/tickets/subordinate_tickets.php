@@ -63,7 +63,8 @@ echo $twig->render('subordinate_tickets.twig', [
 	'num_assigned_tickets' => $num_assigned_tickets,
 	'num_flagged_tickets' => $num_flagged_tickets,
     'num_assigned_intern_tickets' => $num_assigned_intern_tickets,
-
+    'num_assigned_tasks' => $num_assigned_tasks,
+    
 	// tickets variables
 	'tickets' => $ticket_data,
 	'alerts' => $alerts,

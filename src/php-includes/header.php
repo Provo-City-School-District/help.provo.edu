@@ -21,6 +21,7 @@ function isCurrentPage($urls)
 if (isset($_SESSION['username'])) {
     $userId = $_SESSION['username'];
 }
+$username = $_SESSION['username'];
 
 
 
@@ -78,6 +79,11 @@ if (session_is_intern()) {
     $ticket_result_data = mysqli_fetch_assoc($ticket_result);
     $num_assigned_intern_tickets = $ticket_result_data['COUNT(1)'];
 }
+
+$num_assigned_tasks_query = "SELECT COUNT(*) FROM ticket_tasks WHERE (NOT completed AND assigned_tech = ?)";
+$num_assigned_tasks_result = HelpDB::get()->execute_query($num_assigned_tasks_query, [$username]);
+
+$num_assigned_tasks = $num_assigned_tasks_result->fetch_column(0);
 
 ?>
 <!DOCTYPE html>
@@ -182,7 +188,6 @@ if (session_is_intern()) {
                     }
                     if ($_SESSION['permissions']['is_tech'] == 1) {
                         require_once("helpdbconnect.php");
-                        $username = $_SESSION['username'];
                         $num_assigned_tickets = 0;
                         $num_flagged_tickets = 0;
 
@@ -230,7 +235,7 @@ if (session_is_intern()) {
                     ?>
 
                         <li><a href="/tickets.php">My Tickets (<?= $num_assigned_tickets ?>)</a></li>
-
+                        <li><a href="/tasks.php">My Tasks (<?= $num_assigned_tasks ?>)</a></li>
                         <?php
                         if ($num_flagged_tickets != 0) {
                         ?>

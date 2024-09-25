@@ -41,6 +41,7 @@ echo $twig->render('recent_tickets.twig', [
 	'num_assigned_tickets' => $num_assigned_tickets,
 	'num_flagged_tickets' => $num_flagged_tickets,
     'num_assigned_intern_tickets' => $num_assigned_intern_tickets,
+    'num_assigned_tasks' => $num_assigned_tasks,
 
 
 	// ticket_table_base variables

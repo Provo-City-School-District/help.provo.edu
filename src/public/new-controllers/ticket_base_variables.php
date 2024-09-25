@@ -28,6 +28,11 @@ WHERE
     )
 STR;
 
+$num_assigned_tasks_query = "SELECT COUNT(*) FROM ticket_tasks WHERE (NOT completed AND assigned_tech = ?)";
+$num_assigned_tasks_result = HelpDB::get()->execute_query($num_assigned_tasks_query, [$username]);
+
+$num_assigned_tasks = $num_assigned_tasks_result->fetch_column(0);
+
 $num_assigned_intern_tickets = 0;
 if (session_is_intern()) {
     $num_assigned_intern_tickets_query = <<<QUERY

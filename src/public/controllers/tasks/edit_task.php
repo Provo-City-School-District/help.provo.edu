@@ -7,8 +7,7 @@ session_start();
 
 $loader = new \Twig\Loader\FilesystemLoader(from_root('/../views'));
 $twig = new \Twig\Environment($loader, [
-    'cache' => from_root('/../twig-cache'),
-    'auto_reload' => true
+    'cache' => from_root('/../twig-cache')
 ]);
 
 $task_id = filter_input(INPUT_GET, 'task_id', FILTER_VALIDATE_INT);

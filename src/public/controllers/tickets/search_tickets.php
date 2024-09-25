@@ -162,6 +162,8 @@ echo $twig->render('search_tickets.twig', [
     'subord_count' => $subord_count,
     'num_assigned_tickets' => $num_assigned_tickets,
     'num_flagged_tickets' => $num_flagged_tickets,
+    'num_assigned_tasks' => $num_assigned_tasks,
+    'num_subordinate_tickets' => $num_subordinate_tickets,
 
     //page variables
     'isTech' => $isTech,

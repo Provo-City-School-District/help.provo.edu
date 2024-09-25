@@ -169,16 +169,17 @@ if (newTaskModalCloseButton) {
   };
 }
 
-function scrollIntoNoteForm()
-{
-    document.getElementById('new-note-form').scrollIntoView({behavior: 'smooth'});
+function scrollIntoNoteForm() {
+  document
+    .getElementById("new-note-form")
+    .scrollIntoView({ behavior: "smooth" });
 }
 
 // display/hide new note form
 var newNoteButtons = document.getElementsByClassName("new-note-button");
 
 for (const button of newNoteButtons) {
-    button.onclick = scrollIntoNoteForm();
+  button.onclick = scrollIntoNoteForm();
 }
 
 var newNoteForm = document.getElementById("new-note-form");
@@ -322,5 +323,14 @@ if (searchResults) {
     }
   });
 }
-
-
+document
+  .getElementById("close-ticket-button")
+  .addEventListener("click", function (event) {
+    var confirmClose = confirm(
+      "Are you sure you want to close this ticket? Once closed, it will be removed from the work queue, and you won’t be able to add notes. A new ticket will be required for any additional work."
+    );
+    if (!confirmClose) {
+      // Prevent the default action if the user cancels
+      event.preventDefault();
+    }
+  });

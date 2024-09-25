@@ -11,20 +11,16 @@ $twig = new \Twig\Environment($loader, [
 ]);
 
 $ticket_query = <<<QUERY
-    SELECT * FROM tickets WHERE intern_visible = 1 AND location = ?;
+    SELECT * FROM help.tickets WHERE id IN (
+        SELECT ticket_id FROM ticket_tasks WHERE (NOT completed AND assigned_tech = ?)
+    )
 QUERY;
 
-$intern_site = $_SESSION["permissions"]["intern_site"];
-if (!isset($intern_site) || $intern_site == 0) {
-    log_app(LOG_INFO, "[intern_tickets.php] intern_site not set. Exiting...");
-    die;
-}
 
-$site_name = location_name_from_id($intern_site);
-$ticket_result = HelpDB::get()->execute_query($ticket_query, [$intern_site]);
+$ticket_result = HelpDB::get()->execute_query($ticket_query, [$username]);
 $tickets = get_parsed_ticket_data($ticket_result);
 
-echo $twig->render('intern_tickets.twig', [
+echo $twig->render('tasks.twig', [
     // base variables
     'color_scheme' => $color_scheme,
     'current_year' => $current_year,
@@ -44,9 +40,7 @@ echo $twig->render('intern_tickets.twig', [
     'num_assigned_tasks' => $num_assigned_tasks,
     'num_subordinate_tickets' => $num_subordinate_tickets,
 
-    // ticket_table_base variables
-    'tickets' => $tickets,
 
-    // intern_tickets variables
-    'site_name' => $site_name
+    // ticket_table_base variables
+    'tickets' => $tickets
 ]);

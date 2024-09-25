@@ -1,6 +1,6 @@
 <?php
 require_once from_root('/../vendor/autoload.php');
-require_once from_root("/new-controllers/ticket_base_variables.php");
+require_once from_root("/new-controllers/base_variables.php");
 require_once "helpdbconnect.php";
 
 $loader = new \Twig\Loader\FilesystemLoader(from_root('/../views'));

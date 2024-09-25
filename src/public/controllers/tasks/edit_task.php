@@ -10,21 +10,33 @@ $twig = new \Twig\Environment($loader, [
     'cache' => from_root('/../twig-cache')
 ]);
 
-$ticket_query = <<<QUERY
-    SELECT * FROM tickets WHERE intern_visible = 1 AND location = ?;
-QUERY;
+$task_id = filter_input(INPUT_GET, 'task_id', FILTER_VALIDATE_INT);
+$task_info_query = <<<STR
+    SELECT * FROM ticket_tasks WHERE id = ?
+STR;
 
-$intern_site = $_SESSION["permissions"]["intern_site"];
-if (!isset($intern_site) || $intern_site == 0) {
-    log_app(LOG_INFO, "[intern_tickets.php] intern_site not set. Exiting...");
+$task_info_result = HelpDB::get()->execute_query($task_info_query, [$task_id]);
+$task = $task_info_result->fetch_assoc();
+if (!$task) {
+    echo "Task doesn't exist!";
     die;
 }
 
-$site_name = location_name_from_id($intern_site);
-$ticket_result = HelpDB::get()->execute_query($ticket_query, [$intern_site]);
-$tickets = get_parsed_ticket_data($ticket_result);
 
-echo $twig->render('intern_tickets.twig', [
+$tech_usernames = get_tech_usernames();
+$tech_usernames_parsed = [];
+foreach ($tech_usernames as $username) {
+    $name = get_local_name_for_user($username);
+    $firstname = ucwords(strtolower($name["firstname"]));
+    $lastname = ucwords(strtolower($name["lastname"]));
+    $display_string = $firstname . " " . $lastname . " - " . location_name_from_id(get_fast_client_location($username) ?: "");
+    $tech_usernames_parsed[] = [
+        $username,
+        $display_string
+    ];
+}
+
+echo $twig->render('edit_task.twig', [
     // base variables
     'color_scheme' => $color_scheme,
     'current_year' => $current_year,
@@ -44,9 +56,7 @@ echo $twig->render('intern_tickets.twig', [
     'num_assigned_tasks' => $num_assigned_tasks,
     'num_subordinate_tickets' => $num_subordinate_tickets,
 
-    // ticket_table_base variables
-    'tickets' => $tickets,
-
-    // intern_tickets variables
-    'site_name' => $site_name
+    // edit_task variables
+    'task' => $task,
+    'tech_usernames' => $tech_usernames_parsed
 ]);

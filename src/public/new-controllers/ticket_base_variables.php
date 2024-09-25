@@ -28,6 +28,11 @@ WHERE
     )
 STR;
 
+$num_assigned_tasks_query = "SELECT COUNT(*) FROM ticket_tasks WHERE (NOT completed AND assigned_tech = ?)";
+$num_assigned_tasks_result = HelpDB::get()->execute_query($num_assigned_tasks_query, [$username]);
+
+$num_assigned_tasks = $num_assigned_tasks_result->fetch_column(0);
+
 $num_assigned_intern_tickets = 0;
 if (session_is_intern()) {
     $num_assigned_intern_tickets_query = <<<QUERY
@@ -72,3 +77,12 @@ $subord_result = $subord_stmt->get_result();
 $subord_row = $subord_result->fetch_assoc();
 $subord_count = $subord_row['supervisor_username'];
 $subord_stmt->close();
+
+$num_subordinate_tickets_query = <<<STR
+    SELECT COUNT(*) FROM alerts WHERE employee IN
+        (SELECT username FROM users WHERE supervisor_username = ?)
+STR;
+
+$num_subordinate_tickets_result = HelpDB::get()->execute_query($num_subordinate_tickets_query, [$username]);
+
+$num_subordinate_tickets = $num_subordinate_tickets_result->fetch_column(0);

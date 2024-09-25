@@ -21,6 +21,7 @@ function isCurrentPage($urls)
 if (isset($_SESSION['username'])) {
     $userId = $_SESSION['username'];
 }
+$username = $_SESSION['username'];
 
 
 
@@ -79,6 +80,21 @@ if (session_is_intern()) {
     $num_assigned_intern_tickets = $ticket_result_data['COUNT(1)'];
 }
 
+$num_assigned_tasks_query = "SELECT COUNT(*) FROM ticket_tasks WHERE (NOT completed AND assigned_tech = ?)";
+$num_assigned_tasks_result = HelpDB::get()->execute_query($num_assigned_tasks_query, [$username]);
+
+$num_assigned_tasks = $num_assigned_tasks_result->fetch_column(0);
+
+$num_subordinate_tickets_query = <<<STR
+    SELECT COUNT(*) FROM alerts WHERE employee IN
+        (SELECT username FROM users WHERE supervisor_username = ?)
+STR;
+
+$num_subordinate_tickets_result = HelpDB::get()->execute_query($num_subordinate_tickets_query, [$username]);
+
+$num_subordinate_tickets = $num_subordinate_tickets_result->fetch_column(0);
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -109,7 +125,7 @@ if (session_is_intern()) {
         <link rel="stylesheet" type="text/css" href="/includes/css/login-styles.css?v=<?= $app_version; ?>">
     <?php
     }
-?>
+    ?>
     <link href="/includes/css/lightbox.css" rel="stylesheet" />
 </head>
 
@@ -172,7 +188,7 @@ if (session_is_intern()) {
                     <?php
                     if ($_SESSION['permissions']['is_supervisor'] == 1 && $subord_count > 0) {
                     ?>
-                        <li><a href="/controllers/tickets/subordinate_tickets.php">Subordinate Tickets</a></li>
+                        <li><a href="/controllers/tickets/subordinate_tickets.php">Subordinate Tickets (<?= $num_subordinate_tickets ?>) </a></li>
                     <?php
                     }
                     if ($_SESSION['permissions']['is_location_manager'] == 1) {
@@ -182,7 +198,6 @@ if (session_is_intern()) {
                     }
                     if ($_SESSION['permissions']['is_tech'] == 1) {
                         require_once("helpdbconnect.php");
-                        $username = $_SESSION['username'];
                         $num_assigned_tickets = 0;
                         $num_flagged_tickets = 0;
 
@@ -230,7 +245,7 @@ if (session_is_intern()) {
                     ?>
 
                         <li><a href="/tickets.php">My Tickets (<?= $num_assigned_tickets ?>)</a></li>
-
+                        <li><a href="/tasks.php">My Tasks (<?= $num_assigned_tasks ?>)</a></li>
                         <?php
                         if ($num_flagged_tickets != 0) {
                         ?>

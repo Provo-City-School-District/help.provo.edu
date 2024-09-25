@@ -17,6 +17,9 @@ if (!user_is_tech($username)) {
     exit;
 }
 
+$ticket_result = HelpDB::get()->execute_query("SELECT ticket_id FROM ticket_tasks WHERE id = ?", [$task_id]);
+$ticket_id = $ticket_result->fetch_assoc()["ticket_id"];
+
 log_app(LOG_INFO, "[delete_task.php] Deleting task id=$task_id");
 
 $update_status_res = HelpDB::get()->execute_query("DELETE FROM help.ticket_tasks WHERE id = ?", [$task_id]);
@@ -27,4 +30,7 @@ if (!$update_status_res) {
 } else {
     log_app(LOG_INFO, "[delete_task.php] Successfully deleted task id=$task_id");
     http_response_code(200);
+
+    // Redirect to the edit ticket page
+    header("Location: /controllers/tickets/edit_ticket.php?id=$ticket_id");
 }

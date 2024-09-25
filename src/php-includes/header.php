@@ -86,9 +86,8 @@ $num_assigned_tasks_result = HelpDB::get()->execute_query($num_assigned_tasks_qu
 $num_assigned_tasks = $num_assigned_tasks_result->fetch_column(0);
 
 $num_subordinate_tickets_query = <<<STR
-    SELECT COUNT(*) FROM tickets WHERE employee IN
+    SELECT COUNT(*) FROM alerts WHERE employee IN
         (SELECT username FROM users WHERE supervisor_username = ?)
-    AND status NOT IN ('closed', 'resolved')
 STR;
 
 $num_subordinate_tickets_result = HelpDB::get()->execute_query($num_subordinate_tickets_query, [$username]);
@@ -126,7 +125,7 @@ $num_subordinate_tickets = $num_subordinate_tickets_result->fetch_column(0);
         <link rel="stylesheet" type="text/css" href="/includes/css/login-styles.css?v=<?= $app_version; ?>">
     <?php
     }
-?>
+    ?>
     <link href="/includes/css/lightbox.css" rel="stylesheet" />
 </head>
 

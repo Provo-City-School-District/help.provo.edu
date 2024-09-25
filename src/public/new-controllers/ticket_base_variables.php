@@ -79,9 +79,8 @@ $subord_count = $subord_row['supervisor_username'];
 $subord_stmt->close();
 
 $num_subordinate_tickets_query = <<<STR
-    SELECT COUNT(*) FROM tickets WHERE employee IN
+    SELECT COUNT(*) FROM alerts WHERE employee IN
         (SELECT username FROM users WHERE supervisor_username = ?)
-    AND status NOT IN ('closed', 'resolved')
 STR;
 
 $num_subordinate_tickets_result = HelpDB::get()->execute_query($num_subordinate_tickets_query, [$username]);

@@ -145,9 +145,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <input id="work_hours" name="work_hours" type="hidden" value="0" required>
     <?php endif; ?>
     <input type="submit" value="Save Note" class="button">
-    <button onclick="window.location.href='edit_ticket.php?id=<?= $ticket_id ?>'" class="button">Cancel</button>
-
 </form>
+<button onclick="window.location.href='edit_ticket.php?id=<?= $ticket_id ?>'" class="button">Cancel</button>
 <form method="post" action="delete_note.php" id="delete-note-form">
     <input type="hidden" name="note_id" value="<?php echo $note_id; ?>">
     <input type="hidden" name="ticket_id" value="<?php echo $ticket_id; ?>">

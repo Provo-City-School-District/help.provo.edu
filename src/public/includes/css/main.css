@@ -168,6 +168,11 @@ input[type=submit] {
 	margin: 1em 0;
 }
 
+.button a {
+	color: var(--theme-white);
+	text-decoration: none;
+}
+
 #delete-note {
 	margin-top: unset;
 	display: inline-block;

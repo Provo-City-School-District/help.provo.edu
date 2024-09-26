@@ -370,10 +370,13 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
     <!-- Form for updating ticket information -->
     <div class="right">
         <div style="display: flex; gap: 1em;">
-            <?php if ($readonly && !session_is_intern()) : ?>
+            <?php if ($readonly && !session_is_intern() && $ticket['status'] != 'closed') : ?>
                 <button id="close-ticket-button" class="button">Close Ticket</button>
             <?php endif; ?>
-            <button class="new-note-button button">New Note</button>
+            <?php if (!$readonly || $ticket['status'] != 'closed') : ?>
+                <button class="new-note-button button">New Note</button>
+            <?php endif; ?>
+
         </div>
     </div>
     <form id="updateTicketForm" method="POST" action="update_ticket.php">
@@ -385,7 +388,10 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
                 </div>
             <?php endif; ?>
             <div class="horizontalContainerCell">
-                <input id="green-button" type="submit" name="update_ticket_with_email" class="button" value="Update Ticket & Email">
+                <?php if (!$readonly || $ticket['status'] != 'closed') : ?>
+                    <input id="green-button" type="submit" name="update_ticket_with_email" class="button" value="Update Ticket & Email">
+                <?php endif; ?>
+
                 <?php if ($readonly) : ?>
                     <input type="hidden" name="send_client_email" value="send_client_email" checked>
                     <input type="hidden" name="send_tech_email" value="send_tech_email" checked>
@@ -816,7 +822,9 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
             Maximum of 50MB
         </div>
     </div>
-    <button id="toggle-file-upload-form" class="button">Attach <?= isset($hasfiles) && $hasfiles ? 'Additional' : '' ?> Files</button>
+    <?php if (!$readonly || $ticket['status'] != 'closed') : ?>
+        <button id="toggle-file-upload-form" class="button">Attach <?= isset($hasfiles) && $hasfiles ? 'Additional' : '' ?> Files</button>
+    <?php endif; ?>
 
     <?php
     if (count($child_tickets) > 0) {
@@ -895,8 +903,10 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
     }
     ?>
 
+    <?php if (!$readonly || $ticket['status'] != 'closed') : ?>
+        <button id="new-task-button" class="button">Add Task</button><br>
+    <?php endif; ?>
 
-    <button id="new-task-button" class="button">Add Task</button><br>
     <div id="new-task-form-background" class="modal-form-background">
         <div id="new-task-form" class="modal-form" style="display: none;">
             <div class="modal-form-header"><span id="new-task-form-close">&times;</span></div>
@@ -940,10 +950,10 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
     <!-- Loop through the notes and display them -->
     <?php if ($ticket['notes'] !== null) : ?>
 
-
-
         <h2>Notes</h2>
-        <button class="new-note-button button">New Note</button><br>
+        <?php if (!$readonly || $ticket['status'] != 'closed') : ?>
+            <button class="new-note-button button">New Note</button>
+        <?php endif; ?>
         <div id="note-table" class="note">
             <table class="ticketsTable">
                 <tr>
@@ -963,9 +973,9 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
                 log_app(LOG_INFO, "Hello");
                 if ($total_note_count > MAX_VISIBLE_NOTE_COUNT):
                 ?>
-                <tr id="expand-row">
-                    <td colspan=4><a onclick="toggleRowVisibility(<?= $hidden_note_count ?>);" id="expand-row-button">Expand <?= $hidden_note_count ?> more <?= $note_str ?>...</a></td>
-                </tr>
+                    <tr id="expand-row">
+                        <td colspan=4><a onclick="toggleRowVisibility(<?= $hidden_note_count ?>);" id="expand-row-button">Expand <?= $hidden_note_count ?> more <?= $note_str ?>...</a></td>
+                    </tr>
                 <?php
                 endif;
                 foreach ($notes as $note) :
@@ -987,77 +997,77 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
                     else
                         echo "<tr>";
                 ?>
-                        <td data-cell="Date"><a href="edit_note.php?note_id=<?= $note['note_id'] ?>&ticket_id=<?= $ticket_id ?>">
-                                <?php
-                                $date_override = $note['date_override'];
-                                if ($date_override != null)
-                                    echo $date_override . "*";
-                                else
-                                    echo $note['created'];
-                                ?></a></td>
-                        <td data-cell="Created By"><?php
-                        $creator = $note['creator'];
-                        if ($creator == 'System') {
-                            echo $creator;
-                        } else if (isset($creator)) {
-                            $name = get_local_name_for_user($creator);
-                            echo $name['firstname'].' '.$name['lastname'];
-                        }
-                        ?></td>
-                        <td class="ticket_note" data-cell="Note Message">
+                    <td data-cell="Date"><a href="edit_note.php?note_id=<?= $note['note_id'] ?>&ticket_id=<?= $ticket_id ?>">
                             <?php
-                            $ticket_pattern = "/WO#\\d{1,6}/";
-                            $archived_ticket_pattern = "/WO#A-\\d{1,6}/";
-                            $asset_tag_pattern = "/BC#([\w]*)(\s|$|)/";
-                            if ($note['note'] !== null) {
-                                $note_data = strip_tags(sanitize_html($note['note']));
+                            $date_override = $note['date_override'];
+                            if ($date_override != null)
+                                echo $date_override . "*";
+                            else
+                                echo $note['created'];
+                            ?></a></td>
+                    <td data-cell="Created By"><?php
+                                                $creator = $note['creator'];
+                                                if ($creator == 'System') {
+                                                    echo $creator;
+                                                } else if (isset($creator)) {
+                                                    $name = get_local_name_for_user($creator);
+                                                    echo $name['firstname'] . ' ' . $name['lastname'];
+                                                }
+                                                ?></td>
+                    <td class="ticket_note" data-cell="Note Message">
+                        <?php
+                        $ticket_pattern = "/WO#\\d{1,6}/";
+                        $archived_ticket_pattern = "/WO#A-\\d{1,6}/";
+                        $asset_tag_pattern = "/BC#([\w]*)(\s|$|)/";
+                        if ($note['note'] !== null) {
+                            $note_data = strip_tags(sanitize_html($note['note']));
+                        }
+                        if (isset($note_data)) {
+
+                            $ticket_matches = [];
+                            $ticket_match_result = preg_match_all($ticket_pattern, $note_data, $ticket_matches, PREG_OFFSET_CAPTURE);
+
+                            if ($ticket_match_result) {
+                                foreach ($ticket_matches[0] as $match) {
+                                    $match_str = $match[0];
+                                    $url_ticket_id = substr($match_str, 3);
+                                    $url = "<a target=\"_blank\" href=\"edit_ticket.php?id=$url_ticket_id&nr=1\">$match_str</a>";
+                                    $note_data = str_replace($match_str, $url, $note_data);
+                                }
                             }
-                            if (isset($note_data)) {
 
-                                $ticket_matches = [];
-                                $ticket_match_result = preg_match_all($ticket_pattern, $note_data, $ticket_matches, PREG_OFFSET_CAPTURE);
+                            $archived_ticket_matches = [];
+                            $archived_ticket_match_result = preg_match_all($archived_ticket_pattern, $note_data, $archived_ticket_matches, PREG_OFFSET_CAPTURE);
 
-                                if ($ticket_match_result) {
-                                    foreach ($ticket_matches[0] as $match) {
-                                        $match_str = $match[0];
-                                        $url_ticket_id = substr($match_str, 3);
-                                        $url = "<a target=\"_blank\" href=\"edit_ticket.php?id=$url_ticket_id&nr=1\">$match_str</a>";
-                                        $note_data = str_replace($match_str, $url, $note_data);
-                                    }
+                            if ($archived_ticket_match_result) {
+                                foreach ($archived_ticket_matches[0] as $match) {
+                                    $match_str = $match[0];
+                                    $url_ticket_id = substr($match_str, 3);
+                                    $url = "<a target=\"_blank\" href=\"archived_ticket_view.php?id=$url_ticket_id\">$match_str</a>";
+                                    $note_data = str_replace($match_str, $url, $note_data);
                                 }
+                            }
 
-                                $archived_ticket_matches = [];
-                                $archived_ticket_match_result = preg_match_all($archived_ticket_pattern, $note_data, $archived_ticket_matches, PREG_OFFSET_CAPTURE);
 
-                                if ($archived_ticket_match_result) {
-                                    foreach ($archived_ticket_matches[0] as $match) {
-                                        $match_str = $match[0];
-                                        $url_ticket_id = substr($match_str, 3);
-                                        $url = "<a target=\"_blank\" href=\"archived_ticket_view.php?id=$url_ticket_id\">$match_str</a>";
-                                        $note_data = str_replace($match_str, $url, $note_data);
-                                    }
+                            $asset_tag_matches = [];
+                            $asset_tag_match_result = preg_match_all($asset_tag_pattern, $note_data, $asset_tag_matches, PREG_OFFSET_CAPTURE);
+
+                            if ($asset_tag_match_result) {
+                                foreach ($asset_tag_matches[0] as $match) {
+                                    $match_str = $match[0];
+                                    if ($match_str[0] == 'B')
+                                        $barcode = substr($match_str, 3);
+                                    else
+                                        $barcode = $match_str;
+
+                                    // when doing https:// the : kept disappearing, not sure why
+                                    // will just let it choose https automatically
+                                    $url = "<a target=\"_blank\" href=\"//vault.provo.edu/nac_edit.php?barcode=$barcode\">$match_str</a>";
+
+                                    $note_data = str_replace($match_str, $url, $note_data);
                                 }
-
-
-                                $asset_tag_matches = [];
-                                $asset_tag_match_result = preg_match_all($asset_tag_pattern, $note_data, $asset_tag_matches, PREG_OFFSET_CAPTURE);
-
-                                if ($asset_tag_match_result) {
-                                    foreach ($asset_tag_matches[0] as $match) {
-                                        $match_str = $match[0];
-                                        if ($match_str[0] == 'B')
-                                            $barcode = substr($match_str, 3);
-                                        else
-                                            $barcode = $match_str;
-
-                                        // when doing https:// the : kept disappearing, not sure why
-                                        // will just let it choose https automatically
-                                        $url = "<a target=\"_blank\" href=\"//vault.provo.edu/nac_edit.php?barcode=$barcode\">$match_str</a>";
-
-                                        $note_data = str_replace($match_str, $url, $note_data);
-                                    }
-                                }
-                                /*
+                            }
+                            /*
                                 $asset_tag_alt_matches = [];
                                 $asset_tag_alt_match_result = preg_match_all($asset_tag_pattern_alt, $note_data, $asset_tag_alt_matches);
 
@@ -1067,44 +1077,44 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
                                         $note_data = str_replace($match_str, $url, $note_data);
                                     }
                                 }*/
-                            ?>
-                                <span <?php
-                                        $note_creator = $note["creator"];
-                                        if (!user_is_tech($note_creator)) {
-                                            echo 'class="note-content nonTech"';
-                                        } else if ($note['visible_to_client'] == 0) {
-                                            echo 'class="note-content notClientVisible"';
-                                        } else {
-                                            echo 'class="note-content clientVisible"';
-                                        } ?>>
-                                    <?php echo html_entity_decode($note_data); ?>
-                                </span>
+                        ?>
+                            <span <?php
+                                    $note_creator = $note["creator"];
+                                    if (!user_is_tech($note_creator)) {
+                                        echo 'class="note-content nonTech"';
+                                    } else if ($note['visible_to_client'] == 0) {
+                                        echo 'class="note-content notClientVisible"';
+                                    } else {
+                                        echo 'class="note-content clientVisible"';
+                                    } ?>>
+                                <?php echo html_entity_decode($note_data); ?>
+                            </span>
+                        <?php
+                        }
+                        ?>
+                        <span class="note_id">
                             <?php
+                            $note_id = $note["note_id"];
+                            $visible_to_client = $note['visible_to_client'];
+                            if ($note_id !== null) {
+                                $note_id_text =  html_entity_decode($note_id);
+                                echo "<a href=\"edit_note.php?note_id=$note_id&ticket_id=$ticket_id\">Note#: $note_id_text</a>";
+                                echo $note['visible_to_client'] ? "Visible to Client" : "Invisible to Client";
+                                echo '<span class="created_date">' . $note['created'] . '</span>';
+                                echo '<span class="time_since_last_note"></span>';
                             }
                             ?>
-                            <span class="note_id">
-                                <?php
-                                $note_id = $note["note_id"];
-                                $visible_to_client = $note['visible_to_client'];
-                                if ($note_id !== null) {
-                                    $note_id_text =  html_entity_decode($note_id);
-                                    echo "<a href=\"edit_note.php?note_id=$note_id&ticket_id=$ticket_id\">Note#: $note_id_text</a>";
-                                    echo $note['visible_to_client'] ? "Visible to Client" : "Invisible to Client";
-                                    echo '<span class="created_date">' . $note['created'] . '</span>';
-                                    echo '<span class="time_since_last_note"></span>';
-                                }
-                                ?>
-                            </span>
-                        </td>
+                        </span>
+                    </td>
 
-                        <td data-cell="Time Taken">
-                            <?php
-                            displayTime($note, 'work');
-                            displayTime($note, 'travel');
-                            $totalHours = $note['work_hours'] + $note['travel_hours'];
-                            $totalMinutes = $note['work_minutes'] + $note['travel_minutes'];
-                            ?>
-                        </td>
+                    <td data-cell="Time Taken">
+                        <?php
+                        displayTime($note, 'work');
+                        displayTime($note, 'travel');
+                        $totalHours = $note['work_hours'] + $note['travel_hours'];
+                        $totalMinutes = $note['work_minutes'] + $note['travel_minutes'];
+                        ?>
+                    </td>
                     </tr>
                 <?php endforeach; ?>
             <?php endif; ?>
@@ -1117,7 +1127,9 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
             </tr>
             </table>
         </div>
-        <button class="new-note-button button" id="new-note-button" style="margin-top: 10px;">New Note</button>
+        <?php if (!$readonly || $ticket['status'] != 'closed') : ?>
+            <button class="new-note-button button">New Note</button>
+        <?php endif; ?>
         <div>
             <div id="new-note-form" style="display: none;">
                 <h3>New Note</h3>
@@ -1473,8 +1485,8 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
             },
         });
     }
-    function toggleRowVisibility(num_items)
-    {
+
+    function toggleRowVisibility(num_items) {
         // show previously hidden rows
         const rows = document.getElementsByClassName("hidden-note-row");
         for (const row of rows) {

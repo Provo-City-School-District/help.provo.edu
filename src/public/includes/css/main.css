@@ -17,16 +17,16 @@ body {
 
 a {
 	color: var(--theme-url-color);
-	text-decoration: none;
+
 }
 
 a:hover {
 	color: var(--theme-tertiary);
-	text-decoration: underline;
+
 }
 
 #expand-row {
-    font-size: 16px;
+	font-size: 16px;
 }
 
 #green-button {
@@ -237,6 +237,7 @@ input[type=submit] {
 #headerNav nav a {
 	display: block;
 	padding: 1em;
+	text-decoration: none;
 }
 
 #pageContent {
@@ -360,8 +361,13 @@ ol#subMenu {
 	margin: 1em 0;
 }
 
+#subMenu li a:hover {
+	text-decoration: underline;
+}
+
 #subMenu a {
 	color: var(--theme-white);
+	text-decoration: none;
 }
 
 /* =============================== Tickets Styles =============================== */
@@ -507,12 +513,17 @@ select {
 
 }
 
+.alerts_wrapper a {
+	text-decoration: none;
+}
+
 .alerts_wrapper p a:first-of-type {
 	color: var(--theme-white);
 }
 
 .alerts_wrapper p a:hover {
 	color: var(--theme-url-color);
+	text-decoration: underline;
 
 }
 
@@ -769,7 +780,7 @@ select {
 	.taskTable tr {
 		display: grid;
 		grid-template-columns: minmax(150px, 1fr) minmax(125px, 1fr) 120px 110px;
-        word-wrap: break-word;
+		word-wrap: break-word;
 	}
 }
 
@@ -812,4 +823,13 @@ select {
 	margin-bottom: 20px;
 	font-size: 32px;
 }
+
+#ticket-title-container a {
+	color: var(--theme-text-color);
+	text-decoration: none;
+}
+
+#ticket-title-container a:hover {
+	color: var(--theme-url-color);
+	text-decoration: underline;
 }

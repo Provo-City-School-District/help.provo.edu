@@ -123,7 +123,7 @@
                     <th>ID</th>
                     <th class="details">Request Detail</th>
                     {# <th class="tLatestNote">Latest Note</th> #}
-                    {# <th class="client">Client</th> #}
+                    <th class="client">Client</th>
                     <th class="tLocation">Location</th>
                     <th class="category">Request Category</th>
                     <th class="status">Current Status</th>
@@ -140,7 +140,7 @@
                         <tr>
                             <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id={{ result.id }}">{{ result.id }}</a></td>
                             <td class="details" data-cell="Request Detail"><a href="/controllers/tickets/edit_ticket.php?id={{ result.id }}">{{ result.name }}</a><br>{{ result.description|slice(0, 150) }}</td>
-                            
+                            <td data-cell="Client">{{ result.client }}</td>
                                 {# TODO: Ommited the latest note section #}
                             
                             {# <td class="latestNote" data-cell="Latest Note:">

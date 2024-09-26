@@ -58,4 +58,6 @@ if (!empty($search_start_date) && !empty($search_end_date) && !empty($dates_sear
         $date_conditions[] = "($date BETWEEN '$search_start_date' AND '$search_end_date')";
     }
     $ticket_query .= ' AND (' . implode(' OR ', $date_conditions) . ')';
+    // Revert the end date back to its original value
+    $search_end_date = date('Y-m-d', strtotime($search_end_date . ' -1 day'));
 }

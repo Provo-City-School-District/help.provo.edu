@@ -43,8 +43,16 @@ table.dataTable tbody tr {
 	background-color: var(--odd-color);
 }
 
-table a {
+table .details a,
+table .dt-type-numeric a {
 	color: var(--theme-text-color);
+	text-decoration: none;
+}
+
+table .details a:hover,
+table .dt-type-numeric a:hover {
+	color: var(--theme-url-color);
+	text-decoration: underline;
 }
 
 .ticketGrid>* {

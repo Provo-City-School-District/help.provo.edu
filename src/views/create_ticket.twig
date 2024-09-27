@@ -10,6 +10,7 @@
             <div>
                 <label for="location">Department/Location:</label>
                 <select id="location" name="location">
+                    <option hidden disabled selected value></option>
                     <optgroup label="Department">
                     {% for dept in depts %}
                         {% if dept.select %}

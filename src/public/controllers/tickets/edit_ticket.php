@@ -1146,21 +1146,7 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
                             <label for="visible_to_client">Visible to Client:</label>
                             <input type="checkbox" id="visible_to_client" name="visible_to_client" checked="checked">
                         </div>
-                        <?php
-                        $last_note_query = "SELECT * FROM notes WHERE creator = ? ORDER BY created DESC LIMIT 1";
-                        $last_note_stmt = mysqli_prepare(HelpDB::get(), $last_note_query);
 
-                        mysqli_stmt_bind_param($last_note_stmt, "i", $_SESSION['username']);
-                        mysqli_stmt_execute($last_note_stmt);
-                        $last_note_result = mysqli_stmt_get_result($last_note_stmt);
-
-                        if ($last_note_row = mysqli_fetch_assoc($last_note_result)) {
-                            $last_note_time = $last_note_row['created'];
-                            echo "<p>Last note created by " . $_SESSION['username'] . " at: " . $last_note_time . "</p>";
-                        } else {
-                            echo "<p>No notes found for this user</p>";
-                        }
-                        ?>
                         <h4>Work Time</h4>
                         <div class="time_input">
                             <label for="work_hours">Hours:</label>

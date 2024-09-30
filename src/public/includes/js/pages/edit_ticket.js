@@ -184,12 +184,14 @@ for (const button of newNoteButtons) {
 
 var newNoteForm = document.getElementById("new-note-form");
 var newNoteEditor = document.getElementById("new-note-form");
+var visibleToClientCheckbox = document.getElementById("visible_to_client");
 
 if (newNoteButtons && newNoteForm && newNoteEditor) {
   for (var i = 0; i < newNoteButtons.length; i++) {
     newNoteButtons[i].addEventListener("click", function () {
       if (newNoteForm.style.display === "none") {
         newNoteForm.style.display = "block";
+        visibleToClientCheckbox.checked = true;
         tinymce.activeEditor.focus(); // Set focus to the new note editor
         newNoteEditor.scrollIntoView({ behavior: "smooth" }); // Scroll the view to the new note editor
       } else {

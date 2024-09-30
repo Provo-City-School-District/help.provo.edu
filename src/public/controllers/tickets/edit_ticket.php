@@ -1151,7 +1151,9 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
                         $row = $exclude_result->fetch_assoc();
                         $last_note_time = $row['created'];
                         if ($last_note_time != null) {
-                            echo "<p>Last note created by " . $_SESSION['username'] . " at: " . $last_note_time . "</p>";
+                            $date = new DateTime($last_note_time);
+                            $formatted_time = $date->format('Y-m-d h:i A');
+                            echo "<p>Last note created by " . $_SESSION['username'] . " at: " . $formatted_time . "</p>";
                         } else {
                             echo "<p>No notes found for this user</p>";
                         }

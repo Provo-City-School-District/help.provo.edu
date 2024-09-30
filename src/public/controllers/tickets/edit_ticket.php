@@ -1149,13 +1149,13 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
                         <?php
                         $last_note_query = "SELECT created FROM notes WHERE creator = ? ORDER BY created DESC LIMIT 1";
                         $last_note_stmt = mysqli_prepare(HelpDB::get(), $last_note_query);
-                        mysqli_stmt_bind_param($last_note_stmt, "i", $username);
+                        mysqli_stmt_bind_param($last_note_stmt, "i", $_SESSION['username']);
                         mysqli_stmt_execute($last_note_stmt);
                         $last_note_result = mysqli_stmt_get_result($last_note_stmt);
 
                         if ($last_note_row = mysqli_fetch_assoc($last_note_result)) {
                             $last_note_time = $last_note_row['created'];
-                            echo "<p>Your last note was created at: " . htmlspecialchars($last_note_time) . "</p>";
+                            echo "<p>Last note created by " . $_SESSION['username'] . " at: " . htmlspecialchars($last_note_time) . "</p>";
                         } else {
                             echo "<p>No notes found for this user</p>";
                         }

@@ -606,9 +606,15 @@ select {
 }
 
 #file_list .file_del {
-	color: red;
+	color: #c70000;
 	cursor: pointer;
 
+}
+
+#file_list .file_download {
+	color: #008000;
+	cursor: pointer;
+	text-decoration: none;
 }
 
 /* =============================== Responsive Styles =============================== */

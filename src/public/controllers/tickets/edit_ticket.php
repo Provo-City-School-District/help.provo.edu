@@ -786,15 +786,29 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
 
                 if (session_is_tech()) {
                     if ($shouldUseLightbox && $data = get_attachment_data($path)) {
-                        echo "<li><a href=\"$data\" data-lightbox=\"image-1\" data-gallery=\"multiimages\" data-toggle=\"lightbox\">$path</a> <a class='file_del' onclick=\"confirmDeleteAttachment('$attachmentPath')\">&times;</a></li>";
+                        echo "<li>
+                                <a href=\"$data\" data-lightbox=\"image-1\" data-gallery=\"multiimages\" data-toggle=\"lightbox\">$path</a>
+                                <a class='file_download' href=\"$data\" download=\"$path\" class='file_download'>&darr;</a>
+                                <a class='file_del' onclick=\"confirmDeleteAttachment('$attachmentPath')\">&times;</a>
+                              </li>";
                     } else {
-                        echo "<li><a href=\"/upload_viewer.php?file=$path_encoded\">$path</a> <a class='file_del' onclick=\"confirmDeleteAttachment('$attachmentPath')\">&times;</a></li>";
+                        echo "<li>
+                                <a href=\"/upload_viewer.php?file=$path_encoded\">$path</a>
+                                <a class='file_download' href=\"/upload_viewer.php?file=$path_encoded\" download=\"$path\" class='file_download'>&darr;</a>
+                                <a class='file_del' onclick=\"confirmDeleteAttachment('$attachmentPath')\">&times;</a>
+                              </li>";
                     }
                 } else {
                     if ($shouldUseLightbox && $data = get_attachment_data($path)) {
-                        echo "<li><a href=\"$data\" data-lightbox=\"image-1\" data-gallery=\"multiimages\" data-toggle=\"lightbox\">$path</a></li>";
+                        echo "<li>
+                                <a href=\"$data\" data-lightbox=\"image-1\" data-gallery=\"multiimages\" data-toggle=\"lightbox\">$path</a>
+                                <a class='file_download' href=\"$data\" download=\"$path\" class='file_download'>&darr;</a>
+                              </li>";
                     } else {
-                        echo "<li><a href=\"/upload_viewer.php?file=$path_encoded\">$path</a></li>";
+                        echo "<li>
+                                <a href=\"/upload_viewer.php?file=$path_encoded\">$path</a>
+                                <a class='file_download' href=\"/upload_viewer.php?file=$path_encoded\" download=\"$path\" class='file_download'>&darr;</a>
+                              </li>";
                     }
                 }
             }

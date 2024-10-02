@@ -37,12 +37,14 @@ $client_ticket_query = <<<STR
     SELECT *
     FROM tickets
     WHERE status NOT IN ('Closed', 'Resolved')
-    AND client = ?
+    AND (client = ?
+        OR cc_emails LIKE CONCAT('%', ?, '%')
+        OR bcc_emails LIKE CONCAT('%', ?, '%'))
     AND (employee != ? OR employee IS NULL)
     ORDER BY id ASC
 STR;
 
-$client_ticket_result = HelpDB::get()->execute_query($client_ticket_query, [$username, $username]);
+$client_ticket_result = HelpDB::get()->execute_query($client_ticket_query, [$username, $username, $username, $username]);
 $client_tickets = get_parsed_ticket_data($client_ticket_result);
 
 $alert_result = HelpDB::get()->execute_query("SELECT * FROM alerts WHERE employee = ? AND supervisor_alert = 0", [$username]);

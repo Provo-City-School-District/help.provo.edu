@@ -92,7 +92,11 @@
 		<tr class="{{ ticket.row_color }}">
 			<td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id={{ ticket.id }}">{{ ticket.id }}</a></td>
 			<td class="details" data-cell="Request Detail"><a href="/controllers/tickets/edit_ticket.php?id={{ ticket.id }}">{{ ticket.title }}</a>{{ ticket.description|raw }}</td>
-			<td class="latestNote" data-cell="Latest Note:"><strong>{{ ticket.latest_note_author }}: </strong> {{ ticket.latest_note|raw }}</td>
+			{% if ticket.latest_note is defined and ticket.latest_note is not null %}
+				<td class="latestNote" data-cell="Latest Note:"><strong>{{ ticket.latest_note_author }}: </strong> {{ ticket.latest_note|raw }}</td>
+			{% else %}
+				<td class="latestNote" data-cell="Latest Note:"></td>
+			{% endif %}
 			<td data-cell="Client: ">{{ ticket.client_first_name }} {{ ticket.client_last_name }} ({{ ticket.client_username }})</td>
 			<td data-cell="Location">
 				{{ ticket.location_name }}

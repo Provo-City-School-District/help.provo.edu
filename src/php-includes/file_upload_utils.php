@@ -48,33 +48,56 @@ function compress_and_resize_image(string $image_path, string $image_type)
 {
     $newWidth = 1500;
 
-    $image = null;
-    if ($image_type == "image/jpeg")
-        $image = imagecreatefromjpeg($image_path);
-    else if ($image_type == "image/png")
-        $image = imagecreatefrompng($image_path);
-    else
-        return false;
+    // Create a new image from file
+    switch ($image_type) {
+        case 'image/jpeg':
+            $image = imagecreatefromjpeg($image_path);
+            break;
+        case 'image/png':
+            $image = imagecreatefrompng($image_path);
+            break;
+        default:
+            return false;
+    }
 
-
+    // Get original dimensions
     $size = getimagesize($image_path);
     $oldWidth = $size[0];
     $oldHeight = $size[1];
 
-    $image_to_compress = $image;
-    if ($oldWidth > $newWidth) {
-        $width_change_ratio = $newWidth / $oldWidth;
-        $newHeight = $size[1] * $width_change_ratio;
+    // Calculate new dimensions
+    $ratio = $oldWidth / $oldHeight;
+    $newHeight = $newWidth / $ratio;
 
-        $image_to_compress = imagescale($image, $newWidth, $newHeight);
+    // Create a new true color image with the new dimensions
+    $new_image = imagecreatetruecolor($newWidth, $newHeight);
+
+    // Preserve transparency for PNG images
+    if ($image_type == 'image/png') {
+        imagealphablending($new_image, false);
+        imagesavealpha($new_image, true);
+        $transparent = imagecolorallocatealpha($new_image, 255, 255, 255, 127);
+        imagefilledrectangle($new_image, 0, 0, $newWidth, $newHeight, $transparent);
     }
 
-    // Already validated it's jpg or png above
-    if ($image_type == "image/jpeg")
-        return imagejpeg($image_to_compress, $image_path, 90);
-    else
-        // Uses default zlib compression
-        return imagepng($image_to_compress, $image_path);
+    // Copy and resize the old image into the new image
+    imagecopyresampled($new_image, $image, 0, 0, 0, 0, $newWidth, $newHeight, $oldWidth, $oldHeight);
+
+    // Save the new image to the destination file
+    switch ($image_type) {
+        case 'image/jpeg':
+            imagejpeg($new_image, $image_path, 75); // quality set to 75%
+            break;
+        case 'image/png':
+            imagepng($new_image, $image_path);
+            break;
+    }
+
+    // Free up memory
+    imagedestroy($image);
+    imagedestroy($new_image);
+
+    return true;
 }
 
 function handleFileUploads($files, $ticket_id = null)

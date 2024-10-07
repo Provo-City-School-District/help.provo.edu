@@ -115,11 +115,13 @@ foreach ($oldTickets as $oldTicket) {
     // If the last_updated time is longer than 7 days ago, insert an alert for 7 days.
     if (
         $lastUpdated < $date7DaysBack &&
-        ($oldTicket['status'] == 'vendor' ||
+        (
+            $oldTicket['status'] == 'vendor' ||
             $oldTicket['status'] == 'maintenance' ||
             $oldTicket['priority'] == 15 ||
             ($oldTicket['priority'] == 30 && $oldTicket['client'] != $oldTicket['employee']) ||
-            $oldTicket['priority'] != 60)
+            ($oldTicket['priority'] != 60 && $oldTicket['priority'] != 30)
+        )
     ) {
         insertAlertIfNotExists(HelpDB::get(), $oldTicket, $alert7DayMessage, 'warn', 0);
         //else if not updated in 48 hours

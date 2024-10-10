@@ -1211,7 +1211,7 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
                     }
                     ?>
                     <br>
-                    <input type="submit" value="Submit Note">
+                    <input type="submit" class="button" value="Submit Note">
                 </form>
                 <script src="../../includes/js/jquery-3.7.1.min.js"></script>
                 <script>

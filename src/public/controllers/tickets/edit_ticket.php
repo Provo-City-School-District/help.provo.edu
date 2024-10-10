@@ -1273,6 +1273,12 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
                                     case 'sent_emails':
                                         $note_str = $new_value;
                                         break;
+                                    case 'created':
+                                        $note_str = 'Ticket Created';
+                                        break;
+                                    case str_contains($log_row['field_name'], 'Task'):
+                                        $note_str = $log_row['field_name'];
+                                        break;
                                     default:
                                         $note_str = formatFieldName($log_row['field_name']) . ' From: ' . html_entity_decode($old_value) . ' To: ' . html_entity_decode($new_value);
                                         break;

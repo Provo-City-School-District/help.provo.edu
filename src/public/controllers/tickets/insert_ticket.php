@@ -236,6 +236,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 send_email(email_address_from_username($assigned_tech), $assigned_tech_subject, $template);
             }
         }
+
+        logTicketChange(HelpDB::get(), $ticketId, $_SESSION['username'], 'created', '', '');
         // Redirect to the edit page for the new ticket
         header("Location: edit_ticket.php?id=$ticketId");
         exit;

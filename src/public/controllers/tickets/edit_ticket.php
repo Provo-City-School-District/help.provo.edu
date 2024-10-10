@@ -907,7 +907,7 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
                     <td data-cell="Assigned Tech"><?= $assigned_tech_str ?></td>
                     <td data-cell="Task Description"><?= htmlspecialchars($row['description']); ?></td>
                     <td data-cell="Completed"><input type="checkbox" onclick="taskStatusChanged(this, '<?= $task_id ?>');" <?= $checked_if_done ?> /></td>
-                    <td data-cell="Edit Task"><button onclick="location.href='/controllers/tasks/edit_task.php?task_id=<?= $task_id ?>'">Edit Task</button></td>
+                    <td data-cell="Edit Task"><button class="button" onclick="location.href='/controllers/tasks/edit_task.php?task_id=<?= $task_id ?>'">Edit Task</button></td>
                 </tr>
             <?php
             }
@@ -957,7 +957,7 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
                         <input type="checkbox" name="required" checked></input>
                     </div>
                 </div>
-                <input style="margin-top: 20px;" type="submit" value="Submit Task">
+                <input style="margin-top: 20px;" type="submit" class="button" value="Submit Task">
             </form>
         </div>
     </div>

@@ -29,10 +29,6 @@ a:hover {
 	font-size: 16px;
 }
 
-#green-button {
-	background-color: #3aa410;
-}
-
 .help-message {
 	font-size: 80%;
 	font-style: italic;
@@ -75,17 +71,7 @@ blockquote {
 	background-color: transparent;
 }
 
-button,
-input[type=submit] {
-	background-color: var(--theme-primary);
-	color: var(--theme-white);
-	border: none;
-	padding: 1em;
-	border-radius: 4px;
-	cursor: pointer;
-	display: block;
 
-}
 
 .canvasjs-chart-credit {
 	display: none;
@@ -157,7 +143,7 @@ input[type=submit] {
 }
 
 .button {
-	background-color: var(--theme-primary);
+	background-color: var(--button-background);
 	color: var(--theme-white);
 	border: none;
 	padding: 1em;

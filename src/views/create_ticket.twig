@@ -13,7 +13,7 @@
                     <option hidden disabled selected value></option>
                     <optgroup label="Department">
                     {% for dept in depts %}
-                        {% if dept.select %}
+                        {% if user_permissions.is_tech and dept.select %}
                         <option value="{{ dept.site_number }}" selected>{{ dept.site_name }}</option>
                         {% else %}
                         <option value="{{ dept.site_number }}">{{ dept.site_name }}</option>
@@ -22,7 +22,7 @@
                     </optgroup>
                     <optgroup label="Locations">
                     {% for location in locations %}
-                        {% if location.select %}
+                        {% if user_permissions.is_tech and location.select %}
                         <option value="{{ location.site_number }}" selected>{{ location.site_name }}</option>
                         {% else %}
                         <option value="{{ location.site_number }}">{{ location.site_name }}</option>

@@ -245,8 +245,13 @@ $num_subordinate_tickets = $num_subordinate_tickets_result->fetch_column(0);
                     ?>
 
                         <li><a href="/tickets.php">My Tickets (<?= $num_assigned_tickets ?>)</a></li>
-                        <li><a href="/tasks.php">My Tasks (<?= $num_assigned_tasks ?>)</a></li>
+
                         <?php
+                        if ($num_assigned_tasks != 0) {
+                        ?>
+                            <li><a href="/tasks.php">My Tasks (<?= $num_assigned_tasks ?>)</a></li>
+                        <?php
+                        }
                         if ($num_flagged_tickets != 0) {
                         ?>
                             <li><a href="/controllers/tickets/flagged_tickets.php">Flagged Tickets (<?= $num_flagged_tickets ?>)</a></li>

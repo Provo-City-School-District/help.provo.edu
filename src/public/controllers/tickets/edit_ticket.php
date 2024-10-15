@@ -324,7 +324,13 @@ function get_attachment_data(string $file_path)
 
     return $base64;
 }
-
+//parse note information
+$notes = json_decode($ticket['notes'], true);
+$total_note_count = count($notes);
+// Check if notes array is empty or contains only null values
+$hasNotes = !empty($notes) && array_filter($notes, function ($note) {
+    return !is_null($note['note']);
+});
 const MAX_VISIBLE_NOTE_COUNT = 10;
 ?>
 <div class="alerts_wrapper">
@@ -370,13 +376,38 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
     <!-- Form for updating ticket information -->
     <div class="right">
         <div style="display: flex; gap: 1em;">
-            <?php if ($readonly && !session_is_intern() && $ticket['status'] != 'closed') : ?>
+            <?php if ($readonly && !session_is_intern() && $ticket['status'] != 'closed' && !$hasNotes) : ?>
                 <button id="close-ticket-button" class="button">Close Ticket</button>
             <?php endif; ?>
+
+
+
+
+
             <?php if (!$readonly || $ticket['status'] != 'closed') : ?>
                 <button class="new-note-button button">New Note</button>
             <?php endif; ?>
+            <?php
+            if ($is_ticket_flagged) :
+            ?>
+                <form id="flag-form" method="post">
+                    <input type="submit" class="button right" name="unflag_ticket" value="Unflag ticket" class="right">
+                </form>
+            <?php else : ?>
+                <form id="flag-form" method="post">
+                    <input type="submit" class="button right" name="flag_ticket" value="Flag ticket" class="right">
+                </form>
+            <?php endif; ?>
 
+            <?php if ($_SESSION['permissions']['is_tech']) : ?>
+                <br>
+                <form id="merge-form" method="post" action="merge_tickets_handler.php">
+                    <label for="merge_ticket_id">Merge this ticket into:</label>
+                    <input type="hidden" name="ticket_id_source" value="<?= $ticket_id ?>">
+                    <input type="text" name="ticket_id_host" value=""><br>
+                    <input type="submit" class="button" value="Merge">
+                </form>
+            <?php endif; ?>
         </div>
     </div>
     <form id="updateTicketForm" method="POST" action="update_ticket.php">
@@ -962,10 +993,10 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
         </div>
     </div>
     <!-- Loop through the notes and display them -->
-    <?php if ($ticket['notes'] !== null) : ?>
+    <?php if ($hasNotes) : ?>
 
         <h2>Notes</h2>
-        <?php if (!$readonly || $ticket['status'] != 'closed') : ?>
+        <?php if (!$readonly || $ticket['status'] != 'closed' && $hasNotes) : ?>
             <button class="new-note-button button">New Note</button>
         <?php endif; ?>
         <div id="note-table" class="note">
@@ -980,11 +1011,8 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
                 $total_minutes = 0;
                 $total_hours = 0;
                 $num_notes = 0;
-                $notes = json_decode($ticket['notes'], true);
-                $total_note_count = count($notes);
                 $hidden_note_count = $total_note_count - MAX_VISIBLE_NOTE_COUNT;
                 $note_str = $hidden_note_count == 1 ? "note" : "notes";
-                log_app(LOG_INFO, "Hello");
                 if ($total_note_count > MAX_VISIBLE_NOTE_COUNT):
                 ?>
                     <tr id="expand-row">
@@ -1295,28 +1323,6 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
         <?php
         }
         ?>
-        <br>
-        <?php
-        if ($is_ticket_flagged) :
-        ?>
-            <form id="flag-form" method="post">
-                <input type="submit" class="button right" name="unflag_ticket" value="Unflag ticket" class="right">
-            </form>
-        <?php else : ?>
-            <form id="flag-form" method="post">
-                <input type="submit" class="button right" name="flag_ticket" value="Flag ticket" class="right">
-            </form>
-        <?php endif; ?>
-
-        <?php if ($_SESSION['permissions']['is_tech']) : ?>
-            <br>
-            <form id="merge-form" method="post" action="merge_tickets_handler.php">
-                <label for="merge_ticket_id">Merge this ticket into:</label>
-                <input type="hidden" name="ticket_id_source" value="<?= $ticket_id ?>">
-                <input type="text" name="ticket_id_host" value=""><br>
-                <input type="submit" class="button" value="Merge">
-            </form>
-        <?php endif; ?>
 </article>
 <script>
     // Make links in note content open in new tab

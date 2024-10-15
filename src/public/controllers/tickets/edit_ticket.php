@@ -324,7 +324,9 @@ function get_attachment_data(string $file_path)
 
     return $base64;
 }
-
+//parse note information
+$notes = json_decode($ticket['notes'], true);
+$total_note_count = count($notes);
 const MAX_VISIBLE_NOTE_COUNT = 10;
 ?>
 <div class="alerts_wrapper">
@@ -370,9 +372,14 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
     <!-- Form for updating ticket information -->
     <div class="right">
         <div style="display: flex; gap: 1em;">
-            <?php if ($readonly && !session_is_intern() && $ticket['status'] != 'closed') : ?>
+            <?php if ($readonly && !session_is_intern() && $ticket['status'] != 'closed' && $total_note_count > 1) : ?>
                 <button id="close-ticket-button" class="button">Close Ticket</button>
             <?php endif; ?>
+
+
+
+
+
             <?php if (!$readonly || $ticket['status'] != 'closed') : ?>
                 <button class="new-note-button button">New Note</button>
             <?php endif; ?>
@@ -962,7 +969,7 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
         </div>
     </div>
     <!-- Loop through the notes and display them -->
-    <?php if ($ticket['notes'] !== null) : ?>
+    <?php if ($total_note_count > 1) : ?>
 
         <h2>Notes</h2>
         <?php if (!$readonly || $ticket['status'] != 'closed') : ?>
@@ -980,11 +987,8 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
                 $total_minutes = 0;
                 $total_hours = 0;
                 $num_notes = 0;
-                $notes = json_decode($ticket['notes'], true);
-                $total_note_count = count($notes);
                 $hidden_note_count = $total_note_count - MAX_VISIBLE_NOTE_COUNT;
                 $note_str = $hidden_note_count == 1 ? "note" : "notes";
-                log_app(LOG_INFO, "Hello");
                 if ($total_note_count > MAX_VISIBLE_NOTE_COUNT):
                 ?>
                     <tr id="expand-row">

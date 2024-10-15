@@ -327,6 +327,10 @@ function get_attachment_data(string $file_path)
 //parse note information
 $notes = json_decode($ticket['notes'], true);
 $total_note_count = count($notes);
+// Check if notes array is empty or contains only null values
+$hasNotes = !empty($notes) && array_filter($notes, function ($note) {
+    return !is_null($note['note']);
+});
 const MAX_VISIBLE_NOTE_COUNT = 10;
 ?>
 <div class="alerts_wrapper">
@@ -372,7 +376,7 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
     <!-- Form for updating ticket information -->
     <div class="right">
         <div style="display: flex; gap: 1em;">
-            <?php if ($readonly && !session_is_intern() && $ticket['status'] != 'closed' && $total_note_count > 1) : ?>
+            <?php if ($readonly && !session_is_intern() && $ticket['status'] != 'closed' && !$hasNotes) : ?>
                 <button id="close-ticket-button" class="button">Close Ticket</button>
             <?php endif; ?>
 
@@ -989,10 +993,10 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
         </div>
     </div>
     <!-- Loop through the notes and display them -->
-    <?php if ($total_note_count > 1) : ?>
+    <?php if ($hasNotes) : ?>
 
         <h2>Notes</h2>
-        <?php if (!$readonly || $ticket['status'] != 'closed') : ?>
+        <?php if (!$readonly || $ticket['status'] != 'closed' && $hasNotes) : ?>
             <button class="new-note-button button">New Note</button>
         <?php endif; ?>
         <div id="note-table" class="note">

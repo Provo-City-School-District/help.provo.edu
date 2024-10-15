@@ -383,7 +383,27 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
             <?php if (!$readonly || $ticket['status'] != 'closed') : ?>
                 <button class="new-note-button button">New Note</button>
             <?php endif; ?>
+            <?php
+            if ($is_ticket_flagged) :
+            ?>
+                <form id="flag-form" method="post">
+                    <input type="submit" class="button right" name="unflag_ticket" value="Unflag ticket" class="right">
+                </form>
+            <?php else : ?>
+                <form id="flag-form" method="post">
+                    <input type="submit" class="button right" name="flag_ticket" value="Flag ticket" class="right">
+                </form>
+            <?php endif; ?>
 
+            <?php if ($_SESSION['permissions']['is_tech']) : ?>
+                <br>
+                <form id="merge-form" method="post" action="merge_tickets_handler.php">
+                    <label for="merge_ticket_id">Merge this ticket into:</label>
+                    <input type="hidden" name="ticket_id_source" value="<?= $ticket_id ?>">
+                    <input type="text" name="ticket_id_host" value=""><br>
+                    <input type="submit" class="button" value="Merge">
+                </form>
+            <?php endif; ?>
         </div>
     </div>
     <form id="updateTicketForm" method="POST" action="update_ticket.php">
@@ -1299,28 +1319,6 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
         <?php
         }
         ?>
-        <br>
-        <?php
-        if ($is_ticket_flagged) :
-        ?>
-            <form id="flag-form" method="post">
-                <input type="submit" class="button right" name="unflag_ticket" value="Unflag ticket" class="right">
-            </form>
-        <?php else : ?>
-            <form id="flag-form" method="post">
-                <input type="submit" class="button right" name="flag_ticket" value="Flag ticket" class="right">
-            </form>
-        <?php endif; ?>
-
-        <?php if ($_SESSION['permissions']['is_tech']) : ?>
-            <br>
-            <form id="merge-form" method="post" action="merge_tickets_handler.php">
-                <label for="merge_ticket_id">Merge this ticket into:</label>
-                <input type="hidden" name="ticket_id_source" value="<?= $ticket_id ?>">
-                <input type="text" name="ticket_id_host" value=""><br>
-                <input type="submit" class="button" value="Merge">
-            </form>
-        <?php endif; ?>
 </article>
 <script>
     // Make links in note content open in new tab

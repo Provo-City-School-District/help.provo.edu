@@ -1149,7 +1149,6 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
                     </td>
                     </tr>
                 <?php endforeach; ?>
-            <?php endif; ?>
             <tr class="totalTime">
                 <td data-cell="Total Time" colspan=4>
                     <?php
@@ -1159,6 +1158,7 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
             </tr>
             </table>
         </div>
+    <?php endif; ?>
         <?php if (!$readonly || $ticket['status'] != 'closed') : ?>
             <button class="new-note-button button">New Note</button>
         <?php endif; ?>

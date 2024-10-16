@@ -84,5 +84,16 @@ try {
         logTicketChange(HelpDB::get(), $ticket['id'], "system", "sent_emails", "N/A", "Client Reminder Email Sent to " . $ticket['client'] . " ");
     }
 } catch (Exception $e) {
+
+    // Log the exception
+    log_app(LOG_ERR, "Failed to send client reminder email for Ticket ID: " . $ticket['id'] . " Title: " . $ticket['name'] . ". Error: " . $e->getMessage());
+
+    // Send an email to yourself
+    $admin_email = 'dev@provo.edu'; // Replace with your email address
+    $admin_subject = "Failed to send client reminder email for Ticket ID: " . $ticket['id'];
+    $admin_message = "An error occurred while sending the client reminder email for Ticket ID: " . $ticket['id'] . ".\n\nError: " . $e->getMessage();
+    send_email($admin_email, $admin_subject, $admin_message);
+
+
     echo 'Caught exception: ',  $e->getMessage(), "\n";
 }

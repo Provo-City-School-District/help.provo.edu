@@ -983,123 +983,123 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
         </div>
     </div>
     <!-- Loop through the notes and display them -->
-    <?php if ($hasNotes) : ?>
 
-        <h2>Notes</h2>
-        <?php if (!$readonly || $ticket['status'] != 'closed' && $hasNotes) : ?>
-            <button class="new-note-button button">New Note</button>
-        <?php endif; ?>
-        <div id="note-table" class="note">
-            <table class="ticketsTable">
-                <tr>
-                    <th class='tableDate'>Date</th>
-                    <th class="tableUser">Created By</th>
-                    <th class="tableString">Note</th>
-                    <th class="timeColumn">Time</th>
+
+    <h2>Notes</h2>
+    <?php if (!$readonly || $ticket['status'] != 'closed' && $hasNotes) : ?>
+        <button class="new-note-button button">New Note</button>
+    <?php endif; ?>
+    <div id="note-table" class="note">
+        <table class="ticketsTable">
+            <tr>
+                <th class='tableDate'>Date</th>
+                <th class="tableUser">Created By</th>
+                <th class="tableString">Note</th>
+                <th class="timeColumn">Time</th>
+            </tr>
+            <?php
+            $total_minutes = 0;
+            $total_hours = 0;
+            $num_notes = 0;
+            $hidden_note_count = $total_note_count - MAX_VISIBLE_NOTE_COUNT;
+            $note_str = $hidden_note_count == 1 ? "note" : "notes";
+            if ($total_note_count > MAX_VISIBLE_NOTE_COUNT):
+            ?>
+                <tr id="expand-row">
+                    <td colspan=4><a onclick="toggleRowVisibility(<?= $hidden_note_count ?>);" id="expand-row-button">Expand <?= $hidden_note_count ?> more <?= $note_str ?>...</a></td>
                 </tr>
-                <?php
-                $total_minutes = 0;
-                $total_hours = 0;
-                $num_notes = 0;
-                $hidden_note_count = $total_note_count - MAX_VISIBLE_NOTE_COUNT;
-                $note_str = $hidden_note_count == 1 ? "note" : "notes";
-                if ($total_note_count > MAX_VISIBLE_NOTE_COUNT):
-                ?>
-                    <tr id="expand-row">
-                        <td colspan=4><a onclick="toggleRowVisibility(<?= $hidden_note_count ?>);" id="expand-row-button">Expand <?= $hidden_note_count ?> more <?= $note_str ?>...</a></td>
-                    </tr>
-                <?php
-                endif;
-                foreach ($notes as $note) :
-                    // Hidden notes should only be viewable by admins
-                    if (
-                        $note['visible_to_client'] == 0 &&
-                        !$_SESSION['permissions']['is_tech']
-                    )
-                        continue;
-                    $num_notes++;
+            <?php
+            endif;
+            foreach ($notes as $note) :
+                // Hidden notes should only be viewable by admins
+                if (
+                    $note['visible_to_client'] == 0 &&
+                    !$_SESSION['permissions']['is_tech']
+                )
+                    continue;
+                $num_notes++;
 
-                    // Add the total time for this note to the total time for all notes
-                    $total_minutes += $note['work_minutes'] + $note['travel_minutes'];
-                    $total_hours += $note['work_hours'] + $note['travel_hours'];
+                // Add the total time for this note to the total time for all notes
+                $total_minutes += $note['work_minutes'] + $note['travel_minutes'];
+                $total_hours += $note['work_hours'] + $note['travel_hours'];
 
-                    // if $hidden_note_count < 0, always show
-                    if ($num_notes <= $hidden_note_count)
-                        echo "<tr class='hidden-note-row' style='display:none;'>";
-                    else
-                        echo "<tr>";
-                ?>
-                    <td data-cell="Date"><a href="edit_note.php?note_id=<?= $note['note_id'] ?>&ticket_id=<?= $ticket_id ?>">
-                            <?php
-                            $date_override = $note['date_override'];
-                            if ($date_override != null)
-                                echo $date_override . "*";
-                            else
-                                echo $note['created'];
-                            ?></a></td>
-                    <td data-cell="Created By"><?php
-                                                $creator = $note['creator'];
-                                                if ($creator == 'System') {
-                                                    echo $creator;
-                                                } else if (isset($creator)) {
-                                                    $name = get_local_name_for_user($creator);
-                                                    echo $name['firstname'] . ' ' . $name['lastname'];
-                                                }
-                                                ?></td>
-                    <td class="ticket_note" data-cell="Note Message">
+                // if $hidden_note_count < 0, always show
+                if ($num_notes <= $hidden_note_count)
+                    echo "<tr class='hidden-note-row' style='display:none;'>";
+                else
+                    echo "<tr>";
+            ?>
+                <td data-cell="Date"><a href="edit_note.php?note_id=<?= $note['note_id'] ?>&ticket_id=<?= $ticket_id ?>">
                         <?php
-                        $ticket_pattern = "/WO#\\d{1,6}/";
-                        $archived_ticket_pattern = "/WO#A-\\d{1,6}/";
-                        $asset_tag_pattern = "/BC#([\w]*)(\s|$|)/";
-                        if ($note['note'] !== null) {
-                            $note_data = strip_tags(sanitize_html($note['note']));
+                        $date_override = $note['date_override'];
+                        if ($date_override != null)
+                            echo $date_override . "*";
+                        else
+                            echo $note['created'];
+                        ?></a></td>
+                <td data-cell="Created By"><?php
+                                            $creator = $note['creator'];
+                                            if ($creator == 'System') {
+                                                echo $creator;
+                                            } else if (isset($creator)) {
+                                                $name = get_local_name_for_user($creator);
+                                                echo $name['firstname'] . ' ' . $name['lastname'];
+                                            }
+                                            ?></td>
+                <td class="ticket_note" data-cell="Note Message">
+                    <?php
+                    $ticket_pattern = "/WO#\\d{1,6}/";
+                    $archived_ticket_pattern = "/WO#A-\\d{1,6}/";
+                    $asset_tag_pattern = "/BC#([\w]*)(\s|$|)/";
+                    if ($note['note'] !== null) {
+                        $note_data = strip_tags(sanitize_html($note['note']));
+                    }
+                    if (isset($note_data)) {
+
+                        $ticket_matches = [];
+                        $ticket_match_result = preg_match_all($ticket_pattern, $note_data, $ticket_matches, PREG_OFFSET_CAPTURE);
+
+                        if ($ticket_match_result) {
+                            foreach ($ticket_matches[0] as $match) {
+                                $match_str = $match[0];
+                                $url_ticket_id = substr($match_str, 3);
+                                $url = "<a target=\"_blank\" href=\"edit_ticket.php?id=$url_ticket_id&nr=1\">$match_str</a>";
+                                $note_data = str_replace($match_str, $url, $note_data);
+                            }
                         }
-                        if (isset($note_data)) {
 
-                            $ticket_matches = [];
-                            $ticket_match_result = preg_match_all($ticket_pattern, $note_data, $ticket_matches, PREG_OFFSET_CAPTURE);
+                        $archived_ticket_matches = [];
+                        $archived_ticket_match_result = preg_match_all($archived_ticket_pattern, $note_data, $archived_ticket_matches, PREG_OFFSET_CAPTURE);
 
-                            if ($ticket_match_result) {
-                                foreach ($ticket_matches[0] as $match) {
-                                    $match_str = $match[0];
-                                    $url_ticket_id = substr($match_str, 3);
-                                    $url = "<a target=\"_blank\" href=\"edit_ticket.php?id=$url_ticket_id&nr=1\">$match_str</a>";
-                                    $note_data = str_replace($match_str, $url, $note_data);
-                                }
+                        if ($archived_ticket_match_result) {
+                            foreach ($archived_ticket_matches[0] as $match) {
+                                $match_str = $match[0];
+                                $url_ticket_id = substr($match_str, 3);
+                                $url = "<a target=\"_blank\" href=\"archived_ticket_view.php?id=$url_ticket_id\">$match_str</a>";
+                                $note_data = str_replace($match_str, $url, $note_data);
                             }
+                        }
 
-                            $archived_ticket_matches = [];
-                            $archived_ticket_match_result = preg_match_all($archived_ticket_pattern, $note_data, $archived_ticket_matches, PREG_OFFSET_CAPTURE);
 
-                            if ($archived_ticket_match_result) {
-                                foreach ($archived_ticket_matches[0] as $match) {
-                                    $match_str = $match[0];
-                                    $url_ticket_id = substr($match_str, 3);
-                                    $url = "<a target=\"_blank\" href=\"archived_ticket_view.php?id=$url_ticket_id\">$match_str</a>";
-                                    $note_data = str_replace($match_str, $url, $note_data);
-                                }
+                        $asset_tag_matches = [];
+                        $asset_tag_match_result = preg_match_all($asset_tag_pattern, $note_data, $asset_tag_matches, PREG_OFFSET_CAPTURE);
+
+                        if ($asset_tag_match_result) {
+                            foreach ($asset_tag_matches[0] as $match) {
+                                $match_str = $match[0];
+                                if ($match_str[0] == 'B')
+                                    $barcode = substr($match_str, 3);
+                                else
+                                    $barcode = $match_str;
+
+                                // when doing https:// the : kept disappearing, not sure why
+                                // will just let it choose https automatically
+                                $url = "<a target=\"_blank\" href=\"//vault.provo.edu/nac_edit.php?barcode=$barcode\">$match_str</a>";
+
+                                $note_data = str_replace($match_str, $url, $note_data);
                             }
-
-
-                            $asset_tag_matches = [];
-                            $asset_tag_match_result = preg_match_all($asset_tag_pattern, $note_data, $asset_tag_matches, PREG_OFFSET_CAPTURE);
-
-                            if ($asset_tag_match_result) {
-                                foreach ($asset_tag_matches[0] as $match) {
-                                    $match_str = $match[0];
-                                    if ($match_str[0] == 'B')
-                                        $barcode = substr($match_str, 3);
-                                    else
-                                        $barcode = $match_str;
-
-                                    // when doing https:// the : kept disappearing, not sure why
-                                    // will just let it choose https automatically
-                                    $url = "<a target=\"_blank\" href=\"//vault.provo.edu/nac_edit.php?barcode=$barcode\">$match_str</a>";
-
-                                    $note_data = str_replace($match_str, $url, $note_data);
-                                }
-                            }
-                            /*
+                        }
+                        /*
                                 $asset_tag_alt_matches = [];
                                 $asset_tag_alt_match_result = preg_match_all($asset_tag_pattern_alt, $note_data, $asset_tag_alt_matches);
 
@@ -1109,46 +1109,47 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
                                         $note_data = str_replace($match_str, $url, $note_data);
                                     }
                                 }*/
-                        ?>
-                            <span <?php
-                                    $note_creator = $note["creator"];
-                                    if (!user_is_tech($note_creator)) {
-                                        echo 'class="note-content nonTech"';
-                                    } else if ($note['visible_to_client'] == 0) {
-                                        echo 'class="note-content notClientVisible"';
-                                    } else {
-                                        echo 'class="note-content clientVisible"';
-                                    } ?>>
-                                <?php echo html_entity_decode($note_data); ?>
-                            </span>
+                    ?>
+                        <span <?php
+                                $note_creator = $note["creator"];
+                                if (!user_is_tech($note_creator)) {
+                                    echo 'class="note-content nonTech"';
+                                } else if ($note['visible_to_client'] == 0) {
+                                    echo 'class="note-content notClientVisible"';
+                                } else {
+                                    echo 'class="note-content clientVisible"';
+                                } ?>>
+                            <?php echo html_entity_decode($note_data); ?>
+                        </span>
+                    <?php
+                    }
+                    ?>
+                    <span class="note_id">
                         <?php
+                        $note_id = $note["note_id"];
+                        $visible_to_client = $note['visible_to_client'];
+                        if ($note_id !== null) {
+                            $note_id_text =  html_entity_decode($note_id);
+                            echo "<a href=\"edit_note.php?note_id=$note_id&ticket_id=$ticket_id\">Note#: $note_id_text</a>";
+                            echo $note['visible_to_client'] ? "Visible to Client" : "Invisible to Client";
+                            echo '<span class="created_date">' . $note['created'] . '</span>';
+                            echo '<span class="time_since_last_note"></span>';
                         }
                         ?>
-                        <span class="note_id">
-                            <?php
-                            $note_id = $note["note_id"];
-                            $visible_to_client = $note['visible_to_client'];
-                            if ($note_id !== null) {
-                                $note_id_text =  html_entity_decode($note_id);
-                                echo "<a href=\"edit_note.php?note_id=$note_id&ticket_id=$ticket_id\">Note#: $note_id_text</a>";
-                                echo $note['visible_to_client'] ? "Visible to Client" : "Invisible to Client";
-                                echo '<span class="created_date">' . $note['created'] . '</span>';
-                                echo '<span class="time_since_last_note"></span>';
-                            }
-                            ?>
-                        </span>
-                    </td>
+                    </span>
+                </td>
 
-                    <td data-cell="Time Taken">
-                        <?php
-                        displayTime($note, 'work');
-                        displayTime($note, 'travel');
-                        $totalHours = $note['work_hours'] + $note['travel_hours'];
-                        $totalMinutes = $note['work_minutes'] + $note['travel_minutes'];
-                        ?>
-                    </td>
-                    </tr>
-                <?php endforeach; ?>
+                <td data-cell="Time Taken">
+                    <?php
+                    displayTime($note, 'work');
+                    displayTime($note, 'travel');
+                    $totalHours = $note['work_hours'] + $note['travel_hours'];
+                    $totalMinutes = $note['work_minutes'] + $note['travel_minutes'];
+                    ?>
+                </td>
+                </tr>
+            <?php endforeach; ?>
+
             <tr class="totalTime">
                 <td data-cell="Total Time" colspan=4>
                     <?php
@@ -1156,172 +1157,171 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
                     ?>
                 </td>
             </tr>
-            </table>
-        </div>
+        </table>
+    </div>
+    <?php if (!$readonly || $ticket['status'] != 'closed') : ?>
+        <button class="new-note-button button">New Note</button>
     <?php endif; ?>
-        <?php if (!$readonly || $ticket['status'] != 'closed') : ?>
-            <button class="new-note-button button">New Note</button>
-        <?php endif; ?>
-        <div>
-            <div id="new-note-form" style="display: none;">
-                <h3>New Note</h3>
-                <form id="note-submit" method="post" action="add_note_handler.php">
-                    <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
+    <div>
+        <div id="new-note-form" style="display: none;">
+            <h3>New Note</h3>
+            <form id="note-submit" method="post" action="add_note_handler.php">
+                <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
+                <div>
+                    <label for="note">Note:</label>
+                    <textarea id="note" name="note" class="tinyMCEtextarea"></textarea>
+                </div>
+                <?php
+                if (session_is_tech()) {
+                ?>
                     <div>
-                        <label for="note">Note:</label>
-                        <textarea id="note" name="note" class="tinyMCEtextarea"></textarea>
+                        <label for="visible_to_client">Visible to Client:</label>
+                        <input type="checkbox" id="visible_to_client" name="visible_to_client" checked="checked">
                     </div>
                     <?php
-                    if (session_is_tech()) {
-                    ?>
-                        <div>
-                            <label for="visible_to_client">Visible to Client:</label>
-                            <input type="checkbox" id="visible_to_client" name="visible_to_client" checked="checked">
-                        </div>
-                        <?php
-                        $exclude_result = HelpDB::get()->execute_query("SELECT created FROM notes WHERE creator = ? ORDER BY created DESC LIMIT 1", [$_SESSION['username']]);
-                        $row = $exclude_result->fetch_assoc();
-                        $last_note_time = $row['created'];
-                        if ($last_note_time != null) {
-                            $date = new DateTime($last_note_time);
-                            $formatted_time = $date->format('Y-m-d h:i A');
-                            echo "<p>Last note created by " . $_SESSION['username'] . " at: " . $formatted_time . "</p>";
-                        } else {
-                            echo "<p>No notes found for this user</p>";
-                        }
-                        ?>
-                        <h4>Work Time</h4>
-                        <div class="time_input">
-                            <label for="work_hours">Hours:</label>
-                            <input id="work_hours" name="work_hours" type="number" value="0" required>
-
-                            <label for="work_minutes">Minutes:</label>
-                            <input id="work_minutes" name="work_minutes" type="number" value="0" required>
-                        </div>
-                        <h4>Travel Time</h4>
-                        <div class="time_input">
-                            <label for="travel_hours">Hours:</label>
-                            <input id="travel_hours" name="travel_hours" type="number" value="0" required>
-
-                            <label for="travel_minutes">Minutes:</label>
-                            <input id="travel_minutes" name="travel_minutes" type="number" value="0" required>
-                        </div>
-
-                        <div>
-                            <label for="total_time">Total Time in Minutes:</label>
-                            <input id="total_time" name="total_time" type="number" readonly>
-                        </div>
-                        <div>
-                            <label for="date_override_enable">Date Override:</label>
-                            <input type="checkbox" id="date_override_enable" name="date_override_enable">
-                            <input style="display:none;" id="date_override_input" type="datetime-local" name="date_override">
-                        </div>
-                    <?php
+                    $exclude_result = HelpDB::get()->execute_query("SELECT created FROM notes WHERE creator = ? ORDER BY created DESC LIMIT 1", [$_SESSION['username']]);
+                    $row = $exclude_result->fetch_assoc();
+                    $last_note_time = $row['created'];
+                    if ($last_note_time != null) {
+                        $date = new DateTime($last_note_time);
+                        $formatted_time = $date->format('Y-m-d h:i A');
+                        echo "<p>Last note created by " . $_SESSION['username'] . " at: " . $formatted_time . "</p>";
                     } else {
-                    ?>
-                        <input type="hidden" id="visible_to_client" name="visible_to_client" value="1">
-                        <input id="total_time" name="total_time" type="hidden" value="0">
-                        <input id="travel_minutes" name="travel_minutes" type="hidden" value="0" required>
-                        <input id="travel_hours" name="travel_hours" type="hidden" value="0" required>
-                        <input id="work_minutes" name="work_minutes" type="hidden" value="0" required>
-                        <input id="work_hours" name="work_hours" type="hidden" value="0" required>
-                    <?php
+                        echo "<p>No notes found for this user</p>";
                     }
                     ?>
-                    <br>
-                    <input type="submit" class="button" value="Submit Note">
-                </form>
-                <script src="../../includes/js/jquery-3.7.1.min.js"></script>
-                <script>
-                    $('input[name=date_override_enable]').on('change', function() {
-                        if (!this.checked) {
-                            $('#date_override_input').hide();
-                        } else {
-                            $('#date_override_input').show();
-                        }
-                    });
-                </script>
-            </div>
-        </div>
-        <?php
-        // Fetch the ticket logs for the current ticket
-        $log_query = "SELECT * FROM ticket_logs WHERE ticket_id = ? ORDER BY created_at DESC";
-        $log_stmt = mysqli_prepare(HelpDB::get(), $log_query);
-        mysqli_stmt_bind_param($log_stmt, "i", $ticket_id);
-        mysqli_stmt_execute($log_stmt);
-        $log_result = mysqli_stmt_get_result($log_stmt);
+                    <h4>Work Time</h4>
+                    <div class="time_input">
+                        <label for="work_hours">Hours:</label>
+                        <input id="work_hours" name="work_hours" type="number" value="0" required>
 
-        // Display the ticket logs in a table
-        if (session_is_tech() && mysqli_num_rows($log_result) > 0) {
-        ?>
-            <div class="ticket_log">
-                <h2>Ticket History</h2>
-                <p id="ticket-history-status">(collapsed)</p>
-                <table id="ticket-history">
-                    <tr class="ticket-history-header">
-                        <th class="tableDate">Created At</th>
-                        <th class="tableUser">Changed By</th>
-                        <th class="tableString">Changes made</th>
-                    </tr>
-                    <?php
-                    while ($log_row = mysqli_fetch_assoc($log_result)) {
-                        $uniqueNoteId = $log_row['id'];
-                    ?>
-                        <tr>
-                            <td data-cell="Date"><?= $log_row['created_at'] ?></td>
-                            <td data-cell="Created by"><?= $log_row['user_id'] ?></td>
-                            <td class="ticket_note" data-cell="Change Made">
-                                <?php
-                                $note_str = "";
-                                $old_value = sanitize_html(html_entity_decode(test_input($log_row['old_value'])));
-                                $new_value = sanitize_html(html_entity_decode(test_input($log_row['new_value'])));
-                                switch ($log_row['field_name']) {
-                                    case 'Attachment':
-                                        $note_str = generateUpdateHTML('Attachment', null, $new_value, 'Added', $uniqueNoteId);
-                                        break;
-                                    case 'notedeleted':
-                                        $note_str = generateUpdateHTML('Note', $old_value, null, 'Deleted', $uniqueNoteId);
-                                        break;
-                                    case 'note':
-                                        $note_str = generateUpdateHTML('Note', $old_value, $new_value, $old_value != null ? 'Updated' : 'Created', $uniqueNoteId);
-                                        break;
-                                    case 'description':
-                                        $note_str = generateUpdateHTML('Description', $old_value, $new_value, $old_value != null ? 'Updated' : 'Created', $uniqueNoteId);
-                                        break;
-                                    case 'sent_emails':
-                                        $note_str = $new_value;
-                                        break;
-                                    case 'created':
-                                        $note_str = 'Ticket Created';
-                                        break;
-                                    case str_contains($log_row['field_name'], 'Task'):
-                                        $note_str = $log_row['field_name'];
-                                        break;
-                                    default:
-                                        $note_str = formatFieldName($log_row['field_name']) . ' From: ' . html_entity_decode($old_value) . ' To: ' . html_entity_decode($new_value);
-                                        break;
-                                }
-                                echo $note_str;
-                                ?>
-                            </td>
-                        </tr>
-                    <?php
-                    }
-                    ?>
-                </table>
-            </div>
-        <?php
-        }
-        ?>
-        <?php if ($_SESSION['permissions']['is_tech']) : ?>
-            <br>
-            <form id="merge-form" method="post" action="merge_tickets_handler.php">
-                <label for="merge_ticket_id">Merge this ticket into:</label>
-                <input type="hidden" name="ticket_id_source" value="<?= $ticket_id ?>">
-                <input type="text" name="ticket_id_host" value=""><br>
-                <input type="submit" class="button" value="Merge">
+                        <label for="work_minutes">Minutes:</label>
+                        <input id="work_minutes" name="work_minutes" type="number" value="0" required>
+                    </div>
+                    <h4>Travel Time</h4>
+                    <div class="time_input">
+                        <label for="travel_hours">Hours:</label>
+                        <input id="travel_hours" name="travel_hours" type="number" value="0" required>
+
+                        <label for="travel_minutes">Minutes:</label>
+                        <input id="travel_minutes" name="travel_minutes" type="number" value="0" required>
+                    </div>
+
+                    <div>
+                        <label for="total_time">Total Time in Minutes:</label>
+                        <input id="total_time" name="total_time" type="number" readonly>
+                    </div>
+                    <div>
+                        <label for="date_override_enable">Date Override:</label>
+                        <input type="checkbox" id="date_override_enable" name="date_override_enable">
+                        <input style="display:none;" id="date_override_input" type="datetime-local" name="date_override">
+                    </div>
+                <?php
+                } else {
+                ?>
+                    <input type="hidden" id="visible_to_client" name="visible_to_client" value="1">
+                    <input id="total_time" name="total_time" type="hidden" value="0">
+                    <input id="travel_minutes" name="travel_minutes" type="hidden" value="0" required>
+                    <input id="travel_hours" name="travel_hours" type="hidden" value="0" required>
+                    <input id="work_minutes" name="work_minutes" type="hidden" value="0" required>
+                    <input id="work_hours" name="work_hours" type="hidden" value="0" required>
+                <?php
+                }
+                ?>
+                <br>
+                <input type="submit" class="button" value="Submit Note">
             </form>
-        <?php endif; ?>
+            <script src="../../includes/js/jquery-3.7.1.min.js"></script>
+            <script>
+                $('input[name=date_override_enable]').on('change', function() {
+                    if (!this.checked) {
+                        $('#date_override_input').hide();
+                    } else {
+                        $('#date_override_input').show();
+                    }
+                });
+            </script>
+        </div>
+    </div>
+    <?php
+    // Fetch the ticket logs for the current ticket
+    $log_query = "SELECT * FROM ticket_logs WHERE ticket_id = ? ORDER BY created_at DESC";
+    $log_stmt = mysqli_prepare(HelpDB::get(), $log_query);
+    mysqli_stmt_bind_param($log_stmt, "i", $ticket_id);
+    mysqli_stmt_execute($log_stmt);
+    $log_result = mysqli_stmt_get_result($log_stmt);
+
+    // Display the ticket logs in a table
+    if (session_is_tech() && mysqli_num_rows($log_result) > 0) {
+    ?>
+        <div class="ticket_log">
+            <h2>Ticket History</h2>
+            <p id="ticket-history-status">(collapsed)</p>
+            <table id="ticket-history">
+                <tr class="ticket-history-header">
+                    <th class="tableDate">Created At</th>
+                    <th class="tableUser">Changed By</th>
+                    <th class="tableString">Changes made</th>
+                </tr>
+                <?php
+                while ($log_row = mysqli_fetch_assoc($log_result)) {
+                    $uniqueNoteId = $log_row['id'];
+                ?>
+                    <tr>
+                        <td data-cell="Date"><?= $log_row['created_at'] ?></td>
+                        <td data-cell="Created by"><?= $log_row['user_id'] ?></td>
+                        <td class="ticket_note" data-cell="Change Made">
+                            <?php
+                            $note_str = "";
+                            $old_value = sanitize_html(html_entity_decode(test_input($log_row['old_value'])));
+                            $new_value = sanitize_html(html_entity_decode(test_input($log_row['new_value'])));
+                            switch ($log_row['field_name']) {
+                                case 'Attachment':
+                                    $note_str = generateUpdateHTML('Attachment', null, $new_value, 'Added', $uniqueNoteId);
+                                    break;
+                                case 'notedeleted':
+                                    $note_str = generateUpdateHTML('Note', $old_value, null, 'Deleted', $uniqueNoteId);
+                                    break;
+                                case 'note':
+                                    $note_str = generateUpdateHTML('Note', $old_value, $new_value, $old_value != null ? 'Updated' : 'Created', $uniqueNoteId);
+                                    break;
+                                case 'description':
+                                    $note_str = generateUpdateHTML('Description', $old_value, $new_value, $old_value != null ? 'Updated' : 'Created', $uniqueNoteId);
+                                    break;
+                                case 'sent_emails':
+                                    $note_str = $new_value;
+                                    break;
+                                case 'created':
+                                    $note_str = 'Ticket Created';
+                                    break;
+                                case str_contains($log_row['field_name'], 'Task'):
+                                    $note_str = $log_row['field_name'];
+                                    break;
+                                default:
+                                    $note_str = formatFieldName($log_row['field_name']) . ' From: ' . html_entity_decode($old_value) . ' To: ' . html_entity_decode($new_value);
+                                    break;
+                            }
+                            echo $note_str;
+                            ?>
+                        </td>
+                    </tr>
+                <?php
+                }
+                ?>
+            </table>
+        </div>
+    <?php
+    }
+    ?>
+    <?php if ($_SESSION['permissions']['is_tech']) : ?>
+        <br>
+        <form id="merge-form" method="post" action="merge_tickets_handler.php">
+            <label for="merge_ticket_id">Merge this ticket into:</label>
+            <input type="hidden" name="ticket_id_source" value="<?= $ticket_id ?>">
+            <input type="text" name="ticket_id_host" value=""><br>
+            <input type="submit" class="button" value="Merge">
+        </form>
+    <?php endif; ?>
 </article>
 <script>
     // Make links in note content open in new tab

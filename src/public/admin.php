@@ -96,7 +96,7 @@ display_tickets_table($ticket_result, HelpDB::get());
         <label for="exclude_day">Exclude Day:</label>
         <input type="date" id="exclude_day" name="exclude_day">
     </div>
-    <button type="submit">Add Exclude Day</button>
+    <button class="button" type="submit">Add Exclude Day</button>
 </form>
 <h1>Exclude Days</h1>
 <?php
@@ -124,7 +124,7 @@ $exclude_result = HelpDB::get()->execute_query("SELECT * FROM exclude_days WHERE
     <input type="hidden" name="username" value="<?= $_SESSION['username'] ?>">
     Host Ticket ID: <input type="text" id="ticket_id_host" name="ticket_id_host" value=""><br>
     Source Ticket ID:<input type="text" id="ticket_id_source" name="ticket_id_source" value=""><br>
-    <button type="submit">Merge</button><br>
+    <button class="button" type="submit">Merge</button><br>
 </form>
 
 <?php include("footer.php"); ?>

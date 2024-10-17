@@ -368,7 +368,7 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
             <input type="text" id="firstname" name="firstname">
             <label for="lastname">Last Name:</label>
             <input type="text" id="lastname" name="lastname">
-            <input type="submit" value="Search">
+            <input class="button" type="submit" value="Search">
         </form>
 
         <div id="search-results"></div>

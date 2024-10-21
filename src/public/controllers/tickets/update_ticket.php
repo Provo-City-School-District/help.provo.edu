@@ -469,7 +469,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        if ($updatedSendTechEmail) {
+        // if assigned_tech_changed is true, tech was already sent an email
+        if ($updatedSendTechEmail && !$assigned_tech_changed) {
             $res = send_email_and_add_to_ticket($ticket_id, $assigned_tech_email, $ticket_subject, $template_tech, [], [], $attachment_paths);
             if (!$res) {
                 $send_errors[] = "Tech";

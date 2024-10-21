@@ -427,7 +427,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $send_errors = [];
 
     if ($assigned_tech_changed) {
-        $new_subject = "Ticket $ticket_id has been reassigned to $updatedEmployee";
+        $assigned_tech_name = get_local_name_for_user($updatedEmployee);
+        $firstname = ucfirst(strtolower($assigned_tech_name["firstname"]));
+        $lastname = ucfirst(strtolower($assigned_tech_name["lastname"]));
+
+        $new_subject = "Ticket $ticket_id has been reassigned to $firstname $lastname";
 
         log_app(LOG_INFO, "[update_ticket.php] Sent assignment emails");
 

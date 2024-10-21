@@ -427,7 +427,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $send_errors = [];
 
     if ($assigned_tech_changed) {
-        if (!isempty($assigned_tech_name)) {
+        if (!isempty($updatedEmployee)) {
             $assigned_tech_name = get_local_name_for_user($updatedEmployee);
             $firstname = ucfirst(strtolower($assigned_tech_name["firstname"]));
             $lastname = ucfirst(strtolower($assigned_tech_name["lastname"]));

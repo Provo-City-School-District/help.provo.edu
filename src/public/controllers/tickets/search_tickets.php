@@ -71,6 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             // fix '&quot' and other things appearing
             $row["name"] = strip_tags(html_entity_decode($row["name"]));
             $row["description"] = strip_tags(html_entity_decode($row["description"]));
+            $row["client_name"] = get_local_name_for_user($row["client"]);
             $combined_results[] = $row;
         }
 
@@ -111,17 +112,21 @@ if (!$usernamesResult) {
 
 // Store the usernames in an array
 $usernames = array();
-$techusernames = array();
+$tech_display_names = array();
 while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
 
     if ($usernameRow['is_tech'] == 1) {
-        $techusernames[] = strtolower($usernameRow['username']);
+        $name = get_local_name_for_user($usernameRow['username']);
+        $firstname = ucwords(strtolower($name["firstname"]));
+        $lastname = ucwords(strtolower($name["lastname"]));
+        $display_string = $firstname . " " . $lastname . " - " . location_name_from_id(get_fast_client_location($username) ?: "");
+        $tech_display_names[] = $display_string;
     } else {
         $usernames[] = strtolower($usernameRow['username']);
     }
 }
 
-asort($techusernames);
+asort($tech_display_names);
 
 
 //====================================================================================================
@@ -169,7 +174,7 @@ echo $twig->render('search_tickets.twig', [
     'isTech' => $isTech,
     'departments' => $departments,
     'locations' => $locations,
-    'techusernames' => $techusernames,
+    'tech_display_names' => $tech_display_names,
     'page_scripts' => $pageScripts,
     'results' => $combined_results,
 

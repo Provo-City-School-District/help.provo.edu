@@ -26,6 +26,13 @@ RUN apt-get install -y libldb-dev libldap2-dev && docker-php-ext-install -j$(npr
 RUN wget -P /usr/local/share/ca-certificates/ "https://ckr01.provo.edu/ckroot/ckroot.crt"
 RUN chmod 644 /usr/local/share/ca-certificates/ckroot.crt && update-ca-certificates
 
+# Copy certificates for LDAPS
+COPY pcsd_rootca.crt /usr/local/share/ca-certificates/
+RUN chmod 644 /usr/local/share/ca-certificates/pcsd_rootca.crt && update-ca-certificates
+
+COPY pcsd_ca.crt /usr/local/share/ca-certificates/
+RUN chmod 644 /usr/local/share/ca-certificates/pcsd_ca.crt && update-ca-certificates
+
 # # Enable mod_http2
 RUN a2enmod http2 ssl
 

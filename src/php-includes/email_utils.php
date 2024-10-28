@@ -4,6 +4,7 @@ require_once "functions.php";
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+
 const MAX_ATTACHMENT_EMAIL_SIZE = 5 * 1024 * 1024;
 
 function email_address_from_username(string $username)
@@ -86,6 +87,13 @@ function send_email(
                         "jpeg",
                         "heic",
                         "pdf",
+                        "doc",
+                        "docx",
+                        "xls",
+                        "xlsx",
+                        "numbers",
+                        "pages",
+                        "txt",
                     ]);
                     if (
                         $file_size <= MAX_ATTACHMENT_EMAIL_SIZE &&

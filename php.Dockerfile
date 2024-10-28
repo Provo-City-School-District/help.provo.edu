@@ -17,6 +17,9 @@ COPY crontab /etc/cron.d/cron-job
 RUN chmod 0644 /etc/cron.d/cron-job
 RUN /usr/bin/crontab /etc/cron.d/cron-job
 
+# copy LDAP conf
+COPY config/ldap.conf /etc/ldap/ldap.conf
+
 
 # Enable Apache ldap auth module
 RUN apt-get update -y --fix-missing && apt-get upgrade -y

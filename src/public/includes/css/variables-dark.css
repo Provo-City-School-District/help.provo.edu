@@ -204,3 +204,12 @@ table .dt-type-numeric a:hover {
 .ticket-status-notification .success {
 	background-color: var(--success-color);
 }
+
+/*
+=================================================================================
+Timeout Modal color fixing
+=================================================================================
+*/
+#timeoutModal * {
+	color: var(--theme-black) !important;
+}

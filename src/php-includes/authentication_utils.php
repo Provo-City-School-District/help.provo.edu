@@ -1,6 +1,8 @@
 <?php
-require_once("helpdbconnect.php");
-require_once("functions.php");
+require_once "helpdbconnect.php";
+require_once "functions.php";
+require_once "ldap_connection.php";
+
 function user_exists_locally(string $username)
 {
 
@@ -29,9 +31,8 @@ function user_exists_remotely($username)
     $ldap_user = getenv('LDAP_USER');
     $ldap_password = getenv('LDAP_PASS');
 
-    $ldap_host = getenv('LDAPHOST');
-    $ldap_port = getenv('LDAPPORT');
-    $ldap_conn = ldap_connect($ldap_host, $ldap_port);
+
+    $ldap_conn = get_ldaps_conn();
     if (!$ldap_conn) {
         log_app(LOG_ERR, "Failed to create LDAP connection");
         return false;
@@ -72,9 +73,7 @@ function create_user_in_local_db($username)
     $ldap_user = getenv('LDAP_USER');
     $ldap_password = getenv('LDAP_PASS');
 
-    $ldap_host = getenv('LDAPHOST');
-    $ldap_port = getenv('LDAPPORT');
-    $ldap_conn = ldap_connect($ldap_host, $ldap_port);
+    $ldap_conn = get_ldaps_conn();
     if (!$ldap_conn) {
         log_app(LOG_ERR, "Failed to create LDAP connection");
         return CreateLocalUserStatus::LDAPConnectFailed;

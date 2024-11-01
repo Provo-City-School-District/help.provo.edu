@@ -3,19 +3,17 @@ require("helpdbconnect.php");
 require("block_file.php");
 require("functions.php");
 require("ticket_utils.php");
+require_once("ldap_connection.php");
 
 $input = isset($_GET['input']) ? ldapspecialchars($_GET['input']) : '';
 log_app(LOG_INFO, "input: ".$input);
 
 
-$ldap_host = getenv('LDAPHOST');
-$ldap_port = getenv('LDAPPORT');
 $ldap_dn = getenv('LDAP_DN');
 $ldap_user = getenv('LDAP_USER');
 $ldap_password = getenv('LDAP_PASS');
 
-$ldap_conn = ldap_connect($ldap_host, $ldap_port);
-ldap_set_option($ldap_conn, LDAP_OPT_PROTOCOL_VERSION, 3);
+$ldap_conn = get_ldaps_conn();
 $ldap_bind = ldap_bind($ldap_conn, $ldap_user, $ldap_password);
 
 if (!$ldap_bind) {

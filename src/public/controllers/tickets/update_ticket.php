@@ -427,9 +427,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $send_errors = [];
 
     if ($assigned_tech_changed) {
+        if ($updatedEmployee != "unassigned") {
+            $assigned_tech_name = get_local_name_for_user($updatedEmployee);
+            $firstname = ucfirst(strtolower($assigned_tech_name["firstname"]));
+            $lastname = ucfirst(strtolower($assigned_tech_name["lastname"]));
+
+            $new_subject = "Ticket $ticket_id has been reassigned to $firstname $lastname";
+        } else {
+            $new_subject = "Ticket $ticket_id has been unassigned";
+        }
+
         log_app(LOG_INFO, "[update_ticket.php] Sent assignment emails");
 
-        $res = send_email_and_add_to_ticket($ticket_id, $assigned_tech_email, $ticket_subject, $template_tech, [], [], $attachment_paths);
+        $res = send_email_and_add_to_ticket($ticket_id, $assigned_tech_email, $new_subject, $template_tech, [], [], $attachment_paths);
         if (!$res) {
             $send_errors[] = "Newly Assigned Tech";
         } else {
@@ -437,7 +447,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if (isset($old_assigned_email)) {
-            $res = send_email_and_add_to_ticket($ticket_id, $old_assigned_email, $ticket_subject, $template_tech, [], [], $attachment_paths);
+            $res = send_email_and_add_to_ticket($ticket_id, $old_assigned_email, $new_subject, $template_tech, [], [], $attachment_paths);
             if (!$res) {
                 $send_errors[] = "Previously Assigned Tech";
             } else {
@@ -459,7 +469,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        if ($updatedSendTechEmail) {
+        // if assigned_tech_changed is true, tech was already sent an email
+        if ($updatedSendTechEmail && !$assigned_tech_changed) {
             $res = send_email_and_add_to_ticket($ticket_id, $assigned_tech_email, $ticket_subject, $template_tech, [], [], $attachment_paths);
             if (!$res) {
                 $send_errors[] = "Tech";

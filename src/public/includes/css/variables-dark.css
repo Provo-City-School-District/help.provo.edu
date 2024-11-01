@@ -210,6 +210,6 @@ table .dt-type-numeric a:hover {
 Timeout Modal color fixing
 =================================================================================
 */
-#timeoutModal * {
+#timeoutModal *:not(button) {
 	color: var(--theme-black) !important;
 }

@@ -17,6 +17,9 @@ COPY crontab /etc/cron.d/cron-job
 RUN chmod 0644 /etc/cron.d/cron-job
 RUN /usr/bin/crontab /etc/cron.d/cron-job
 
+# copy LDAP conf
+COPY config/ldap.conf /etc/ldap/ldap.conf
+
 
 # Enable Apache ldap auth module
 RUN apt-get update -y --fix-missing && apt-get upgrade -y
@@ -25,6 +28,13 @@ RUN apt-get install -y libldb-dev libldap2-dev && docker-php-ext-install -j$(npr
 # COPY ckroot.crt /usr/local/share/ca-certificates/ckroot.crt
 RUN wget -P /usr/local/share/ca-certificates/ "https://ckr01.provo.edu/ckroot/ckroot.crt"
 RUN chmod 644 /usr/local/share/ca-certificates/ckroot.crt && update-ca-certificates
+
+# Copy certificates for LDAPS
+RUN wget -P /usr/local/share/ca-certificates/ "https://internal-certs.provo.edu/pcsd_rootca.crt"
+RUN chmod 644 /usr/local/share/ca-certificates/pcsd_rootca.crt && update-ca-certificates
+
+RUN wget -P /usr/local/share/ca-certificates/ "https://internal-certs.provo.edu/pcsd_ca.crt"
+RUN chmod 644 /usr/local/share/ca-certificates/pcsd_ca.crt && update-ca-certificates
 
 # # Enable mod_http2
 RUN a2enmod http2 ssl

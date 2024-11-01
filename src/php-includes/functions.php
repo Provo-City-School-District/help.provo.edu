@@ -1,6 +1,7 @@
 <?php
 // handle 500 error
 register_shutdown_function("handleFatalError");
+require_once "ldap_connection.php";
 
 function handleFatalError()
 {
@@ -60,13 +61,11 @@ function get_client_name(string $client)
         return $res;
     }
 
-    $ldap_host = getenv('LDAPHOST');
-    $ldap_port = getenv('LDAPPORT');
     $ldap_dn = getenv('LDAP_DN');
     $ldap_user = getenv('LDAP_USER');
     $ldap_password = getenv('LDAP_PASS');
 
-    $ldap_conn = ldap_connect($ldap_host, $ldap_port);
+    $ldap_conn = get_ldaps_conn();
     ldap_set_option($ldap_conn, LDAP_OPT_PROTOCOL_VERSION, 3);
     $ldap_bind = ldap_bind($ldap_conn, $ldap_user, $ldap_password);
 
@@ -87,13 +86,11 @@ function get_client_name(string $client)
 
 function get_client_location(string $client)
 {
-    $ldap_host = getenv('LDAPHOST');
-    $ldap_port = getenv('LDAPPORT');
     $ldap_dn = getenv('LDAP_DN');
     $ldap_user = getenv('LDAP_USER');
     $ldap_password = getenv('LDAP_PASS');
 
-    $ldap_conn = ldap_connect($ldap_host, $ldap_port);
+    $ldap_conn = get_ldaps_conn();
     ldap_set_option($ldap_conn, LDAP_OPT_PROTOCOL_VERSION, 3);
     $ldap_bind = ldap_bind($ldap_conn, $ldap_user, $ldap_password);
 
@@ -117,13 +114,11 @@ function get_client_location(string $client)
 
 function get_employee_id(string $username)
 {
-    $ldap_host = getenv('LDAPHOST');
-    $ldap_port = getenv('LDAPPORT');
     $ldap_dn = getenv('LDAP_DN');
     $ldap_user = getenv('LDAP_USER');
     $ldap_password = getenv('LDAP_PASS');
 
-    $ldap_conn = ldap_connect($ldap_host, $ldap_port);
+    $ldap_conn = get_ldaps_conn();
     ldap_set_option($ldap_conn, LDAP_OPT_PROTOCOL_VERSION, 3);
     $ldap_bind = ldap_bind($ldap_conn, $ldap_user, $ldap_password);
 
@@ -144,13 +139,11 @@ const LDAP_EMPLOYEE_JOB_TITLE = (1 << 3);
 
 function get_ldap_info(string $username, int $request_flags)
 {
-    $ldap_host = getenv('LDAPHOST');
-    $ldap_port = getenv('LDAPPORT');
     $ldap_dn = getenv('LDAP_DN');
     $ldap_user = getenv('LDAP_USER');
     $ldap_password = getenv('LDAP_PASS');
 
-    $ldap_conn = ldap_connect($ldap_host, $ldap_port);
+    $ldap_conn = get_ldaps_conn();
     ldap_set_option($ldap_conn, LDAP_OPT_PROTOCOL_VERSION, 3);
     $ldap_bind = ldap_bind($ldap_conn, $ldap_user, $ldap_password);
 
@@ -197,13 +190,11 @@ function get_ldap_info(string $username, int $request_flags)
 
 function find_clients(string $name)
 {
-    $ldap_host = getenv('LDAPHOST');
-    $ldap_port = getenv('LDAPPORT');
     $ldap_dn = getenv('LDAP_DN');
     $ldap_user = getenv('LDAP_USER');
     $ldap_password = getenv('LDAP_PASS');
 
-    $ldap_conn = ldap_connect($ldap_host, $ldap_port);
+    $ldap_conn = get_ldaps_conn();
     ldap_set_option($ldap_conn, LDAP_OPT_PROTOCOL_VERSION, 3);
     $ldap_bind = ldap_bind($ldap_conn, $ldap_user, $ldap_password);
 

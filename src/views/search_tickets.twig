@@ -84,7 +84,7 @@
         <select id="search_employee" name="search_employee">
             <option value="" selected></option>
             <option value="Unassigned" {{ search_employee == 'helpdesk' ? 'selected' : '' }}>Unassigned</option>
-            {% for techuser in techusernames %}
+            {% for techuser in tech_display_names %}
             <option value="{{ techuser }}" {{ search_employee == techuser ? 'selected' : '' }}>{{ techuser }}</option>
             {% endfor %}
         </select>
@@ -140,7 +140,7 @@
                         <tr>
                             <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id={{ result.id }}">{{ result.id }}</a></td>
                             <td class="details" data-cell="Request Detail"><a href="/controllers/tickets/edit_ticket.php?id={{ result.id }}">{{ result.name }}</a><br>{{ result.description|slice(0, 150) }}</td>
-                            <td data-cell="Client">{{ result.client }}</td>
+                            <td data-cell="Client">{{ result.client_name["firstname"] }} {{ result.client_name["lastname"] }}</td>
                                 {# TODO: Ommited the latest note section #}
                             
                             {# <td class="latestNote" data-cell="Latest Note:">

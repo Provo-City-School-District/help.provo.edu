@@ -16,8 +16,8 @@
         //     }
         // }
         ?>
-        <button onclick="dismiss_timeout_modal()">Dismiss</button>
-        <button onclick="location.reload()">Reload Page</button>
+        <button class="button" onclick="dismiss_timeout_modal()">Dismiss</button>
+        <button class="button" onclick="location.reload()">Reload Page</button>
     </div>
 </div>
 </div>

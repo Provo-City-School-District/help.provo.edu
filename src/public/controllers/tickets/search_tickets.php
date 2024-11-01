@@ -120,7 +120,7 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
         $firstname = ucwords(strtolower($name["firstname"]));
         $lastname = ucwords(strtolower($name["lastname"]));
         $display_string = $firstname . " " . $lastname . " - " . location_name_from_id(get_fast_client_location($username) ?: "");
-        $tech_display_names[] = $display_string;
+        $tech_display_names[] = [$display_string, $usernameRow['username']];
     } else {
         $usernames[] = strtolower($usernameRow['username']);
     }

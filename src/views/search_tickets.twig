@@ -85,7 +85,7 @@
             <option value="" selected></option>
             <option value="Unassigned" {{ search_employee == 'helpdesk' ? 'selected' : '' }}>Unassigned</option>
             {% for techuser in tech_display_names %}
-            <option value="{{ techuser }}" {{ search_employee == techuser ? 'selected' : '' }}>{{ techuser }}</option>
+            <option value="{{ techuser[1] }}" {{ search_employee == techuser[1] ? 'selected' : '' }}>{{ techuser[0] }}</option>
             {% endfor %}
         </select>
     </div>

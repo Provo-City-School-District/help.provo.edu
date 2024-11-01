@@ -11,9 +11,11 @@ these are the default ports that the containers will use. If you need to change 
 - Requires a .env file in the root directory with the following variables set. make sure to wrap passwords in quotes to prevent syntax errors when they are loaded into CLI variables.
 
 ```
-LDAPHOST=
-LDAPPORT=
+LDAP_PRIMARY_HOST=
+LDAP_SECONDARY_HOST=
+LDAP_PORT=
 LDAP_DN=
+LDAP_ARCHIVED_DN=
 LDAP_USER=
 LDAP_PASS=
 SQL_ROOT=

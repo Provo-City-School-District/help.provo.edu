@@ -38,8 +38,8 @@ $client_ticket_query = <<<STR
     FROM tickets
     WHERE status NOT IN ('Closed', 'Resolved')
     AND (client = ?
-        OR cc_emails LIKE CONCAT('%', ?, '%')
-        OR bcc_emails LIKE CONCAT('%', ?, '%'))
+        OR cc_emails REGEXP CONCAT('(^|,)', ?, '@')
+        OR bcc_emails REGEXP CONCAT('(^|,)', ?, '@'))
     AND (employee != ? OR employee IS NULL)
     ORDER BY id ASC
 STR;

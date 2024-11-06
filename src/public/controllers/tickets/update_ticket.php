@@ -405,11 +405,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $ticket_subject = "Ticket " . $ticket_id . " ($subject_status) - " . $updatedName;
     $client_name = get_client_name($updatedClient);
     $location_name = location_name_from_id($updatedLocation);
+    $department_name = location_name_from_id($updatedDepartment);
     $assigned_tech_email = email_address_from_username($updatedEmployee);
 
     $template_tech = new Template(from_root("/includes/templates/{$template_path}_tech.phtml"));
 
     $template_tech->client = $client_name["firstname"] . " " . $client_name["lastname"];
+    $template_tech->department->$department_name;
     $template_tech->location = $location_name;
     $template_tech->ticket_id = $ticket_id;
     $template_tech->changes_message = $changesMessage;
@@ -423,6 +425,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $template_client->client = $client_name["firstname"] . " " . $client_name["lastname"];
     $template_client->location = $location_name;
+    $template_client->department->$department_name;
     $template_client->ticket_id = $ticket_id;
     $template_client->notes_message = $notesMessageClient;
     $template_client->site_url = getenv('ROOTDOMAIN');

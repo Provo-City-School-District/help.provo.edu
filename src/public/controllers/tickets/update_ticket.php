@@ -400,7 +400,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $remaining_tasks_query = "SELECT assigned_tech, description FROM ticket_tasks WHERE (completed != 1 AND ticket_id = ?)";
 
     $remaining_tasks_result = HelpDB::get()->execute_query($remaining_tasks_query, [$ticket_id]);
-    $remaining_tasks = "";
+    $remaining_tasks = [];
 
     while ($row = $remaining_tasks_result->fetch_assoc()) {
         $tech_name = get_local_name_for_user($row["assigned_tech"]);

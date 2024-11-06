@@ -58,6 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $row = mysqli_fetch_assoc($tasks_result);
         if ($row['count'] != 0) {
             // Stop the resolving process and display an error message
+            $formData = http_build_query($_POST);
             $error = "Cannot resolve with required, uncompleted tasks";
             $_SESSION['current_status'] = $error;
             $_SESSION['status_type'] = 'error';

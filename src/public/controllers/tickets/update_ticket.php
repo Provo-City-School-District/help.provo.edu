@@ -403,7 +403,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $remaining_tasks_str = "";
 
     while ($row = $remaining_tasks_result->fetch_assoc()) {
-        log_app(LOG_INFO, var_dump($row));
         $tech_name = get_local_name_for_user($row["assigned_tech"]);
         $tech = "Unassigned";
         if ($tech_name != null) {
@@ -412,6 +411,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $desc = $row["description"];
         $remaining_tasks_str .= "$tech: $desc<br>";
     }
+
+    log_app(LOG_INFO, $remaining_tasks_str);
 
     $template_tech->remaining_tasks = $remaining_tasks_str;
 

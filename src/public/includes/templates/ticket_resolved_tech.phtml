@@ -50,6 +50,10 @@ if ($this->changes_message) {
     <?php
 }
 ?>
+<?php if ($this->remaining_tasks): ?>
+<p><strong>Remaining Tasks: </strong></p>
+<p><?= $this->remaining_tasks ?></p>
+<?php endif; ?>
 <p><strong>Recent Notes:</strong></p>
 <table><?= $this->notes_message?> </table>
 <p>You have 10 days to re-open this ticket if your issue has not been resolved.</p>

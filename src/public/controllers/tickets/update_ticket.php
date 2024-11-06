@@ -397,6 +397,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $template_tech->room = empty($updatedRoom) ? "<empty>" : $updatedRoom;
     $template_tech->phone = empty($updatedPhone) ? "<empty>" : $updatedPhone;
 
+    $remaining_tasks_query = "SELECT assigned_tech, description FROM ticket_tasks WHERE (completed != 1 AND ticket_id = ?)";
+
+    $remaining_tasks_result = HelpDB::get()->execute_query($remaining_tasks_query, [$ticket_id]);
+    $remaining_tasks_str = "";
+
+    while ($row = $remaining_tasks_result->fetch_assoc()) {
+        $tech_name = get_local_name_for_user($row["assigned_tech"]);
+        $tech = $tech_name["firstname"]." ".$tech_name["lastname"];
+        $desc = $row["description"];
+        $remaining_tasks_str .= "$tech: $desc<br>";
+    }
+
+    $template_tech->remaining_tasks = $remaining_tasks_str;
+
+
     $template_client = new Template(from_root("/includes/templates/{$template_path}_client.phtml"));
 
     $template_client->client = $client_name["firstname"] . " " . $client_name["lastname"];

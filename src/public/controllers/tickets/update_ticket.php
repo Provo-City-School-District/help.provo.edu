@@ -405,7 +405,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     while ($row = $remaining_tasks_result->fetch_assoc()) {
         log_app(LOG_INFO, var_dump($row));
         $tech_name = get_local_name_for_user($row["assigned_tech"]);
-        $tech = "Unassigned"
+        $tech = "Unassigned";
         if ($tech_name != null) {
             $tech = $tech_name["firstname"]." ".$tech_name["lastname"];
         }

@@ -77,7 +77,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
     $incoming_cc_emails = [];
     if (isset($header->cc)) {
         foreach ($header->cc as $cc_email) {
-            $incoming_cc_emails[] = $cc_email->mailbox.'@'.$cc_email->host;
+            $incoming_cc_emails[] = $cc_email->mailbox . '@' . $cc_email->host;
         }
     }
 

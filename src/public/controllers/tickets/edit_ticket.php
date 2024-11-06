@@ -159,7 +159,11 @@ if (mysqli_num_rows($insert_flagged_ticket_result) > 0) {
 }
 
 // Note Order
-$note_order = isset($_SESSION['note_order']) ? $_SESSION['note_order'] : "ASC";
+$note_order = "ASC";
+
+// Note count
+$note_count = isset($_SESSION['note_count']) ? $_SESSION['note_count'] : 5;
+
 
 // Query the ticket by ID and all notes for that ID
 $query = "SELECT
@@ -331,7 +335,6 @@ $total_note_count = count($notes);
 $hasNotes = !empty($notes) && array_filter($notes, function ($note) {
     return !is_null($note['note']);
 });
-const MAX_VISIBLE_NOTE_COUNT = 10;
 ?>
 <div class="alerts_wrapper">
     <?php foreach ($alert_data as $alert) : ?>
@@ -1001,9 +1004,9 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
             $total_minutes = 0;
             $total_hours = 0;
             $num_notes = 0;
-            $hidden_note_count = $total_note_count - MAX_VISIBLE_NOTE_COUNT;
+            $hidden_note_count = $total_note_count - $note_count;
             $note_str = $hidden_note_count == 1 ? "note" : "notes";
-            if ($total_note_count > MAX_VISIBLE_NOTE_COUNT):
+            if ($total_note_count > $note_count):
             ?>
                 <tr id="expand-row">
                     <td colspan=4><a onclick="toggleRowVisibility(<?= $hidden_note_count ?>);" id="expand-row-button">Expand <?= $hidden_note_count ?> more <?= $note_str ?>...</a></td>

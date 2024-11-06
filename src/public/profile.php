@@ -26,8 +26,9 @@ $firstname = ucfirst(strtolower($user_data['firstname']));
 $lastname = ucfirst(strtolower($user_data['lastname']));
 $email = $user_data['email'];
 $color_scheme = $user_data['color_scheme'];
-$note_order = $user_data['note_order'];
+// $note_order = $user_data['note_order'];
 $hide_alerts = $user_data['hide_alerts'];
+$note_count = $user_data['note_count'];
 
 if ($permissions["is_tech"]) {
     require_once("time_utils.php");
@@ -76,8 +77,9 @@ echo $twig->render('profile.twig', [
     'first_name' => $firstname,
     'last_name' => $lastname,
     'email' => $email,
-    'note_order' => $note_order,
+    // 'note_order' => $note_order,
     'hide_alerts' => $hide_alerts,
     'user_times' => $user_times,
     'user_time_total' => $user_time_total,
+    'note_count' => $note_count,
 ]);

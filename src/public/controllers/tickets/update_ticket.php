@@ -16,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $updatedClient = trim(htmlspecialchars($_POST['client']));
     $updatedEmployee = trim(htmlspecialchars($_POST['employee']));
     $updatedLocation = trim(htmlspecialchars($_POST['location']));
+    $updatedDepartment = trim(htmlspecialchars($_POST['department']));
     $updatedRoom = trim(htmlspecialchars($_POST['room']));
     $updatedName = trim(htmlspecialchars($_POST['ticket_name']));
     $updatedDescription = trim(htmlspecialchars($_POST['description']));
@@ -148,6 +149,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         client = ?,
         employee = ?,
         location = ?,
+        department = ?,
         room = ?,
         name = ?,
         description = ?,
@@ -168,11 +170,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         WHERE id = ?";
 
     $update_ticket_query_vars = [
-        $updatedClient, $updatedEmployee, $updatedLocation, $updatedRoom, $updatedName,
-        $updatedDescription, $updatedDueDate, $updatedStatus, $updatedPhone, $updatedCCEmails,
-        $updatedBCCEmails, $updatedPriority, $updatedRequestType, $updatedParentTicket,
-        $updatedSendClientEmail, $updatedSendTechEmail, $updatedSendCCEmails, $updatedSendBCCEmails, 
-        $updatedInternTicketStatus, $ticket_id
+        $updatedClient,
+        $updatedEmployee,
+        $updatedLocation,
+        $updatedDepartment,
+        $updatedRoom,
+        $updatedName,
+        $updatedDescription,
+        $updatedDueDate,
+        $updatedStatus,
+        $updatedPhone,
+        $updatedCCEmails,
+        $updatedBCCEmails,
+        $updatedPriority,
+        $updatedRequestType,
+        $updatedParentTicket,
+        $updatedSendClientEmail,
+        $updatedSendTechEmail,
+        $updatedSendCCEmails,
+        $updatedSendBCCEmails,
+        $updatedInternTicketStatus,
+        $ticket_id
     ];
 
     // Execute the update queries
@@ -186,6 +204,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $clientColumn  = "client";
     $employeeColumn  = "employee";
     $locationColumn  = "location";
+    $departmentColumn = "department";
     $roomColumn  = "room";
     $nameColumn  = "name";
     $descriptionColumn  = "description";
@@ -239,7 +258,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         logTicketChange(HelpDB::get(), $ticket_id, $updatedby, $locationColumn, $old_ticket_data['location'], $updatedLocation);
         $changesMessage .= "<li>Changed Location from " . $old_ticket_data['location'] . " to " . $updatedLocation . "</li>";
     }
-
+    if (isset($old_ticket_data['department'], $updatedDepartment) && $old_ticket_data['department'] != $updatedDepartment) {
+        logTicketChange(HelpDB::get(), $ticket_id, $updatedby, $departmentColumn, $old_ticket_data['location'], $updatedDepartment);
+        $changesMessage .= "<li>Changed Department from " . $old_ticket_data['department'] . " to " . $updatedDepartment . "</li>";
+    }
     if (isset($old_ticket_data['room'], $updatedRoom) && $old_ticket_data['room'] != $updatedRoom) {
         logTicketChange(HelpDB::get(), $ticket_id, $updatedby, $roomColumn, $old_ticket_data['room'], $updatedRoom);
         $changesMessage .= "<li>Changed Room from " . $old_ticket_data['room'] . " to " . $updatedRoom . "</li>";

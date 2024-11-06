@@ -211,6 +211,8 @@ for ($i = 1; $i <= $msg_count; $i++) {
                 }
                 $operating_ticket = $receipt_ticket_id;
 
+                // Log the ticket creation
+                logTicketChange(HelpDB::get(), $receipt_ticket_id, 'System', 'created', '', '');
 
                 $incoming_cc_emails_str = mysqli_real_escape_string(HelpDB::get(), implode(',', $incoming_cc_emails));
                 $res = HelpDB::get()->execute_query("UPDATE help.tickets SET cc_emails = ? WHERE id = ?", [$incoming_cc_emails_str, $receipt_ticket_id]);

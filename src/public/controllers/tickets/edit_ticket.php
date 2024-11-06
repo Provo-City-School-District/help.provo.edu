@@ -1177,10 +1177,15 @@ $hasNotes = !empty($notes) && array_filter($notes, function ($note) {
                 <?php
                 if (session_is_tech()) {
                 ?>
-                    <div>
-                        <label for="visible_to_client">Visible to Client:</label>
-                        <input type="checkbox" id="visible_to_client" name="visible_to_client" checked="checked">
+                    <div class="flex">
+                        <div>
+                            <label for="visible_to_client">Visible to Client:</label>
+                            <input type="checkbox" id="visible_to_client" name="visible_to_client" checked="checked">
+                        </div>
+
+                        <div><a href="/note_shortcuts.php">Note Shorthand</a></div>
                     </div>
+
                     <?php
                     $exclude_result = HelpDB::get()->execute_query("SELECT created FROM notes WHERE creator = ? ORDER BY created DESC LIMIT 1", [$_SESSION['username']]);
                     $row = $exclude_result->fetch_assoc();

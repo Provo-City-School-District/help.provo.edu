@@ -409,7 +409,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $tech = $tech_name["firstname"]." ".$tech_name["lastname"];
         }
         $desc = $row["description"];
-        $remaining_tasks[] =  ["tech_name" => $tech_name, "description" => $desc];
+        $remaining_tasks[] =  ["tech_name" => $tech, "description" => $desc];
     }
 
 

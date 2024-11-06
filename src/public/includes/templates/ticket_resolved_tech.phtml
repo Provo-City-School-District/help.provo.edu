@@ -50,9 +50,20 @@ if ($this->changes_message) {
     <?php
 }
 ?>
-<?php if ($this->remaining_tasks): ?>
-<p><strong>Remaining Tasks: </strong></p>
-<p><?= $this->remaining_tasks ?></p>
+<?php if (count($this->remaining_tasks) > 0): ?>
+<h3>Remaining Tasks</h3>
+<table>
+    <tr>
+        <th>Assigned Tech</th>
+        <th>Task Description</th>
+    </tr>
+    <?php foreach ($this->remaining_tasks as $task): ?>
+    <tr>
+        <td><?= $task["tech_name"] ?></td>
+        <td><?= $task["description"] ?></td>
+    </tr>
+    <?php endforeach; ?>
+</table>
 <?php endif; ?>
 <p><strong>Recent Notes:</strong></p>
 <table><?= $this->notes_message?> </table>

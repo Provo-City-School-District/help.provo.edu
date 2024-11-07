@@ -171,6 +171,7 @@ tickets.id,
 tickets.client,
 tickets.employee,
 tickets.location,
+tickets.department,
 tickets.room,
 tickets.name,
 tickets.description,
@@ -229,6 +230,7 @@ if (!$result) {
     die('Error: ' . mysqli_error(HelpDB::get()));
 }
 
+
 // Fetch the ticket and notes from the result set
 $ticket = mysqli_fetch_assoc($result);
 $ticket_merged_id = $ticket["merged_into_id"];
@@ -239,6 +241,28 @@ if ($ticket_merged_id != null && $should_redirect) {
     die();
 }
 ob_end_flush();
+
+// Define the list of Department locations
+//this is to fix older tickets prior to the separation of the department and location fields
+$dep_locations = [
+    1700,
+    1510,
+    1897,
+    1540,
+    1100,
+    881100,
+    1560,
+    1350,
+    1300,
+    1310,
+    1360,
+    1370
+];
+
+// Check if the ticket location is in the list and set the department variable
+if (in_array($ticket['location'], $dep_locations)) {
+    $ticket['department'] = $ticket['location'];
+}
 
 // Fetch the list of usernames from the users table
 $usernamesQuery = "SELECT username, is_tech FROM users WHERE is_tech = 1 ORDER BY username ASC";
@@ -541,30 +565,40 @@ $hasNotes = !empty($notes) && array_filter($notes, function ($note) {
                     </select>
                 </div>
                 <div>
-                    <label for="location">Department/Location:</label>
-                    <select id="location" name="location">
+                    <label for="department">Department:</label>
+                    <select id="department" name="department">
+                        <option hidden disabled selected value></option>
                         <?php
                         // Query the locations table to get the departments
                         $department_query = "SELECT sitenumber, location_name FROM locations WHERE is_department = TRUE ORDER BY location_name ASC";
                         $department_result = HelpDB::get()->execute_query($department_query);
 
-                        // Create a "Department" optgroup and create an option for each department
-                        echo '<optgroup label="Department">';
+                        //Create a "Department" optgroup and create an option for each department
+                        // echo '<optgroup label="Department">';
                         while ($locations = mysqli_fetch_assoc($department_result)) {
                             $selected = '';
-                            if ($locations['sitenumber'] == $ticket['location']) {
+                            if ($locations['sitenumber'] == $ticket['department']) {
                                 $selected = 'selected';
                             }
                             echo '<option value="' . $locations['sitenumber'] . '" ' . $selected . '>' . $locations['location_name'] . '</option>';
                         }
-                        echo '</optgroup>';
+                        // echo '</optgroup>';
+                        ?>
+                    </select>
+                </div>
+                <div>
+                    <label for="location">Location:</label>
+                    <select id="location" name="location">
+                        <option hidden disabled selected value></option>
+                        <?php
+
 
                         // Query the locations table to get the locations
                         $location_query = "SELECT sitenumber, location_name FROM locations WHERE is_department = FALSE ORDER BY location_name ASC";
                         $location_result = HelpDB::get()->execute_query($location_query);
 
                         // Create a "Location" optgroup and create an option for each location
-                        echo '<optgroup label="Location">';
+                        // echo '<optgroup label="Location">';
                         while ($locations = mysqli_fetch_assoc($location_result)) {
                             $selected = '';
                             if ($locations['sitenumber'] == $ticket['location']) {
@@ -572,7 +606,7 @@ $hasNotes = !empty($notes) && array_filter($notes, function ($note) {
                             }
                             echo '<option value="' . $locations['sitenumber'] . '" ' . $selected . '>' . $locations['location_name'] . '</option>';
                         }
-                        echo '</optgroup>';
+                        // echo '</optgroup>';
                         ?>
                     </select>
                 </div>

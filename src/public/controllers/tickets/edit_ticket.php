@@ -230,6 +230,7 @@ if (!$result) {
     die('Error: ' . mysqli_error(HelpDB::get()));
 }
 
+
 // Fetch the ticket and notes from the result set
 $ticket = mysqli_fetch_assoc($result);
 $ticket_merged_id = $ticket["merged_into_id"];
@@ -240,6 +241,28 @@ if ($ticket_merged_id != null && $should_redirect) {
     die();
 }
 ob_end_flush();
+
+// Define the list of Department locations
+//this is to fix older tickets prior to the separation of the department and location fields
+$dep_locations = [
+    1700,
+    1510,
+    1897,
+    1540,
+    1100,
+    881100,
+    1560,
+    1350,
+    1300,
+    1310,
+    1360,
+    1370
+];
+
+// Check if the ticket location is in the list and set the department variable
+if (in_array($ticket['location'], $dep_locations)) {
+    $ticket['department'] = $ticket['location'];
+}
 
 // Fetch the list of usernames from the users table
 $usernamesQuery = "SELECT username, is_tech FROM users WHERE is_tech = 1 ORDER BY username ASC";

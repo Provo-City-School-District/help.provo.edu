@@ -40,6 +40,7 @@ if (isset($_POST["visible_to_client"])) {
 // Super crusty, open to other ideas, but this seemed to work for now
 // Check if the note content matches the last note content stored in the session for the same ticket
 if (isset($_SESSION['last_note']) && $_SESSION['last_note']['ticket_id'] === $ticket_id && $_SESSION['last_note']['content'] === $note_content) {
+    log_app(LOG_INFO, "Duplicate note detected");
     $_SESSION['current_status'] = "Duplicate note detected";
     $_SESSION['status_type'] = "error";
 } else {

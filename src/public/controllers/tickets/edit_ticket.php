@@ -566,7 +566,7 @@ $hasNotes = !empty($notes) && array_filter($notes, function ($note) {
                 </div>
                 <div>
                     <label for="department">Department:</label>
-                    <select id="department" name="department">
+                    <select id="department" name="department" required>
                         <option hidden disabled selected value></option>
                         <?php
                         // Query the locations table to get the departments
@@ -588,7 +588,7 @@ $hasNotes = !empty($notes) && array_filter($notes, function ($note) {
                 </div>
                 <div>
                     <label for="location">Location:</label>
-                    <select id="location" name="location">
+                    <select id="location" name="location" required>
                         <option hidden disabled selected value></option>
                         <?php
 

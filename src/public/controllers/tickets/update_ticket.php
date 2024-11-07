@@ -411,7 +411,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $template_tech = new Template(from_root("/includes/templates/{$template_path}_tech.phtml"));
 
     $template_tech->client = $client_name["firstname"] . " " . $client_name["lastname"];
-    $template_tech->department->$department_name;
+    $template_tech->department = $department_name;
     $template_tech->location = $location_name;
     $template_tech->ticket_id = $ticket_id;
     $template_tech->changes_message = $changesMessage;
@@ -425,7 +425,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $template_client->client = $client_name["firstname"] . " " . $client_name["lastname"];
     $template_client->location = $location_name;
-    $template_client->department->$department_name;
+    $template_client->department = $department_name;
     $template_client->ticket_id = $ticket_id;
     $template_client->notes_message = $notesMessageClient;
     $template_client->site_url = getenv('ROOTDOMAIN');

@@ -6,8 +6,8 @@
 <p>Example: <a href="//vault.provo.edu/nac_edit.php?barcode=003001">BC#003001</a>, <a href="//vault.provo.edu/nac_edit.php?barcode=FVFZ624JLYWH">BC#FVFZ624JLYWH</a></p>
 <h4>Link to another ticket / work order: WO#[ticket number]</h4><br>
 <p>Example: <a href="/controllers/tickets/edit_ticket.php?id=50">WO#50</a></p><br>
-<form>
-	<button formaction="/profile.php">Return</button>
-</form>
+
+<button class="button" onclick="window.history.back()">Return</button>
+
 
 {% endblock %}

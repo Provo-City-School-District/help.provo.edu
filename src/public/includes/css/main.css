@@ -178,6 +178,13 @@ blockquote {
 	height: 2em;
 }
 
+.flex {
+	display: flex;
+	gap: 1em;
+	margin-top: 5px;
+	align-items: center;
+}
+
 /*
 .new-note-button {
 	margin-bottom: 1em;

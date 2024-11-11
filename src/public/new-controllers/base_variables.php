@@ -5,7 +5,8 @@ if (!session_id()) {
     session_start();
 }
 //included in twig base_variables and in functions.php while transitioning to twig
-$app_version = "1.2.14";
+$app_version = "1.3.0";
+
 // check if logged in. redirects to login page if not
 if (!$_SESSION['username']) {
     // Store the requested page in the session

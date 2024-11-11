@@ -16,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $updatedClient = trim(htmlspecialchars($_POST['client']));
     $updatedEmployee = trim(htmlspecialchars($_POST['employee']));
     $updatedLocation = trim(htmlspecialchars($_POST['location']));
+    $updatedDepartment = trim(htmlspecialchars($_POST['department']));
     $updatedRoom = trim(htmlspecialchars($_POST['room']));
     $updatedName = trim(htmlspecialchars($_POST['ticket_name']));
     $updatedDescription = trim(htmlspecialchars($_POST['description']));
@@ -58,6 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $row = mysqli_fetch_assoc($tasks_result);
         if ($row['count'] != 0) {
             // Stop the resolving process and display an error message
+            $formData = http_build_query($_POST);
             $error = "Cannot resolve with required, uncompleted tasks";
             $_SESSION['current_status'] = $error;
             $_SESSION['status_type'] = 'error';
@@ -148,6 +150,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         client = ?,
         employee = ?,
         location = ?,
+        department = ?,
         room = ?,
         name = ?,
         description = ?,
@@ -168,11 +171,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         WHERE id = ?";
 
     $update_ticket_query_vars = [
-        $updatedClient, $updatedEmployee, $updatedLocation, $updatedRoom, $updatedName,
-        $updatedDescription, $updatedDueDate, $updatedStatus, $updatedPhone, $updatedCCEmails,
-        $updatedBCCEmails, $updatedPriority, $updatedRequestType, $updatedParentTicket,
-        $updatedSendClientEmail, $updatedSendTechEmail, $updatedSendCCEmails, $updatedSendBCCEmails, 
-        $updatedInternTicketStatus, $ticket_id
+        $updatedClient,
+        $updatedEmployee,
+        $updatedLocation,
+        $updatedDepartment,
+        $updatedRoom,
+        $updatedName,
+        $updatedDescription,
+        $updatedDueDate,
+        $updatedStatus,
+        $updatedPhone,
+        $updatedCCEmails,
+        $updatedBCCEmails,
+        $updatedPriority,
+        $updatedRequestType,
+        $updatedParentTicket,
+        $updatedSendClientEmail,
+        $updatedSendTechEmail,
+        $updatedSendCCEmails,
+        $updatedSendBCCEmails,
+        $updatedInternTicketStatus,
+        $ticket_id
     ];
 
     // Execute the update queries
@@ -186,6 +205,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $clientColumn  = "client";
     $employeeColumn  = "employee";
     $locationColumn  = "location";
+    $departmentColumn = "department";
     $roomColumn  = "room";
     $nameColumn  = "name";
     $descriptionColumn  = "description";
@@ -239,7 +259,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         logTicketChange(HelpDB::get(), $ticket_id, $updatedby, $locationColumn, $old_ticket_data['location'], $updatedLocation);
         $changesMessage .= "<li>Changed Location from " . $old_ticket_data['location'] . " to " . $updatedLocation . "</li>";
     }
-
+    if (isset($old_ticket_data['department'], $updatedDepartment) && $old_ticket_data['department'] != $updatedDepartment) {
+        logTicketChange(HelpDB::get(), $ticket_id, $updatedby, $departmentColumn, $old_ticket_data['location'], $updatedDepartment);
+        $changesMessage .= "<li>Changed Department from " . $old_ticket_data['department'] . " to " . $updatedDepartment . "</li>";
+    }
     if (isset($old_ticket_data['room'], $updatedRoom) && $old_ticket_data['room'] != $updatedRoom) {
         logTicketChange(HelpDB::get(), $ticket_id, $updatedby, $roomColumn, $old_ticket_data['room'], $updatedRoom);
         $changesMessage .= "<li>Changed Room from " . $old_ticket_data['room'] . " to " . $updatedRoom . "</li>";
@@ -383,11 +406,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $ticket_subject = "Ticket " . $ticket_id . " ($subject_status) - " . $updatedName;
     $client_name = get_client_name($updatedClient);
     $location_name = location_name_from_id($updatedLocation);
+    $department_name = location_name_from_id($updatedDepartment);
     $assigned_tech_email = email_address_from_username($updatedEmployee);
 
     $template_tech = new Template(from_root("/includes/templates/{$template_path}_tech.phtml"));
 
     $template_tech->client = $client_name["firstname"] . " " . $client_name["lastname"];
+    $template_tech->department = $department_name;
     $template_tech->location = $location_name;
     $template_tech->ticket_id = $ticket_id;
     $template_tech->changes_message = $changesMessage;
@@ -397,10 +422,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $template_tech->room = empty($updatedRoom) ? "<empty>" : $updatedRoom;
     $template_tech->phone = empty($updatedPhone) ? "<empty>" : $updatedPhone;
 
+    $remaining_tasks_query = "SELECT assigned_tech, description FROM ticket_tasks WHERE (completed != 1 AND ticket_id = ?)";
+
+    $remaining_tasks_result = HelpDB::get()->execute_query($remaining_tasks_query, [$ticket_id]);
+    $remaining_tasks = [];
+
+    while ($row = $remaining_tasks_result->fetch_assoc()) {
+        $tech_name = null;
+        $assigned_tech = $row["assigned_tech"];
+        if (isset($assigned_tech)) {
+            $tech_name = get_local_name_for_user($assigned_tech);
+        }
+
+        $tech = "Unassigned";
+        if ($tech_name != null) {
+            $tech = $tech_name["firstname"]." ".$tech_name["lastname"];
+        }
+        $desc = $row["description"];
+        $remaining_tasks[] =  ["tech_name" => $tech, "description" => $desc];
+    }
+
+
+    $template_tech->remaining_tasks = $remaining_tasks;
+
+
     $template_client = new Template(from_root("/includes/templates/{$template_path}_client.phtml"));
 
     $template_client->client = $client_name["firstname"] . " " . $client_name["lastname"];
     $template_client->location = $location_name;
+    $template_client->department = $department_name;
     $template_client->ticket_id = $ticket_id;
     $template_client->notes_message = $notesMessageClient;
     $template_client->site_url = getenv('ROOTDOMAIN');

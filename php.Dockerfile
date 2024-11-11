@@ -1,4 +1,4 @@
-FROM php:8.3.12-apache
+FROM php:8.3-apache
 
 # php adjustments.
 COPY config/customphp.ini /usr/local/etc/php/conf.d/
@@ -99,4 +99,4 @@ RUN mkdir -p /var/www/html/twig-cache && chown -R www-data:www-data /var/www/htm
 
 RUN chown -R www-data:www-data /var/www/html/
 
-CMD service cron start && chown -R www-data:www-data /var/www/html/vendor && chmod -R 550 /var/www/html/scripts/* && chown -R www-data:www-data /var/php/sessions && composer install --no-interaction --no-ansi --no-scripts --no-progress --prefer-dist && docker-php-entrypoint apache2-foreground
+CMD ["sh", "-c", "service cron start && chown -R www-data:www-data /var/www/html/vendor && chmod -R 550 /var/www/html/scripts/* && chown -R www-data:www-data /var/php/sessions && composer install --no-interaction --no-ansi --no-scripts --no-progress --prefer-dist && docker-php-entrypoint apache2-foreground"]

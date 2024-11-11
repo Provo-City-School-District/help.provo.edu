@@ -37,6 +37,7 @@
         Ticket <?= $this->ticket_id ?> has been updated
         <p><strong>Client:</strong> <?= $this->client ?></p>
         <p><strong>Location:</strong> <?= $this->location ?></p>
+        <p><strong>Department:</strong> <?= $this->department ?><p>
         <p><strong>Room:</strong> <?= htmlspecialchars($this->room) ?></p>
         <p><strong>Phone:</strong> <?= htmlspecialchars($this->phone) ?></p>
         <p><strong>Request Detail:</strong></p>
@@ -49,6 +50,21 @@
             <?php
         }
         ?>
+        <?php if (count($this->remaining_tasks) > 0): ?>
+        <p><strong>Remaining Tasks</strong></p>
+        <table>
+            <tr>
+                <th>Assigned Tech</th>
+                <th>Task Description</th>
+            </tr>
+            <?php foreach ($this->remaining_tasks as $task): ?>
+            <tr>
+                <td><?= $task["tech_name"] ?></td>
+                <td><?= $task["description"] ?></td>
+            </tr>
+            <?php endforeach; ?>
+        </table>
+        <?php endif; ?>
         <p><strong>Recent Notes:</strong></p>
         <table><?= $this->notes_message?> </table>
         <p><a href="<?= $this->site_url ?>/controllers/tickets/edit_ticket.php?id=<?= $this->ticket_id ?>">View ticket <?= $this->ticket_id ?></a></p>

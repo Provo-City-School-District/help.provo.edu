@@ -159,7 +159,11 @@ if (mysqli_num_rows($insert_flagged_ticket_result) > 0) {
 }
 
 // Note Order
-$note_order = isset($_SESSION['note_order']) ? $_SESSION['note_order'] : "ASC";
+$note_order = "ASC";
+
+// Note count
+$note_count = isset($_SESSION['note_count']) ? $_SESSION['note_count'] : 5;
+
 
 // Query the ticket by ID and all notes for that ID
 $query = "SELECT
@@ -167,6 +171,7 @@ tickets.id,
 tickets.client,
 tickets.employee,
 tickets.location,
+tickets.department,
 tickets.room,
 tickets.name,
 tickets.description,
@@ -225,6 +230,7 @@ if (!$result) {
     die('Error: ' . mysqli_error(HelpDB::get()));
 }
 
+
 // Fetch the ticket and notes from the result set
 $ticket = mysqli_fetch_assoc($result);
 $ticket_merged_id = $ticket["merged_into_id"];
@@ -235,6 +241,28 @@ if ($ticket_merged_id != null && $should_redirect) {
     die();
 }
 ob_end_flush();
+
+// Define the list of Department locations
+//this is to fix older tickets prior to the separation of the department and location fields
+$dep_locations = [
+    1700,
+    1510,
+    1897,
+    1540,
+    1100,
+    881100,
+    1560,
+    1350,
+    1300,
+    1310,
+    1360,
+    1370
+];
+
+// Check if the ticket location is in the list and set the department variable
+if (in_array($ticket['location'], $dep_locations)) {
+    $ticket['department'] = $ticket['location'];
+}
 
 // Fetch the list of usernames from the users table
 $usernamesQuery = "SELECT username, is_tech FROM users WHERE is_tech = 1 ORDER BY username ASC";
@@ -331,7 +359,6 @@ $total_note_count = count($notes);
 $hasNotes = !empty($notes) && array_filter($notes, function ($note) {
     return !is_null($note['note']);
 });
-const MAX_VISIBLE_NOTE_COUNT = 10;
 ?>
 <div class="alerts_wrapper">
     <?php foreach ($alert_data as $alert) : ?>
@@ -538,30 +565,40 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
                     </select>
                 </div>
                 <div>
-                    <label for="location">Department/Location:</label>
-                    <select id="location" name="location">
+                    <label for="department">Department:</label>
+                    <select id="department" name="department" required>
+                        <option hidden disabled selected value></option>
                         <?php
                         // Query the locations table to get the departments
                         $department_query = "SELECT sitenumber, location_name FROM locations WHERE is_department = TRUE ORDER BY location_name ASC";
                         $department_result = HelpDB::get()->execute_query($department_query);
 
-                        // Create a "Department" optgroup and create an option for each department
-                        echo '<optgroup label="Department">';
+                        //Create a "Department" optgroup and create an option for each department
+                        // echo '<optgroup label="Department">';
                         while ($locations = mysqli_fetch_assoc($department_result)) {
                             $selected = '';
-                            if ($locations['sitenumber'] == $ticket['location']) {
+                            if ($locations['sitenumber'] == $ticket['department']) {
                                 $selected = 'selected';
                             }
                             echo '<option value="' . $locations['sitenumber'] . '" ' . $selected . '>' . $locations['location_name'] . '</option>';
                         }
-                        echo '</optgroup>';
+                        // echo '</optgroup>';
+                        ?>
+                    </select>
+                </div>
+                <div>
+                    <label for="location">Location:</label>
+                    <select id="location" name="location" required>
+                        <option hidden disabled selected value></option>
+                        <?php
+
 
                         // Query the locations table to get the locations
                         $location_query = "SELECT sitenumber, location_name FROM locations WHERE is_department = FALSE ORDER BY location_name ASC";
                         $location_result = HelpDB::get()->execute_query($location_query);
 
                         // Create a "Location" optgroup and create an option for each location
-                        echo '<optgroup label="Location">';
+                        // echo '<optgroup label="Location">';
                         while ($locations = mysqli_fetch_assoc($location_result)) {
                             $selected = '';
                             if ($locations['sitenumber'] == $ticket['location']) {
@@ -569,7 +606,7 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
                             }
                             echo '<option value="' . $locations['sitenumber'] . '" ' . $selected . '>' . $locations['location_name'] . '</option>';
                         }
-                        echo '</optgroup>';
+                        // echo '</optgroup>';
                         ?>
                     </select>
                 </div>
@@ -1001,9 +1038,9 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
             $total_minutes = 0;
             $total_hours = 0;
             $num_notes = 0;
-            $hidden_note_count = $total_note_count - MAX_VISIBLE_NOTE_COUNT;
+            $hidden_note_count = $total_note_count - $note_count;
             $note_str = $hidden_note_count == 1 ? "note" : "notes";
-            if ($total_note_count > MAX_VISIBLE_NOTE_COUNT):
+            if ($total_note_count > $note_count):
             ?>
                 <tr id="expand-row">
                     <td colspan=4><a onclick="toggleRowVisibility(<?= $hidden_note_count ?>);" id="expand-row-button">Expand <?= $hidden_note_count ?> more <?= $note_str ?>...</a></td>
@@ -1174,10 +1211,15 @@ const MAX_VISIBLE_NOTE_COUNT = 10;
                 <?php
                 if (session_is_tech()) {
                 ?>
-                    <div>
-                        <label for="visible_to_client">Visible to Client:</label>
-                        <input type="checkbox" id="visible_to_client" name="visible_to_client" checked="checked">
+                    <div class="flex">
+                        <div>
+                            <label for="visible_to_client">Visible to Client:</label>
+                            <input type="checkbox" id="visible_to_client" name="visible_to_client" checked="checked">
+                        </div>
+
+                        <div><a href="/note_shortcuts.php">Note Shorthand</a></div>
                     </div>
+
                     <?php
                     $exclude_result = HelpDB::get()->execute_query("SELECT created FROM notes WHERE creator = ? ORDER BY created DESC LIMIT 1", [$_SESSION['username']]);
                     $row = $exclude_result->fetch_assoc();

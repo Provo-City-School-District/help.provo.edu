@@ -30,6 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $cc_emails = filter_input(INPUT_POST, 'cc_emails', FILTER_SANITIZE_SPECIAL_CHARS);
     $bcc_emails = filter_input(INPUT_POST, 'bcc_emails', FILTER_SANITIZE_SPECIAL_CHARS);
     $assigned_tech = filter_input(INPUT_POST, 'assigned', FILTER_SANITIZE_SPECIAL_CHARS);
+    $department = filter_input(INPUT_POST, 'department', FILTER_SANITIZE_SPECIAL_CHARS);
 
 
     if ($client === "") {
@@ -66,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Check if required fields are empty
-    if (empty($location) || empty($name) || empty($description)) {
+    if (empty($location) || empty($name) || empty($description) || empty($department)) {
         // Handle empty fields (e.g., show an error message)
         $error = 'All fields are required';
         $formData = http_build_query($_POST);
@@ -134,8 +135,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     // Create an SQL INSERT query
-    $insertQuery = "INSERT INTO tickets (location, room, name, description, created, last_updated, due_date, status, client,attachment_path,phone,cc_emails,bcc_emails,request_type_id,priority,employee)
-                VALUES (?, ?, ?, ?, ?, ?, ?,'open', ?, ?, ?, ?, ?,0,10,?)";
+    $insertQuery = "INSERT INTO tickets (location, room, name, description, created, last_updated, due_date, status, client,attachment_path,phone,cc_emails,bcc_emails,request_type_id,priority,employee,department)
+                VALUES (?, ?, ?, ?, ?, ?, ?,'open', ?, ?, ?, ?, ?,0,10,?,?)";
 
     // Prepare the SQL statement
     $stmt = mysqli_prepare(HelpDB::get(), $insertQuery);
@@ -175,7 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     mysqli_stmt_bind_param(
         $stmt,
-        'sssssssssssss',
+        'ssssssssssssss',
         $location,
         $room,
         $name,
@@ -188,7 +189,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $phone,
         $cc_emails_clean,
         $bcc_emails_clean,
-        $assigned_tech
+        $assigned_tech,
+        $department
     );
 
     $failed_files_count = count($failed_files);

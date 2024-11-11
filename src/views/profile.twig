@@ -35,18 +35,6 @@
         </select>
     </div>
     <div>
-        <label for="note_order">Ticket Note Order:</label>
-        <select id="note_order" name="note_order">
-            {% if note_order == "ASC" %}
-            <option value="ASC" selected>Ascending</option>
-            <option value="DESC">Descending</option>
-            {% else %}
-            <option value="ASC">Ascending</option>
-            <option value="DESC" selected>Descending</option>
-            {% endif %}
-        </select>
-    </div>
-    <div>
         <label for="hide_alerts">Hide Alerts Banner on "My Tickets" Page:</label>
         {% if hide_alerts %}
         <input type="checkbox" id="hide_alerts" name="hide_alerts" checked="checked">
@@ -79,6 +67,32 @@
             <option value="100" selected>100</option>
             {% endif %}
 
+        </select>
+    </div>
+    <div>
+        <label for="note_count">Default Ticket Count:</label>
+        <select id="note_count" name="note_count">
+            {% if note_count == 5 %}
+            <option value="5" selected>5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="25">25</option>
+            {% elseif note_count == 10 %}
+            <option value="5">5</option>
+            <option value="10" selected>10</option>
+            <option value="15">15</option>
+            <option value="25">25</option>
+            {% elseif note_count == 15 %}
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15" selected>15</option>
+            <option value="25">25</option>
+            {% elseif note_count == 25 %}
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="25" selected>25</option>
+            {% endif %}
         </select>
     </div>
 

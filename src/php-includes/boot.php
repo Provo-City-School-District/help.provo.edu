@@ -1,6 +1,6 @@
 <?php
-$app_version = "1.2.14";
 
+$app_version = "1.3.0";
 
 function from_root(string $path)
 {

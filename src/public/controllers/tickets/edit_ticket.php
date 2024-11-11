@@ -530,6 +530,10 @@ $hasNotes = !empty($notes) && array_filter($notes, function ($note) {
                 <input type="hidden" id="location" name="location" value="<?= $ticket['location'] ?>">
 
                 <div>
+                    <span>Department:</span> <?= $ticket['department'] ?>
+                </div>
+                <input type="hidden" id="department" name="department" value="<?= $ticket['department'] ?>">
+                <div>
                     <span>Request Type:</span> <?= $ticket['request_type_id'] ?>
                 </div>
                 <input type="hidden" id="request_type" name="request_type" value="<?= $ticket['location'] ?>">

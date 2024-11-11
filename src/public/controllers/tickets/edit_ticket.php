@@ -415,16 +415,19 @@ $hasNotes = !empty($notes) && array_filter($notes, function ($note) {
                 <button class="new-note-button button">New Note</button>
             <?php endif; ?>
             <?php
-            if ($is_ticket_flagged) :
+            if (!$readonly) {
+                if ($is_ticket_flagged) {
             ?>
-                <form id="flag-form" method="post">
-                    <input type="submit" class="button right" name="unflag_ticket" value="Unflag ticket" class="right">
-                </form>
-            <?php else : ?>
-                <form id="flag-form" method="post">
-                    <input type="submit" class="button right" name="flag_ticket" value="Flag ticket" class="right">
-                </form>
-            <?php endif; ?>
+                    <form id="flag-form" method="post">
+                        <input type="submit" class="button right" name="unflag_ticket" value="Unflag ticket" class="right">
+                    </form>
+                <?php } else { ?>
+                    <form id="flag-form" method="post">
+                        <input type="submit" class="button right" name="flag_ticket" value="Flag ticket" class="right">
+                    </form>
+            <?php }
+            }
+            ?>
         </div>
     </div>
     <form id="updateTicketForm" method="POST" action="update_ticket.php">

@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $updatedClient = trim(htmlspecialchars($_POST['client']));
     $updatedEmployee = trim(htmlspecialchars($_POST['employee']));
     $updatedLocation = trim(htmlspecialchars($_POST['location']));
-    $updatedDepartment = trim(htmlspecialchars($_POST['department']));
+    $updatedDepartment = isset($_POST['department']) ? trim(htmlspecialchars($_POST['department'])) : null;
     $updatedRoom = trim(htmlspecialchars($_POST['room']));
     $updatedName = trim(htmlspecialchars($_POST['ticket_name']));
     $updatedDescription = trim(htmlspecialchars($_POST['description']));
@@ -406,7 +406,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $ticket_subject = "Ticket " . $ticket_id . " ($subject_status) - " . $updatedName;
     $client_name = get_client_name($updatedClient);
     $location_name = location_name_from_id($updatedLocation);
-    $department_name = location_name_from_id($updatedDepartment);
+    $department_name = location_name_from_id($updatedDepartment ?? '');
     $assigned_tech_email = email_address_from_username($updatedEmployee);
 
     $template_tech = new Template(from_root("/includes/templates/{$template_path}_tech.phtml"));
@@ -436,7 +436,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $tech = "Unassigned";
         if ($tech_name != null) {
-            $tech = $tech_name["firstname"]." ".$tech_name["lastname"];
+            $tech = $tech_name["firstname"] . " " . $tech_name["lastname"];
         }
         $desc = $row["description"];
         $remaining_tasks[] =  ["tech_name" => $tech, "description" => $desc];

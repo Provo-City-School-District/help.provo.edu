@@ -167,7 +167,12 @@ if ($_SESSION['permissions']['is_admin'] == 1) {
                 ?>
             </select>
         <?php
+        } else {
+        ?>
+            <input type="hidden" id="man_location" name="man_location" value="">
+        <?php
         }
+
         ?>
 
 

@@ -77,6 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         //add in archived tickets if the checkbox is checked
         if ($search_archived == 1) {
             while ($row = mysqli_fetch_assoc($old_ticket_result)) {
+                $row["client_name"] = get_sw_client_name($row["CLIENT_ID"]);
                 $combined_results[] = $row;
             }
         }
@@ -216,6 +217,15 @@ function get_location_name_from_id($location_sw_id, $archived = false)
     }
 
     return $location_name;
+}
+
+function get_sw_client_name(string $sw_client_id)
+{
+    $tech_name_result = SolarWindsDB::get()->execute_query("SELECT FIRST_NAME, LAST_NAME FROM client WHERE CLIENT_ID = ?", [$sw_client_id]);
+    $tech_name_data = $tech_name_result->fetch_assoc();
+    $first_name = ucfirst(strtolower(trim($tech_name_data["FIRST_NAME"])));
+    $last_name = ucfirst(strtolower(trim($tech_name_data["LAST_NAME"])));
+    return ["firstname" => $first_name, "lastname" => $last_name];
 }
 
 // TODO could cache these

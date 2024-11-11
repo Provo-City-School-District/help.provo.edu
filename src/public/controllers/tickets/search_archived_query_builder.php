@@ -1,7 +1,7 @@
 <?php
 
 // Construct the SQL query for the old ticket database
-$old_ticket_query = "SELECT CONCAT('A-', JOB_TICKET_ID) AS a_id,PROBLEM_TYPE_ID,SUBJECT,QUESTION_TEXT,REPORT_DATE,LAST_UPDATED,JOB_TIME,ASSIGNED_TECH_ID,ROOM,LOCATION_ID,STATUS_TYPE_ID,CLOSE_DATE FROM whd.job_ticket";
+$old_ticket_query = "SELECT CONCAT('A-', JOB_TICKET_ID) AS a_id,PROBLEM_TYPE_ID,SUBJECT,QUESTION_TEXT,REPORT_DATE,LAST_UPDATED,JOB_TIME,ASSIGNED_TECH_ID,ROOM,LOCATION_ID,STATUS_TYPE_ID,CLOSE_DATE,CLIENT_ID FROM whd.job_ticket";
 if (!empty($search_id) || !empty($search_name) || !empty($search_location) || !empty($search_employee) || !empty($search_client) || !empty($search_status) || !empty($search_status) || !empty($search_priority) || !empty($dates_searched) || !empty($search_end_date) || !empty($search_start_date)) {
     $old_ticket_query .= " WHERE 1=1";
 } else {

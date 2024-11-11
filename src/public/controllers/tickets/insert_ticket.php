@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Check if required fields are empty
-    if (empty($location) || empty($name) || empty($description) || empty($department)) {
+    if (empty($location) || empty($name) || empty($description)) {
         // Handle empty fields (e.g., show an error message)
         $error = 'All fields are required';
         $formData = http_build_query($_POST);

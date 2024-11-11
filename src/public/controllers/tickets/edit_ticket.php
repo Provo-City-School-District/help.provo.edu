@@ -415,16 +415,19 @@ $hasNotes = !empty($notes) && array_filter($notes, function ($note) {
                 <button class="new-note-button button">New Note</button>
             <?php endif; ?>
             <?php
-            if ($is_ticket_flagged) :
+            if (!$readonly) {
+                if ($is_ticket_flagged) {
             ?>
-                <form id="flag-form" method="post">
-                    <input type="submit" class="button right" name="unflag_ticket" value="Unflag ticket" class="right">
-                </form>
-            <?php else : ?>
-                <form id="flag-form" method="post">
-                    <input type="submit" class="button right" name="flag_ticket" value="Flag ticket" class="right">
-                </form>
-            <?php endif; ?>
+                    <form id="flag-form" method="post">
+                        <input type="submit" class="button right" name="unflag_ticket" value="Unflag ticket" class="right">
+                    </form>
+                <?php } else { ?>
+                    <form id="flag-form" method="post">
+                        <input type="submit" class="button right" name="flag_ticket" value="Flag ticket" class="right">
+                    </form>
+            <?php }
+            }
+            ?>
         </div>
     </div>
     <form id="updateTicketForm" method="POST" action="update_ticket.php">
@@ -530,14 +533,19 @@ $hasNotes = !empty($notes) && array_filter($notes, function ($note) {
                 <input type="hidden" id="location" name="location" value="<?= $ticket['location'] ?>">
 
                 <div>
-                    <span>Request Type:</span> <?= $ticket['request_type_id'] ?>
+                    <span>Department:</span> <?= $ticket['department'] ?>
                 </div>
-                <input type="hidden" id="request_type" name="request_type" value="<?= $ticket['location'] ?>">
-
+                <input type="hidden" id="department" name="department" value="<?= $ticket['department'] ?>">
                 <div>
                     <span>Current Status:</span> <?= $ticket['status'] ?>
                 </div>
                 <input type="hidden" id="status" name="status" value="<?= $ticket['status'] ?>">
+                <div>
+                    <span>Request Type:</span> <?= $ticket['request_type_id'] ?>
+                </div>
+                <input type="hidden" id="request_type" name="request_type" value="<?= $ticket['location'] ?>">
+
+
 
                 <div>
                     <span>Priority:</span> <?= getPriorityName($ticket['priority']) ?>
@@ -566,7 +574,7 @@ $hasNotes = !empty($notes) && array_filter($notes, function ($note) {
                 </div>
                 <div>
                     <label for="department">Department:</label>
-                    <select id="department" name="department" required>
+                    <select id="department" name="department">
                         <option hidden disabled selected value></option>
                         <?php
                         // Query the locations table to get the departments
@@ -608,6 +616,17 @@ $hasNotes = !empty($notes) && array_filter($notes, function ($note) {
                         }
                         // echo '</optgroup>';
                         ?>
+                    </select>
+                </div>
+                <div>
+                    <label for="status">Current Status:</label>
+                    <select id="status" name="status">
+                        <option value="open" <?= ($ticket['status'] == 'open') ? ' selected' : '' ?>>Open</option>
+                        <option value="closed" <?= ($ticket['status'] == 'closed') ? ' selected' : '' ?>>Closed</option>
+                        <option value="resolved" <?= ($ticket['status'] == 'resolved') ? ' selected' : '' ?>>Resolved</option>
+                        <!-- <option value="pending" <?= ($ticket['status'] == 'pending') ? ' selected' : '' ?>>Pending</option> -->
+                        <option value="vendor" <?= ($ticket['status'] == 'vendor') ? ' selected' : '' ?>>Vendor</option>
+                        <option value="maintenance" <?= ($ticket['status'] == 'maintenance') ? ' selected' : '' ?>>Maintenance</option>
                     </select>
                 </div>
                 <div>
@@ -677,17 +696,7 @@ $hasNotes = !empty($notes) && array_filter($notes, function ($note) {
                         ?>
                     </select>
                 </div>
-                <div>
-                    <label for="status">Current Status:</label>
-                    <select id="status" name="status">
-                        <option value="open" <?= ($ticket['status'] == 'open') ? ' selected' : '' ?>>Open</option>
-                        <option value="closed" <?= ($ticket['status'] == 'closed') ? ' selected' : '' ?>>Closed</option>
-                        <option value="resolved" <?= ($ticket['status'] == 'resolved') ? ' selected' : '' ?>>Resolved</option>
-                        <!-- <option value="pending" <?= ($ticket['status'] == 'pending') ? ' selected' : '' ?>>Pending</option> -->
-                        <option value="vendor" <?= ($ticket['status'] == 'vendor') ? ' selected' : '' ?>>Vendor</option>
-                        <option value="maintenance" <?= ($ticket['status'] == 'maintenance') ? ' selected' : '' ?>>Maintenance</option>
-                    </select>
-                </div>
+
                 <div>
                     <label for="priority">Priority:</label>
                     <select id="priority" name="priority">

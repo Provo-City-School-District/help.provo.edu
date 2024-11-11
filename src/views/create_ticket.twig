@@ -8,28 +8,15 @@
         <input type="hidden" name="client" value="{{ username }}">
         <div class="ticketGrid">
             <div>
-                <label for="department">Department:</label>
-                <select id="department" name="department" required>
-                    <option hidden disabled selected value></option>
-                    {% for dept in depts %}
-                        {% if user_permissions.is_tech and dept.select %}
-                        <option value="{{ dept.site_number }}" selected>{{ dept.site_name }}</option>
-                        {% else %}
-                        <option value="{{ dept.site_number }}">{{ dept.site_name }}</option>
-                        {% endif %}
-                    {% endfor %}      
-                </select>
-            </div>
-            <div>
                 <label for="location">Location:</label>
                 <select id="location" name="location" required>
                     <option hidden disabled selected value></option>
    
-                    {% for location in locations %}
+                     {% for location in locations %}
                         {% if user_permissions.is_tech and location.select %}
-                        <option value="{{ location.site_number }}" selected>{{ location.site_name }}</option>
+                            <option value="{{ location.site_number }}" {% if _get.location is defined and _get.location == location.site_number %}selected{% endif %}>{{ location.site_name }}</option>
                         {% else %}
-                        <option value="{{ location.site_number }}">{{ location.site_name }}</option>
+                            <option value="{{ location.site_number }}" {% if _get.location is defined and _get.location == location.site_number %}selected{% endif %}>{{ location.site_name }}</option>
                         {% endif %}
                     {% endfor %}
           
@@ -53,6 +40,19 @@
                 <input type="text" id="bcc_emails" name="bcc_emails" value="{{ _get['bcc_emails']|escape }}">
             </div>
         {% if user_permissions.is_tech %}
+        <div>
+                <label for="department">Department:</label>
+                <select id="department" name="department">
+                    <option hidden disabled selected value></option>
+                    {% for dept in depts %}
+                        {% if user_permissions.is_tech and dept.select %}
+                        <option value="{{ dept.site_number }}" selected>{{ dept.site_name }}</option>
+                        {% else %}
+                        <option value="{{ dept.site_number }}">{{ dept.site_name }}</option>
+                        {% endif %}
+                    {% endfor %}      
+                </select>
+            </div>
             <div>
                 <label for="assigned">Assigned to</label>
                 <select id="assigned" name="assigned">

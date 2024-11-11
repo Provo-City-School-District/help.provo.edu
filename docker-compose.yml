@@ -15,11 +15,6 @@ services:
       - /var/www/html/twig-cache/
     networks:
       - help-network
-    logging:
-      driver: syslog
-      options:
-        syslog-address: "udp://localhost:514"
-        tag: "help-web"
   help-db:
     container_name: help-db
     build:
@@ -39,11 +34,6 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - help-network
-    logging:
-      driver: syslog
-      options:
-        syslog-address: "udp://localhost:514"
-        tag: "help-db"
   help_myadmin:
     container_name: help-myadmin
     image: phpmyadmin:latest
@@ -57,11 +47,6 @@ services:
       - help-db
     networks:
       - help-network
-    logging:
-      driver: syslog
-      options:
-        syslog-address: "udp://localhost:514"
-        tag: "help-myadmin"
 networks:
   help-network:
 volumes:

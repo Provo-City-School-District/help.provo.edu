@@ -8,7 +8,7 @@ require("time_utils.php");
 require_once("ticket_utils.php");
 
 // Function to check if the current URL matches any of the specified URLs
-function isCurrentPage($urls)
+function is_current_page($urls)
 {
     $currentPage = $_SERVER['REQUEST_URI'];
     foreach ($urls as $url) {
@@ -18,21 +18,18 @@ function isCurrentPage($urls)
     }
     return false;
 }
+
+$username = "";
 if (isset($_SESSION['username'])) {
-    $userId = $_SESSION['username'];
+    $username = $_SESSION['username'];
 }
-$username = $_SESSION['username'];
 
-
-
-$subord_query = "SELECT count(supervisor_username) as supervisor_username FROM users WHERE supervisor_username = ?";
-$subord_stmt = HelpDB::get()->prepare($subord_query);
-$subord_stmt->bind_param("s", $userId);
-$subord_stmt->execute();
-$subord_result = $subord_stmt->get_result();
+$subord_result = HelpDB::get()->execute_query(
+    "SELECT COUNT(*) AS supervisor_count FROM users WHERE supervisor_username = ?",
+    [$username]
+);
 $subord_row = $subord_result->fetch_assoc();
-$subord_count = $subord_row['supervisor_username'];
-$subord_stmt->close();
+$subord_count = $subord_row['supervisor_count'];
 
 // List of Ticket pages for which you want to display a ticket sub-menu
 $ticketPages = array(
@@ -64,7 +61,7 @@ $current_page = $_SERVER['REQUEST_URI'];
 //$user_profile = '/profile.php';
 // $admin_page = '/admin.php';
 
-if (session_is_intern()) {
+if (session_logged_in() && session_is_intern()) {
     $num_assigned_intern_tickets = 0;
 
     $num_assigned_intern_tickets_query = <<<QUERY
@@ -178,7 +175,7 @@ $num_subordinate_tickets = $num_subordinate_tickets_result->fetch_column(0);
         <main id="pageContent">
             <?php
             // Check if the current page matches any of the specified URLs
-            if (isCurrentPage($ticketPages)) {
+            if (is_current_page($ticketPages)) {
                 // Display the sub-menu here
             ?>
                 <ul id="subMenu">

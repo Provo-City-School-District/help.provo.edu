@@ -29,7 +29,7 @@ $pageScripts = '/includes/js/pages/search_tickets.js';
 //====================================================================================================
 // parse the search form if it was submitted
 //====================================================================================================
-
+$combined_results = [];
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
     if (!empty($_GET)) {
@@ -66,7 +66,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         }
 
         // Combine the results from both queries into a single array
-        $combined_results = array();
         while ($row = mysqli_fetch_assoc($ticket_result)) {
             // fix '&quot' and other things appearing
             $row["name"] = strip_tags(html_entity_decode($row["name"]));
@@ -111,8 +110,8 @@ if (!$usernamesResult) {
 }
 
 // Store the usernames in an array
-$usernames = array();
-$tech_display_names = array();
+$usernames = [];
+$tech_display_names = [];
 while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
 
     if ($usernameRow['is_tech'] == 1) {

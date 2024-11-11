@@ -69,14 +69,12 @@ mysqli_stmt_close($assigned_stmt);
 mysqli_stmt_close($flagged_stmt);
 
 
-$subord_query = "SELECT count(supervisor_username) as supervisor_username FROM users WHERE supervisor_username = ?";
-$subord_stmt = HelpDB::get()->prepare($subord_query);
-$subord_stmt->bind_param("s", $username);
-$subord_stmt->execute();
-$subord_result = $subord_stmt->get_result();
+$subord_result = HelpDB::get()->execute_query(
+    "SELECT COUNT(*) AS supervisor_count FROM users WHERE supervisor_username = ?",
+    [$username]
+);
 $subord_row = $subord_result->fetch_assoc();
-$subord_count = $subord_row['supervisor_username'];
-$subord_stmt->close();
+$subord_count = $subord_row['supervisor_count'];
 
 $num_subordinate_tickets_query = <<<STR
     SELECT COUNT(*) FROM alerts WHERE employee IN

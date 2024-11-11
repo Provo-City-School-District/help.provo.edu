@@ -428,13 +428,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $remaining_tasks = [];
 
     while ($row = $remaining_tasks_result->fetch_assoc()) {
-        $tech_name = get_local_name_for_user($row["assigned_tech"]);
+        $tech_name = null;
+        $assigned_tech = $row["assigned_tech"];
+        if (isset($assigned_tech)) {
+            $tech_name = get_local_name_for_user($assigned_tech);
+        }
+
         $tech = "Unassigned";
         if ($tech_name != null) {
             $tech = $tech_name["firstname"]." ".$tech_name["lastname"];
         }
         $desc = $row["description"];
         $remaining_tasks[] =  ["tech_name" => $tech, "description" => $desc];
+    }
     }
 
 

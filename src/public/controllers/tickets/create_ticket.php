@@ -6,11 +6,11 @@ require from_root("/../vendor/autoload.php");
 require from_root("/new-controllers/base_variables.php");
 
 if (!session_id())
-	session_start();
+    session_start();
 
 $loader = new \Twig\Loader\FilesystemLoader(from_root('/../views'));
 $twig = new \Twig\Environment($loader, [
-	'cache' => from_root('/../twig-cache'),
+    'cache' => from_root('/../twig-cache'),
     'auto_reload' => true
 ]);
 
@@ -28,6 +28,7 @@ while ($row = mysqli_fetch_assoc($department_result)) {
             if ($row['sitenumber'] == 1897) {
                 $select = true;
             }
+            $_GET['location'] = 1896;
         } else {
             $loc = get_fast_client_location($_SESSION["username"]);
             if ($row['sitenumber'] == $loc) {
@@ -56,16 +57,16 @@ while ($row = mysqli_fetch_assoc($location_result)) {
 }
 
 echo $twig->render('create_ticket.twig', [
-	// base variables
-	'color_scheme' => $color_scheme,
-	'current_year' => $current_year,
-	'user_permissions' => $permissions,
-	'wo_time' => $wo_time,
-	'user_pref' => $user_pref,
-	'ticket_limit' => $ticket_limit,
-	'status_alert_type' => $status_alert_type,
-	'status_alert_message' => $status_alert_message,
-	'app_version' => $app_version,
+    // base variables
+    'color_scheme' => $color_scheme,
+    'current_year' => $current_year,
+    'user_permissions' => $permissions,
+    'wo_time' => $wo_time,
+    'user_pref' => $user_pref,
+    'ticket_limit' => $ticket_limit,
+    'status_alert_type' => $status_alert_type,
+    'status_alert_message' => $status_alert_message,
+    'app_version' => $app_version,
 
     // create_ticket variables
     'depts' => $depts,

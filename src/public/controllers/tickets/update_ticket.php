@@ -441,7 +441,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $desc = $row["description"];
         $remaining_tasks[] =  ["tech_name" => $tech, "description" => $desc];
     }
-    }
 
 
     $template_tech->remaining_tasks = $remaining_tasks;

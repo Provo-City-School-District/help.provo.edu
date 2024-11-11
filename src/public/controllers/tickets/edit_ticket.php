@@ -537,14 +537,15 @@ $hasNotes = !empty($notes) && array_filter($notes, function ($note) {
                 </div>
                 <input type="hidden" id="department" name="department" value="<?= $ticket['department'] ?>">
                 <div>
+                    <span>Current Status:</span> <?= $ticket['status'] ?>
+                </div>
+                <input type="hidden" id="status" name="status" value="<?= $ticket['status'] ?>">
+                <div>
                     <span>Request Type:</span> <?= $ticket['request_type_id'] ?>
                 </div>
                 <input type="hidden" id="request_type" name="request_type" value="<?= $ticket['location'] ?>">
 
-                <div>
-                    <span>Current Status:</span> <?= $ticket['status'] ?>
-                </div>
-                <input type="hidden" id="status" name="status" value="<?= $ticket['status'] ?>">
+
 
                 <div>
                     <span>Priority:</span> <?= getPriorityName($ticket['priority']) ?>
@@ -618,6 +619,17 @@ $hasNotes = !empty($notes) && array_filter($notes, function ($note) {
                     </select>
                 </div>
                 <div>
+                    <label for="status">Current Status:</label>
+                    <select id="status" name="status">
+                        <option value="open" <?= ($ticket['status'] == 'open') ? ' selected' : '' ?>>Open</option>
+                        <option value="closed" <?= ($ticket['status'] == 'closed') ? ' selected' : '' ?>>Closed</option>
+                        <option value="resolved" <?= ($ticket['status'] == 'resolved') ? ' selected' : '' ?>>Resolved</option>
+                        <!-- <option value="pending" <?= ($ticket['status'] == 'pending') ? ' selected' : '' ?>>Pending</option> -->
+                        <option value="vendor" <?= ($ticket['status'] == 'vendor') ? ' selected' : '' ?>>Vendor</option>
+                        <option value="maintenance" <?= ($ticket['status'] == 'maintenance') ? ' selected' : '' ?>>Maintenance</option>
+                    </select>
+                </div>
+                <div>
                     <label for="request_type">Request Type:</label>
                     <select id="request_type" name="request_type">
                         <option value="0">Select a more specific request type otherwise (Other)</option>
@@ -684,17 +696,7 @@ $hasNotes = !empty($notes) && array_filter($notes, function ($note) {
                         ?>
                     </select>
                 </div>
-                <div>
-                    <label for="status">Current Status:</label>
-                    <select id="status" name="status">
-                        <option value="open" <?= ($ticket['status'] == 'open') ? ' selected' : '' ?>>Open</option>
-                        <option value="closed" <?= ($ticket['status'] == 'closed') ? ' selected' : '' ?>>Closed</option>
-                        <option value="resolved" <?= ($ticket['status'] == 'resolved') ? ' selected' : '' ?>>Resolved</option>
-                        <!-- <option value="pending" <?= ($ticket['status'] == 'pending') ? ' selected' : '' ?>>Pending</option> -->
-                        <option value="vendor" <?= ($ticket['status'] == 'vendor') ? ' selected' : '' ?>>Vendor</option>
-                        <option value="maintenance" <?= ($ticket['status'] == 'maintenance') ? ' selected' : '' ?>>Maintenance</option>
-                    </select>
-                </div>
+
                 <div>
                     <label for="priority">Priority:</label>
                     <select id="priority" name="priority">

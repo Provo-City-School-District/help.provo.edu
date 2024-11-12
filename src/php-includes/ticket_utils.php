@@ -10,22 +10,22 @@ function session_logged_in()
 
 function session_is_tech()
 {
-    return $_SESSION["permissions"]["is_tech"] != 0;
+    return isset($_SESSION["permissions"]["is_tech"]) && $_SESSION["permissions"]["is_tech"] != 0;
 }
 
 function session_is_admin()
 {
-    return $_SESSION["permissions"]["is_admin"] != 0;
+    return isset($_SESSION["permissions"]["is_admin"]) && $_SESSION["permissions"]["is_admin"] != 0;
 }
 
 function session_is_intern()
 {
-    return $_SESSION["permissions"]["is_intern"] != 0;
+    return isset($_SESSION["permissions"]["is_intern"]) && $_SESSION["permissions"]["is_intern"] != 0;
 }
 
 function session_is_supervisor()
 {
-    return $_SESSION["permissions"]["is_supervisor"] != 0;
+    return isset($_SESSION["permissions"]["is_supervisor"]) && $_SESSION["permissions"]["is_supervisor"] != 0;
 }
 
 function email_if_valid(string $email)

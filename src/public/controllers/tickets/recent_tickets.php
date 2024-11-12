@@ -13,11 +13,18 @@ $twig = new \Twig\Environment($loader, [
 $ticket_query = <<<QUERY
 	SELECT tickets.*, GROUP_CONCAT(DISTINCT alerts.alert_level) AS alert_levels
 	FROM tickets
-	LEFT JOIN notes ON tickets.id = notes.linked_id 
-	LEFT JOIN ticket_logs ON tickets.id = ticket_logs.ticket_id
+	LEFT JOIN (
+		SELECT linked_id
+		FROM notes
+		WHERE creator = ? AND created >= DATE_SUB(NOW(), INTERVAL 2 DAY)
+	) AS recent_notes ON tickets.id = recent_notes.linked_id
+	LEFT JOIN (
+		SELECT ticket_id
+		FROM ticket_logs
+		WHERE user_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 2 DAY)
+	) AS recent_logs ON tickets.id = recent_logs.ticket_id
 	LEFT JOIN alerts ON tickets.id = alerts.ticket_id
-	WHERE ((notes.creator = ? AND notes.created >= DATE_SUB(NOW(), INTERVAL 2 DAY)) 
-	OR (ticket_logs.user_id = ? AND ticket_logs.created_at >= DATE_SUB(NOW(), INTERVAL 2 DAY)))
+	WHERE recent_notes.linked_id IS NOT NULL OR recent_logs.ticket_id IS NOT NULL
 	GROUP BY tickets.id
 QUERY;
 
@@ -40,9 +47,9 @@ echo $twig->render('recent_tickets.twig', [
 	'subord_count' => $subord_count,
 	'num_assigned_tickets' => $num_assigned_tickets,
 	'num_flagged_tickets' => $num_flagged_tickets,
-    'num_assigned_intern_tickets' => $num_assigned_intern_tickets,
-    'num_assigned_tasks' => $num_assigned_tasks,
-    'num_subordinate_tickets' => $num_subordinate_tickets,
+	'num_assigned_intern_tickets' => $num_assigned_intern_tickets,
+	'num_assigned_tasks' => $num_assigned_tasks,
+	'num_subordinate_tickets' => $num_subordinate_tickets,
 
 
 	// ticket_table_base variables

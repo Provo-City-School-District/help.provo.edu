@@ -37,13 +37,6 @@ if (isset($_POST["visible_to_client"])) {
     $visible_to_client = true;
 }
 
-// // Super crusty, open to other ideas, but this seemed to work for now
-// // Check if the note content matches the last note content stored in the session for the same ticket
-// if (isset($_SESSION['last_note']) && $_SESSION['last_note']['ticket_id'] === $ticket_id && $_SESSION['last_note']['content'] === $note_content) {
-//     log_app(LOG_INFO, "Duplicate note detected");
-//     $_SESSION['current_status'] = "Duplicate note detected";
-//     $_SESSION['status_type'] = "error";
-// } else {
 // Add the note if it doesn't match the last note content for the same ticket
 $add_note_result = create_note(
     $ticket_id,
@@ -79,8 +72,5 @@ mysqli_stmt_close($update_stmt);
 // Check if the ticket has an alert about not being updated in last 48 hours and clear it since the ticket was just updated.
 removeAlert(HelpDB::get(), $alert48Message, $ticket_id);
 removeAlert(HelpDB::get(), $alert7DayMessage, $ticket_id);
-// }
 
-// Redirect back to the edit ticket page
-header("Location: edit_ticket.php?id=$ticket_id");
 exit();

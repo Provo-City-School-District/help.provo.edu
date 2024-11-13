@@ -234,6 +234,10 @@ table.dataTable.no-footer {
 	border: 2px solid var(--theme-table-border-color);
 }
 
+colgroup {
+	display: none;
+}
+
 th,
 td {
 	border: 1px solid var(--theme-primary);
@@ -719,6 +723,10 @@ select {
 
 	.totalTime span {
 		display: inline-block;
+	}
+
+	colgroup {
+		display: unset;
 	}
 
 	th,

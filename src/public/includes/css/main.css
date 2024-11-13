@@ -17,12 +17,10 @@ body {
 
 a {
 	color: var(--theme-url-color);
-
 }
 
 a:hover {
 	color: var(--theme-tertiary);
-
 }
 
 #expand-row {
@@ -71,15 +69,12 @@ blockquote {
 	background-color: transparent;
 }
 
-
-
 .canvasjs-chart-credit {
 	display: none;
 }
 
 #wrapper {
 	width: 100%;
-	/* padding:1em; */
 }
 
 .horizontalContainer {
@@ -117,7 +112,6 @@ blockquote {
 	color: red;
 	display: inline;
 }
-
 
 .hidden {
 	display: none;
@@ -185,23 +179,12 @@ blockquote {
 	align-items: center;
 }
 
-/*
-.new-note-button {
-	margin-bottom: 1em;
-	margin-top: 1em;
-}
-
-.right .new-note-button {
-	margin-top: unset;
-}
-*/
 /* =============================== Header Styles =============================== */
 #mainHeader {
 	background: linear-gradient(to bottom, var(--header-grad-start), var(--header-grad-end) 50%, var(--header-grad-end) 55%, var(--header-grad-start));
 	display: grid;
 	grid-template-columns: 1fr;
 	gap: 1em;
-	/* max-height: 170px; */
 	padding: 1em;
 	justify-items: center;
 }
@@ -249,15 +232,6 @@ table,
 table.dataTable.no-footer {
 	width: 100%;
 	border: 2px solid var(--theme-table-border-color);
-}
-
-table[style] {
-	width: 100% !important;
-}
-
-/* Data tables throwing in colgroup. This hides it till we find a solution. */
-colgroup {
-	display: none;
 }
 
 th,
@@ -375,6 +349,16 @@ ol#subMenu {
 	padding: 1em;
 }
 
+.ticketButtons {
+	place-items: start;
+
+}
+
+.ticketButtons>div {
+	display: flex;
+	gap: .6em;
+}
+
 .ticketGrid {
 	display: grid;
 	margin-bottom: 1em;
@@ -385,7 +369,13 @@ ol#subMenu {
 	display: grid;
 	grid-template-columns: 1fr;
 	background-color: var(--theme-white);
+}
 
+.ticketGrid .currentClient {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	align-items: center;
+	padding: 1em;
 }
 
 .ticketGrid label,
@@ -500,6 +490,48 @@ select {
 	display: inline-block;
 }
 
+.note .note_id {
+	font-size: 50%;
+	display: block;
+	text-align: right;
+}
+
+.note_id .created_date {
+	display: none;
+}
+
+.note_id a,
+.note_id span {
+	display: block;
+}
+
+#profile_time_table {
+	max-width: 800px;
+}
+
+#maximum-file-size-text {
+	padding: 3px;
+	margin-top: 5px;
+	font-size: 80%;
+}
+
+#ticket-title-container {
+	display: inline-block;
+	cursor: pointer;
+	margin-bottom: 20px;
+	font-size: 32px;
+}
+
+#ticket-title-container a {
+	color: var(--theme-text-color);
+	text-decoration: none;
+}
+
+#ticket-title-container a:hover {
+	color: var(--theme-url-color);
+	text-decoration: underline;
+}
+
 /* =============================== Alerts Styles =============================== */
 .alerts_wrapper {
 	margin: 0 auto;
@@ -508,7 +540,6 @@ select {
 .alerts_wrapper p {
 	padding: .5em 1em;
 	margin: 0 0 2px 0;
-
 }
 
 .alerts_wrapper a {
@@ -522,7 +553,6 @@ select {
 .alerts_wrapper p a:hover {
 	color: var(--theme-url-color);
 	text-decoration: underline;
-
 }
 
 .alerts_wrapper .close-alert {
@@ -575,7 +605,6 @@ select {
 	height: 45px;
 }
 
-
 /* =============================== User Management Screen =============================== */
 .userPermissions div {
 	display: grid;
@@ -601,7 +630,6 @@ select {
 #file_list .file_del {
 	color: #c70000;
 	cursor: pointer;
-
 }
 
 #file_list .file_download {
@@ -611,6 +639,42 @@ select {
 }
 
 /* =============================== Responsive Styles =============================== */
+
+@media (max-width: 400px) {
+
+	#headerNav,
+	#subMenu {
+		font-size: 12px;
+	}
+}
+
+/* End of min0width: 400px media query */
+
+@media (min-width: 750px) {
+
+	.ticketButtons {
+		place-items: end;
+	}
+
+	#subMenu {
+		display: flex;
+		justify-content: var(--header-location);
+		align-items: center;
+		gap: 2em;
+	}
+
+	#subMenu li {
+		margin: unset;
+	}
+
+	.alerts_wrapper {
+		width: 60%;
+		max-width: 650px;
+	}
+}
+
+/* End of min0width: 750px media query */
+
 @media(min-width: 800px) {
 	#mainHeader {
 		grid-template-columns: 175px 1fr 250px;
@@ -647,7 +711,6 @@ select {
 	.time_input input {
 		font-size: unset;
 		padding: unset;
-
 	}
 
 	.totalTime {
@@ -678,47 +741,23 @@ select {
 
 	.grid3 {
 		grid-template-columns: repeat(3, 1fr);
-
 	}
 
 	.ticketsTable {
 		font-size: 80%;
 	}
 
-	/* Table Column Widths */
 	table .tableUser {
 		width: 100px;
 	}
-}
 
-@media (min-width: 750px) {
 	.ticketGrid {
+		display: grid;
 		grid-template-columns: 1fr 1fr;
-		gap: 1em;
 	}
 
-	#subMenu {
-		display: flex;
-		justify-content: var(--header-location);
-		align-items: center;
-		gap: 2em;
-	}
-
-	#subMenu li {
-		margin: unset;
-	}
-
-	.alerts_wrapper {
-		width: 60%;
-		max-width: 650px;
-	}
-}
-
-@media (min-width:800px) {
 	.ticketGrid>* {
-		display: flex;
 		align-items: center;
-
 	}
 
 	.form-group {
@@ -732,14 +771,6 @@ select {
 		grid-template-columns: 1fr 375px;
 	}
 
-
-
-	.ticketGrid span,
-	.ticketGrid label {
-		width: 200px;
-		/* flex: 1; */
-	}
-
 	.ticketGrid input,
 	.ticketGrid select {
 		flex: 3;
@@ -747,8 +778,7 @@ select {
 
 	.ticketGrid span:first-of-type {
 		margin-right: 5px;
-		max-width: 200px;
-		margin-bottom: unset;
+		margin-bottom: .5em;
 	}
 
 	.currentClient {
@@ -788,52 +818,25 @@ select {
 	}
 }
 
-@media (max-width: 400px) {
+/* End of min-width: 800px media query */
 
-	#headerNav,
-	#subMenu {
-		font-size: 12px;
+@media(min-width: 1050px) {
+	.ticketGrid {
+		gap: 1em;
+	}
+
+	.ticketGrid span,
+	.ticketGrid label {
+		width: 200px;
+	}
+
+	.ticketGrid>*:not(.currentClient) {
+		display: flex;
+	}
+
+	.ticketGrid span:first-of-type {
+		margin-bottom: unset;
 	}
 }
 
-.note .note_id {
-	font-size: 50%;
-	display: block;
-	text-align: right;
-}
-
-.note_id .created_date {
-	display: none;
-}
-
-.note_id a,
-.note_id span {
-	display: block;
-}
-
-#profile_time_table {
-	max-width: 800px;
-}
-
-#maximum-file-size-text {
-	padding: 3px;
-	margin-top: 5px;
-	font-size: 80%;
-}
-
-#ticket-title-container {
-	display: inline-block;
-	cursor: pointer;
-	margin-bottom: 20px;
-	font-size: 32px;
-}
-
-#ticket-title-container a {
-	color: var(--theme-text-color);
-	text-decoration: none;
-}
-
-#ticket-title-container a:hover {
-	color: var(--theme-url-color);
-	text-decoration: underline;
-}
+/* End of min-width: 1050px media query */

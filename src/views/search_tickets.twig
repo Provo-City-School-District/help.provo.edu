@@ -66,7 +66,7 @@
     <div class="form-group">
         <label for="search_department">Department:</label>
         <select id="search_department" name="search_department">
-            <option value="" selected></option>
+            <option value="" selected hidden></option>
                 {% for department in departments %}
                 <option value="{{ department.sitenumber }}" {{ department.sitenumber == search_department ? 'selected' : '' }}>{{ department.location_name }}</option>
                 {% endfor %}
@@ -75,7 +75,7 @@
     <div class="form-group">
         <label for="search_location">Location:</label>
         <select id="search_location" name="search_location">
-            <option value="" selected></option>
+            <option value="" selected hidden></option>
                 {% for location in locations %}
                 <option value="{{ location.sitenumber }}" {{ location.sitenumber == search_location ? 'selected' : '' }}>{{ location.location_name }}</option>
                 {% endfor %}

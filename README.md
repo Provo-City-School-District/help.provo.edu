@@ -1,5 +1,5 @@
 # help.provo.edu
-Version: 1.1.02
+This is the repository for the help.provo.edu website. This website is a helpdesk ticketing system for the Provo City School District. It is built using PHP, MariaDB, and LDAP for authentication. It is designed to be run in a docker container environment.
 ## Default Ports
 these are the default ports that the containers will use. If you need to change them, you can do so in the docker-compose.yml file.
 - 8080 - HTTP
@@ -9,6 +9,7 @@ these are the default ports that the containers will use. If you need to change 
 ## Requirements
 - Requires Docker Engine and Docker Compose to be installed on the host machine.
 - Requires a .env file in the root directory with the following variables set. make sure to wrap passwords in quotes to prevent syntax errors when they are loaded into CLI variables.
+- Requires a backup of the database to be restored into the database container. This can be done using PHPMyAdmin.
 
 ```
 LDAP_PRIMARY_HOST=
@@ -75,10 +76,10 @@ If you're setting up a fresh development instance the database should initialize
 - CanvasJS: https://canvasjs.com/php-charts/
 - Composer: https://getcomposer.org/
 - Twig (3.x): https://twig.symfony.com/
-- PHPMailer (6.9.1): https://github.com/PHPMailer/PHPMailer
+- PHPMailer (6.9.2): https://github.com/PHPMailer/PHPMailer
 - Data Tables (2.0.7): https://datatables.net/
 - TinyMCE (7.1): https://www.tiny.cloud/docs/tinymce/6/
-- HTMLPurifier (4.17): https://htmlpurifier.org/
+- HTMLPurifier (4.18): https://htmlpurifier.org/
 - Jquery (3.7.1): https://jquery.com/
 - Jquery UI (1.13.3): https://jqueryui.com/
 - Lightbox2 (2.11.4) - https://github.com/lokesh/lightbox2

@@ -484,8 +484,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $template_client->description = html_entity_decode($updatedDescription);
     $template_client->url_paths = $url_paths;
 
-    echo $template_tech;
-
     $sent_tech_email_log_msg = "Sent tech-privileged emails to: ";
     $sent_client_email_log_msg = "Sent non-tech emails to: ";
 

@@ -1276,7 +1276,7 @@ $hasNotes = !empty($notes) && array_filter($notes, function ($note) {
                 <br>
                 <input type="submit" class="button" value="Submit Note">
             </form>
-            <script src="../../includes/js/jquery-3.7.1.min.js"></script>
+            <script src="/includes/js/external/jquery-3.7.1.min.js"></script>
             <script>
                 $('input[name=date_override_enable]').on('change', function() {
                     if (!this.checked) {

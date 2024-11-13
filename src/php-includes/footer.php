@@ -21,12 +21,12 @@
     </div>
 </div>
 </div>
-<script src="/includes/js/jquery-3.7.1.min.js" type="text/javascript"></script>
-<script src="/includes/js/jquery-ui.min.js" type="text/javascript"></script>
-<script src="/includes/js/lightbox.js"></script>
+<script src="/includes/js/external/jquery-3.7.1.min.js" type="text/javascript"></script>
+<script src="/includes/js/external/jquery-ui.min.js" type="text/javascript"></script>
+<script src="/includes/js/external/lightbox.js"></script>
 <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
-<script src="/includes/js/dataTables/jquery.dataTables.min.js" type="text/javascript"></script>
-<script src="/includes/js/tinymce/tinymce.min.js" referrerpolicy="origin"></script>
+<script src="/includes/js/external/dataTables/jquery.dataTables.min.js" type="text/javascript"></script>
+<script src="/includes/js/external/tinymce/tinymce.min.js" referrerpolicy="origin"></script>
 <script>
     var userPref = '<?php echo isset($_SESSION['color_scheme']) ? $_SESSION['color_scheme'] : 'light'; ?>';
     var ticketLimit = '<?php echo isset($_SESSION['ticket_limit']) ? $_SESSION['ticket_limit'] : 10; ?>';

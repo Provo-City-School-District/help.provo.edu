@@ -100,10 +100,10 @@ $num_subordinate_tickets = $num_subordinate_tickets_result->fetch_column(0);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Help For Provo City School District</title>
-    <link rel="stylesheet" href="/includes/js/dataTables/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="/includes/js/external/dataTables/jquery.dataTables.min.css">
     <link rel="stylesheet" href="/includes/css/main.css?v=<?= $app_version; ?>">
     <link rel="icon" type="image/png" href="/includes/img/favicons/favicon-16x16.png" sizes="16x16">
-    <link rel="stylesheet" href="/includes/css/jquery-ui.min.css">
+    <link rel="stylesheet" href="/includes/css/external/jquery-ui.min.css">
     <?php
     //load color scheme if set. loads light scheme if not set
     if (isset($_SESSION['color_scheme'])) {
@@ -122,7 +122,7 @@ $num_subordinate_tickets = $num_subordinate_tickets_result->fetch_column(0);
     <?php
     }
     ?>
-    <link href="/includes/css/lightbox.css" rel="stylesheet" />
+    <link href="/includes/css/external/lightbox.css" rel="stylesheet" />
 </head>
 
 <body>

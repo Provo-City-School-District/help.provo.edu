@@ -24,7 +24,6 @@
 <script src="/includes/js/external/jquery-3.7.1.min.js" type="text/javascript"></script>
 <script src="/includes/js/external/jquery-ui.min.js" type="text/javascript"></script>
 <script src="/includes/js/external/lightbox.js"></script>
-<script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
 <script src="/includes/js/external/dataTables/jquery.dataTables.min.js" type="text/javascript"></script>
 <script src="/includes/js/external/tinymce/tinymce.min.js" referrerpolicy="origin"></script>
 <script>

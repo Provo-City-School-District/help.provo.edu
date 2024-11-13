@@ -412,7 +412,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $all_attachment_paths = explode(',', $attachment_data["attachment_path"]);
     $attachment_paths = [];
-    $url_paths = [];
+    $attachment_urls = [];
 
     foreach ($all_attachment_paths as $path) {
         $real_path = realpath(from_root("/../uploads/$path"));
@@ -422,7 +422,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $root = getenv('ROOTDOMAIN');
             $filename = basename($path);
             $url = "$root/upload_viewer.php?file=$filename";
-            $url_paths[] = $url;
+            $attachment_urls[] = ["url" => $url, "filename" => $filename];
         } else {
             $attachment_paths[] = $path;
         }
@@ -448,7 +448,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $template_tech->description = html_entity_decode($updatedDescription);
     $template_tech->room = empty($updatedRoom) ? "<empty>" : $updatedRoom;
     $template_tech->phone = empty($updatedPhone) ? "<empty>" : $updatedPhone;
-    $template_tech->url_paths = $url_paths;
+    $template_tech->attachment_urls = $attachment_urls;
 
     $remaining_tasks_query = "SELECT assigned_tech, description FROM ticket_tasks WHERE (completed != 1 AND ticket_id = ?)";
 
@@ -470,7 +470,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $remaining_tasks[] =  ["tech_name" => $tech, "description" => $desc];
     }
 
-
     $template_tech->remaining_tasks = $remaining_tasks;
 
     $template_client = new Template(from_root("/includes/templates/{$template_path}_client.phtml"));
@@ -482,7 +481,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $template_client->notes_message = $notesMessageClient;
     $template_client->site_url = getenv('ROOTDOMAIN');
     $template_client->description = html_entity_decode($updatedDescription);
-    $template_client->url_paths = $url_paths;
+    $template_client->attachment_urls = $attachment_urls;
+
 
     $sent_tech_email_log_msg = "Sent tech-privileged emails to: ";
     $sent_client_email_log_msg = "Sent non-tech emails to: ";

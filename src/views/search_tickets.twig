@@ -64,19 +64,21 @@
         </select>
     </div>
     <div class="form-group">
-        <label for="search_location">Department/Location:</label>
+        <label for="search_department">Department:</label>
+        <select id="search_department" name="search_department">
+            <option value="" selected></option>
+                {% for department in departments %}
+                <option value="{{ department.sitenumber }}" {{ department.sitenumber == search_department ? 'selected' : '' }}>{{ department.location_name }}</option>
+                {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="search_location">Location:</label>
         <select id="search_location" name="search_location">
             <option value="" selected></option>
-            <optgroup label="Department">
-                {% for department in departments %}
-                <option value="{{ department.sitenumber }}" {{ department.sitenumber == search_location ? 'selected' : '' }}>{{ department.location_name }}</option>
-                {% endfor %}
-            </optgroup>
-            <optgroup label="Location">
                 {% for location in locations %}
                 <option value="{{ location.sitenumber }}" {{ location.sitenumber == search_location ? 'selected' : '' }}>{{ location.location_name }}</option>
                 {% endfor %}
-            </optgroup>
         </select>
     </div>
     <div class="form-group">
@@ -117,6 +119,7 @@
 
 {% block content %}
     {% if results|length > 0 %}
+     <strong>{{ get_location_name_from_id(result.department) }}</strong>
          <table id="DataTables_Table_0" class="search-data-table ticketsTable">
             <thead>
                 <tr>
@@ -124,6 +127,7 @@
                     <th class="details">Request Detail</th>
                     {# <th class="tLatestNote">Latest Note</th> #}
                     <th class="client">Client</th>
+                    <th class="department">Department</th>
                     <th class="tLocation">Location</th>
                     <th class="category">Request Category</th>
                     <th class="status">Current Status</th>
@@ -150,7 +154,11 @@
                                 
                             {% endif %}
                         </td> #}
-                            
+                            <td data-cell="Department">
+                                {% if result.department is defined %}
+                                    <strong>{{ get_location_name_from_id(result.department) }}</strong>
+                                {% endif %}
+                            </td>
                             <td data-cell="Location" class="tableLocation">
                                 {% if result.location is defined %}
                                     <strong>{{ get_location_name_from_id(result.location) }}</strong> RM {{ result.room }}
@@ -177,6 +185,11 @@
                             <td data-cell="Client">{{ result.client_name["firstname"] }} {{ result.client_name["lastname"] }}</td>
                                 {# TODO: Ommited the latest note section #}
                             {# <td class="latestNote" data-cell="Latest Note:"><strong></td> #}
+                            <td data-cell="Department">
+                                {% if result.DEPARTMENT is defined %}
+                                    {{ get_location_name_from_id(result.LOCATION_ID, true) }}
+                                {% endif %}
+                            </td>
                             <td data-cell="Location">
                                 {% if result.LOCATION_ID is defined %}
                                     {{ get_location_name_from_id(result.LOCATION_ID, true) }}

@@ -59,6 +59,11 @@ function send_email(
 
         // Make sure line is 70 chars max and uses \r\n (RFC 2822)
         $email_body = wordwrap($message, 70, "\r\n");
+
+        // Replace 'WO#' with the URL
+        $url = "https://help.provo.edu/controllers/tickets/edit_ticket.php?id=";
+        $email_body = str_replace('WO#', $url, $email_body);
+
         $mailer->Body = $email_body;
 
         if ($cc_recipients) {

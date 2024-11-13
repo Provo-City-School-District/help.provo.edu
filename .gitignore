@@ -1,5 +1,6 @@
 /db_data
 .env
+docker-compose.yml
 src/vendor
 src/twig-cache
 .DS_Store

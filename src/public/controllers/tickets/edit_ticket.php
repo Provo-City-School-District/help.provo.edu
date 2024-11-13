@@ -47,7 +47,6 @@ if ($is_ticket_shared_res->num_rows > 0) {
 
     while ($row = $is_ticket_shared_res->fetch_assoc()) {
         $tmp_username = $row["username"];
-        log_app(LOG_INFO, "is_ticket_shared fetched username: $tmp_username ");
         if ($tmp_username != $username)
             $ticket_shared_usernames[] = $tmp_username;
     }

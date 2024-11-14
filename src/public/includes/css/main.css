@@ -725,10 +725,6 @@ select {
 		display: inline-block;
 	}
 
-	colgroup {
-		display: unset;
-	}
-
 	th,
 	td {
 		display: table-cell;

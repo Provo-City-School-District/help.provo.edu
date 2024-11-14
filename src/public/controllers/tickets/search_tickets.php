@@ -11,6 +11,7 @@ require "sanitization_utils.php";
 $search_id = '';
 $search_name = '';
 $search_location = '';
+$search_department = '';
 $search_employee = '';
 $search_client = '';
 $search_status = '';
@@ -19,12 +20,6 @@ $search_start_date = '';
 $search_end_date = '';
 $dates_searched = [];
 $pageScripts = '/includes/js/pages/search_tickets.js';
-
-//// I dont think this is needed here anymore.
-////
-// Query the locations table to get the location information
-// $location_query = "SELECT sitenumber, location_name FROM locations ORDER BY location_name ASC";
-// $location_result = HelpDB::get()->execute_query($location_query);
 
 //====================================================================================================
 // parse the search form if it was submitted
@@ -37,6 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $search_id = isset($_GET['search_id']) ? mysqli_real_escape_string(HelpDB::get(), $_GET['search_id']) : '';
         $search_name = isset($_GET['search_name']) ? mysqli_real_escape_string(HelpDB::get(), $_GET['search_name']) : '';
         $search_location = isset($_GET['search_location']) ? mysqli_real_escape_string(HelpDB::get(), $_GET['search_location']) : '';
+        $search_department = isset($_GET['search_department']) ? mysqli_real_escape_string(HelpDB::get(), $_GET['search_department']) : '';
         $search_employee = isset($_GET['search_employee']) ? mysqli_real_escape_string(HelpDB::get(), $_GET['search_employee']) : '';
         $search_client = isset($_GET['search_client']) ? mysqli_real_escape_string(HelpDB::get(), $_GET['search_client']) : '';
         $search_status = isset($_GET['search_status']) ? mysqli_real_escape_string(HelpDB::get(), $_GET['search_status']) : '';
@@ -48,6 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
         // Query the archived_location_id values for the given sitenumber
         $archived_location_ids = array();
+        $archived_department_ids = array();
         $arch_location_query = "SELECT archived_location_id FROM locations WHERE sitenumber = '$search_location'";
         $arch_location_result = HelpDB::get()->query($arch_location_query);
         if ($arch_location_result->num_rows > 0) {
@@ -127,8 +124,6 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
 }
 
 asort($tech_display_names);
-
-
 //====================================================================================================
 //Display View
 //====================================================================================================
@@ -182,6 +177,7 @@ echo $twig->render('search_tickets.twig', [
     'search_id' => $search_id,
     'search_name' => $search_name,
     'search_location' => $search_location,
+    'search_department' => $search_department,
     'search_status' => $search_status,
     'search_priority' => $search_priority,
     'search_start_date' => $search_start_date,
@@ -203,7 +199,7 @@ function get_location_name_from_id($location_sw_id, $archived = false)
 {
     $location_name = "";
     if ($location_sw_id === null || $location_sw_id === "") {
-        return "Unknown Location";
+        return "Unknown";
     }
     if ($archived) {
         $location_name_result = HelpDB::get()->execute_query("SELECT location_name FROM locations WHERE archived_location_id = ?", [$location_sw_id]);

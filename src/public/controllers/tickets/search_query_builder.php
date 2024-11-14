@@ -29,7 +29,9 @@ if (!empty($search_name)) {
 if (!empty($search_id)) {
     $ticket_query .= " AND id LIKE '" . $search_id . "'";
 }
-
+if (!empty($search_department)) {
+    $ticket_query .= " AND department LIKE '$search_department'";
+}
 
 if (!empty($search_location)) {
     $ticket_query .= " AND location LIKE '%$search_location%'";

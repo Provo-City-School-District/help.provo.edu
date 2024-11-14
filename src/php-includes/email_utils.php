@@ -1,11 +1,10 @@
 <?php
 require from_root("/../vendor/autoload.php");
 require_once "functions.php";
+require_once "file_upload_utils.php";
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
-
-const MAX_ATTACHMENT_EMAIL_SIZE = 5 * 1024 * 1024;
 
 function email_address_from_username(string $username)
 {
@@ -86,22 +85,9 @@ function send_email(
                     $real_path = from_root("/../uploads/$attachment_base");
                     $file_size = filesize($real_path);
                     $file_extension = pathinfo($real_path, PATHINFO_EXTENSION);
-                    $extension_is_valid = in_array($file_extension, [
-                        "png",
-                        "jpg",
-                        "jpeg",
-                        "heic",
-                        "pdf",
-                        "doc",
-                        "docx",
-                        "xls",
-                        "xlsx",
-                        "numbers",
-                        "pages",
-                        "txt",
-                    ]);
+                    $extension_is_valid = in_array($file_extension, get_allowed_extensions());
                     if (
-                        $file_size <= MAX_ATTACHMENT_EMAIL_SIZE &&
+                        $file_size <= get_max_attachment_file_size() &&
                         $extension_is_valid
                     ) {
                         $mailer->addAttachment($real_path);

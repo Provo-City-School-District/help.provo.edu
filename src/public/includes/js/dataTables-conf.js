@@ -9,21 +9,7 @@ $(document).ready(function () {
     pageLength: ticketLimit, // Enable pagination
     stateSave: true, // Enable state saving
     ordering: true, // Enable sorting
-    columns: [
-      { width: "5%" },
-      { width: "30%" },
-      { width: "15%" },
-      { width: "5%" },
-      { width: "5%" },
-      { width: "5%" },
-      { width: "5%" },
-      { width: "5%" },
-      { width: "5%" },
-      { width: "5%" },
-      { width: "5%" },
-      { width: "5%" },
-      { width: "5%" },
-    ],
+    autoWidth: false, // Disable auto width calculation
   };
 
   // Modify properties for specific cases
@@ -56,7 +42,7 @@ $(document).ready(function () {
     pageLength: 50, // Set the number of rows per page
     stateSave: true, // Enable state saving
     ordering: true, // Enable sorting
-    autoWidth: true, // Disable auto width calculation
+    autoWidth: false, // Disable auto width calculation
   });
 });
 

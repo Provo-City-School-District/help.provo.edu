@@ -400,16 +400,11 @@ $hasNotes = !empty($notes) && array_filter($notes, function ($note) {
         <div id="search-results"></div>
     </div>
     <!-- Form for updating ticket information -->
-    <div class="right">
-        <div style="display: flex; gap: 1em;">
+    <div class="ticketButtons">
+        <div>
             <?php if ($readonly && !session_is_intern() && $ticket['status'] != 'closed' && !$hasNotes) : ?>
                 <button id="close-ticket-button" class="button">Close Ticket</button>
             <?php endif; ?>
-
-
-
-
-
             <?php if (!$readonly || $ticket['status'] != 'closed') : ?>
                 <button class="new-note-button button">New Note</button>
             <?php endif; ?>
@@ -1281,7 +1276,7 @@ $hasNotes = !empty($notes) && array_filter($notes, function ($note) {
                 <br>
                 <input type="submit" class="button" value="Submit Note">
             </form>
-            <script src="../../includes/js/jquery-3.7.1.min.js"></script>
+            <script src="/includes/js/external/jquery-3.7.1.min.js"></script>
             <script>
                 $('input[name=date_override_enable]').on('change', function() {
                     if (!this.checked) {

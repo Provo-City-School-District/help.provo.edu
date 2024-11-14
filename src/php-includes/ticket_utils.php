@@ -78,7 +78,7 @@ function isWeekend($date)
 
 function isExcludedDate($date)
 {
-    $exclude_result = HelpDB::get()->query("SELECT COUNT(*) as count FROM exclude_days WHERE exclude_day = '$date'");
+    $exclude_result = HelpDB::get()->execute_query("SELECT COUNT(*) as count FROM exclude_days WHERE exclude_day = ?", [$date]);
     $row = $exclude_result->fetch_assoc();
 
     if ($row['count'] > 0) {

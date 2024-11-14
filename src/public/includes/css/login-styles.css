@@ -26,6 +26,11 @@
 
 }
 
+#loginWrapper a:hover {
+	background-color: var(--theme-secondary);
+	color: var(--theme-white);
+}
+
 .welcomeMessage {
 	text-align: center;
 	font-size: 3em;

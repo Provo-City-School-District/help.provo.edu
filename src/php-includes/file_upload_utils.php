@@ -9,6 +9,11 @@ function MiB(int $bytes)
     return KiB($bytes) * 1024;
 }
 
+function get_max_attachment_file_size()
+{
+    return MiB(10);
+}
+
 function get_max_file_size()
 {
     return MiB(100);

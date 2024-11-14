@@ -196,3 +196,4 @@ display_tickets_table($ticket_result, HelpDB::get());
     })
 </script>
 <?php include("footer.php"); ?>
+<script src="/includes/js/external/canvasjs.min.js"></script>

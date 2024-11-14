@@ -6,6 +6,7 @@ require_once('helpdbconnect.php');
 require("ticket_utils.php");
 require_once("email_utils.php");
 require_once("template.php");
+require_once("file_upload_utils.php");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $old_client = null;
@@ -401,6 +402,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $subject_status = "Updated";
     }
 
+    $result = HelpDB::get()->execute_query(
+        "SELECT attachment_path from help.tickets WHERE id = ?", [$ticket_id]);
+    if (!$result) {
+        log_app(LOG_ERR, "Failed to get old attachment_path");
+    }
+
+    $attachment_data = $result->fetch_assoc();
+
+    $all_attachment_paths = explode(',', $attachment_data["attachment_path"]);
+    $attachment_paths = [];
+    $attachment_urls = [];
+
+    foreach ($all_attachment_paths as $path) {
+        $real_path = realpath(from_root("/../uploads/$path"));
+        $file_size = filesize($real_path);
+
+        if ($file_size >= get_max_attachment_file_size()) {
+            $root = getenv('ROOTDOMAIN');
+            $filename = basename($path);
+            $url = "$root/upload_viewer.php?file=$filename";
+            $attachment_urls[] = ["url" => $url, "filename" => $filename];
+        } else {
+            $attachment_paths[] = $path;
+        }
+    }
+
     // message for gui to display
     $client_email = email_address_from_username($updatedClient);
     $ticket_subject = "Ticket " . $ticket_id . " ($subject_status) - " . $updatedName;
@@ -421,6 +448,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $template_tech->description = html_entity_decode($updatedDescription);
     $template_tech->room = empty($updatedRoom) ? "<empty>" : $updatedRoom;
     $template_tech->phone = empty($updatedPhone) ? "<empty>" : $updatedPhone;
+    $template_tech->attachment_urls = $attachment_urls;
 
     $remaining_tasks_query = "SELECT assigned_tech, description FROM ticket_tasks WHERE (completed != 1 AND ticket_id = ?)";
 
@@ -442,9 +470,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $remaining_tasks[] =  ["tech_name" => $tech, "description" => $desc];
     }
 
-
     $template_tech->remaining_tasks = $remaining_tasks;
-
 
     $template_client = new Template(from_root("/includes/templates/{$template_path}_client.phtml"));
 
@@ -455,19 +481,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $template_client->notes_message = $notesMessageClient;
     $template_client->site_url = getenv('ROOTDOMAIN');
     $template_client->description = html_entity_decode($updatedDescription);
+    $template_client->attachment_urls = $attachment_urls;
 
-    $select_attachments_query = "SELECT attachment_path from help.tickets WHERE id = ?";
-    $stmt = mysqli_prepare(HelpDB::get(), $select_attachments_query);
-    mysqli_stmt_bind_param($stmt, "i", $ticket_id);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
-
-    if (!$result) {
-        log_app(LOG_ERR, "Failed to get old attachment_path");
-    }
-    mysqli_stmt_close($stmt);
-
-    $attachment_paths = explode(',', $result["attachment_path"]);
 
     $sent_tech_email_log_msg = "Sent tech-privileged emails to: ";
     $sent_client_email_log_msg = "Sent non-tech emails to: ";

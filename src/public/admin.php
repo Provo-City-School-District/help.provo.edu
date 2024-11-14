@@ -126,5 +126,4 @@ $exclude_result = HelpDB::get()->execute_query("SELECT * FROM exclude_days WHERE
     Source Ticket ID:<input type="text" id="ticket_id_source" name="ticket_id_source" value=""><br>
     <button class="button" type="submit">Merge</button><br>
 </form>
-
 <?php include("footer.php"); ?>

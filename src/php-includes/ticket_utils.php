@@ -307,7 +307,7 @@ function create_note(
         // Skip email to tech if ticket is still unassigned
         if ($assigned_tech !== null) {
             log_app(LOG_INFO, "Emailing assigned tech $assigned_tech that client is updating ticket");
-            send_email_and_add_to_ticket($ticket_id_clean, email_address_from_username($assigned_tech), $email_subject, $template_tech);
+            send_email_and_add_to_ticket($ticket_id_clean, email_address_from_username($assigned_tech), $email_subject, $template_tech, [], [], $attachment_paths);
         }
     }
     return true;

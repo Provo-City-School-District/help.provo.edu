@@ -24,7 +24,9 @@ a:hover {
 }
 
 #expand-row {
-	font-size: 16px;
+	font-size: 2em;
+	text-align: center;
+	cursor: pointer;
 }
 
 .help-message {
@@ -297,7 +299,7 @@ td {
 	display: block;
 }
 
-td::before {
+td::before:not(#expand-row) {
 	content: attr(data-cell) ": ";
 	font-weight: 700;
 	text-transform: capitalize;

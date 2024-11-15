@@ -255,10 +255,59 @@ function create_note(
         $template_tech->room = field_for_ticket($ticket_id_clean, "room") ?: "<empty>";
         $template_tech->phone = field_for_ticket($ticket_id_clean, "phone") ?: "<empty>";
 
-        //Skips email to Tech is still unassigned.
+        $result = HelpDB::get()->execute_query(
+            "SELECT attachment_path from help.tickets WHERE id = ?", [$ticket_id_clean]);
+        if (!$result) {
+            log_app(LOG_ERR, "Failed to get old attachment_path");
+        }
+    
+        $attachment_data = $result->fetch_assoc();
+    
+        $all_attachment_paths = explode(',', $attachment_data["attachment_path"]);
+        $attachment_paths = [];
+        $attachment_urls = [];
+    
+        foreach ($all_attachment_paths as $path) {
+            $real_path = realpath(from_root("/../uploads/$path"));
+            $file_size = filesize($real_path);
+    
+            if ($file_size >= get_max_attachment_file_size()) {
+                $root = getenv('ROOTDOMAIN');
+                $filename = basename($path);
+                $url = "$root/upload_viewer.php?file=$filename";
+                $attachment_urls[] = ["url" => $url, "filename" => $filename];
+            } else {
+                $attachment_paths[] = $path;
+            }
+        }
+
+        $remaining_tasks_query = "SELECT assigned_tech, description FROM ticket_tasks WHERE (completed != 1 AND ticket_id = ?)";
+
+        $remaining_tasks_result = HelpDB::get()->execute_query($remaining_tasks_query, [$ticket_id_clean]);
+        $remaining_tasks = [];
+    
+        while ($row = $remaining_tasks_result->fetch_assoc()) {
+            $tech_name = null;
+            $assigned_tech = $row["assigned_tech"];
+            if (isset($assigned_tech)) {
+                $tech_name = get_local_name_for_user($assigned_tech);
+            }
+    
+            $tech = "Unassigned";
+            if ($tech_name != null) {
+                $tech = $tech_name["firstname"] . " " . $tech_name["lastname"];
+            }
+            $desc = $row["description"];
+            $remaining_tasks[] =  ["tech_name" => $tech, "description" => $desc];
+        }
+    
+        $template_tech->remaining_tasks = $remaining_tasks;
+        $template_tech->attachment_urls = $attachment_urls;
+
+        // Skip email to tech if ticket is still unassigned
         if ($assigned_tech !== null) {
             log_app(LOG_INFO, "Emailing assigned tech $assigned_tech that client is updating ticket");
-            send_email_and_add_to_ticket($ticket_id_clean, email_address_from_username($assigned_tech), $email_subject, $template_tech);
+            send_email_and_add_to_ticket($ticket_id_clean, email_address_from_username($assigned_tech), $email_subject, $template_tech, [], [], $attachment_paths);
         }
     }
     return true;

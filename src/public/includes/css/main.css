@@ -181,6 +181,10 @@ blockquote {
 	align-items: center;
 }
 
+.spinner {
+	cursor: progress;
+}
+
 /* =============================== Header Styles =============================== */
 #mainHeader {
 	background: linear-gradient(to bottom, var(--header-grad-start), var(--header-grad-end) 50%, var(--header-grad-end) 55%, var(--header-grad-start));

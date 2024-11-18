@@ -997,8 +997,8 @@ $hasNotes = !empty($notes) && array_filter($notes, function ($note) {
                             <?php foreach ($techusernames as $username) : ?>
                                 <?php
                                 $name = get_local_name_for_user($username);
-                                $firstname = ucwords(strtolower($name["firstname"]));
-                                $lastname = ucwords(strtolower($name["lastname"]));
+                                $firstname = $name["firstname"];
+                                $lastname = $name["lastname"];
                                 $display_string = $firstname . " " . $lastname . " - " . location_name_from_id(get_fast_client_location($username) ?: "");
                                 ?>
                                 <option value="<?= $username ?>"><?= $display_string ?></option>

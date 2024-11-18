@@ -80,7 +80,7 @@ function get_client_name(string $client)
     // Should only be one match, get the first one
     $firstname = isset($entries[0]['givenname'][0]) ? $entries[0]['givenname'][0] : null;
     $lastname = isset($entries[0]['sn'][0]) ? $entries[0]['sn'][0] : null;
-    $result = ['firstname' => $firstname, 'lastname' => $lastname];
+    $result = ['firstname' => ucfirst(strtolower($firstname)), 'lastname' => ucfirst(strtolower($lastname))];
     return $result;
 }
 

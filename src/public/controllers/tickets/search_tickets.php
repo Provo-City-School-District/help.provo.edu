@@ -226,10 +226,10 @@ function get_sw_client_name(string $sw_client_id)
 
 // TODO could cache these
 // TODO2: similar function in ticket_utils.php. lets consolidate
-function get_tech_name_from_id_user(string $tech_sw_id, $archived = false)
+function get_tech_name_from_id_user(string $tech_id, $archived = false)
 {
     if ($archived) {
-        $tech_name_result = SolarWindsDB::get()->execute_query("SELECT FIRST_NAME, LAST_NAME FROM tech WHERE CLIENT_ID = ?", [$tech_sw_id]);
+        $tech_name_result = SolarWindsDB::get()->execute_query("SELECT FIRST_NAME, LAST_NAME FROM tech WHERE CLIENT_ID = ?", [$tech_id]);
         $tech_name_data = mysqli_fetch_assoc($tech_name_result);
         if (is_array($tech_name_data)) {
             // Convert to lowercase and then capitalize each word
@@ -240,12 +240,10 @@ function get_tech_name_from_id_user(string $tech_sw_id, $archived = false)
             $tech_name = "Unknown Technician";
         }
     } else {
-        $tech_name_result = HelpDB::get()->execute_query("SELECT firstname, lastname FROM users WHERE username = ?", [$tech_sw_id]);
-        $tech_name_data = mysqli_fetch_assoc($tech_name_result);
-        if (is_array($tech_name_data)) {
-            // Convert to lowercase and then capitalize each word
-            $first_name = ucwords(strtolower(trim($tech_name_data["firstname"])));
-            $last_name = ucwords(strtolower(trim($tech_name_data["lastname"])));
+        $tech_name_result = get_local_name_for_user($tech_id);
+        if ($tech_name_result) {
+            $first_name = $tech_name_result["firstname"];
+            $last_name = $tech_name_result["lastname"];
             $tech_name = $first_name . " " . $last_name;
         } else {
             $tech_name = "Unknown Technician";

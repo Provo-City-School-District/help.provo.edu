@@ -6,6 +6,11 @@ $user_agent = $_SERVER['HTTP_USER_AGENT'];
 if (strpos($user_agent, 'InterMapper') === false && !session_id()) {
     session_start();
 }
+// Ensure $_SESSION is an array
+if (!isset($_SESSION)) {
+    $_SESSION = [];
+}
+
 include_once('functions.php');
 include_once('helpdbconnect.php');
 

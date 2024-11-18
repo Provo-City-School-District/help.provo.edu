@@ -76,30 +76,44 @@ if (searchResults) {
   });
 }
 
-$("#search_client").on("input", function() {
-    const new_value = $(this).val();
-    $("#search_client").autocomplete({
-        source: function (request, response) {
-            $.ajax({
-                url: "/ajax/name_search_ldap.php",
-                method: "GET",
-                data: {name: new_value},
-                success: function(data, textStatus, xhr) {
-                    let mappedResults = $.map(data, function (item) {
-                        let itemLocation = item.location ? item.location : "unknown";
-                        return $.extend(item, { label: item.firstName + ' ' + item.lastName + ' (' + itemLocation + ')', value: item.username });
-                    });
-                    response(mappedResults);
-                },
-                error: function() {
-                    alert("Error: Autocomplete AJAX call failed");
-                }
+$("#search_client").on("input", function () {
+  const new_value = $(this).val();
+  $("#search_client").autocomplete({
+    source: function (request, response) {
+      $.ajax({
+        url: "/ajax/name_search_ldap.php",
+        method: "GET",
+        data: { name: new_value },
+        success: function (data, textStatus, xhr) {
+          let mappedResults = $.map(data, function (item) {
+            let itemLocation = item.location ? item.location : "unknown";
+            return $.extend(item, {
+              label:
+                item.firstName +
+                " " +
+                item.lastName +
+                " (" +
+                itemLocation +
+                ")",
+              value: item.username,
             });
+          });
+          response(mappedResults);
         },
-        minLength: 2,
-        focus: function () {
-            // prevent value inserted on focus
-            return false;
-        }
-    });
+        error: function () {
+          alert("Error: Autocomplete AJAX call failed");
+        },
+      });
+    },
+    minLength: 2,
+    focus: function () {
+      // prevent value inserted on focus
+      return false;
+    },
+  });
+});
+// add progress search button submit to indicate working
+document.getElementById("search-submit").addEventListener("click", function () {
+  document.body.classList.add("spinner");
+  document.getElementById("search-submit").classList.add("spinner");
 });

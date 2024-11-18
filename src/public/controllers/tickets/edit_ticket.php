@@ -1007,7 +1007,7 @@ $hasNotes = !empty($notes) && array_filter($notes, function ($note) {
                     </div>
                     <div>
                         <label for="task-description">Task description: </label>
-                        <input type="text" name="task_description"></input>
+                        <textarea id="task-description" name="task-description" class="tinyMCEtextarea"></textarea>
                     </div>
                     <div>
                         <label for="task-description">Completed: </label>

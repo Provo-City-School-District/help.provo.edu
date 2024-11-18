@@ -5,19 +5,11 @@ require_once("template.php");
 
 function session_logged_in()
 {
-    // Ensure $_SESSION is set and is an array
-    if (!isset($_SESSION) || !is_array($_SESSION)) {
-        return false;
-    }
     return array_key_exists("username", $_SESSION) && isset($_SESSION["username"]);
 }
 
 function session_is_tech()
 {
-    // Ensure $_SESSION is set and is an array
-    if (!isset($_SESSION) || !is_array($_SESSION)) {
-        return false;
-    }
     return isset($_SESSION["permissions"]["is_tech"]) && $_SESSION["permissions"]["is_tech"] != 0;
 }
 
@@ -264,23 +256,21 @@ function create_note(
         $template_tech->phone = field_for_ticket($ticket_id_clean, "phone") ?: "<empty>";
 
         $result = HelpDB::get()->execute_query(
-            "SELECT attachment_path from help.tickets WHERE id = ?",
-            [$ticket_id_clean]
-        );
+            "SELECT attachment_path from help.tickets WHERE id = ?", [$ticket_id_clean]);
         if (!$result) {
             log_app(LOG_ERR, "Failed to get old attachment_path");
         }
-
+    
         $attachment_data = $result->fetch_assoc();
-
+    
         $all_attachment_paths = explode(',', $attachment_data["attachment_path"]);
         $attachment_paths = [];
         $attachment_urls = [];
-
+    
         foreach ($all_attachment_paths as $path) {
             $real_path = realpath(from_root("/../uploads/$path"));
             $file_size = filesize($real_path);
-
+    
             if ($file_size >= get_max_attachment_file_size()) {
                 $root = getenv('ROOTDOMAIN');
                 $filename = basename($path);
@@ -295,14 +285,14 @@ function create_note(
 
         $remaining_tasks_result = HelpDB::get()->execute_query($remaining_tasks_query, [$ticket_id_clean]);
         $remaining_tasks = [];
-
+    
         while ($row = $remaining_tasks_result->fetch_assoc()) {
             $tech_name = null;
             $assigned_tech = $row["assigned_tech"];
             if (isset($assigned_tech)) {
                 $tech_name = get_local_name_for_user($assigned_tech);
             }
-
+    
             $tech = "Unassigned";
             if ($tech_name != null) {
                 $tech = $tech_name["firstname"] . " " . $tech_name["lastname"];
@@ -310,7 +300,7 @@ function create_note(
             $desc = $row["description"];
             $remaining_tasks[] =  ["tech_name" => $tech, "description" => $desc];
         }
-
+    
         $template_tech->remaining_tasks = $remaining_tasks;
         $template_tech->attachment_urls = $attachment_urls;
 

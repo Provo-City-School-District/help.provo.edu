@@ -152,7 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <input type="hidden" name="ticket_id" value="<?php echo $ticket_id; ?>">
     <input type="submit" value="Delete Note" id="delete-note" class="button">
 </form>
-<script src="/includes/js/jquery-3.7.1.min.js"></script>
+<script src="/includes/js/external/jquery-3.7.1.min.js"></script>
 
 <?php if (session_is_tech()) : ?>
     <script src="/includes/js/note_time.js" type="text/javascript"></script>

@@ -763,7 +763,7 @@ $hasNotes = !empty($notes) && array_filter($notes, function ($note) {
                 <?php
                 $ticket_pattern = "/WO#\\d{1,6}/";
                 $archived_ticket_pattern = "/WO#A-\\d{1,6}/";
-                $asset_tag_pattern = "/BC#([\w]*)(\s|$|)/";
+                $asset_tag_pattern = "/(BC|SN|bc|sn)#([\w]*)(\s|$|)/";
                 if ($ticket['description'] !== null) {
                     $request_detail = sanitize_html($ticket['description']);
                 }
@@ -796,14 +796,20 @@ $hasNotes = !empty($notes) && array_filter($notes, function ($note) {
                 if ($asset_tag_match_result) {
                     foreach ($asset_tag_matches[0] as $match) {
                         $match_str = $match[0];
-                        if ($match_str[0] == 'B')
-                            $barcode = substr($match_str, 3);
-                        else
-                            $barcode = $match_str;
+                        $scheme = null;
+
+                        if (str_starts_with(strtolower($match_str), 'bc')) {
+                            $scheme = 'barcode';
+                        } else {
+                            $scheme = 'sn';
+                        }
+
+                        // BC# and SN# have the same characters so the first 3 can be trimmed in both
+                        $value = substr($match_str, 3);
 
                         // when doing https:// the : kept disappearing, not sure why
                         // will just let it choose https automatically
-                        $url = "<a target=\"_blank\" href=\"//vault.provo.edu/nac_edit.php?barcode=$barcode\">$match_str</a>";
+                        $url = "<a target=\"_blank\" href=\"//vault.provo.edu/nac_edit.php?$scheme=$value\">$match_str</a>";
 
                         $request_detail = str_replace($match_str, $url, $request_detail);
                     }
@@ -1090,7 +1096,7 @@ $hasNotes = !empty($notes) && array_filter($notes, function ($note) {
                     <?php
                     $ticket_pattern = "/WO#\\d{1,6}/";
                     $archived_ticket_pattern = "/WO#A-\\d{1,6}/";
-                    $asset_tag_pattern = "/BC#([\w]*)(\s|$|)/";
+                    $asset_tag_pattern = "/(BC|SN|bc|sn)#([\w]*)(\s|$|)/";
                     if ($note['note'] !== null) {
                         $note_data = strip_tags(sanitize_html($note['note']));
                     }
@@ -1127,14 +1133,20 @@ $hasNotes = !empty($notes) && array_filter($notes, function ($note) {
                         if ($asset_tag_match_result) {
                             foreach ($asset_tag_matches[0] as $match) {
                                 $match_str = $match[0];
-                                if ($match_str[0] == 'B')
-                                    $barcode = substr($match_str, 3);
-                                else
-                                    $barcode = $match_str;
+                                $scheme = null;
+        
+                                if (str_starts_with(strtolower($match_str), 'bc')) {
+                                    $scheme = 'barcode';
+                                } else {
+                                    $scheme = 'sn';
+                                }
+
+                                // BC# and SN# have the same characters so the first 3 can be trimmed in both
+                                $value = substr($match_str, 3);
 
                                 // when doing https:// the : kept disappearing, not sure why
                                 // will just let it choose https automatically
-                                $url = "<a target=\"_blank\" href=\"//vault.provo.edu/nac_edit.php?barcode=$barcode\">$match_str</a>";
+                                $url = "<a target=\"_blank\" href=\"//vault.provo.edu/nac_edit.php?$scheme=$value\">$match_str</a>";
 
                                 $note_data = str_replace($match_str, $url, $note_data);
                             }

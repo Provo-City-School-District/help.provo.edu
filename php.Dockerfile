@@ -1,4 +1,4 @@
-FROM php:8.3-apache
+FROM php:8.4-apache
 
 # php adjustments.
 COPY config/customphp.ini /usr/local/etc/php/conf.d/
@@ -9,8 +9,12 @@ RUN apt-get update \
   && docker-php-ext-install mysqli pdo_pgsql pdo_mysql zip
 
 RUN docker-php-ext-configure gd --with-jpeg=/usr
-RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl
-RUN docker-php-ext-install gd imap
+RUN docker-php-ext-install gd
+
+
+# install imap extension from PECL
+COPY ./src/php-includes/boot.php /var/www/html/php-includes/boot.php
+RUN yes '' | pecl install imap
 
 # setup cron
 COPY crontab /etc/cron.d/cron-job

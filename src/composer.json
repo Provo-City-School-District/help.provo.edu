@@ -4,6 +4,7 @@
     "google/apiclient": "^2.18.0",
     "ezyang/htmlpurifier": "^4.18",
     "twig/twig": "^3.15.0",
-    "google/apiclient-services": "^0.382.0"
+    "google/apiclient-services": "^0.382.0",
+    "webklex/php-imap": "^5.5"
   }
 }

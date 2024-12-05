@@ -61,75 +61,14 @@ function get_client_name(string $client)
         return $res;
     }
 
-    $ldap_dn = getenv('LDAP_DN');
-    $ldap_user = getenv('LDAP_USER');
-    $ldap_password = getenv('LDAP_PASS');
-
-    $ldap_conn = get_ldaps_conn();
-    ldap_set_option($ldap_conn, LDAP_OPT_PROTOCOL_VERSION, 3);
-    $ldap_bind = ldap_bind($ldap_conn, $ldap_user, $ldap_password);
-
-    if (!$ldap_bind) {
-        die('Could not bind to LDAP server.');
-    }
-
-    $search = "(&(objectCategory=person)(objectClass=user)(samaccountname=$client))";
-    $ldap_result = ldap_search($ldap_conn, $ldap_dn, $search);
-    $entries = ldap_get_entries($ldap_conn, $ldap_result);
-
-    // Should only be one match, get the first one
-    $firstname = isset($entries[0]['givenname'][0]) ? $entries[0]['givenname'][0] : null;
-    $lastname = isset($entries[0]['sn'][0]) ? $entries[0]['sn'][0] : null;
-    $result = ['firstname' => $firstname, 'lastname' => $lastname];
-    return $result;
+    $data = get_ldap_info($client, LDAP_EMPLOYEE_NAME);
+    return $data;
 }
 
 function get_client_location(string $client)
 {
-    $ldap_dn = getenv('LDAP_DN');
-    $ldap_user = getenv('LDAP_USER');
-    $ldap_password = getenv('LDAP_PASS');
-
-    $ldap_conn = get_ldaps_conn();
-    ldap_set_option($ldap_conn, LDAP_OPT_PROTOCOL_VERSION, 3);
-    $ldap_bind = ldap_bind($ldap_conn, $ldap_user, $ldap_password);
-
-    if (!$ldap_bind) {
-        die('Could not bind to LDAP server.');
-    }
-
-    $search = "(&(objectCategory=person)(objectClass=user)(samaccountname=$client))";
-    $ldap_result = ldap_search($ldap_conn, $ldap_dn, $search);
-    $entries = ldap_get_entries($ldap_conn, $ldap_result);
-
-    // Should only be one match, get the first one, default to District Office
-    $location_code = intval($entries[0]["ou"][0] ?: 38);
-
-    // Hacky mapping for aux services, should be 1896 internally
-    if ($location_code == 1892)
-        return 1896;
-    else
-        return $location_code;
-}
-
-function get_employee_id(string $username)
-{
-    $ldap_dn = getenv('LDAP_DN');
-    $ldap_user = getenv('LDAP_USER');
-    $ldap_password = getenv('LDAP_PASS');
-
-    $ldap_conn = get_ldaps_conn();
-    ldap_set_option($ldap_conn, LDAP_OPT_PROTOCOL_VERSION, 3);
-    $ldap_bind = ldap_bind($ldap_conn, $ldap_user, $ldap_password);
-
-    if (!$ldap_bind) {
-        die('Could not bind to LDAP server.');
-    }
-
-    $search = "(&(objectCategory=person)(objectClass=user)(samaccountname=$username))";
-    $ldap_result = ldap_search($ldap_conn, $ldap_dn, $search);
-    $entries = ldap_get_entries($ldap_conn, $ldap_result);
-    return $entries[0]["employeeid"][0];
+    $data = get_ldap_info($client, LDAP_EMPLOYEE_LOCATION);
+    return $data["location"];
 }
 
 const LDAP_EMPLOYEE_ID = (1 << 0);
@@ -166,8 +105,8 @@ function get_ldap_info(string $username, int $request_flags)
         $firstname = isset($first_entry['givenname'][0]) ? $first_entry['givenname'][0] : null;
         $lastname = isset($first_entry['sn'][0]) ? $first_entry['sn'][0] : null;
 
-        $result["firstname"] = $firstname;
-        $result["lastname"] = $lastname;
+        $result["firstname"] = ucfirst(strtolower($firstname));
+        $result["lastname"] = ucfirst(strtolower($lastname));
     }
 
     if ($request_flags & LDAP_EMPLOYEE_LOCATION) {

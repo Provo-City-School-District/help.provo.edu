@@ -494,8 +494,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($assigned_tech_changed) {
         if ($updatedEmployee != "unassigned") {
             $assigned_tech_name = get_local_name_for_user($updatedEmployee);
-            $firstname = ucfirst(strtolower($assigned_tech_name["firstname"]));
-            $lastname = ucfirst(strtolower($assigned_tech_name["lastname"]));
+            $firstname = $assigned_tech_name["firstname"];
+            $lastname = $assigned_tech_name["lastname"];
 
             $new_subject = "Ticket $ticket_id has been reassigned to $firstname $lastname";
         } else {

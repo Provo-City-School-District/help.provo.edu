@@ -147,7 +147,6 @@ if (newTaskButton) {
       if (newTaskForm.style.display === "none") {
         newTaskForm.style.display = "block";
         newTaskModalBackground.style.display = "block";
-        newNoteEditor.scrollIntoView({ behavior: "smooth" }); // Scroll the view to the new note editor
       } else {
         newTaskForm.style.display = "none";
       }

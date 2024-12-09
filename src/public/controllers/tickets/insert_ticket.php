@@ -66,21 +66,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Check if required fields are empty
-    if (empty($location) || empty($name) || empty($description)) {
-        // Handle empty fields (e.g., show an error message)
-        $error = 'All fields are required';
-        $formData = http_build_query($_POST);
-        $_SESSION['current_status'] = $error;
-        $_SESSION['status_type'] = 'error';
+    $missing_fields = [];
 
-        header("Location: create_ticket.php?$formData");
-        exit;
+    // Check if required fields are empty
+    if (empty($location)) {
+        $missing_fields[] = "Location";
     }
 
-    if ((empty($room) || empty($phone)) && !$_SESSION["permissions"]["is_tech"]) {
-        // Handle empty fields (e.g., show an error message)
-        $error = 'All fields are required';
+    if (empty($name)) {
+        $missing_fields[] = "Title";
+    }
+
+    if (empty($description)) {
+        $missing_fields[] = "Description";
+    }
+
+    if (!$_SESSION["permissions"]["is_tech"]) {
+        if (empty($phone)) {
+            $missing_fields[] = "Phone";
+        }
+
+        if (empty($room)) {
+            $missing_fields[] = "Room";
+        }
+    }
+
+    if (!empty($missing_fields)) {
+        $error = "Missing fields: ".implode(', ', $missing_fields);
         $formData = http_build_query($_POST);
         $_SESSION['current_status'] = $error;
         $_SESSION['status_type'] = 'error';

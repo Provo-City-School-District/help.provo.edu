@@ -12,7 +12,7 @@ if (!user_is_tech($username)) {
 }
 
 $ticket_id = $_POST['ticket_id'];
-$ticket_desc = $_POST['task_description'];
+$ticket_desc = strip_tags($_POST['task_description']);
 $assigned_tech = $_POST['assigned_tech'];
 if (empty($assigned_tech)) {
     $assigned_tech = null;

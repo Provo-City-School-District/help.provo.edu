@@ -35,7 +35,8 @@ a:hover {
 }
 
 strong {
-	font-weight: 700;
+	font-weight: bolder;
+	font-size: 120%;
 }
 
 em {

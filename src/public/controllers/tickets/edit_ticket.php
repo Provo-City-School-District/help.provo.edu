@@ -1012,15 +1012,15 @@ $hasNotes = !empty($notes) && array_filter($notes, function ($note) {
                         </select>
                     </div>
                     <div>
-                        <label for="task-description">Task description: </label>
-                        <textarea id="task-description" name="task-description" class="tinyMCEtextarea"></textarea>
+                        <label for="task_description">Task description: </label>
+                        <textarea id="task-description" name="task_description" class="tinyMCEtextarea"></textarea>
                     </div>
                     <div>
-                        <label for="task-description">Completed: </label>
+                        <label for="task_complete">Completed: </label>
                         <input type="checkbox" name="task_complete"></input>
                     </div>
                     <div>
-                        <label for="task-description">Required: </label>
+                        <label for="required">Required: </label>
                         <input type="checkbox" name="required" checked></input>
                     </div>
                 </div>

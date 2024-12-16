@@ -6,13 +6,13 @@ require_once('ticket_utils.php');
 
 $username = $_SESSION["username"];
 if (!user_is_tech($username)) {
-	log_app(LOG_INFO, "[delete_task.php] User is not a tech. Ignoring task request...");
-	http_response_code(401);
-	exit;
+    log_app(LOG_INFO, "[delete_task.php] User is not a tech. Ignoring task request...");
+    http_response_code(401);
+    exit;
 }
 
 $ticket_id = $_POST['ticket_id'];
-$ticket_desc = $_POST['task_description'];
+$ticket_desc = strip_tags($_POST['task_description']);
 $assigned_tech = $_POST['assigned_tech'];
 if (empty($assigned_tech)) {
     $assigned_tech = null;

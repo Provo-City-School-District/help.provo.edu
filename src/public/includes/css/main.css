@@ -39,6 +39,10 @@ strong {
 	font-size: 120%;
 }
 
+table strong {
+	font-size: 100%;
+}
+
 em {
 	font-style: italic;
 }

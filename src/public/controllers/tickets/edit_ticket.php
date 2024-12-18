@@ -1085,11 +1085,15 @@ $hasNotes = !empty($notes) && array_filter($notes, function ($note) {
                         ?></a></td>
                 <td data-cell="Created By"><?php
                                             $creator = $note['creator'];
-                                            if ($creator == 'System') {
-                                                echo $creator;
-                                            } else if (isset($creator)) {
+
+                                            // Check if creator exists as a user
+                                            $creator_found_result = HelpDB::get()->execute_query('SELECT COUNT(*) AS count FROM users WHERE username = ?', [$creator]);
+                                            $creator_found_data = $creator_found_result->fetch_assoc();
+                                            if (isset($creator) && $creator_found_data["count"] > 0) {
                                                 $name = get_local_name_for_user($creator);
                                                 echo $name['firstname'] . ' ' . $name['lastname'];
+                                            } else {
+                                                echo $creator;
                                             }
                                             ?></td>
                 <td class="ticket_note" data-cell="Note Message">

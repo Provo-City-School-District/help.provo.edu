@@ -88,6 +88,10 @@ class EmailParser {
         $this->blacklisted_emails = $blacklist;
     }
 
+    public function __destruct() {
+        imap_close($this->connection);
+    }
+
     private function parse_message(int $msg_num) {
         $msg = new EmailMessage($this->connection, $msg_num);
 

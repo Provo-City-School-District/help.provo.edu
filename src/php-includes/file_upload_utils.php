@@ -139,8 +139,8 @@ function handleFileUploads($files, $ticket_id = null)
         if ($tmpFilePath != "") {
             if ($fileSize <= $max_file_size) {
                 if (in_array($fileExtension, $allowed_extensions)) {
+
                     // Generate a unique file name
-                    // TODO: Move uploads to ../uploads (outside of public)
                     if ($ticket_id != null) {
                         $newFilePath = "/../uploads/" . $ticket_id . "-" . $fileName;
                     } else {

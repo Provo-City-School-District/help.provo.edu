@@ -12,7 +12,7 @@ $blacklisted_emails = [
     "helpdesk@provo.edu"
 ];
 
-$move_emails_after_parsed = false;
+$move_emails_after_parsed = true;
 
 $imap_path = '{imap.gmail.com:993/imap/ssl}INBOX';
 $username = getenv("GMAIL_USER");

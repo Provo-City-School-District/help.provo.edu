@@ -129,21 +129,22 @@ document.querySelectorAll("form").forEach((form) => {
   });
 });
 
-$("#client").on("input", function() {
+$("#client").on("input", function () {
   const new_value = extractLast($(this).val());
   $("#client").autocomplete({
-        source: function(request, response) {
+    source: function (request, response) {
       $.ajax({
         url: "/ajax/name_search_ldap.php",
         method: "GET",
         data: {
           name: new_value,
         },
-                success: function(data, textStatus, xhr) {
-                    let mappedResults = $.map(data, function(item) {
+        success: function (data, textStatus, xhr) {
+          let mappedResults = $.map(data, function (item) {
             let itemLocation = item.location ? item.location : "unknown";
             return $.extend(item, {
-                            label: item.firstName +
+              label:
+                item.firstName +
                 " " +
                 item.lastName +
                 " (" +
@@ -154,12 +155,12 @@ $("#client").on("input", function() {
           });
           response(mappedResults);
         },
-                error: function() {
+        error: function () {
           alert("Error: Autocomplete AJAX call failed");
         },
       });
     },
-        minLength: 3
+    minLength: 3,
   });
 });
 // Hide detailContainer, attachment-fields, and submit button if department is Maintenance(1700)

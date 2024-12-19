@@ -241,13 +241,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $template->description = html_entity_decode($description);
 
         $receipt_subject = "Ticket $ticketId - $name";
-        send_email(email_address_from_username($username), $receipt_subject, $template);
+        send_email_and_add_to_ticket($ticketId, email_address_from_username($username), $receipt_subject, $template);
 
         if (isset($assigned_tech)) {
             // Send email to assigned tech on ticket creation
             if ($username != $assigned_tech) {
                 $assigned_tech_subject = "Ticket $ticketId has been assigned to $assigned_tech";
-                send_email(email_address_from_username($assigned_tech), $assigned_tech_subject, $template);
+                send_email_and_add_to_ticket($ticketId, email_address_from_username($assigned_tech), $assigned_tech_subject, $template);
             }
         }
 

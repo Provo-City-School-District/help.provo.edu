@@ -627,18 +627,19 @@ function description_for_ticket(int $ticket_id)
 function field_for_ticket(int $ticket_id, string $field)
 {
     // add to this later
-    $allowed_fields = ["room", "phone"];
+    $allowed_fields = ["room", "phone", "cc_emails", "bcc_emails"];
     if (!in_array($field, $allowed_fields, true)) {
         return null;
     }
 
-    $result = HelpDB::get()->execute_query("SELECT ? FROM help.tickets WHERE tickets.id = ?", [$field, $ticket_id]);
+    // unsafe to drop string directly in the query but with strict validation above we should be good
+    $result = HelpDB::get()->execute_query("SELECT $field FROM help.tickets WHERE tickets.id = ?", [$ticket_id]);
     if (!isset($result)) {
         log_app(LOG_ERR, "[field_for_ticket] Failed to get $field query result");
         return null;
     }
 
-    $data = mysqli_fetch_assoc($result);
+    $data = $result->fetch_assoc();
     if (!isset($data)) {
         log_app(LOG_ERR, "[field_for_ticket] Failed to get $field data");
         return null;

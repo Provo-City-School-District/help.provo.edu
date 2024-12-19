@@ -12,7 +12,7 @@ $blacklisted_emails = [
     "helpdesk@provo.edu"
 ];
 
-$move_emails_after_parsed = true;
+$move_emails_after_parsed = false;
 
 $imap_path = '{imap.gmail.com:993/imap/ssl}INBOX';
 $username = getenv("GMAIL_USER");
@@ -99,13 +99,12 @@ for ($i = 1; $i <= $msg_count; $i++) {
         continue;
     }
 
-    // Ignore non district emails
-    if ($from_host != "provo.edu") {
-        log_app(LOG_INFO, "Received email from $sender_email, ignoring...");
+    $msg_is_external = false;
 
-        // These can be safely moved as we don't care about them
-        $succeeded_uids[] = imap_uid($mbox, $i);
-        continue;
+    // Detect non district emails
+    if ($from_host != "provo.edu") {
+        $msg_is_external = true;
+        $sender_username = "External sender: $sender_email";
     }
 
     if (!user_exists_locally($sender_username)) {
@@ -149,8 +148,8 @@ for ($i = 1; $i <= $msg_count; $i++) {
     $text = strip_tags($text);
     $message = preg_replace('#(^\w.+:\n)?(^>.*(\n|$))+#mi', "", nl2br($text));
 
-    $isForward = str_starts_with($subject, "Fwd:");
-    $msg_is_reply = isset($email_ancestor_id) && !$isForward;
+    $is_forward = str_starts_with($subject, "Fwd:");
+    $msg_is_reply = isset($email_ancestor_id) && !$is_forward;
     // Parse ticket here
     $subject_split = explode(' ', $subject);
     $operating_ticket = -1;
@@ -169,6 +168,12 @@ for ($i = 1; $i <= $msg_count; $i++) {
         if (isset($email_exists_data["id"])) {
             $existing_ticket_id = intval($email_exists_data["id"]);
             $operating_ticket = $existing_ticket_id;
+
+            if ($msg_is_external && !email_is_referenced_on_ticket($sender_email, $operating_ticket)) {
+                log_app(LOG_INFO, "Email $sender_email doesn't have permission to add a note to ticket $operating_ticket (not found in CC/BCC emails)");
+                continue;
+            }
+
             // add note on existing ticket
             create_note($existing_ticket_id, $sender_username, $message, 0, 0, 0, 0, true, null, $email_msg_id);
         } else {
@@ -178,6 +183,12 @@ for ($i = 1; $i <= $msg_count; $i++) {
             if (isset($ticket_exists_data["linked_id"])) {
                 $existing_ticket_id = intval($ticket_exists_data["linked_id"]);
                 $operating_ticket = $existing_ticket_id;
+
+                if ($msg_is_external && !email_is_referenced_on_ticket($sender_email, $operating_ticket)) {
+                    log_app(LOG_INFO, "Email $sender_email doesn't have permission to add a note to ticket $operating_ticket (not found in CC/BCC emails)");
+                    continue;
+                }
+
                 create_note($existing_ticket_id, $sender_username, $message, 0, 0, 0, 0, true, null, $email_msg_id);
             } else {
                 $failed_email_ids[] = $i;
@@ -188,6 +199,10 @@ for ($i = 1; $i <= $msg_count; $i++) {
         $subject_ticket_id = count($subject_split) > 1 ? intval($subject_split[1]) : 0;
         log_app(LOG_INFO, "Email is NOT a reply");
         if (strtolower($subject_split[0]) != "ticket" ||  $subject_ticket_id <= 0 || count($subject_split) != 2) {
+            // Early return to prevent external emails from creating tickets
+            if ($msg_is_external)
+                continue;
+
             $receipt_ticket_id = -1;
             // Check if the user is in the local database. If the value isn't in failed_email_ids, they exist in local db
             if (!in_array($i, $failed_email_ids)) {
@@ -219,6 +234,11 @@ for ($i = 1; $i <= $msg_count; $i++) {
             }
         } else {
             $operating_ticket = $subject_ticket_id;
+            if ($msg_is_external && !email_is_referenced_on_ticket($sender_email, $operating_ticket)) {
+                log_app(LOG_INFO, "Email $sender_email doesn't have permission to add a note to ticket $operating_ticket (not found in CC/BCC emails)");
+                continue;
+            }
+
             // ticket syntax is valid, add a note on that ticket
             create_note($subject_ticket_id, $sender_username, $message, 0, 0, 0, 0, true, null);
         }
@@ -360,6 +380,16 @@ function find_and_upload_attachments(int $ticket_id, IMAP\Connection $mbox, int 
         $changed_string .= $filename . ", ";
     }
     logTicketChange(HelpDB::get(), $ticket_id, $sender_username, $field_name, $old_value, $changed_string);
+}
+
+function email_is_referenced_on_ticket(string $sender_email, int $ticket_id)
+{
+    $cc_emails = explode(',', field_for_ticket($ticket_id, "cc_emails"));
+    $bcc_emails = explode(',', field_for_ticket($ticket_id, "bcc_emails"));
+
+    $combined = array_merge($cc_emails, $bcc_emails);
+
+    return in_array($sender_email, $combined);
 }
 ?>
 Successfully parsed <?= $parsed_emails ?> emails, and moved <?= $moved_emails ?> emails. (These should be the same)<br>

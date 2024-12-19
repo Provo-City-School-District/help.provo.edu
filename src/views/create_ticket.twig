@@ -7,6 +7,19 @@
     <form method="POST" action="insert_ticket.php" enctype="multipart/form-data">
         <input type="hidden" name="client" value="{{ username }}">
         <div class="ticketGrid">
+             <div>
+                <label for="department">Department:</label>
+                <select id="department" name="department">
+                    <option hidden disabled selected value></option>
+                    {% for dept in depts %}
+                        {% if user_permissions.is_tech and dept.select %}
+                        <option value="{{ dept.site_number }}" selected>{{ dept.site_name }}</option>
+                        {% else %}
+                        <option value="{{ dept.site_number }}">{{ dept.site_name }}</option>
+                        {% endif %}
+                    {% endfor %}      
+                </select>
+            </div>
             <div>
                 <label for="location">Location:</label>
                 <select id="location" name="location" required>
@@ -40,19 +53,6 @@
                 <input type="text" id="bcc_emails" name="bcc_emails" value="{{ _get['bcc_emails']|escape }}">
             </div>
         {% if user_permissions.is_tech %}
-        <div>
-                <label for="department">Department:</label>
-                <select id="department" name="department">
-                    <option hidden disabled selected value></option>
-                    {% for dept in depts %}
-                        {% if user_permissions.is_tech and dept.select %}
-                        <option value="{{ dept.site_number }}" selected>{{ dept.site_name }}</option>
-                        {% else %}
-                        <option value="{{ dept.site_number }}">{{ dept.site_name }}</option>
-                        {% endif %}
-                    {% endfor %}      
-                </select>
-            </div>
             <div>
                 <label for="assigned">Assigned to</label>
                 <select id="assigned" name="assigned">

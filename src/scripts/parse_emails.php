@@ -64,6 +64,42 @@ class EmailMessage {
 
         $this->sender = strtolower($this->sender_username . '@' . $sender_host);
         $this->subject = isset($msg_header->subject) ? $msg_header->subject : "";
+
+        $this->body = EmailMessage::get_message_body($connection, $msg_num);
+    }
+
+    private static function get_message_body($connection, $msg_num) {
+        $obj_structure = imap_fetchstructure($connection, $msg_num);
+
+        $obj_section = $obj_structure;
+        $section = "1";
+        for ($j = 0; $j < 10; $j++) {
+            if ($obj_section->type == 0) {
+                break;
+            } else {
+                $obj_section = $obj_section->parts[0];
+                $section .= ($j > 0 ? ".1" : "");
+            }
+        }
+        $text = imap_fetchbody($connection, $msg_num, $section);
+
+        if ($obj_section->encoding == 3) {
+            $text = imap_base64($text);
+        } else if ($obj_section->encoding == 4) {
+            $text = imap_qprint($text);
+        }
+
+        foreach ($obj_section->parameters as $obj_param) {
+            if (($obj_param->attribute == "charset") && (mb_strtoupper($obj_param->value) != "UTF-8")) {
+                $text = utf8_encode($text);
+                break;
+            }
+        }
+
+        $text = strip_tags($text);
+        $message = preg_replace('#(^\w.+:\n)?(^>.*(\n|$))+#mi', "", nl2br($text));
+
+        return $message;
     }
 
     public function get_username() {
@@ -116,6 +152,9 @@ class EmailParser {
                 log_app(LOG_ERR, "Failed to create local user $msg_username. Ignoring...");
             }
         }
+
+        $msg_is_forward = str_starts_with($msg->subject, "Fwd:");
+        $msg_is_reply = isset($msg->ancestor_id) && !$msg_is_forward;
     }
 
     public function parse_messages() {

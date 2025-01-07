@@ -492,13 +492,18 @@ select {
 	display: block;
 }
 
-.ticket_note p {
+#note-table table {
+	table-layout: fixed;
+	width: 100%;
+}
+
+.ticket_note {
 	margin: 1em 0;
-	display: block;
+	word-wrap: break-word;
 }
 
 .timeColumn {
-	width: 200px;
+	width: 115px;
 }
 
 .child-ticket-details p {

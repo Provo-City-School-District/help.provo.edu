@@ -155,6 +155,22 @@ class EmailParser {
 
         $msg_is_forward = str_starts_with($msg->subject, "Fwd:");
         $msg_is_reply = isset($msg->ancestor_id) && !$msg_is_forward;
+
+        if (!$msg_is_reply) {
+            $msg_subject_split = explode(' ', $msg->subject);
+            $subject_ticket_id = count($subject_split) > 1 ? intval($subject_split[1]) : 0;
+            if (strtolower($subject_split[0]) == "ticket" && $subject_ticket_id > 0 && count($subject_split) == 2) {
+                // add note
+            /*
+            if ($msg_is_external && !email_is_referenced_on_ticket($sender_email, $operating_ticket)) {
+                log_app(LOG_INFO, "Email $sender_email doesn't have permission to add a note to ticket $operating_ticket (not found in CC/BCC emails)");
+                continue;
+            }
+            // ticket syntax is valid, add a note on that ticket
+            create_note($subject_ticket_id, $sender_username, $message, 0, 0, 0, 0, true, null);
+            */
+            }
+        }
     }
 
     public function parse_messages() {

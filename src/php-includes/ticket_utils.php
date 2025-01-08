@@ -838,3 +838,22 @@ function getPriorityName(int $priority)
             return "Unknown";
     }
 }
+
+function get_child_tickets_for_ticket(int $ticket_id)
+{
+    $res = HelpDB::get()->execute_query("SELECT id FROM tickets WHERE parent_ticket = ?", [$ticket_id]);
+    $ids = [];
+    
+    while ($row = $res->fetch_assoc()) {
+        $ids[] = $row["id"];
+    }
+
+    return $ids;
+}
+
+function get_parent_ticket_for_ticket(int $ticket_id)
+{
+    $res = HelpDB::get()->execute_query("SELECT parent_ticket FROM tickets WHERE id = ?", [$ticket_id]);
+    $row = $res->fetch_assoc();
+    return $row["parent_ticket"];
+}

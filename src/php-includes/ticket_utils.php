@@ -196,8 +196,10 @@ function create_note(
 
     // Allow pseudo-clients to update ticket status if in CC/BCC field
     if ((strtolower($username) == strtolower($client) ||
-        in_array($user_email, $cc_emails) ||
-        in_array($user_email, $bcc_emails)) && !user_is_tech($username)) {
+            in_array($user_email, $cc_emails) ||
+            in_array($user_email, $bcc_emails)) && !user_is_tech($username) ||
+        client_for_ticket($ticket_id_clean) == $username
+    ) {
         // set priority to standard
         $result = HelpDB::get()->execute_query("UPDATE tickets SET tickets.priority = 10 WHERE tickets.id = ?", [$ticket_id_clean]);
         if (!$result) {
@@ -843,7 +845,7 @@ function get_child_tickets_for_ticket(int $ticket_id)
 {
     $res = HelpDB::get()->execute_query("SELECT id FROM tickets WHERE parent_ticket = ?", [$ticket_id]);
     $ids = [];
-    
+
     while ($row = $res->fetch_assoc()) {
         $ids[] = $row["id"];
     }

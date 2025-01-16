@@ -676,15 +676,11 @@ function get_parsed_ticket_data($ticket_data)
         $tmp = [];
         $tmp["id"] = $row["id"];
 
-        $row_color = '';
-        if (isset($row["alert_levels"])) {
-            $alert_levels = explode(',', $row["alert_levels"]);
-            foreach ($alert_levels as $alert_level) {
-                $row_color .= trim($alert_level) . ' ';
-            }
-        }
 
-        $tmp["row_color"] =  $row_color;
+        $alerts_split = explode(',', $row['alert_levels']);
+        $tmp["red_alert_enabled"] = in_array('crit', $alerts_split);
+        $tmp["yellow_alert_enabled"] = in_array('warn', $alerts_split);
+
         $tmp["title"] = $row["name"];
         $tmp["description"] = limitChars(strip_tags(html_entity_decode($row["description"])), 100);
 
@@ -766,7 +762,7 @@ function get_parsed_ticket_data($ticket_data)
         $user_id = get_id_for_user($_SESSION["username"]);
         $last_viewed_res = HelpDB::get()->execute_query($last_viewed_query, [$user_id, $row["id"]]);
        // echo var_dump($last_viewed_res);
-        $tmp["last_viewed"] = $last_viewed_res->fetch_assoc()["last_viewed"];
+        $tmp["blue_alert_enabled"] = !isset($last_viewed_res->fetch_assoc()["last_viewed"]);
         $tickets[] = $tmp;
     }
     return $tickets;

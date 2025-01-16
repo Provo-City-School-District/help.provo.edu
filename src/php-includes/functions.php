@@ -259,3 +259,10 @@ function user_is_tech(string $username)
     else
         return false;
 }
+
+
+function get_id_for_user(string $username)
+{
+    $user_id_res = HelpDB::get()->execute_query("SELECT id FROM help.users WHERE username = ?", [$username]);
+    return $user_id_res->fetch_assoc()["id"];
+}

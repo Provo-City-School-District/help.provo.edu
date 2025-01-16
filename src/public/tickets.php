@@ -16,7 +16,8 @@ require from_root("/new-controllers/ticket_base_variables.php");
 
 $loader = new \Twig\Loader\FilesystemLoader(from_root('/../views'));
 $twig = new \Twig\Environment($loader, [
-    'cache' => from_root('/../twig-cache')
+    'cache' => from_root('/../twig-cache'),
+    'auto_reload' => true
 ]);
 
 $tech_ticket_query = <<<STR

@@ -759,6 +759,14 @@ function get_parsed_ticket_data($ticket_data)
             $tmp["assigned_tech"] = $row["employee"];
         }
         $tmp["alert_level"] = isset($row["alert_levels"]) ? $row["alert_levels"] : '';
+
+        $last_viewed_query = <<<STR
+            SELECT last_viewed FROM ticket_viewed WHERE user_id = ? AND ticket_id = ?
+        STR;
+        $user_id = get_id_for_user($_SESSION["username"]);
+        $last_viewed_res = HelpDB::get()->execute_query($last_viewed_query, [$user_id, $row["id"]]);
+       // echo var_dump($last_viewed_res);
+        $tmp["last_viewed"] = $last_viewed_res->fetch_assoc()["last_viewed"];
         $tickets[] = $tmp;
     }
     return $tickets;

@@ -3,6 +3,7 @@
     <thead>
         <tr>
             <th class="tID">ID</th>
+            <th class="viewed">Viewed</th>
             <th class="reqDetail">Request Detail</th>
             <th class="tLatestNote">Latest Note</th>
             <th class="client">Client</th>
@@ -21,6 +22,13 @@
         {% for ticket in tickets %}
         <tr class="{{ ticket.row_color }}">
             <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id={{ ticket.id }}">{{ ticket.id }}</a></td>
+            <td data-cell="Viewed" width="50px">
+                <div style="display: flex; justify-content: center; width: 100%;">
+                {% if ticket.last_viewed is null %}
+                    <div class="dot"></div>
+                {% endif %}
+                </div>
+            </td>
             <td class="details" data-cell="Request Detail"><a href="/controllers/tickets/edit_ticket.php?id={{ ticket.id }}">{{ ticket.title|raw }}</a>{{ ticket.description|raw }}</td>
             {% if ticket.latest_note is defined and ticket.latest_note is not null %}
                 <td class="latestNote" data-cell="Latest Note:"><strong>{{ ticket.latest_note_author }}: </strong> {{ ticket.latest_note|raw }}</td>

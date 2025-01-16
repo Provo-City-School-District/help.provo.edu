@@ -190,6 +190,14 @@ blockquote {
 	cursor: progress;
 }
 
+.dot {
+    height: 8px;
+    width: 8px;
+    background-color: #03a5fc;
+    border-radius: 50%;
+    display: inline-block;
+}
+
 /* =============================== Header Styles =============================== */
 #mainHeader {
 	background: linear-gradient(to bottom, var(--header-grad-start), var(--header-grad-end) 50%, var(--header-grad-end) 55%, var(--header-grad-start));

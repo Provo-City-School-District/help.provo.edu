@@ -90,6 +90,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (empty($room)) {
             $missing_fields[] = "Room";
         }
+        if (empty($department)) {
+            $missing_fields[] = "Department";
+        }
     }
 
     if (!empty($missing_fields)) {

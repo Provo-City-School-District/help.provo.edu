@@ -191,24 +191,24 @@ blockquote {
 }
 
 .blue-dot {
-    height: 8px;
-    width: 8px;
+    height: 9px;
+    width: 9px;
     background-color: #03a5fc;
     border-radius: 50%;
     display: inline-block;
 }
 
 .yellow-dot {
-    height: 8px;
-    width: 8px;
+    height: 9px;
+    width: 9px;
     background-color: var(--warn-color);
     border-radius: 50%;
     display: inline-block;
 }
 
 .red-dot {
-    height: 8px;
-    width: 8px;
+    height: 9px;
+    width: 9px;
     background-color: var(--crit-color);
     border-radius: 50%;
     display: inline-block;

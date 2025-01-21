@@ -12,7 +12,8 @@
                 <select id="department" name="department">
                     <option hidden disabled selected value></option>
                     {% for dept in depts %}
-                        {% if user_permissions.is_tech and dept.select %}
+                        {% if (user_permissions.is_tech and dept.select and _get.department is null)
+                            or (_get.department is defined and _get.department == dept.site_number) %}
                         <option value="{{ dept.site_number }}" selected>{{ dept.site_name }}</option>
                         {% else %}
                         <option value="{{ dept.site_number }}">{{ dept.site_name }}</option>

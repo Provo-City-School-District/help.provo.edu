@@ -70,7 +70,7 @@
         <a href="<?= $this->site_url ?>/controllers/tickets/edit_ticket.php?id=<?= $this->parent_ticket ?>"><strong>Parent Ticket: <?= $this->parent_ticket ?></strong></a>
         <?php endif; ?>
 
-        <?php if (count($this->child_tickets) > 0): ?>
+        <?php if (isset($this->child_tickets) && $this->child_tickets != 0): ?>
         <p><strong>Child Tickets:</strong></p>
             <?php foreach ($this->child_tickets as $child_ticket): ?>
                 <a href="<?= $this->site_url ?>/controllers/tickets/edit_ticket.php?id=<?= $child_ticket ?>"><strong><?= $child_ticket ?></strong></a>

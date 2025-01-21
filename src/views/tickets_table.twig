@@ -24,17 +24,17 @@
             <td data-cell="Alerts" width="50px">
                 <div>
                     {% if ticket.blue_alert_enabled %}
-                        <div class="alert-dot-container">
+                        <div title="Ticket unread" class="alert-dot-container">
                             <div class="blue-dot"></div>
                         </div>
                     {% endif %}
                     {% if ticket.yellow_alert_enabled and not ticket.red_alert_enabled %}
-                        <div class="alert-dot-container">
+                        <div title="Ticket warning alert" class="alert-dot-container">
                             <div class="yellow-dot"></div>
                         </div>
                     {% endif %}
                     {% if ticket.red_alert_enabled %}
-                        <div class="alert-dot-container">
+                        <div title="Ticket critical alert" class="alert-dot-container">
                             <div class="red-dot"></div>
                         </div>
                     {% endif %}

@@ -7,6 +7,19 @@
     <form method="POST" action="insert_ticket.php" enctype="multipart/form-data">
         <input type="hidden" name="client" value="{{ username }}">
         <div class="ticketGrid">
+             <div>
+                <label for="department">Department:</label>
+                <select id="department" name="department">
+                    <option hidden disabled selected value></option>
+                    {% for dept in depts %}
+                        {% if user_permissions.is_tech and dept.select %}
+                        <option value="{{ dept.site_number }}" selected>{{ dept.site_name }}</option>
+                        {% else %}
+                        <option value="{{ dept.site_number }}">{{ dept.site_name }}</option>
+                        {% endif %}
+                    {% endfor %}      
+                </select>
+            </div>
             <div>
                 <label for="location">Location:</label>
                 <select id="location" name="location" required>
@@ -40,19 +53,6 @@
                 <input type="text" id="bcc_emails" name="bcc_emails" value="{{ _get['bcc_emails']|escape }}">
             </div>
         {% if user_permissions.is_tech %}
-        <div>
-                <label for="department">Department:</label>
-                <select id="department" name="department">
-                    <option hidden disabled selected value></option>
-                    {% for dept in depts %}
-                        {% if user_permissions.is_tech and dept.select %}
-                        <option value="{{ dept.site_number }}" selected>{{ dept.site_name }}</option>
-                        {% else %}
-                        <option value="{{ dept.site_number }}">{{ dept.site_name }}</option>
-                        {% endif %}
-                    {% endfor %}      
-                </select>
-            </div>
             <div>
                 <label for="assigned">Assigned to</label>
                 <select id="assigned" name="assigned">
@@ -70,6 +70,27 @@
                 <label for="client">Client:</label>
                 <input type="text" id="client" name="client" value="{{ _get['client']|escape }}">
             </div>
+            <div>
+    <label for="request_type">Request Type:</label>
+    <select id="request_type" name="request_type">
+        <option value="0">Select a more specific request type otherwise (Other)</option>
+        {% for topLevel in requestTypes %}
+            <option disabled value="{{ topLevel.id }}" {% if topLevel.id == _get['request_type'] %}selected{% endif %}>
+                {{ topLevel.name }}
+            </option>
+            {% for child in topLevel.children %}
+                <option value="{{ child.id }}" {% if child.id == _get['request_type'] %}selected{% endif %}>
+                    &nbsp;&nbsp;&nbsp;&nbsp;{{ child.name }}
+                </option>
+                {% for grandchild in child.children %}
+                    <option value="{{ grandchild.id }}" {% if grandchild.id == _get['request_type'] %}selected{% endif %}>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ grandchild.name }}
+                    </option>
+                {% endfor %}
+            {% endfor %}
+        {% endfor %}
+    </select>
+</div>
         {% endif %}
         </div>
 
@@ -88,6 +109,9 @@
             <input type="file" id="attachment" name="attachment[]" type="file" multiple>
         </div>
         <input type="submit" class="button" value="Create Ticket">
+        <div id="message" style="display: none;">
+            <p>If you are a teacher, please take your maintenance request to either your head custodian or your admin team for their approval. Upon approval, they will submit the work order for you.</p>
+        </div>
     </form>
 </article>
 <script src="/includes/js/external/jquery-3.7.1.min.js"></script>

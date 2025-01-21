@@ -190,6 +190,37 @@ blockquote {
 	cursor: progress;
 }
 
+.blue-dot {
+    height: 8px;
+    width: 8px;
+    background-color: #03a5fc;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.yellow-dot {
+    height: 8px;
+    width: 8px;
+    background-color: var(--warn-color);
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.red-dot {
+    height: 8px;
+    width: 8px;
+    background-color: var(--crit-color);
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.alert-dot-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding-top: 4px;
+}
+
 /* =============================== Header Styles =============================== */
 #mainHeader {
 	background: linear-gradient(to bottom, var(--header-grad-start), var(--header-grad-end) 50%, var(--header-grad-end) 55%, var(--header-grad-start));
@@ -492,13 +523,18 @@ select {
 	display: block;
 }
 
-.ticket_note p {
+#note-table table {
+	table-layout: fixed;
+	width: 100%;
+}
+
+.ticket_note {
 	margin: 1em 0;
-	display: block;
+	word-wrap: break-word;
 }
 
 .timeColumn {
-	width: 200px;
+	width: 115px;
 }
 
 .child-ticket-details p {

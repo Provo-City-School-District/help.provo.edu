@@ -13,9 +13,9 @@ $twig = new \Twig\Environment($loader, [
     'cache' => from_root('/../twig-cache'),
     'auto_reload' => true
 ]);
-
+// Fetch the tech usernames
 $tech_usernames = get_tech_usernames();
-
+// Fetch the departments
 $department_result = HelpDB::get()->execute_query("SELECT * FROM locations WHERE is_department = TRUE ORDER BY location_name ASC");
 $depts = [];
 while ($row = mysqli_fetch_assoc($department_result)) {
@@ -40,6 +40,7 @@ while ($row = mysqli_fetch_assoc($department_result)) {
     $depts[] = ["site_number" => $row["sitenumber"], "site_name" => $row["location_name"], "select" => $select];
 }
 
+// Fetch the locations
 $location_result = HelpDB::get()->execute_query("SELECT * FROM locations WHERE is_department = FALSE ORDER BY location_name ASC");
 $locations = [];
 while ($row = mysqli_fetch_assoc($location_result)) {
@@ -56,6 +57,49 @@ while ($row = mysqli_fetch_assoc($location_result)) {
     $locations[] = ["site_number" => $row["sitenumber"], "site_name" => $row["location_name"], "select" => $select];
 }
 
+// Fetch request types
+$topLevelQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_parent IS NULL ORDER BY request_name";
+$topLevelResult = HelpDB::get()->query($topLevelQuery);
+
+$requestTypes = [];
+
+while ($topLevelRow = $topLevelResult->fetch_assoc()) {
+    $topLevelId = $topLevelRow['request_id'];
+    $requestTypes[$topLevelId] = [
+        'id' => $topLevelId,
+        'name' => $topLevelRow['request_name'],
+        'children' => []
+    ];
+
+    // Fetch the child request types
+    $childQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_parent = $topLevelId ORDER BY request_name";
+    $childResult = HelpDB::get()->query($childQuery);
+
+    while ($childRow = $childResult->fetch_assoc()) {
+        $childId = $childRow['request_id'];
+        $requestTypes[$topLevelId]['children'][$childId] = [
+            'id' => $childId,
+            'name' => $childRow['request_name'],
+            'children' => []
+        ];
+
+        // Fetch the grandchild request types
+        $grandchildQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_parent = $childId ORDER BY request_name";
+        $grandchildResult = HelpDB::get()->query($grandchildQuery);
+
+        while ($grandchildRow = $grandchildResult->fetch_assoc()) {
+            $grandchildId = $grandchildRow['request_id'];
+            $requestTypes[$topLevelId]['children'][$childId]['children'][$grandchildId] = [
+                'id' => $grandchildId,
+                'name' => $grandchildRow['request_name']
+            ];
+        }
+    }
+}
+
+
+
+
 echo $twig->render('create_ticket.twig', [
     // base variables
     'color_scheme' => $color_scheme,
@@ -71,6 +115,7 @@ echo $twig->render('create_ticket.twig', [
     // create_ticket variables
     'depts' => $depts,
     'locations' => $locations,
+    'requestTypes' => $requestTypes,
     'tech_usernames' => $tech_usernames,
     'username' => $_SESSION['username'],
     '_get' => $_GET

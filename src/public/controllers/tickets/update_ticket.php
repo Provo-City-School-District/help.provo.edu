@@ -449,6 +449,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $template_tech->room = empty($updatedRoom) ? "<empty>" : $updatedRoom;
     $template_tech->phone = empty($updatedPhone) ? "<empty>" : $updatedPhone;
     $template_tech->attachment_urls = $attachment_urls;
+    $template_tech->parent_ticket = get_parent_ticket_for_ticket($ticket_id);
+    $template_tech->child_tickets = get_child_tickets_for_ticket($ticket_id);
 
     $remaining_tasks_query = "SELECT assigned_tech, description FROM ticket_tasks WHERE (completed != 1 AND ticket_id = ?)";
 

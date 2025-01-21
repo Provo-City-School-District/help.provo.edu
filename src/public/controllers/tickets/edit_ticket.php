@@ -358,6 +358,15 @@ $total_note_count = count($notes);
 $hasNotes = !empty($notes) && array_filter($notes, function ($note) {
     return !is_null($note['note']);
 });
+
+$user_id = get_id_for_user($username);
+
+$insert_viewed_query = <<<STR
+    INSERT INTO ticket_viewed (user_id, ticket_id, last_viewed) VALUES (?, ?, NOW())
+    ON DUPLICATE KEY UPDATE last_viewed = NOW()
+STR;
+$insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$user_id, $ticket_id]);
+
 ?>
 <div class="alerts_wrapper">
     <?php foreach ($alert_data as $alert) : ?>

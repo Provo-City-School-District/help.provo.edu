@@ -40,8 +40,6 @@
             <option value="open" {{ search_status is same as('open') ? 'selected' : '' }}>Open</option>
             <option value="closed" {{ search_status is same as('closed') ? 'selected' : '' }}>Closed</option>
             <option value="resolved" {{ search_status is same as('resolved') ? 'selected' : '' }}>Resolved</option>
-            {# <option value="cancelled" {{ search_status is same as('cancelled') ? 'selected' : '' }}>Cancelled</option> #}
-            <option value="pending" {{ search_status is same as('pending') ? 'selected' : '' }}>Pending</option>
             <option value="vendor" {{ search_status is same as('vendor') ? 'selected' : '' }}>Vendor</option>
             <option value="maintenance" {{ search_status is same as('maintenance') ? 'selected' : '' }}>Maintenance</option>
         </select>

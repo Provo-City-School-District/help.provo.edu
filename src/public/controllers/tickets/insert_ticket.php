@@ -31,6 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $bcc_emails = filter_input(INPUT_POST, 'bcc_emails', FILTER_SANITIZE_SPECIAL_CHARS);
     $assigned_tech = filter_input(INPUT_POST, 'assigned', FILTER_SANITIZE_SPECIAL_CHARS);
     $department = filter_input(INPUT_POST, 'department', FILTER_SANITIZE_SPECIAL_CHARS);
+    $requestType = filter_input(INPUT_POST, 'request_type', FILTER_SANITIZE_SPECIAL_CHARS);
 
 
     if ($client === "") {
@@ -89,10 +90,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (empty($room)) {
             $missing_fields[] = "Room";
         }
+        if (empty($department)) {
+            $missing_fields[] = "Department";
+        }
     }
 
     if (!empty($missing_fields)) {
-        $error = "Missing fields: ".implode(', ', $missing_fields);
+        $error = "Missing fields: " . implode(', ', $missing_fields);
         $formData = http_build_query($_POST);
         $_SESSION['current_status'] = $error;
         $_SESSION['status_type'] = 'error';
@@ -148,7 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Create an SQL INSERT query
     $insertQuery = "INSERT INTO tickets (location, room, name, description, created, last_updated, due_date, status, client,attachment_path,phone,cc_emails,bcc_emails,request_type_id,priority,employee,department)
-                VALUES (?, ?, ?, ?, ?, ?, ?,'open', ?, ?, ?, ?, ?,0,10,?,?)";
+                VALUES (?, ?, ?, ?, ?, ?, ?,'open', ?, ?, ?, ?, ?,?,10,?,?)";
 
     // Prepare the SQL statement
     $stmt = mysqli_prepare(HelpDB::get(), $insertQuery);
@@ -188,7 +192,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     mysqli_stmt_bind_param(
         $stmt,
-        'ssssssssssssss',
+        'ssssssssssssiss',
         $location,
         $room,
         $name,
@@ -201,6 +205,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $phone,
         $cc_emails_clean,
         $bcc_emails_clean,
+        $requestType,
         $assigned_tech,
         $department
     );

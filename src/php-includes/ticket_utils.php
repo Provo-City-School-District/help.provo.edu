@@ -196,8 +196,10 @@ function create_note(
 
     // Allow pseudo-clients to update ticket status if in CC/BCC field
     if ((strtolower($username) == strtolower($client) ||
-        in_array($user_email, $cc_emails) ||
-        in_array($user_email, $bcc_emails)) && !user_is_tech($username)) {
+            in_array($user_email, $cc_emails) ||
+            in_array($user_email, $bcc_emails)) && !user_is_tech($username) ||
+        client_for_ticket($ticket_id_clean) == $username
+    ) {
         // set priority to standard
         $result = HelpDB::get()->execute_query("UPDATE tickets SET tickets.priority = 10 WHERE tickets.id = ?", [$ticket_id_clean]);
         if (!$result) {
@@ -674,15 +676,11 @@ function get_parsed_ticket_data($ticket_data)
         $tmp = [];
         $tmp["id"] = $row["id"];
 
-        $row_color = '';
-        if (isset($row["alert_levels"])) {
-            $alert_levels = explode(',', $row["alert_levels"]);
-            foreach ($alert_levels as $alert_level) {
-                $row_color .= trim($alert_level) . ' ';
-            }
-        }
 
-        $tmp["row_color"] =  $row_color;
+        $alerts_split = explode(',', $row['alert_levels']);
+        $tmp["red_alert_enabled"] = in_array('crit', $alerts_split);
+        $tmp["yellow_alert_enabled"] = in_array('warn', $alerts_split);
+
         $tmp["title"] = $row["name"];
         $tmp["description"] = limitChars(strip_tags(html_entity_decode($row["description"])), 100);
 
@@ -757,6 +755,14 @@ function get_parsed_ticket_data($ticket_data)
             $tmp["assigned_tech"] = $row["employee"];
         }
         $tmp["alert_level"] = isset($row["alert_levels"]) ? $row["alert_levels"] : '';
+
+        $last_viewed_query = <<<STR
+            SELECT last_viewed FROM ticket_viewed WHERE user_id = ? AND ticket_id = ?
+        STR;
+        $user_id = get_id_for_user($_SESSION["username"]);
+        $last_viewed_res = HelpDB::get()->execute_query($last_viewed_query, [$user_id, $row["id"]]);
+       // echo var_dump($last_viewed_res);
+        $tmp["blue_alert_enabled"] = !isset($last_viewed_res->fetch_assoc()["last_viewed"]);
         $tickets[] = $tmp;
     }
     return $tickets;
@@ -837,4 +843,23 @@ function getPriorityName(int $priority)
         default:
             return "Unknown";
     }
+}
+
+function get_child_tickets_for_ticket(int $ticket_id)
+{
+    $res = HelpDB::get()->execute_query("SELECT id FROM tickets WHERE parent_ticket = ?", [$ticket_id]);
+    $ids = [];
+
+    while ($row = $res->fetch_assoc()) {
+        $ids[] = $row["id"];
+    }
+
+    return $ids;
+}
+
+function get_parent_ticket_for_ticket(int $ticket_id)
+{
+    $res = HelpDB::get()->execute_query("SELECT parent_ticket FROM tickets WHERE id = ?", [$ticket_id]);
+    $row = $res->fetch_assoc();
+    return $row["parent_ticket"];
 }

@@ -3,6 +3,7 @@
     <thead>
         <tr>
             <th class="tID">ID</th>
+            <th class="alerts">Alerts</th>
             <th class="reqDetail">Request Detail</th>
             <th class="tLatestNote">Latest Note</th>
             <th class="client">Client</th>
@@ -14,13 +15,31 @@
             <th class="tDate">Last Updated</th>
             <th class="date">Due</th>
             <th class="">Assigned</th>
-            <th class="alertLevel">Alert</th>
         </tr>
     </thead>
     <tbody>
         {% for ticket in tickets %}
-        <tr class="{{ ticket.row_color }}">
+        <tr>
             <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id={{ ticket.id }}">{{ ticket.id }}</a></td>
+            <td data-cell="Alerts" width="50px">
+                <div>
+                    {% if ticket.blue_alert_enabled %}
+                        <div class="alert-dot-container">
+                            <div class="blue-dot"></div>
+                        </div>
+                    {% endif %}
+                    {% if ticket.yellow_alert_enabled and not ticket.red_alert_enabled %}
+                        <div class="alert-dot-container">
+                            <div class="yellow-dot"></div>
+                        </div>
+                    {% endif %}
+                    {% if ticket.red_alert_enabled %}
+                        <div class="alert-dot-container">
+                            <div class="red-dot"></div>
+                        </div>
+                    {% endif %}
+                </div>
+            </td>
             <td class="details" data-cell="Request Detail"><a href="/controllers/tickets/edit_ticket.php?id={{ ticket.id }}">{{ ticket.title|raw }}</a>{{ ticket.description|raw }}</td>
             {% if ticket.latest_note is defined and ticket.latest_note is not null %}
                 <td class="latestNote" data-cell="Latest Note:"><strong>{{ ticket.latest_note_author }}: </strong> {{ ticket.latest_note|raw }}</td>
@@ -45,7 +64,6 @@
             <td data-cell="Last Updated">{{ ticket.last_updated }}</td>
             <td data-cell="Due">{{ ticket.due_date }}</td>
             <td data-cell="Assigned">{{ ticket.assigned_tech }}</td>
-            <td data-cell="Alert Levels">{{ ticket.alert_level }}</td>
         </tr>
         {% endfor %}
     </tbody>

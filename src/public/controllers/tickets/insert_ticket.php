@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $bcc_emails = filter_input(INPUT_POST, 'bcc_emails', FILTER_SANITIZE_SPECIAL_CHARS);
     $assigned_tech = filter_input(INPUT_POST, 'assigned', FILTER_SANITIZE_SPECIAL_CHARS);
     $department = filter_input(INPUT_POST, 'department', FILTER_SANITIZE_SPECIAL_CHARS);
-    $requestType = filter_input(INPUT_POST, 'request_type', FILTER_SANITIZE_SPECIAL_CHARS);
+    $requestType = filter_input(INPUT_POST, 'request_type', FILTER_SANITIZE_SPECIAL_CHARS) ?? 0;
 
 
     if ($client === "") {

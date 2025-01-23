@@ -187,12 +187,21 @@ function create_note(
 
     // Send email to assigned tech on update if the client updates ticket
     $client = client_for_ticket($ticket_id_clean);
+    $assigned_tech = assigned_tech_for_ticket($ticket_id_clean);
     $cc_emails = explode(',', emails_for_ticket($ticket_id_clean, false));
     $bcc_emails = explode(',', emails_for_ticket($ticket_id_clean, true));
 
     $user_email = email_address_from_username(strtolower($username));
 
     log_app(LOG_INFO, "username: $username, client: $client");
+
+    // Mark ticket as unread for assigned tech if anyone else puts in a note
+    if ($username != $assigned_tech) {
+        $assigned_tech_id = get_id_for_user($assigned_tech);
+    
+        $remove_read_query = "DELETE FROM ticket_viewed WHERE (user_id = ? AND ticket_id = ?)";
+        $remove_read_res = HelpDB::get()->execute_query($remove_read_query, [$assigned_tech_id, $ticket_id_clean]);
+    }
 
     // Allow pseudo-clients to update ticket status if in CC/BCC field
     if ((strtolower($username) == strtolower($client) ||
@@ -215,7 +224,6 @@ function create_note(
             }
         }
 
-        $assigned_tech = assigned_tech_for_ticket($ticket_id_clean);
         $client_name = get_client_name($username);
         $location_name = location_name_from_id(location_for_ticket($ticket_id_clean));
         $ticket_desc = description_for_ticket($ticket_id_clean);

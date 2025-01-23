@@ -203,6 +203,14 @@ function create_note(
         $remove_read_res = HelpDB::get()->execute_query($remove_read_query, [$assigned_tech_id, $ticket_id_clean]);
     }
 
+     // Mark ticket as unread for client if anyone else puts in a note
+    if ($username != $client) {
+        $client_id = get_id_for_user($client);
+    
+        $remove_read_query = "DELETE FROM ticket_viewed WHERE (user_id = ? AND ticket_id = ?)";
+        $remove_read_res = HelpDB::get()->execute_query($remove_read_query, [$client_id, $ticket_id_clean]);
+    }
+
     // Allow pseudo-clients to update ticket status if in CC/BCC field
     if ((strtolower($username) == strtolower($client) ||
             in_array($user_email, $cc_emails) ||

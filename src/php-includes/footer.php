@@ -24,7 +24,7 @@
 <script src="/includes/js/external/jquery-3.7.1.min.js" type="text/javascript"></script>
 <script src="/includes/js/external/jquery-ui.min.js" type="text/javascript"></script>
 <script src="/includes/js/external/lightbox.js"></script>
-<script src="/includes/js/external/dataTables/jquery.dataTables.min.js" type="text/javascript"></script>
+<script src="/includes/js/external/dataTables/datatables.min.js" type="text/javascript"></script>
 <script src="/includes/js/external/tinymce/tinymce.min.js" referrerpolicy="origin"></script>
 <script>
     var userPref = '<?php echo isset($_SESSION['color_scheme']) ? $_SESSION['color_scheme'] : 'light'; ?>';

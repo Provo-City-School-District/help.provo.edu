@@ -1,16 +1,22 @@
 // Define the table variable
 var table;
 
+function getDataTableOptions() {
+    const options = {
+        paging: true,
+        pageLength: ticketLimit, // Enable pagination
+        stateSave: true, // Enable state saving
+        ordering: true, // Enable sorting
+        autoWidth: false, // Disable auto width calculation
+    };
+
+    return options;
+}
+
 // Initialize the data table library on the table with the class data-table
 $(document).ready(function () {
   // Define general properties
-  var options = {
-    paging: true,
-    pageLength: ticketLimit, // Enable pagination
-    stateSave: true, // Enable state saving
-    ordering: true, // Enable sorting
-    autoWidth: false, // Disable auto width calculation
-  };
+  let options = getDataTableOptions();
 
   // Modify properties for specific cases
   if (

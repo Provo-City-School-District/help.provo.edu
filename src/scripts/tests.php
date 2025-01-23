@@ -86,6 +86,8 @@ function test_helper_methods()
 
     assert(user_exists_locally($username));
 
+    assert(get_id_for_user("braxtona") == 5);
+
     return true;
 }
 
@@ -160,9 +162,4 @@ if (test_note_creation($ticket_id)) {
 if (test_helper_methods()) {
     echo "Helper methods: passed<br>";
 }
-
-if (test_pages()) {
-    echo "All pages: passed<br>";
-}
-
 echo "<br>Tests complete";

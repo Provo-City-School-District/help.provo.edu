@@ -3,16 +3,6 @@ require_once "helpdbconnect.php";
 require_once "functions.php";
 require_once "ldap_connection.php";
 
-function user_exists_locally(string $username)
-{
-
-    $check_query = "SELECT * FROM users WHERE username = ?";
-    $result = HelpDB::get()->execute_query($check_query, [$username]);
-
-    // If a row is returned, the user exists
-    return mysqli_num_rows($result) > 0;
-}
-
 enum CreateLocalUserStatus
 {
     case LDAPConnectFailed;

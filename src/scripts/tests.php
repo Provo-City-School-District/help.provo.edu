@@ -1,8 +1,8 @@
 <?php
-require "block_file.php";
-require "ticket_utils.php";
-require "helpdbconnect.php";
-require "authentication_utils.php";
+require_once "helpdbconnect.php";
+require_once "block_file.php";
+require_once "ticket_utils.php";
+require_once "authentication_utils.php";
 
 if (!$_SESSION["permissions"]["is_admin"]) {
     echo "You do not have permission to view this page";

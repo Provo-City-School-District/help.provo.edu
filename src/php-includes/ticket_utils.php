@@ -1,6 +1,8 @@
 <?php
 require_once("email_utils.php");
 require_once("template.php");
+require_once("authentication_utils.php");
+
 // DB connection can fail if not included first, TODO fix maybe
 
 function session_logged_in()
@@ -187,28 +189,66 @@ function create_note(
 
     // Send email to assigned tech on update if the client updates ticket
     $client = client_for_ticket($ticket_id_clean);
-    $assigned_tech = assigned_tech_for_ticket($ticket_id_clean);
+    $assigned_tech = assigned_tech_for_ticket($ticket_id_clean) ?? 'unassigned';
     $cc_emails = explode(',', emails_for_ticket($ticket_id_clean, false));
     $bcc_emails = explode(',', emails_for_ticket($ticket_id_clean, true));
-
     $user_email = email_address_from_username(strtolower($username));
 
-    log_app(LOG_INFO, "username: $username, client: $client");
 
     // Mark ticket as unread for assigned tech if anyone else puts in a note
-    if ($username != $assigned_tech) {
-        $assigned_tech_id = get_id_for_user($assigned_tech);
-    
-        $remove_read_query = "DELETE FROM ticket_viewed WHERE (user_id = ? AND ticket_id = ?)";
-        $remove_read_res = HelpDB::get()->execute_query($remove_read_query, [$assigned_tech_id, $ticket_id_clean]);
+    if ($username != $assigned_tech && user_exists_locally($assigned_tech)) {
+        mark_ticket_unread($assigned_tech, $ticket_id_clean);
     }
 
-     // Mark ticket as unread for client if anyone else puts in a note
-    if ($username != $client) {
-        $client_id = get_id_for_user($client);
+    log_app(LOG_INFO, $client);
+
+    // Mark ticket as unread for client if anyone else puts in a note
+    if ($username != $client && user_exists_locally($client)) {
+        mark_ticket_unread($client, $ticket_id_clean);
+    }
+
+
+    // Mark ticket as unread for any CC users that are in the system if anyone else puts in a note
+    foreach ($cc_emails as $cc_email) {
+        $data = get_info_from_email($cc_email);
+        $email_user = $data["user"];
+        $email_domain = $data["domain"];
     
-        $remove_read_query = "DELETE FROM ticket_viewed WHERE (user_id = ? AND ticket_id = ?)";
-        $remove_read_res = HelpDB::get()->execute_query($remove_read_query, [$client_id, $ticket_id_clean]);
+        // non provo.edu can never be in the system, so skip
+        if ($email_domain != 'provo.edu')
+            continue;
+
+        // if not in system, skip
+        if (!user_exists_locally($email_user))
+            continue;
+
+        // no need to clear ticket status for ourselves (we put in the note)
+        if ($email_user == $username)
+            continue;
+    
+        mark_ticket_unread($email_user, $ticket_id);
+    }
+
+
+    // Mark ticket as unread for any BCC users that are in the system if anyone else puts in a note
+    foreach ($bcc_emails as $bcc_email) {
+        $data = get_info_from_email($bcc_email);
+        $email_user = $data["user"];
+        $email_domain = $data["domain"];
+    
+        // non provo.edu can never be in the system, so skip
+        if ($email_domain != 'provo.edu')
+            continue;
+
+        // if not in system, skip
+        if (!user_exists_locally($email_user))
+            continue;
+
+        // no need to clear ticket status for ourselves (we put in the note)
+        if ($email_user == $username)
+            continue;
+    
+        mark_ticket_unread($email_user, $ticket_id);
     }
 
     // Allow pseudo-clients to update ticket status if in CC/BCC field
@@ -903,4 +943,23 @@ function get_user_setting($userId, $settingName)
         log_app(LOG_ERR, "Failed to get user setting: $settingName for user: $userId");
         return null;
     }
+}
+
+
+
+function get_id_for_user(string $username)
+{
+    $user_id_res = HelpDB::get()->execute_query("SELECT id FROM help.users WHERE username = ?", [$username]);
+    return $user_id_res->fetch_assoc()["id"];
+}
+
+function mark_ticket_unread(string $username, int $ticket_id)
+{
+    $user_id = get_id_for_user($username);
+    log_app(LOG_INFO, $user_id);
+    
+    $remove_read_query = "DELETE FROM ticket_viewed WHERE (user_id = ? AND ticket_id = ?)";
+    $remove_read_res = HelpDB::get()->execute_query($remove_read_query, [$user_id, $ticket_id]);
+
+    return (bool)$remove_read_res;
 }

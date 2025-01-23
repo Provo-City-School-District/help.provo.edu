@@ -11,8 +11,8 @@ if (session_is_intern()) {
 require from_root("/../vendor/autoload.php");
 require from_root("/new-controllers/ticket_base_variables.php");
 
-
-
+// get user setting for if to show alerts or not
+$show_alerts = get_user_setting(get_id_for_user($_SESSION['username']), 'show_alerts');
 
 $loader = new \Twig\Loader\FilesystemLoader(from_root('/../views'));
 $twig = new \Twig\Environment($loader, [
@@ -50,7 +50,6 @@ $client_tickets = get_parsed_ticket_data($client_ticket_result);
 
 $alert_result = HelpDB::get()->execute_query("SELECT * FROM alerts WHERE employee = ? AND supervisor_alert = 0", [$username]);
 $alerts = get_parsed_alert_data($alert_result);
-
 echo $twig->render('tickets.twig', [
     // base variables
     'color_scheme' => $color_scheme,
@@ -75,5 +74,7 @@ echo $twig->render('tickets.twig', [
     'my_tickets' => $my_tickets,
     'open_tickets' => $client_tickets,
     'alerts' => $alerts,
+    'hide_alerts' => $_SESSION['hide_alerts'],
+    // 'show_alerts' => $show_alerts
     'show_alerts' => 1
 ]);

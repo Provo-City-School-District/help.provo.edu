@@ -1,7 +1,6 @@
 <?php
 require_once("email_utils.php");
 require_once("template.php");
-require_once("authentication_utils.php");
 
 // DB connection can fail if not included first, TODO fix maybe
 
@@ -962,4 +961,14 @@ function mark_ticket_unread(string $username, int $ticket_id)
     $remove_read_res = HelpDB::get()->execute_query($remove_read_query, [$user_id, $ticket_id]);
 
     return (bool)$remove_read_res;
+}
+
+function user_exists_locally(string $username)
+{
+
+    $check_query = "SELECT * FROM users WHERE username = ?";
+    $result = HelpDB::get()->execute_query($check_query, [$username]);
+
+    // If a row is returned, the user exists
+    return mysqli_num_rows($result) > 0;
 }

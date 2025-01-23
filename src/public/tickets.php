@@ -75,5 +75,5 @@ echo $twig->render('tickets.twig', [
     'my_tickets' => $my_tickets,
     'open_tickets' => $client_tickets,
     'alerts' => $alerts,
-    'hide_alerts' => $_SESSION['hide_alerts']
+    'show_alerts' => 1
 ]);

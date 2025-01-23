@@ -1,28 +1,29 @@
 <?php
 
-function display_tickets_table($tickets, $database)
+function display_tickets_table($tickets, $database, $custom_data_table_class = null)
 {
+    $data_table_class = $custom_data_table_class ?? "data-table";
     //map priority types
     $priorityTypes = [1 => "Critical", 3 => "Urgent", 5 => "High", 10 => "Standard", 15 => "Client Response", 30 => "Project", 60 => "Meeting Support"];
-    echo '<table class="ticketsTable data-table">
+    echo "<table class=\"ticketsTable $data_table_class\">
         <thead>
             <tr>
-                <th class="tID">ID</th>
-                <th class="reqDetail">Request Detail</th>
-                <th class="tLatestNote">Latest Note</th>
-                <th class="client">Client</th>
-                <th class="tLocation">Location</th>
-                <th class="category">Request Category</th>
-                <th class="status">Current Status</th>
-                <th class="priority">Priority</th>
-                <th class="tDate">Created Date</th>
-                <th class="tDate">Last Updated</th>
-                <th class="date">Due</th>
-                <th class="">Assigned</th>
-                <th class="alertLevel">Alert</th>
+                <th class=\"tID\">ID</th>
+                <th class=\"reqDetail\">Request Detail</th>
+                <th class=\"tLatestNote\">Latest Note</th>
+                <th class=\"client\">Client</th>
+                <th class=\"tLocation\">Location</th>
+                <th class=\"category\">Request Category</th>
+                <th class=\"status\">Current Status</th>
+                <th class=\"priority\">Priority</th>
+                <th class=\"tDate\">Created Date</th>
+                <th class=\"tDate\">Last Updated</th>
+                <th class=\"date\">Due</th>
+                <th class=\"\">Assigned</th>
+                <th class=\"alertLevel\">Alert</th>
             </tr>
         </thead>
-        <tbody>';
+        <tbody>";
 
     foreach ($tickets as $ticket) {
         // Set the row color

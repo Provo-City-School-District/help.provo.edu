@@ -47,7 +47,7 @@ ORDER BY tickets.id ASC
 STR;
 
 $ticket_result = HelpDB::get()->execute_query($ticket_query);
-display_tickets_table($ticket_result, HelpDB::get());
+display_tickets_table($ticket_result, HelpDB::get(), "admin-data-table");
 ?>
 
 <h2>All Users</h2>
@@ -127,3 +127,15 @@ $exclude_result = HelpDB::get()->execute_query("SELECT * FROM exclude_days WHERE
     <button class="button" type="submit">Merge</button><br>
 </form>
 <?php include("footer.php"); ?>
+<script>
+    let options = getDataTableOptions();
+    options.select = { style: 'multi' };
+
+    let admin_table = $(".admin-data-table").first().DataTable(options);
+
+    admin_table.on('select', function (e, dt, type, indexes) {
+        if (type === 'row') {
+            alert('selected');
+        }
+    });
+</script>

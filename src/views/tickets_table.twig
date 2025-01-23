@@ -19,7 +19,17 @@
     </thead>
     <tbody>
         {% for ticket in tickets %}
-        <tr>
+        {% if show_alerts %}
+                {% if ticket.yellow_alert_enabled and not ticket.red_alert_enabled %}
+                    <tr class="warn">
+                {% elseif ticket.red_alert_enabled %}
+                    <tr class="crit">
+                {% else %}
+                    <tr>
+                {% endif %}
+            {% else %}
+                <tr>
+            {% endif %}
             <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id={{ ticket.id }}">{{ ticket.id }}</a></td>
             <td data-cell="Alerts" width="50px">
                 <div>

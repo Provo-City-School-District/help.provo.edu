@@ -868,3 +868,23 @@ function get_parent_ticket_for_ticket(int $ticket_id)
     $row = $res->fetch_assoc();
     return $row["parent_ticket"];
 }
+
+function get_user_setting($userId, $settingName)
+{
+    try {
+        // query to get the setting value
+        $result = HelpDB::get()->execute_query("SELECT $settingName FROM user_settings WHERE user_id = ?", [$userId]);
+
+        // Fetch the setting value if it exists
+        if ($result && $row = $result->fetch_assoc()) {
+            return $row[$settingName];
+        }
+
+        // Return null if the setting is not found
+        return null;
+    } catch (Exception $e) {
+        // if setting is not found, log the error and return null
+        log_app(LOG_ERR, "Failed to get user setting: $settingName for user: $userId");
+        return null;
+    }
+}

@@ -1,6 +1,7 @@
 <?php
 require(from_root('/../vendor/autoload.php'));
 require("authentication_utils.php");
+require "ticket_utils.php";
 
 session_start();
 session_regenerate_id(true);

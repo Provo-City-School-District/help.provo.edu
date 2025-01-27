@@ -47,7 +47,7 @@ ORDER BY tickets.id ASC
 STR;
 
 $ticket_result = HelpDB::get()->execute_query($ticket_query);
-display_tickets_table($ticket_result, HelpDB::get(), "admin-data-table");
+display_tickets_table($ticket_result, HelpDB::get(), "admin-data-table", true);
 ?>
 
 <h2>All Users</h2>
@@ -127,15 +127,114 @@ $exclude_result = HelpDB::get()->execute_query("SELECT * FROM exclude_days WHERE
     <button class="button" type="submit">Merge</button><br>
 </form>
 <?php include("footer.php"); ?>
+<div id="bulk-actions-container">
+    <form action="/ajax/bulk_action.php" id="bulk-actions-form">
+        <div id="bulk-actions-content">
+            <p id="bulk-actions-row-count"></p>
+            <div>
+                <label for="ticket_action">Ticket action:</label>
+                <select name="ticket_action">
+                    <option value="resolve">Resolve</option>
+                    <option value="close">Close</option>
+                    <option value="assign">Assign</option>
+                </select>
+            </div>
+            <input type="submit" value="Commit action">
+        </div>
+    </form>
+</div>
 <script>
-    let options = getDataTableOptions();
-    options.select = { style: 'multi' };
+    $("#bulk-actions-form").submit(do_bulk_action);
+    function do_bulk_action(e)
+    {   
+        const ticket_ids = get_selected_tickets();
+        for (const ticket_id of ticket_ids) {
+            $("<input />").attr("type", "hidden")
+                .attr("name", "ticket_ids[]")
+                .attr("value", ticket_id)
+                .appendTo("#bulk-actions-form");
+        }
 
-    let admin_table = $(".admin-data-table").first().DataTable(options);
+
+        e.preventDefault();
+
+        var form = $(this);
+        var action_url = form.attr('action');
+        console.log(form);
+
+        $.ajax({
+            type: "POST",
+            url: action_url,
+            data: form.serialize(),
+            success: function(data) {
+                window.location.reload();
+            }
+        });
+    }
+
+    function get_selected_tickets()
+    {
+        const admin_table = $(".admin-data-table").first().DataTable();
+        const row_data = admin_table.rows({selected: true}).data();
+
+        let ticket_ids = [];
+        row_data.each(function (value, index) {
+            const ticket_url = value[1];
+            ticket_id = ticket_url.replace(/<\/?[^>]+(>|$)/g, "");
+            ticket_ids.push(ticket_id);
+        });
+        return ticket_ids;
+    }
+
+
+    function update_bulk_actions_container(e, dt, type, indexes)
+    {
+        const row_count = dt.rows({'selected': true}).count();
+        if (row_count == 0) {
+            $('#bulk-actions-container').hide();
+        } else {
+            $('#bulk-actions-container').show();
+            $('#bulk-actions-row-count').text(`Selected rows: ${row_count}`);
+        }
+    }
+
+    function dt_row_selected(e, dt, type, indexes)
+    {
+        update_bulk_actions_container(e, dt, type, indexes);
+    }
+
+    function dt_row_deselected(e, dt, type, indexes)
+    {
+        update_bulk_actions_container(e, dt, type, indexes);
+    }
+
+
+    const options = getDataTableOptions();
+    options.columnDefs = [
+        {
+            target: 0,
+            orderable: false,
+            render: DataTable.render.select(),
+        }
+    ];
+
+    options.select = { 
+        style: 'multi',
+        selector: 'td:first-child input[type="checkbox"]' 
+    };
+ 
+
+    const admin_table = $(".admin-data-table").first().DataTable(options);
 
     admin_table.on('select', function (e, dt, type, indexes) {
         if (type === 'row') {
-            alert('selected');
+            dt_row_selected(e, dt, type, indexes);
+        }
+    });
+
+    admin_table.on('deselect', function (e, dt, type, indexes) {
+        if (type === 'row') {
+            dt_row_deselected(e, dt, type, indexes);
         }
     });
 </script>

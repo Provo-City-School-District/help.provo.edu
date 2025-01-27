@@ -1,13 +1,16 @@
 <?php
 
-function display_tickets_table($tickets, $database, $custom_data_table_class = null)
+function display_tickets_table($tickets, $database, $custom_data_table_class = null, $using_multiselect = false)
 {
     $data_table_class = $custom_data_table_class ?? "data-table";
+    $extra_th_if_needed = $using_multiselect ? "<th></th>" : "";
+    $extra_td_if_needed = $using_multiselect ? "<td></td>" : "";
     //map priority types
     $priorityTypes = [1 => "Critical", 3 => "Urgent", 5 => "High", 10 => "Standard", 15 => "Client Response", 30 => "Project", 60 => "Meeting Support"];
     echo "<table class=\"ticketsTable $data_table_class\">
         <thead>
             <tr>
+                $extra_th_if_needed
                 <th class=\"tID\">ID</th>
                 <th class=\"reqDetail\">Request Detail</th>
                 <th class=\"tLatestNote\">Latest Note</th>
@@ -89,7 +92,8 @@ function display_tickets_table($tickets, $database, $custom_data_table_class = n
         if (!isset($ticket['location']) || $ticket['location'] == null) {
             $location_name = "N/A";
         }
-        echo '<tr class="' . $row_color . '">
+        echo '<tr class="' . $row_color . '">'
+        .$extra_td_if_needed.'
             <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id=' . $ticket["id"] . '">' . $ticket["id"] . '</a></td>
             <td class="details" data-cell="Request Detail"><a href="/controllers/tickets/edit_ticket.php?id=' . $ticket["id"] . '">' . $ticket["name"] . ':</a>' . limitChars($descriptionWithoutLinks, 100) . '</td>
             <td class="latestNote" data-cell="Latest Note:">' . limitChars($latest_note_str, 150) . '</td>

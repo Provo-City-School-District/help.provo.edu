@@ -972,3 +972,20 @@ function user_exists_locally(string $username)
     // If a row is returned, the user exists
     return mysqli_num_rows($result) > 0;
 }
+
+function set_field_for_ticket(int $ticket_id, string $field, $value)
+{
+    // add to this later
+    $allowed_fields = ["employee", "status"];
+    if (!in_array($field, $allowed_fields, true)) {
+        return false;
+    }
+
+    $result = HelpDB::get()->execute_query("UPDATE tickets SET $field = ? WHERE id = ?", [$value, $ticket_id]);
+    if (!$result) {
+        log_app(LOG_ERR, "Failed to update ticket field \"$field\" for id=$ticket_id");
+        return false;
+    }
+
+    return true;
+}

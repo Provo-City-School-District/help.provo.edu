@@ -133,12 +133,28 @@ $exclude_result = HelpDB::get()->execute_query("SELECT * FROM exclude_days WHERE
             <p id="bulk-actions-row-count"></p>
             <div>
                 <label for="ticket_action">Ticket action:</label>
-                <select name="ticket_action">
+                <select id="ticket-action-dropdown" name="ticket_action">
                     <option value="resolve">Resolve</option>
                     <option value="close">Close</option>
                     <option value="assign">Assign</option>
                 </select>
             </div>
+            <div id="assigned-tech-container"> 
+                <label for="assigned_tech">Assigned Tech:</label>
+                <select name="assigned_tech">
+                    <option value="unassigned">Unassigned</option>
+                    <?php foreach (get_tech_usernames() as $username) : ?>
+                        <?php
+                        $name = get_local_name_for_user($username);
+                        $firstname = ucwords(strtolower($name["firstname"]));
+                        $lastname = ucwords(strtolower($name["lastname"]));
+                        $display_string = $firstname . " " . $lastname . " - " . location_name_from_id(get_fast_client_location($username) ?: "");
+                        ?>
+                        <option value="<?= $username ?>" <?= $ticket['employee'] === $username ? 'selected' : '' ?>><?= $display_string ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
             <input type="submit" value="Commit action">
         </div>
     </form>
@@ -179,6 +195,7 @@ $exclude_result = HelpDB::get()->execute_query("SELECT * FROM exclude_days WHERE
 
         let ticket_ids = [];
         row_data.each(function (value, index) {
+            // This relies on ticket id being in the 2nd column as well as being parsable (pretty crusty)
             const ticket_url = value[1];
             ticket_id = ticket_url.replace(/<\/?[^>]+(>|$)/g, "");
             ticket_ids.push(ticket_id);
@@ -235,6 +252,15 @@ $exclude_result = HelpDB::get()->execute_query("SELECT * FROM exclude_days WHERE
     admin_table.on('deselect', function (e, dt, type, indexes) {
         if (type === 'row') {
             dt_row_deselected(e, dt, type, indexes);
+        }
+    });
+
+    $("#ticket-action-dropdown").change(function () {
+        const new_value = this.value;
+        if (new_value == "assign") {
+            $('#assigned-tech-container').show();
+        } else {
+            $('#assigned-tech-container').hide();
         }
     });
 </script>

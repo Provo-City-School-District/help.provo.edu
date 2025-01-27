@@ -272,7 +272,7 @@ blockquote {
     position: fixed;
     bottom: 0;
     width: 100%;
-    display: none;
+    display: none; /* hide at first */
 }
 
 #bulk-actions-content {
@@ -281,7 +281,11 @@ blockquote {
     padding: 10px;
     background-color: #96a6ff;
     display: grid;
-    grid-template-columns: 1fr 200px 100px;
+    grid-auto-flow: column;
+}
+
+#assigned-tech-container {
+    display: none; /* hide at first */
 }
 
 /* =============================== Table Styles =============================== */

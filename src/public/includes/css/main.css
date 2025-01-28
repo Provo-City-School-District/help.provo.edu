@@ -278,15 +278,28 @@ blockquote {
 #bulk-actions-content {
     border-radius: 8px;
     margin: 0px 10px 10px 10px;
-    padding: 10px;
-    background-color: #96a6ff;
+    padding: 10px 20px 10px 20px;
+    background-color: var(--theme-primary);
     display: grid;
+    grid-auto-columns: auto;
     grid-auto-flow: column;
+    align-items: center;
+    color: white;
 }
 
 #assigned-tech-container {
     display: none; /* hide at first */
 }
+
+#bulk-actions-submit-element {
+    text-align: center;
+}
+
+.bulk-actions-element {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
 
 /* =============================== Table Styles =============================== */
 

@@ -130,8 +130,10 @@ $exclude_result = HelpDB::get()->execute_query("SELECT * FROM exclude_days WHERE
 <div id="bulk-actions-container">
     <form action="/ajax/bulk_action.php" id="bulk-actions-form">
         <div id="bulk-actions-content">
-            <p id="bulk-actions-row-count"></p>
-            <div>
+            <div class="bulk-actions-element">
+                <p id="bulk-actions-row-count"></p>
+            </div>
+            <div class="bulk-actions-element">
                 <label for="ticket_action">Ticket action:</label>
                 <select id="ticket-action-dropdown" name="ticket_action">
                     <option value="resolve">Resolve</option>
@@ -139,7 +141,7 @@ $exclude_result = HelpDB::get()->execute_query("SELECT * FROM exclude_days WHERE
                     <option value="assign">Assign</option>
                 </select>
             </div>
-            <div id="assigned-tech-container"> 
+            <div id="assigned-tech-container" class="bulk-actions-element"> 
                 <label for="assigned_tech">Assigned Tech:</label>
                 <select name="assigned_tech">
                     <option value="unassigned">Unassigned</option>
@@ -154,8 +156,9 @@ $exclude_result = HelpDB::get()->execute_query("SELECT * FROM exclude_days WHERE
                     <?php endforeach; ?>
                 </select>
             </div>
-
-            <input type="submit" value="Commit action">
+            <div class="bulk-actions-element" id="bulk-actions-submit-element">
+                <input type="submit" value="Commit action">
+            </div>
         </div>
     </form>
 </div>

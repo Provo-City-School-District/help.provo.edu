@@ -4,6 +4,13 @@ require "ticket_utils.php";
 require "helpdbconnect.php";
 
 
+// Only admins are allowed to do bulk actions for now
+if (!session_is_admin()) {
+    log_app(LOG_INFO, "[bulk_action.php] Session user is not an admin. Ignoring request...");
+    http_response_code(403);
+    exit;
+}
+
 $ticket_ids = $_POST["ticket_ids"];
 $ticket_action = $_POST["ticket_action"];
 

@@ -22,6 +22,9 @@ foreach ($ticket_ids as $ticket_id) {
     } else if ($ticket_action == "assign") {
         $new_assigned_tech = $_POST["assigned_tech"];
         set_field_for_ticket($ticket_id, "employee", $new_assigned_tech);
+    } else {
+        log_app(LOG_ERR, "[bulk_action.php] Unknown ticket_action found. Exiting...");
+        exit;
     }
 }
 

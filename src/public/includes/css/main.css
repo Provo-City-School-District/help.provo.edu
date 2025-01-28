@@ -291,7 +291,7 @@ blockquote {
     display: none; /* hide at first */
 }
 
-#bulk-actions-submit-element {
+.bulk-actions-center-element {
     text-align: center;
 }
 

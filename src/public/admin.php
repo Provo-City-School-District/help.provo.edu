@@ -136,9 +136,9 @@ $exclude_result = HelpDB::get()->execute_query("SELECT * FROM exclude_days WHERE
             <div class="bulk-actions-element bulk-actions-center-element">
                 <label for="ticket_action">Ticket action:</label>
                 <select id="ticket-action-dropdown" name="ticket_action">
+                    <option value="assign">Assign</option>
                     <option value="resolve">Resolve</option>
                     <option value="close">Close</option>
-                    <option value="assign">Assign</option>
                 </select>
             </div>
             <div id="assigned-tech-container" class="bulk-actions-element bulk-actions-center-element"> 

@@ -16,8 +16,6 @@
 <h1>Tickets Assigned to Me</h1>
     {% include 'tickets_table.twig' with { 'tickets': my_tickets } %}
 {% endif %}
-
-
 	<h1>Tickets I'm Included In</h1>
-	    {% include 'tickets_table.twig' with { 'tickets': open_tickets } %}
+	{% include 'tickets_table.twig' with { 'tickets': open_tickets } %}
 {% endblock %}

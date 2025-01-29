@@ -1,6 +1,7 @@
 <?php
 require_once("email_utils.php");
 require_once("template.php");
+
 // DB connection can fail if not included first, TODO fix maybe
 
 function session_logged_in()
@@ -187,12 +188,67 @@ function create_note(
 
     // Send email to assigned tech on update if the client updates ticket
     $client = client_for_ticket($ticket_id_clean);
+    $assigned_tech = assigned_tech_for_ticket($ticket_id_clean) ?? 'unassigned';
     $cc_emails = explode(',', emails_for_ticket($ticket_id_clean, false));
     $bcc_emails = explode(',', emails_for_ticket($ticket_id_clean, true));
-
     $user_email = email_address_from_username(strtolower($username));
 
-    log_app(LOG_INFO, "username: $username, client: $client");
+
+    // Mark ticket as unread for assigned tech if anyone else puts in a note
+    if ($username != $assigned_tech && user_exists_locally($assigned_tech)) {
+        mark_ticket_unread($assigned_tech, $ticket_id_clean);
+    }
+
+    log_app(LOG_INFO, $client);
+
+    // Mark ticket as unread for client if anyone else puts in a note
+    if ($username != $client && user_exists_locally($client)) {
+        mark_ticket_unread($client, $ticket_id_clean);
+    }
+
+
+    // Mark ticket as unread for any CC users that are in the system if anyone else puts in a note
+    foreach ($cc_emails as $cc_email) {
+        $data = get_info_from_email($cc_email);
+        $email_user = $data["user"];
+        $email_domain = $data["domain"];
+    
+        // non provo.edu can never be in the system, so skip
+        if ($email_domain != 'provo.edu')
+            continue;
+
+        // if not in system, skip
+        if (!user_exists_locally($email_user))
+            continue;
+
+        // no need to clear ticket status for ourselves (we put in the note)
+        if ($email_user == $username)
+            continue;
+    
+        mark_ticket_unread($email_user, $ticket_id);
+    }
+
+
+    // Mark ticket as unread for any BCC users that are in the system if anyone else puts in a note
+    foreach ($bcc_emails as $bcc_email) {
+        $data = get_info_from_email($bcc_email);
+        $email_user = $data["user"];
+        $email_domain = $data["domain"];
+    
+        // non provo.edu can never be in the system, so skip
+        if ($email_domain != 'provo.edu')
+            continue;
+
+        // if not in system, skip
+        if (!user_exists_locally($email_user))
+            continue;
+
+        // no need to clear ticket status for ourselves (we put in the note)
+        if ($email_user == $username)
+            continue;
+    
+        mark_ticket_unread($email_user, $ticket_id);
+    }
 
     // Allow pseudo-clients to update ticket status if in CC/BCC field
     if ((strtolower($username) == strtolower($client) ||
@@ -215,7 +271,6 @@ function create_note(
             }
         }
 
-        $assigned_tech = assigned_tech_for_ticket($ticket_id_clean);
         $client_name = get_client_name($username);
         $location_name = location_name_from_id(location_for_ticket($ticket_id_clean));
         $ticket_desc = description_for_ticket($ticket_id_clean);
@@ -887,4 +942,64 @@ function get_user_setting($userId, $settingName)
         log_app(LOG_ERR, "Failed to get user setting: $settingName for user: $userId");
         return null;
     }
+}
+
+
+
+function get_id_for_user(string $username)
+{
+    $user_id_res = HelpDB::get()->execute_query("SELECT id FROM help.users WHERE username = ?", [$username]);
+    return $user_id_res->fetch_assoc()["id"];
+}
+
+function mark_ticket_unread(string $username, int $ticket_id)
+{
+    $user_id = get_id_for_user($username);
+    log_app(LOG_INFO, $user_id);
+    
+    $remove_read_query = "DELETE FROM ticket_viewed WHERE (user_id = ? AND ticket_id = ?)";
+    $remove_read_res = HelpDB::get()->execute_query($remove_read_query, [$user_id, $ticket_id]);
+
+    return (bool)$remove_read_res;
+}
+
+function user_exists_locally(string $username)
+{
+
+    $check_query = "SELECT * FROM users WHERE username = ?";
+    $result = HelpDB::get()->execute_query($check_query, [$username]);
+
+    // If a row is returned, the user exists
+    return mysqli_num_rows($result) > 0;
+}
+
+function set_field_for_ticket(int $ticket_id, string $field, $value)
+{
+    // add to this later
+    $allowed_fields = ["employee", "status", "department"];
+    if (!in_array($field, $allowed_fields, true)) {
+        return false;
+    }
+
+    $result = HelpDB::get()->execute_query("UPDATE tickets SET $field = ? WHERE id = ?", [$value, $ticket_id]);
+    if (!$result) {
+        log_app(LOG_ERR, "Failed to update ticket field \"$field\" for id=$ticket_id");
+        return false;
+    }
+
+    return true;
+}
+
+function get_departments()
+{
+    // Query the locations table to get the departments
+    $department_query = "SELECT sitenumber, location_name FROM locations WHERE is_department = TRUE ORDER BY location_name ASC";
+    $department_result = HelpDB::get()->execute_query($department_query);
+
+    $tmp = [];
+    while ($row = $department_result->fetch_assoc()) {
+        $tmp[] = $row;
+    }
+
+    return $tmp;
 }

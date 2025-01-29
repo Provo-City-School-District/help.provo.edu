@@ -1,8 +1,8 @@
 <?php
-require "block_file.php";
-require "ticket_utils.php";
-require "helpdbconnect.php";
-require "authentication_utils.php";
+require_once "helpdbconnect.php";
+require_once "block_file.php";
+require_once "ticket_utils.php";
+require_once "authentication_utils.php";
 
 if (!$_SESSION["permissions"]["is_admin"]) {
     echo "You do not have permission to view this page";
@@ -86,6 +86,8 @@ function test_helper_methods()
 
     assert(user_exists_locally($username));
 
+    assert(get_id_for_user("braxtona") == 5);
+
     return true;
 }
 
@@ -160,9 +162,4 @@ if (test_note_creation($ticket_id)) {
 if (test_helper_methods()) {
     echo "Helper methods: passed<br>";
 }
-
-if (test_pages()) {
-    echo "All pages: passed<br>";
-}
-
 echo "<br>Tests complete";

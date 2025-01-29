@@ -268,6 +268,35 @@ blockquote {
 	background-color: var(--page-background);
 }
 
+#bulk-actions-container {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    display: none; /* hide at first */
+}
+
+#bulk-actions-content {
+    border-radius: 8px;
+    margin: 0px 10px 10px 10px;
+    padding: 10px 20px 10px 20px;
+    background-color: var(--theme-primary);
+    display: grid;
+    grid-auto-columns: auto;
+    grid-auto-flow: column;
+    align-items: center;
+    color: white;
+}
+
+.bulk-actions-center-element {
+    text-align: center;
+}
+
+.bulk-actions-element {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+
 /* =============================== Table Styles =============================== */
 
 table,

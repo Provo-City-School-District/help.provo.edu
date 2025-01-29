@@ -976,7 +976,7 @@ function user_exists_locally(string $username)
 function set_field_for_ticket(int $ticket_id, string $field, $value)
 {
     // add to this later
-    $allowed_fields = ["employee", "status"];
+    $allowed_fields = ["employee", "status", "department"];
     if (!in_array($field, $allowed_fields, true)) {
         return false;
     }
@@ -988,4 +988,18 @@ function set_field_for_ticket(int $ticket_id, string $field, $value)
     }
 
     return true;
+}
+
+function get_departments()
+{
+    // Query the locations table to get the departments
+    $department_query = "SELECT sitenumber, location_name FROM locations WHERE is_department = TRUE ORDER BY location_name ASC";
+    $department_result = HelpDB::get()->execute_query($department_query);
+
+    $tmp = [];
+    while ($row = $department_result->fetch_assoc()) {
+        $tmp[] = $row;
+    }
+
+    return $tmp;
 }

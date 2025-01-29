@@ -136,7 +136,8 @@ $exclude_result = HelpDB::get()->execute_query("SELECT * FROM exclude_days WHERE
             <div class="bulk-actions-element bulk-actions-center-element">
                 <label for="ticket_action">Ticket action:</label>
                 <select id="ticket-action-dropdown" name="ticket_action">
-                    <option value="assign">Assign</option>
+                    <option value="assign_tech">Assign Tech</option>
+                    <option value="assign_dept">Assign Department</option>
                     <option value="resolve">Resolve</option>
                     <option value="close">Close</option>
                 </select>
@@ -152,7 +153,19 @@ $exclude_result = HelpDB::get()->execute_query("SELECT * FROM exclude_days WHERE
                         $lastname = ucwords(strtolower($name["lastname"]));
                         $display_string = $firstname . " " . $lastname . " - " . location_name_from_id(get_fast_client_location($username) ?: "");
                         ?>
-                        <option value="<?= $username ?>" <?= $ticket['employee'] === $username ? 'selected' : '' ?>><?= $display_string ?></option>
+                        <option value="<?= $username ?>"><?= $display_string ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div id="assigned-dept-container" class="bulk-actions-element bulk-actions-center-element hidden"> 
+                <label for="assigned_dept">Assigned Dept:</label>
+                <select name="assigned_dept">
+                    <option hidden disabled selected value></option>
+                    <?php foreach (get_departments() as $dept) : ?>
+                        <?php
+                            $display_string = $dept["location_name"];
+                        ?>
+                        <option value="<?= $dept["sitenumber"] ?>"><?= $display_string ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -260,10 +273,15 @@ $exclude_result = HelpDB::get()->execute_query("SELECT * FROM exclude_days WHERE
 
     $("#ticket-action-dropdown").change(function () {
         const new_value = this.value;
-        if (new_value == "assign") {
+        if (new_value == "assign_tech") {
             $('#assigned-tech-container').show();
+            $('#assigned-dept-container').hide();
+        } else if (new_value == "assign_dept") {
+            $('#assigned-dept-container').show();
+            $('#assigned-tech-container').hide();
         } else {
             $('#assigned-tech-container').hide();
+            $('#assigned-dept-container').hide();
         }
     });
 </script>

@@ -19,9 +19,12 @@ foreach ($ticket_ids as $ticket_id) {
         set_field_for_ticket($ticket_id, "status", "resolved");
     } else if ($ticket_action == "close") {
         set_field_for_ticket($ticket_id, "status", "closed");
-    } else if ($ticket_action == "assign") {
+    } else if ($ticket_action == "assign_tech") {
         $new_assigned_tech = $_POST["assigned_tech"];
         set_field_for_ticket($ticket_id, "employee", $new_assigned_tech);
+    } else if ($ticket_action == "assign_dept") {
+        $new_dept_id = $_POST["assigned_dept"];
+        set_field_for_ticket($ticket_id, "department", $new_dept_id);
     } else {
         log_app(LOG_ERR, "[bulk_action.php] Unknown ticket_action found. Exiting...");
         exit;

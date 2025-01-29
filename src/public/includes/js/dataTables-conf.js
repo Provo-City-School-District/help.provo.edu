@@ -30,7 +30,7 @@ $(document).ready(function () {
     window.location.pathname === "/admin.php" ||
     window.location.pathname === "/tickets.php"
   ) {
-    options.order = [[8, "asc"]];
+    options.order = [[9, "asc"]];
   } else if (
     window.location.pathname === "/controllers/tickets/subordinate_tickets.php"
   ) {

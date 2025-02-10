@@ -928,6 +928,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                     <th>Ticket Assigned To</th>
                     <th>Ticket Title</th>
                     <th>Ticket Description</th>
+                    <th>Ticket Location</th>
                 </tr>
                 <?php
                 foreach ($child_tickets as $child_ticket) {
@@ -938,6 +939,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                         <td data-cell="Tech"><?= $child_ticket['employee'] ?></td>
                         <td data-cell="Ticket Title"><?= $child_ticket['name'] ?></td>
                         <td data-cell="Request Detail" class="child-ticket-details"><?= mb_substr(strip_tags(html_entity_decode($child_ticket['description'])), 0, 100) ?>...</td>
+                        <td data-cell="Ticket Location"><?= location_name_from_id($child_ticket['location']) ?></td>
                     </tr>
                 <?php
                 }
@@ -1147,7 +1149,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                             foreach ($asset_tag_matches[0] as $match) {
                                 $match_str = $match[0];
                                 $scheme = null;
-        
+
                                 if (str_starts_with(strtolower($match_str), 'bc')) {
                                     $scheme = 'barcode';
                                 } else {

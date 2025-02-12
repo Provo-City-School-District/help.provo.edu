@@ -743,28 +743,23 @@ function get_parsed_ticket_data($ticket_data)
 
         $tmp["title"] = $row["name"];
         $tmp["description"] = limitChars(strip_tags(html_entity_decode($row["description"])), 100);
-
-        $notes_query = "SELECT creator, note FROM help.notes WHERE linked_id = ? ORDER BY
-			(CASE WHEN date_override IS NULL THEN created ELSE date_override END) DESC
-		";
-        $notes_stmt = mysqli_prepare(HelpDB::get(), $notes_query);
-        $creator = null;
-        $note_data = null;
-        if ($notes_stmt) {
-            mysqli_stmt_bind_param($notes_stmt, "i", $row["id"]);
-            mysqli_stmt_execute($notes_stmt);
-
-            mysqli_stmt_bind_result($notes_stmt, $creator, $note_data);
-            // Fetch the result
-            mysqli_stmt_fetch($notes_stmt);
-
-            // Use $location_name as needed
-            mysqli_stmt_close($notes_stmt);
+        
+        if (session_is_tech()) {
+            $notes_query = "SELECT creator, note FROM help.notes WHERE linked_id = ? ORDER BY
+                (CASE WHEN date_override IS NULL THEN created ELSE date_override END) DESC
+            ";
+        } else {
+            $notes_query = "SELECT creator, note FROM help.notes WHERE (linked_id = ? AND visible_to_client = 1) ORDER BY
+            (CASE WHEN date_override IS NULL THEN created ELSE date_override END) DESC";
         }
+        $notes_stmt_result = HelpDB::get()->execute_query($notes_query, [$row["id"]]);
+        $notes_stmt_data = $notes_stmt_result->fetch_assoc();
+
         $latest_note_str = "";
-        if ($creator != null && $note_data != null) {
-            $tmp["latest_note_author"] = $creator;
-            $tmp["latest_note"] = limitChars(strip_tags(html_entity_decode($note_data)), 150);
+        if (isset($notes_stmt_data) && array_key_exists("creator", $notes_stmt_data) &&
+            array_key_exists("note", $notes_stmt_data)) {
+            $tmp["latest_note_author"] = $notes_stmt_data["creator"];
+            $tmp["latest_note"] = limitChars(strip_tags(html_entity_decode($notes_stmt_data["note"])), 150);
         }
 
         $tmp["client_username"] = $row["client"];

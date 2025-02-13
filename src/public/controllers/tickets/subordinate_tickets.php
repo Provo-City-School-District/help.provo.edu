@@ -24,8 +24,9 @@ $ticket_query = <<<STR
 	SELECT tickets.*, GROUP_CONCAT(DISTINCT alerts.alert_level) AS alert_levels
 	FROM tickets
 	JOIN users ON tickets.employee = users.username
+    JOIN user_settings ON user_settings.user_id = users.id
 	LEFT JOIN alerts ON tickets.id = alerts.ticket_id
-	WHERE users.supervisor_username = ?
+	WHERE user_settings.supervisor_username = ?
 	AND tickets.status NOT IN ('closed', 'resolved')
 	GROUP BY tickets.id
 	ORDER BY tickets.last_updated DESC
@@ -39,7 +40,8 @@ $alerts_query = <<<STR
 	SELECT alerts.* 
 	FROM alerts 
 	JOIN users ON alerts.employee = users.username
-	WHERE users.supervisor_username = ?
+    JOIN user_settings ON user_settings.user_id = users.id
+	WHERE user_settings.supervisor_username = ?
 	AND alerts.supervisor_alert IN (0, 1)
 STR;
 

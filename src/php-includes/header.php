@@ -83,13 +83,15 @@ $num_assigned_tasks_result = HelpDB::get()->execute_query($num_assigned_tasks_qu
 $num_assigned_tasks = $num_assigned_tasks_result->fetch_column(0);
 
 $num_subordinate_tickets_query = <<<STR
-    SELECT COUNT(*) FROM alerts WHERE employee IN
-        (SELECT user_id FROM user_settings WHERE supervisor_username = ?)
+    SELECT COUNT(*) FROM alerts
+    INNER JOIN users ON users.username = alerts.employee
+    INNER JOIN user_settings ON user_settings.user_id = users.id
+    WHERE user_settings.supervisor_username = ?
 STR;
 
 
 if (isset($_SESSION['username']) && $_SESSION['username'] != "") {
-    $num_subordinate_tickets_result = HelpDB::get()->execute_query($num_subordinate_tickets_query, [get_id_for_user($username)]);
+    $num_subordinate_tickets_result = HelpDB::get()->execute_query($num_subordinate_tickets_query, [$username]);
     $num_subordinate_tickets = $num_subordinate_tickets_result->fetch_column(0);
 }
 

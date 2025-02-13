@@ -6,16 +6,7 @@
     <div style="background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%;">
         <h2>Inactivity Alert</h2>
         <p>This tab has been inactive for over 30 minutes. Your session may have ended.</p>
-        <?php
-        // $time_difference = calculateTimeSinceLastLogin();
-        // // Check if the user has been logged in for more than 2 hours and display the appropriate message about session likely broken
-        // if ($time_difference > 3 * 60 * 60) {
-        //     echo "<p>Your session may have expired. It's recommended to log out and back in.</p>";
-        //     if (isset($_SESSION['username'])) {
-        //         log_app(LOG_INFO, $_SESSION['username'] . " alerted of old session");
-        //     }
-        // }
-        ?>
+
         <button class="button" onclick="dismiss_timeout_modal()">Dismiss</button>
         <button class="button" onclick="location.reload()">Reload Page</button>
     </div>

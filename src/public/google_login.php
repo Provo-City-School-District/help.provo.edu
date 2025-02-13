@@ -31,7 +31,7 @@ if (isset($_GET['code'])) {
 
         // store access token
         $_SESSION['access_token'] = $token['access_token'];
-/*
+        /*
         Could potentially be used to resolve login issues (7 day cache)
 
         // refresh token
@@ -84,7 +84,7 @@ if (isset($_GET['code'])) {
             create_user_in_local_db($username);
         }
         // Query Local user information
-        $local_query_results = HelpDB::get()->execute_query("SELECT * FROM users WHERE username = ?", [$_SESSION["username"]]);
+        $local_query_results = HelpDB::get()->execute_query("SELECT * FROM user_settings WHERE user_id = ?", [get_id_for_user($_SESSION["username"])]);
         $local_query_data = mysqli_fetch_assoc($local_query_results);
 
         // if user is still not found, LDAP failed to insert user into local database
@@ -110,7 +110,6 @@ if (isset($_GET['code'])) {
             'can_view_tickets' => $local_query_data['can_view_tickets'],
             'can_create_tickets' => $local_query_data['can_create_tickets'],
             'can_edit_tickets' => $local_query_data['can_edit_tickets'],
-            'can_delete_tickets' => $local_query_data['can_delete_tickets'],
             'is_admin' => $local_query_data['is_admin'],
             'is_tech' => $local_query_data['is_tech'],
             'is_supervisor' => $local_query_data['is_supervisor'],

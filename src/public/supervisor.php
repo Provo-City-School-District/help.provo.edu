@@ -106,10 +106,11 @@ $allLocations = process_query_result($location_query_result, "location_name");
 
 // Query open tickets based on field tech:
 $field_tech_query = <<<STR
-    SELECT tickets.employee 
-    FROM tickets 
-    INNER JOIN users ON tickets.employee = users.username 
-    WHERE tickets.status NOT IN ('closed', 'resolved') AND users.is_tech = 1
+    SELECT t.employee 
+    FROM tickets t
+    INNER JOIN users u ON t.employee = u.username 
+    INNER JOIN user_settings us ON u.id = us.user_id
+    WHERE t.status NOT IN ('closed', 'resolved') AND us.is_tech = 1
 STR;
 
 $field_tech_query_result = HelpDB::get()->execute_query($field_tech_query);

@@ -256,7 +256,12 @@ function calculateTimeSinceLastLogin()
 //TODO: have session_is_tech and user_is_tech which might be used as the same thing
 function user_is_tech(string $username)
 {
-    $userPermissionsResult = HelpDB::get()->execute_query("SELECT is_tech FROM users WHERE username = ?", [$username]);
+    $userPermissionsResult = HelpDB::get()->execute_query("
+        SELECT us.is_tech 
+        FROM users u
+        LEFT JOIN user_settings us ON u.id = us.user_id
+        WHERE u.username = ?
+    ", [$username]);
     $userPermissionsData = mysqli_fetch_assoc($userPermissionsResult);
     if (isset($userPermissionsResult) && isset($userPermissionsData))
         return $userPermissionsData["is_tech"] != 0;

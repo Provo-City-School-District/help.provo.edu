@@ -14,6 +14,7 @@ if ($_POST['referer'] == 'profile.php') {
     $hide_alerts = isset($_POST['hide_alerts']) ? 1 : 0;
     $ticket_limit = $_POST['ticket_limit'] ?? 10;
     $note_count = $_POST['note_count'] ?? 5;
+    $show_alerts = isset($_POST['show_alerts']) ? 1 : 0;
 
     // update color scheme with the new one. takes effect immediately
     $_SESSION['color_scheme'] = $color_scheme;
@@ -24,9 +25,9 @@ if ($_POST['referer'] == 'profile.php') {
 
 
     // Update the color_scheme in the database
-    $update_user_query = "UPDATE users SET color_scheme = ?, note_count = ?, hide_alerts = ?, ticket_limit = ? WHERE id = ?";
+    $update_user_query = "UPDATE user_settings SET color_scheme = ?, note_count = ?, hide_alerts = ?, ticket_limit = ?, show_alerts = ? WHERE user_id = ?";
     $update_user_stmt = mysqli_prepare(HelpDB::get(), $update_user_query);
-    mysqli_stmt_bind_param($update_user_stmt, "siiii", $color_scheme, $note_count, $hide_alerts, $ticket_limit, $user_id);
+    mysqli_stmt_bind_param($update_user_stmt, "siiiii", $color_scheme, $note_count, $hide_alerts, $ticket_limit, $show_alerts, $user_id);
 
     $res = mysqli_stmt_execute($update_user_stmt);
     if ($res) {

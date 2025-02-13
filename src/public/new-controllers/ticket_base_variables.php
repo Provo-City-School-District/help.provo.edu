@@ -70,15 +70,17 @@ mysqli_stmt_close($flagged_stmt);
 
 
 $subord_result = HelpDB::get()->execute_query(
-    "SELECT COUNT(*) AS supervisor_count FROM users WHERE supervisor_username = ?",
+    "SELECT COUNT(*) AS supervisor_count FROM user_settings WHERE supervisor_username = ?",
     [$username]
 );
 $subord_row = $subord_result->fetch_assoc();
 $subord_count = $subord_row['supervisor_count'];
 
 $num_subordinate_tickets_query = <<<STR
-    SELECT COUNT(*) FROM alerts WHERE employee IN
-        (SELECT username FROM users WHERE supervisor_username = ?)
+    SELECT COUNT(*) FROM alerts
+    INNER JOIN users ON users.username = alerts.employee
+    INNER JOIN user_settings ON user_settings.user_id = users.id
+    WHERE user_settings.supervisor_username = ?
 STR;
 
 $num_subordinate_tickets_result = HelpDB::get()->execute_query($num_subordinate_tickets_query, [$username]);

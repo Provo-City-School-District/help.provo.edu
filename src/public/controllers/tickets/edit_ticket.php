@@ -264,7 +264,13 @@ if (in_array($ticket['location'], $dep_locations)) {
 }
 
 // Fetch the list of usernames from the users table
-$usernamesQuery = "SELECT username, is_tech FROM users WHERE is_tech = 1 ORDER BY username ASC";
+$usernamesQuery = "
+    SELECT u.username, us.is_tech 
+    FROM users u
+    LEFT JOIN user_settings us ON u.id = us.user_id
+    WHERE us.is_tech = 1
+    ORDER BY u.username ASC
+";
 $usernamesResult = HelpDB::get()->execute_query($usernamesQuery);
 
 if (!$usernamesResult) {
@@ -411,6 +417,9 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
     <!-- Form for updating ticket information -->
     <div class="ticketButtons">
         <div>
+            <?php if (!$readonly) : ?>
+                <button id="unread-ticket-button" class="button">Unread Ticket</button>
+            <?php endif; ?>
             <?php if ($readonly && !session_is_intern() && $ticket['status'] != 'closed' && !$hasNotes) : ?>
                 <button id="close-ticket-button" class="button">Close Ticket</button>
             <?php endif; ?>
@@ -1482,7 +1491,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
 
     // Pass the note order from PHP to JavaScript
     var noteOrder = "<?php echo $note_order; ?>";
-
+    // Close Ticket Button call to AJAX
     $(document).ready(function() {
         $('#close-ticket-button').click(function() {
             $.ajax({
@@ -1494,6 +1503,25 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                 success: function(data, textStatus, xhr) {
                     console.log("Ticket closed successfully");
                     location.reload();
+                },
+                error: function() {
+                    alert("Error: Autocomplete AJAX call failed");
+                },
+            });
+        });
+    });
+    // Unread Button Call to AJAX
+    $(document).ready(function() {
+        $('#unread-ticket-button').click(function() {
+            $.ajax({
+                url: "/ajax/unread_ticket.php",
+                method: "POST",
+                data: {
+                    ticket_id: <?= $ticket_id ?>,
+                },
+                success: function(data, textStatus, xhr) {
+                    console.log("Ticket unread successfully");
+                    window.location.href = "/tickets.php";
                 },
                 error: function() {
                     alert("Error: Autocomplete AJAX call failed");

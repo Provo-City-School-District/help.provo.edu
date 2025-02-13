@@ -100,7 +100,12 @@ $locations = mysqli_fetch_all($location_result, MYSQLI_ASSOC);
 //===================================================
 // Get the usernames for the search form
 //===================================================
-$usernamesQuery = "SELECT username,is_tech FROM users ORDER BY username ASC";
+$usernamesQuery = "
+    SELECT u.username, us.is_tech 
+    FROM users u
+    LEFT JOIN user_settings us ON u.id = us.user_id
+    ORDER BY u.username ASC
+";
 $usernamesResult = HelpDB::get()->execute_query($usernamesQuery);
 
 if (!$usernamesResult) {

@@ -212,7 +212,7 @@ function create_note(
         $data = get_info_from_email($cc_email);
         $email_user = $data["user"];
         $email_domain = $data["domain"];
-    
+
         // non provo.edu can never be in the system, so skip
         if ($email_domain != 'provo.edu')
             continue;
@@ -224,7 +224,7 @@ function create_note(
         // no need to clear ticket status for ourselves (we put in the note)
         if ($email_user == $username)
             continue;
-    
+
         mark_ticket_unread($email_user, $ticket_id);
     }
 
@@ -234,7 +234,7 @@ function create_note(
         $data = get_info_from_email($bcc_email);
         $email_user = $data["user"];
         $email_domain = $data["domain"];
-    
+
         // non provo.edu can never be in the system, so skip
         if ($email_domain != 'provo.edu')
             continue;
@@ -246,7 +246,7 @@ function create_note(
         // no need to clear ticket status for ourselves (we put in the note)
         if ($email_user == $username)
             continue;
-    
+
         mark_ticket_unread($email_user, $ticket_id);
     }
 
@@ -743,7 +743,7 @@ function get_parsed_ticket_data($ticket_data)
 
         $tmp["title"] = $row["name"];
         $tmp["description"] = limitChars(strip_tags(html_entity_decode($row["description"])), 100);
-        
+
         if (session_is_tech()) {
             $notes_query = "SELECT creator, note FROM help.notes WHERE linked_id = ? ORDER BY
                 (CASE WHEN date_override IS NULL THEN created ELSE date_override END) DESC
@@ -756,8 +756,10 @@ function get_parsed_ticket_data($ticket_data)
         $notes_stmt_data = $notes_stmt_result->fetch_assoc();
 
         $latest_note_str = "";
-        if (isset($notes_stmt_data) && array_key_exists("creator", $notes_stmt_data) &&
-            array_key_exists("note", $notes_stmt_data)) {
+        if (
+            isset($notes_stmt_data) && array_key_exists("creator", $notes_stmt_data) &&
+            array_key_exists("note", $notes_stmt_data)
+        ) {
             $tmp["latest_note_author"] = $notes_stmt_data["creator"];
             $tmp["latest_note"] = limitChars(strip_tags(html_entity_decode($notes_stmt_data["note"])), 150);
         }
@@ -863,7 +865,13 @@ function ldapspecialchars($string)
 function get_tech_usernames()
 {
 
-    $usernamesResult = HelpDB::get()->execute_query("SELECT username, is_tech FROM users WHERE is_tech = 1 ORDER BY username ASC");
+    $usernamesResult = HelpDB::get()->execute_query("
+        SELECT u.username, us.is_tech 
+        FROM users u
+        LEFT JOIN user_settings us ON u.id = us.user_id
+        WHERE us.is_tech = 1 
+        ORDER BY u.username ASC
+    ");
     if (!$usernamesResult) {
         log_app(LOG_ERR, "[get_tech_usernames] Failed to query database");
         return [];
@@ -951,7 +959,7 @@ function mark_ticket_unread(string $username, int $ticket_id)
 {
     $user_id = get_id_for_user($username);
     log_app(LOG_INFO, $user_id);
-    
+
     $remove_read_query = "DELETE FROM ticket_viewed WHERE (user_id = ? AND ticket_id = ?)";
     $remove_read_res = HelpDB::get()->execute_query($remove_read_query, [$user_id, $ticket_id]);
 

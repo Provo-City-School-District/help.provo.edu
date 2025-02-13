@@ -264,7 +264,13 @@ if (in_array($ticket['location'], $dep_locations)) {
 }
 
 // Fetch the list of usernames from the users table
-$usernamesQuery = "SELECT username, is_tech FROM users WHERE is_tech = 1 ORDER BY username ASC";
+$usernamesQuery = "
+    SELECT u.username, us.is_tech 
+    FROM users u
+    LEFT JOIN user_settings us ON u.id = us.user_id
+    WHERE us.is_tech = 1
+    ORDER BY u.username ASC
+";
 $usernamesResult = HelpDB::get()->execute_query($usernamesQuery);
 
 if (!$usernamesResult) {

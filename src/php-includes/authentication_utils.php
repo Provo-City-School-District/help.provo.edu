@@ -101,6 +101,7 @@ function create_user_in_local_db($username)
         $email = $ldap_entries_result[$i]['mail'][0];
         $employee_id = $ldap_entries_result[$i]['employeeid'][0];
     }
+    $username = strtolower($username);
 
     if (user_exists_locally($username))
         return CreateLocalUserStatus::UserAlreadyExists;

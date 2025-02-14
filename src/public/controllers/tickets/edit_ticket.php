@@ -535,12 +535,15 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
             ?>
 
                 <div>
-                    <span>Assigned Tech:</span> <?= $ticket['employee'] ?>
+                    <?php
+                    $tech_nice_name = get_local_name_for_user($ticket['employee']);
+                    ?>
+                    <span>Assigned Tech:</span> <?= $tech_nice_name['firstname'] . ' ' . $tech_nice_name['lastname'] ?>
                 </div>
                 <input type="hidden" id="employee" name="employee" value="<?= $ticket['employee'] ?>">
 
                 <div>
-                    <span>Location:</span> <?= $ticket['location'] ?>
+                    <span>Location:</span> <?= location_name_from_id($ticket['location']) ?>
                 </div>
                 <input type="hidden" id="location" name="location" value="<?= $ticket['location'] ?>">
 
@@ -553,7 +556,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                 </div>
                 <input type="hidden" id="status" name="status" value="<?= $ticket['status'] ?>">
                 <div>
-                    <span>Request Type:</span> <?= $ticket['request_type_id'] ?>
+                    <span>Request Type:</span> <?= request_name_for_type($ticket['request_type_id']) ?>
                 </div>
                 <input type="hidden" id="request_type" name="request_type" value="<?= $ticket['location'] ?>">
 

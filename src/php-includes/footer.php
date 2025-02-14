@@ -5,7 +5,7 @@
 <div id="timeoutModal" style="display: none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4);">
     <div style="background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%;">
         <h2>Inactivity Alert</h2>
-        <p>This tab has been inactive for over 30 minutes. Your session may have ended.</p>
+        <p>This tab has been inactive for over 30 minutes. <strong>Your session may have ended.</strong></p>
 
         <button class="button" onclick="dismiss_timeout_modal()">Dismiss</button>
         <button class="button" onclick="location.reload()">Reload Page</button>

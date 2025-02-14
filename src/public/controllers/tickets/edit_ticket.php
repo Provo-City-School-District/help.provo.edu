@@ -535,11 +535,15 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
             ?>
 
                 <div>
+                    <span>Assigned Tech:</span>
                     <?php
-                    // $tech_nice_name = get_local_name_for_user($ticket['employee']);
-                    print_r($ticket['employee']);
+                    if (!empty($ticket['employee'])) {
+                        $tech_nice_name = get_local_name_for_user($ticket['employee']);
+                        echo $tech_nice_name['firstname'] . ' ' . $tech_nice_name['lastname'];
+                    } else {
+                        echo "Unassigned";
+                    }
                     ?>
-                    <span>Assigned Tech:</span> <?= $tech_nice_name['firstname'] . ' ' . $tech_nice_name['lastname'] ?>
                 </div>
                 <input type="hidden" id="employee" name="employee" value="<?= $ticket['employee'] ?>">
 

@@ -536,7 +536,8 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
 
                 <div>
                     <?php
-                    $tech_nice_name = get_local_name_for_user($ticket['employee']);
+                    // $tech_nice_name = get_local_name_for_user($ticket['employee']);
+                    print_r($ticket['employee']);
                     ?>
                     <span>Assigned Tech:</span> <?= $tech_nice_name['firstname'] . ' ' . $tech_nice_name['lastname'] ?>
                 </div>

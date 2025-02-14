@@ -218,7 +218,7 @@ blockquote {
 .alert-dot-container {
 	display: flex;
 	justify-content: center;
-	width: 100%;
+	max-width: 100%;
 	padding-top: 4px;
 }
 
@@ -419,6 +419,12 @@ table.dataTable .details {
 .latestNote strong,
 .tableLocation strong {
 	display: block;
+
+}
+
+.alertsTD div {
+	display: flex;
+	gap: 1em;
 
 }
 
@@ -849,6 +855,13 @@ select {
 	.note th:nth-child(1),
 	.note td:nth-child(2) {
 		width: 100px;
+	}
+
+	.alertsTD div {
+		display: block;
+		justify-items: center;
+		gap: 1em;
+
 	}
 
 	.grid2 {

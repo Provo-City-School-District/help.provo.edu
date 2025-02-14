@@ -196,7 +196,7 @@ blockquote {
 	width: 9px;
 	background-color: #03a5fc;
 	border-radius: 50%;
-	display: inline-block;
+	/* display: inline-block; */
 }
 
 .yellow-dot {
@@ -204,7 +204,7 @@ blockquote {
 	width: 9px;
 	background-color: var(--warn-color);
 	border-radius: 50%;
-	display: inline-block;
+	/* display: inline-block; */
 }
 
 .red-dot {
@@ -212,7 +212,7 @@ blockquote {
 	width: 9px;
 	background-color: var(--crit-color);
 	border-radius: 50%;
-	display: inline-block;
+	/* display: inline-block; */
 }
 
 .alert-dot-container {
@@ -374,7 +374,8 @@ th {
 
 .data-table tr.warn a,
 .data-table tr.crit a {
-	color: var(--theme-black);
+	color: var(--theme-white);
+	text-decoration-color: underline;
 }
 
 .data-table tr.warn {
@@ -413,6 +414,7 @@ td::before {
 
 table.dataTable .details a {
 	display: block;
+	font-size: 1.1em;
 	margin-bottom: 1em;
 }
 
@@ -871,8 +873,8 @@ select {
 	}
 
 	.alertsTD div {
-		display: block;
-		justify-items: center;
+		display: grid;
+
 		gap: 1em;
 
 	}

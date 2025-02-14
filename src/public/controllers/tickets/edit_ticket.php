@@ -1548,27 +1548,6 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
         });
     }
 
-    /*
-    function taskRequiredChanged(obj, task_id) {
-        $.ajax({
-            url: "/ajax/ticket_tasks/update_task.php",
-            method: "POST",
-            data: {
-                task_id: task_id,
-                new_status: obj.checked ? 1 : 0,
-                update_type: "required_change"
-            },
-            success: function(data, textStatus, xhr) {
-                console.log("Ticket task status changed successfully");
-            },
-            error: function() {
-                alert("Error: Ticket task status AJAX call failed");
-            },
-        });
-    }
-    */
-
-
     function confirmDeleteTask(task_id) {
         if (confirm("Are you sure you want to delete this task?")) {
             deleteTask(task_id);
@@ -1643,40 +1622,3 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
             expand_row.textContent = `Expand ${num_items_str} more ${note_str}...`;
     }
 </script>
-<!-- <script>
-    $(document).ready(function() {
-        $('#note-submit').on('submit', function(e) {
-            e.preventDefault();
-
-            $.ajax({
-                type: 'POST',
-                url: 'add_note_handler.php',
-                data: $(this).serialize(),
-                success: function(response) {
-                    // Reload the notes section
-                    $('#note-table').load(location.href + ' #note-table', function() {
-                        // Scroll to the new note
-                        var newNote = $('#note-table .note').first(); // or .last() depending on user settings
-                        $('html, body').animate({
-                            scrollTop: newNote.offset().top
-                        }, 200); // 2000 milliseconds
-                    });
-
-                    // Close the modal
-                    $('#new-note-form-background').hide();
-                    $('#new-note-form').hide();
-                    // Clear the TinyMCE editor
-                    tinymce.get('note').setContent('');
-                    // clear time input fields
-                    $('#work_minutes').val(0);
-                    $('#work_hours').val(0);
-                    $('#travel_hours').val(0);
-                    $('#travel_minutes').val(0);
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    console.log(textStatus, errorThrown);
-                }
-            });
-        });
-    });
-</script> -->

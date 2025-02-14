@@ -248,6 +248,11 @@ blockquote {
 	align-self: center;
 }
 
+#chevron {
+	font-size: 0.8em;
+	margin-left: 5px;
+}
+
 /* =============================== Header Styles =============================== */
 #mainHeader {
 	background: linear-gradient(to bottom, var(--header-grad-start), var(--header-grad-end) 50%, var(--header-grad-end) 55%, var(--header-grad-start));
@@ -690,6 +695,10 @@ select {
 /* =============================== Tickets Log =============================== */
 #ticket-history {
 	display: none;
+}
+
+#ticket-history-status {
+	margin-bottom: 1em;
 }
 
 .ticket_log .note-container {

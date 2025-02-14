@@ -1339,7 +1339,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
     if (session_is_tech() && mysqli_num_rows($log_result) > 0) {
     ?>
         <div class="ticket_log">
-            <h2 id="ticket-history-status">Expand Ticket History</h2>
+            <h2 id="ticket-history-status">Expand Ticket History <span id="chevron" style="font-size: 0.8em;">&#x2192;</span></h2>
             <table id="ticket-history">
                 <tr class="ticket-history-header">
                     <th class="tableDate">Created At</th>
@@ -1426,15 +1426,19 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
     $('#ticket-history-status').click(function() {
         const ticketHistoryStatus = document.getElementById("ticket-history-status");
         const ticketHistory = $('#ticket-history');
+        const chevron = document.getElementById("chevron");
         let ticketHistoryStatusText = ticketHistoryStatus.textContent.trim();
 
-        if (ticketHistoryStatusText === "Expand Ticket History") {
+        if (ticketHistoryStatusText.includes("Expand Ticket History")) {
             ticketHistoryStatusText = "Hide Ticket History";
-        } else if (ticketHistoryStatusText === "Hide Ticket History") {
+            chevron.innerHTML = "&#x2193;"; // Down chevron
+        } else if (ticketHistoryStatusText.includes("Hide Ticket History")) {
             ticketHistoryStatusText = "Expand Ticket History";
+            chevron.innerHTML = "&#x2192;"; // Right chevron
         }
 
-        ticketHistoryStatus.innerHTML = ticketHistoryStatusText;
+        ticketHistoryStatus.textContent = ticketHistoryStatusText;
+        ticketHistoryStatus.appendChild(chevron); // Re-append the chevron
         ticketHistory.toggle();
     });
 

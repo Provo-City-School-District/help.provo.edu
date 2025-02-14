@@ -553,7 +553,13 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                 <input type="hidden" id="location" name="location" value="<?= $ticket['location'] ?>">
 
                 <div>
-                    <span>Department:</span> <?= location_name_from_id($ticket['department']) ?>
+                    <span>Department:</span><?php
+                                            if (!empty($ticket['department'])) {
+                                                echo location_name_from_id($ticket['department']);
+                                            } else {
+                                                echo "Not Assigned";
+                                            }
+                                            ?>
                 </div>
                 <input type="hidden" id="department" name="department" value="<?= $ticket['department'] ?>">
                 <div>

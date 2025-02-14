@@ -551,7 +551,7 @@ function displayTotalTime($total_hours, $total_minutes)
         }
     }
 }
-
+// TODO: similar function in search_tickets.php. lets consolidate
 function location_name_from_id(string $site_id)
 {
     if ($site_id == "")

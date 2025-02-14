@@ -116,9 +116,9 @@ $exclude_result = HelpDB::get()->execute_query("SELECT * FROM exclude_days WHERE
 <table class="exclude_days nst">
     <thead>
         <tr>
-            <th>Exclude Day</th>
+            <th>Excluded Date</th>
             <th>Added By</th>
-            <th>Date Added</th>
+            <th>When Created</th>
             <th>Options</th>
         </tr>
     </thead>

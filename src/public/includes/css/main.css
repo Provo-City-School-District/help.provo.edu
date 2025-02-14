@@ -434,6 +434,10 @@ table.dataTable .details {
 
 }
 
+.exclude_days th {
+	text-align: right !important;
+}
+
 /* =============================== Sub Menu Styles =============================== */
 #subMenu {
 	margin-top: -1em;

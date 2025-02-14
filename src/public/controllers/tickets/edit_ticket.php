@@ -775,7 +775,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
 
 
         <div class="detailContainer">
-            <div class="grid2 ticketSubject">
+            <div class="ticketSubject">
                 <label for="ticket_name">Ticket Title:</label>
                 <input type="text" id="ticket_name" name="ticket_name" value="<?= $ticket['name'] ?>" maxlength="100">
             </div>

@@ -110,7 +110,6 @@ if (isset($_SESSION['username']) && $_SESSION['username'] != "") {
     <link rel="icon" type="image/png" href="/includes/img/favicons/favicon-16x16.png" sizes="16x16">
     <link rel="stylesheet" href="/includes/css/external/jquery-ui.min.css">
     <link rel="stylesheet" type="text/css" href="/includes/css/variables-common.css?v=<?= $app_version; ?>">
-    test
     <?php
     //load color scheme if set. loads light scheme if not set
     if (isset($_SESSION['color_scheme'])) {

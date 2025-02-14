@@ -435,7 +435,7 @@ table.dataTable .details {
 }
 
 .exclude_days th {
-	text-align: right !important;
+	text-align: left !important;
 }
 
 /* =============================== Sub Menu Styles =============================== */

@@ -31,7 +31,7 @@
                 <tr>
             {% endif %}
             <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id={{ ticket.id }}">{{ ticket.id }}</a></td>
-            <td data-cell="Alerts" width="50px">
+            <td data-cell="Alerts">
                 <div>
                     {% if ticket.blue_alert_enabled %}
                         <div title="Ticket unread" class="alert-dot-container">

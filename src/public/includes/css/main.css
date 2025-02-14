@@ -596,7 +596,6 @@ select {
 }
 
 .ticket_note {
-	margin: 1em 0;
 	word-wrap: break-word;
 }
 
@@ -689,6 +688,10 @@ select {
 }
 
 /* =============================== Tickets Log =============================== */
+#ticket-history {
+	display: none;
+}
+
 .ticket_log .note-container {
 	overflow: hidden;
 	height: 20px;

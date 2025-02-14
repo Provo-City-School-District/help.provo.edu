@@ -1381,6 +1381,12 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                                 case str_contains($log_row['field_name'], 'Task'):
                                     $note_str = $log_row['field_name'];
                                     break;
+                                case 'location':
+                                    $note_str = 'Location Changed From: ' . location_name_from_id($old_value) . ' To: ' . location_name_from_id($new_value);
+                                    break;
+                                case 'priority':
+                                    $note_str = 'Priority Changed From: ' . getPriorityName($old_value) . ' To: ' . getPriorityName($new_value);
+                                    break;
                                 default:
                                     $note_str = formatFieldName($log_row['field_name']) . ' From: ' . html_entity_decode($old_value) . ' To: ' . html_entity_decode($new_value);
                                     break;

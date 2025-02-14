@@ -986,7 +986,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                 $checked_if_done = $task_complete ? "checked" : "";
                 $checked_if_required = $task_required ? "checked" : "";
 
-                if (isset($assigned_tech)) {
+                if (isset($assigned_tech) && $assigned_tech != "unassigned") {
                     $assigned_tech_name = get_local_name_for_user($assigned_tech);
                     $assigned_tech_str = $assigned_tech_name["firstname"] . " " . $assigned_tech_name["lastname"];
                 } else {

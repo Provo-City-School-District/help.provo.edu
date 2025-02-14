@@ -101,6 +101,7 @@ function create_user_in_local_db($username)
         $email = $ldap_entries_result[$i]['mail'][0];
         $employee_id = $ldap_entries_result[$i]['employeeid'][0];
     }
+    $username = strtolower($username);
 
     if (user_exists_locally($username))
         return CreateLocalUserStatus::UserAlreadyExists;
@@ -113,6 +114,15 @@ function create_user_in_local_db($username)
         log_app(LOG_ERR, "Insert query error: $current_mysqli_error");
         return CreateLocalUserStatus::InsertQueryFailed;
     }
+    // Insert into user_settings table
+    $user_id = HelpDB::get()->insert_id;
+    $insert_settings_query = "INSERT INTO user_settings (user_id) VALUES (?)";
+    $insert_settings_result = HelpDB::get()->execute_query($insert_settings_query, [$user_id]);
 
+    if (!$insert_settings_result) {
+        $current_mysqli_error = mysqli_error(HelpDB::get());
+        log_app(LOG_ERR, "Insert query error for user_settings: $current_mysqli_error");
+        return CreateLocalUserStatus::InsertQueryFailed;
+    }
     return CreateLocalUserStatus::Success;
 }

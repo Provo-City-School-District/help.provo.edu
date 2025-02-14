@@ -12,6 +12,7 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Get the exclude day from the form data
     $exclude_day = trim(htmlspecialchars($_POST['exclude_day']));
+    $entered_by = trim(htmlspecialchars($_POST['username']));
     if ($exclude_day == null || $exclude_day == "") {
         $error = 'Exclude date was invalid';
         $_SESSION['current_status'] = $error;
@@ -20,9 +21,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
     // Insert the exclude day into the database
-    $query = "INSERT INTO exclude_days (exclude_day) VALUES (?)";
+    $query = "INSERT INTO exclude_days (exclude_day, entered_by) VALUES (?, ?)";
     $stmt = mysqli_prepare(HelpDB::get(), $query);
-    mysqli_stmt_bind_param($stmt, "s", $exclude_day);
+    mysqli_stmt_bind_param($stmt, "ss", $exclude_day, $entered_by);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
 

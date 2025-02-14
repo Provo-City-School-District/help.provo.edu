@@ -4,4 +4,6 @@
     --theme-black: #000;
     --header-location: start;
     --button-background: #3aa410;
+    --crit-color: #bd0808;
+    --warn-color: #fa8907;
 }

@@ -535,17 +535,31 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
             ?>
 
                 <div>
-                    <span>Assigned Tech:</span> <?= $ticket['employee'] ?>
+                    <span>Assigned Tech:</span>
+                    <?php
+                    if (!empty($ticket['employee'])) {
+                        $tech_nice_name = get_local_name_for_user($ticket['employee']);
+                        echo $tech_nice_name['firstname'] . ' ' . $tech_nice_name['lastname'];
+                    } else {
+                        echo "Unassigned";
+                    }
+                    ?>
                 </div>
                 <input type="hidden" id="employee" name="employee" value="<?= $ticket['employee'] ?>">
 
                 <div>
-                    <span>Location:</span> <?= $ticket['location'] ?>
+                    <span>Location:</span> <?= location_name_from_id($ticket['location']) ?>
                 </div>
                 <input type="hidden" id="location" name="location" value="<?= $ticket['location'] ?>">
 
                 <div>
-                    <span>Department:</span> <?= $ticket['department'] ?>
+                    <span>Department:</span><?php
+                                            if (!empty($ticket['department'])) {
+                                                echo location_name_from_id($ticket['department']);
+                                            } else {
+                                                echo "Not Assigned";
+                                            }
+                                            ?>
                 </div>
                 <input type="hidden" id="department" name="department" value="<?= $ticket['department'] ?>">
                 <div>
@@ -553,7 +567,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                 </div>
                 <input type="hidden" id="status" name="status" value="<?= $ticket['status'] ?>">
                 <div>
-                    <span>Request Type:</span> <?= $ticket['request_type_id'] ?>
+                    <span>Request Type:</span> <?= request_name_for_type($ticket['request_type_id']) ?>
                 </div>
                 <input type="hidden" id="request_type" name="request_type" value="<?= $ticket['location'] ?>">
 
@@ -772,7 +786,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
 
 
         <div class="detailContainer">
-            <div class="grid2 ticketSubject">
+            <div class="ticketSubject">
                 <label for="ticket_name">Ticket Title:</label>
                 <input type="text" id="ticket_name" name="ticket_name" value="<?= $ticket['name'] ?>" maxlength="100">
             </div>
@@ -983,7 +997,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                 $checked_if_done = $task_complete ? "checked" : "";
                 $checked_if_required = $task_required ? "checked" : "";
 
-                if (isset($assigned_tech)) {
+                if (isset($assigned_tech) && $assigned_tech != "unassigned") {
                     $assigned_tech_name = get_local_name_for_user($assigned_tech);
                     $assigned_tech_str = $assigned_tech_name["firstname"] . " " . $assigned_tech_name["lastname"];
                 } else {
@@ -1336,8 +1350,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
     if (session_is_tech() && mysqli_num_rows($log_result) > 0) {
     ?>
         <div class="ticket_log">
-            <h2>Ticket History</h2>
-            <p id="ticket-history-status">(collapsed)</p>
+            <h2 id="ticket-history-status">Expand Ticket History <span id="chevron" style="font-size: 0.8em;">&#x2192;</span></h2>
             <table id="ticket-history">
                 <tr class="ticket-history-header">
                     <th class="tableDate">Created At</th>
@@ -1378,6 +1391,18 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                                 case str_contains($log_row['field_name'], 'Task'):
                                     $note_str = $log_row['field_name'];
                                     break;
+                                case 'location':
+                                    $note_str = 'Location Changed From: ' . location_name_from_id($old_value) . ' To: ' . location_name_from_id($new_value);
+                                    break;
+                                case 'department':
+                                    $note_str = 'Location Changed From: ' . location_name_from_id($old_value) . ' To: ' . location_name_from_id($new_value);
+                                    break;
+                                case 'priority':
+                                    $note_str = 'Priority Changed From: ' . getPriorityName($old_value) . ' To: ' . getPriorityName($new_value);
+                                    break;
+                                case 'request_type_id':
+                                    $note_str = 'Request Type Changed From: ' . request_name_for_type($old_value) . ' To: ' . request_name_for_type($new_value);
+                                    break;
                                 default:
                                     $note_str = formatFieldName($log_row['field_name']) . ' From: ' . html_entity_decode($old_value) . ' To: ' . html_entity_decode($new_value);
                                     break;
@@ -1408,22 +1433,24 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
     // Make links in note content open in new tab
     $('.note-content a').attr('target', '_blank');
 
-    // Toggle ticket history visibility to closed on page load
-    $('#ticket-history .ticket-history-header').nextUntil('tr.header').toggle();
-
     // Toggle ticket history visibility when clicked
-    $('#ticket-history .ticket-history-header').click(function() {
-        $(this).nextUntil('tr.header').toggle();
+    $('#ticket-history-status').click(function() {
         const ticketHistoryStatus = document.getElementById("ticket-history-status");
+        const ticketHistory = $('#ticket-history');
+        const chevron = document.getElementById("chevron");
+        let ticketHistoryStatusText = ticketHistoryStatus.textContent.trim();
 
-        let ticketHistoryStatusText = ticketHistoryStatus.textContent;
-
-        if (ticketHistoryStatusText == "(collapsed)")
-            ticketHistoryStatusText = "(expanded)"
-        else if (ticketHistoryStatusText == "(expanded)")
-            ticketHistoryStatusText = "(collapsed)"
+        if (ticketHistoryStatusText.includes("Expand Ticket History")) {
+            ticketHistoryStatusText = "Hide Ticket History";
+            chevron.innerHTML = "&#x2193;"; // Down chevron
+        } else if (ticketHistoryStatusText.includes("Hide Ticket History")) {
+            ticketHistoryStatusText = "Expand Ticket History";
+            chevron.innerHTML = "&#x2192;"; // Right chevron
+        }
 
         ticketHistoryStatus.textContent = ticketHistoryStatusText;
+        ticketHistoryStatus.appendChild(chevron); // Re-append the chevron
+        ticketHistory.toggle();
     });
 
     const title = document.getElementById("ticket-title");
@@ -1548,27 +1575,6 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
         });
     }
 
-    /*
-    function taskRequiredChanged(obj, task_id) {
-        $.ajax({
-            url: "/ajax/ticket_tasks/update_task.php",
-            method: "POST",
-            data: {
-                task_id: task_id,
-                new_status: obj.checked ? 1 : 0,
-                update_type: "required_change"
-            },
-            success: function(data, textStatus, xhr) {
-                console.log("Ticket task status changed successfully");
-            },
-            error: function() {
-                alert("Error: Ticket task status AJAX call failed");
-            },
-        });
-    }
-    */
-
-
     function confirmDeleteTask(task_id) {
         if (confirm("Are you sure you want to delete this task?")) {
             deleteTask(task_id);
@@ -1643,40 +1649,3 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
             expand_row.textContent = `Expand ${num_items_str} more ${note_str}...`;
     }
 </script>
-<!-- <script>
-    $(document).ready(function() {
-        $('#note-submit').on('submit', function(e) {
-            e.preventDefault();
-
-            $.ajax({
-                type: 'POST',
-                url: 'add_note_handler.php',
-                data: $(this).serialize(),
-                success: function(response) {
-                    // Reload the notes section
-                    $('#note-table').load(location.href + ' #note-table', function() {
-                        // Scroll to the new note
-                        var newNote = $('#note-table .note').first(); // or .last() depending on user settings
-                        $('html, body').animate({
-                            scrollTop: newNote.offset().top
-                        }, 200); // 2000 milliseconds
-                    });
-
-                    // Close the modal
-                    $('#new-note-form-background').hide();
-                    $('#new-note-form').hide();
-                    // Clear the TinyMCE editor
-                    tinymce.get('note').setContent('');
-                    // clear time input fields
-                    $('#work_minutes').val(0);
-                    $('#work_hours').val(0);
-                    $('#travel_hours').val(0);
-                    $('#travel_minutes').val(0);
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    console.log(textStatus, errorThrown);
-                }
-            });
-        });
-    });
-</script> -->

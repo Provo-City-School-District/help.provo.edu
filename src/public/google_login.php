@@ -91,6 +91,7 @@ if (isset($_GET['code'])) {
         if ($local_query_data == null) {
             // print_r($_SESSION);
             $msg = "Error: User not found in local database.";
+            log_app(LOG_ERR, $username . " Error: User not found in local database.");
             // unset session variables
             session_unset();
             session_destroy();

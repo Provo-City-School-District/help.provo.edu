@@ -104,6 +104,7 @@ display_tickets_table($ticket_result, HelpDB::get(), "admin-data-table", true);
     <div>
         <label for="exclude_day">Exclude Day:</label>
         <input type="date" id="exclude_day" name="exclude_day">
+        <input type="hidden" name="username" value="<?= $_SESSION['username'] ?>">
     </div>
     <button class="button" type="submit">Add Exclude Day</button>
 </form>
@@ -115,15 +116,19 @@ $exclude_result = HelpDB::get()->execute_query("SELECT * FROM exclude_days WHERE
 <table class="exclude_days nst">
     <thead>
         <tr>
-            <th>Exclude Day</th>
-            <th></th>
+            <th>Excluded Date</th>
+            <th>Added By</th>
+            <th>When Created</th>
+            <th>Options</th>
         </tr>
     </thead>
     <tbody>
         <?php while ($exclude_row = mysqli_fetch_assoc($exclude_result)) : ?>
             <tr>
-                <td data-cell="Excluded Day"><?= $exclude_row['exclude_day'] ?></td>
-                <td data-cell="Remove Excluded Day"><a href="/controllers/admin/delete_exclude_day.php?id=<?= $exclude_row['id'] ?>">Delete</a></td>
+                <td data-cell="Excluded Day" class="center"><?= $exclude_row['exclude_day'] ?></td>
+                <td data-cell="Added By" class="center"><?= $exclude_row['entered_by'] ?></td>
+                <td data-cell="Date Added" class="center"><?= $exclude_row['entered_at'] ?></td>
+                <td data-cell="Remove Excluded Day" class="center"><a href="/controllers/admin/delete_exclude_day.php?id=<?= $exclude_row['id'] ?>">Delete</a></td>
             </tr>
         <?php endwhile; ?>
     </tbody>

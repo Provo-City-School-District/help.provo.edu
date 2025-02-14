@@ -396,7 +396,7 @@ td {
 	display: block;
 }
 
-td::before:not(#expand-row) {
+td::before {
 	content: attr(data-cell) ": ";
 	font-weight: 700;
 	text-transform: capitalize;

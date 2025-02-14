@@ -96,8 +96,9 @@ blockquote {
 /* =============================== Utility Styles =============================== */
 .grid2 {
 	display: grid;
-	grid-template-columns: 1fr 1fr;
-	gap: 10px;
+	grid-template-columns: 1fr;
+	/* gap: 10px; */
+	/* margin: 1em 0; */
 }
 
 .grid3 {
@@ -191,34 +192,60 @@ blockquote {
 }
 
 .blue-dot {
-    height: 9px;
-    width: 9px;
-    background-color: #03a5fc;
-    border-radius: 50%;
-    display: inline-block;
+	height: 9px;
+	width: 9px;
+	background-color: #03a5fc;
+	border-radius: 50%;
+	display: inline-block;
 }
 
 .yellow-dot {
-    height: 9px;
-    width: 9px;
-    background-color: var(--warn-color);
-    border-radius: 50%;
-    display: inline-block;
+	height: 9px;
+	width: 9px;
+	background-color: var(--warn-color);
+	border-radius: 50%;
+	display: inline-block;
 }
 
 .red-dot {
-    height: 9px;
-    width: 9px;
-    background-color: var(--crit-color);
-    border-radius: 50%;
-    display: inline-block;
+	height: 9px;
+	width: 9px;
+	background-color: var(--crit-color);
+	border-radius: 50%;
+	display: inline-block;
 }
 
 .alert-dot-container {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    padding-top: 4px;
+	display: flex;
+	justify-content: center;
+	width: 100%;
+	padding-top: 4px;
+}
+
+.singleColForm {
+	max-width: 800px;
+}
+
+.singleColForm label {
+	background-color: var(--theme-primary);
+	color: var(--theme-white);
+	padding: 1em 0 1em 1em;
+}
+
+.singleColForm input {
+	justify-self: start;
+	padding: 1em;
+}
+
+.singleColForm select {
+	padding: 1em 0 1em 1em;
+	font-size: 1em;
+}
+
+.singleColForm input[type="checkbox"] {
+	width: 20px;
+	height: 20px;
+	align-self: center;
 }
 
 /* =============================== Header Styles =============================== */
@@ -269,31 +296,32 @@ blockquote {
 }
 
 #bulk-actions-container {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    display: none; /* hide at first */
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	display: none;
+	/* hide at first */
 }
 
 #bulk-actions-content {
-    border-radius: 8px;
-    margin: 0px 10px 10px 10px;
-    padding: 10px 20px 10px 20px;
-    background-color: var(--theme-primary);
-    display: grid;
-    grid-auto-columns: auto;
-    grid-auto-flow: column;
-    align-items: center;
-    color: white;
+	border-radius: 8px;
+	margin: 0px 10px 10px 10px;
+	padding: 10px 20px 10px 20px;
+	background-color: var(--theme-primary);
+	display: grid;
+	grid-auto-columns: auto;
+	grid-auto-flow: column;
+	align-items: center;
+	color: white;
 }
 
 .bulk-actions-center-element {
-    text-align: center;
+	text-align: center;
 }
 
 .bulk-actions-element {
-    margin-left: 5px;
-    margin-right: 5px;
+	margin-left: 5px;
+	margin-right: 5px;
 }
 
 
@@ -817,6 +845,10 @@ select {
 	.note th:nth-child(1),
 	.note td:nth-child(2) {
 		width: 100px;
+	}
+
+	.grid2 {
+		grid-template-columns: 1fr 1fr;
 	}
 
 	.grid3 {

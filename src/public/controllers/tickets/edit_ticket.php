@@ -1339,8 +1339,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
     if (session_is_tech() && mysqli_num_rows($log_result) > 0) {
     ?>
         <div class="ticket_log">
-            <h2>Ticket History</h2>
-            <p id="ticket-history-status">(collapsed)</p>
+            <h2 id="ticket-history-status">Expand Ticket History</h2>
             <table id="ticket-history">
                 <tr class="ticket-history-header">
                     <th class="tableDate">Created At</th>
@@ -1423,22 +1422,20 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
     // Make links in note content open in new tab
     $('.note-content a').attr('target', '_blank');
 
-    // Toggle ticket history visibility to closed on page load
-    $('#ticket-history .ticket-history-header').nextUntil('tr.header').toggle();
-
     // Toggle ticket history visibility when clicked
-    $('#ticket-history .ticket-history-header').click(function() {
-        $(this).nextUntil('tr.header').toggle();
+    $('#ticket-history-status').click(function() {
         const ticketHistoryStatus = document.getElementById("ticket-history-status");
+        const ticketHistory = $('#ticket-history');
+        let ticketHistoryStatusText = ticketHistoryStatus.textContent.trim();
 
-        let ticketHistoryStatusText = ticketHistoryStatus.textContent;
+        if (ticketHistoryStatusText === "Expand Ticket History") {
+            ticketHistoryStatusText = "Hide Ticket History";
+        } else if (ticketHistoryStatusText === "Hide Ticket History") {
+            ticketHistoryStatusText = "Expand Ticket History";
+        }
 
-        if (ticketHistoryStatusText == "(collapsed)")
-            ticketHistoryStatusText = "(expanded)"
-        else if (ticketHistoryStatusText == "(expanded)")
-            ticketHistoryStatusText = "(collapsed)"
-
-        ticketHistoryStatus.textContent = ticketHistoryStatusText;
+        ticketHistoryStatus.innerHTML = ticketHistoryStatusText;
+        ticketHistory.toggle();
     });
 
     const title = document.getElementById("ticket-title");

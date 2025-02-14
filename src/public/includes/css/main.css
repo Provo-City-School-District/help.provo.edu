@@ -402,6 +402,10 @@ td::before {
 	text-transform: capitalize;
 }
 
+#expand-row td::before {
+	content: unset;
+}
+
 table.dataTable .details a {
 	display: block;
 	margin-bottom: 1em;

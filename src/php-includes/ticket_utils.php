@@ -307,7 +307,7 @@ function create_note(
 
 
         // Email tech if client has updated ticket
-        $email_subject = "Ticket $ticket_id_clean Updated)";
+        $email_subject = "Ticket $ticket_id_clean (Updated)";
         $template_tech = new Template(from_root("/includes/templates/ticket_updated_tech.phtml"));
 
         $template_tech->client = $client_name["firstname"] . " " . $client_name["lastname"];

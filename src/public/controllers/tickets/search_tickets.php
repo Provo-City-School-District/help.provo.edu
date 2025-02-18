@@ -74,7 +74,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         //add in archived tickets if the checkbox is checked
         if ($search_archived == 1) {
             while ($row = mysqli_fetch_assoc($old_ticket_result)) {
-                $row["client_name"] = get_sw_client_name($row["CLIENT_ID"]);
+                if (!empty($row["CLIENT_ID"])) {
+                    $row["client_name"] = get_sw_client_name($row["CLIENT_ID"]);
+                } else {
+                    $row["client_name"] = "Unknown Client";
+                }
                 $combined_results[] = $row;
             }
         }

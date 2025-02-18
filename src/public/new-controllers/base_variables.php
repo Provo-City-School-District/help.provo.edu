@@ -1,11 +1,12 @@
 <?php
+require_once 'block_file.php';
 require_once 'time_utils.php';
-
+session_regenerate_id(true);
 if (!session_id()) {
     session_start();
 }
 //included in twig base_variables and in functions.php while transitioning to twig
-$app_version = "1.4.8";
+$app_version = "1.4.9";
 
 // check if logged in. redirects to login page if not
 if (!$_SESSION['username']) {

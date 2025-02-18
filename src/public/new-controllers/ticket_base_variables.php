@@ -2,10 +2,6 @@
 require_once from_root("/new-controllers/base_variables.php");
 require_once "ticket_utils.php";
 
-if (!session_id()) {
-    session_start();
-}
-
 $num_assigned_tickets = 0;
 $num_flagged_tickets = 0;
 

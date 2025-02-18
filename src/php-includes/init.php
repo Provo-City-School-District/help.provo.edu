@@ -1,4 +1,5 @@
 <?php
+
 // Get the user agent
 $user_agent = $_SERVER['HTTP_USER_AGENT'];
 
@@ -6,6 +7,12 @@ $user_agent = $_SERVER['HTTP_USER_AGENT'];
 if (strpos($user_agent, 'InterMapper') === false && !session_id()) {
     session_start();
 }
+
+// Regenerate session ID and delete the old session
+if (session_id()) {
+    session_regenerate_id(true);
+}
+
 // Ensure $_SESSION is an array
 if (!isset($_SESSION)) {
     $_SESSION = [];

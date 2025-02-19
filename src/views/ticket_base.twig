@@ -21,7 +21,7 @@
         <li><a href="/controllers/tickets/search_tickets.php">Search Tickets</a></li>
     {% else %}
         {% if user_permissions.is_intern %}
-            <li><a href="/tickets.php">Intern Tickets ({{ num_assigned_intern_tickets }})</a></li>
+            <li><a href="/controllers/tickets/intern_tickets.php">Intern Tickets ({{ num_assigned_intern_tickets }})</a></li>
         {% else %}
             <li><a href="/tickets.php">My Tickets</a></li>
         {% endif %}

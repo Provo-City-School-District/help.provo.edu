@@ -255,7 +255,8 @@ $dep_locations = [
     1300,
     1310,
     1360,
-    1370
+    1370,
+    1200
 ];
 
 // Check if the ticket location is in the list and set the department variable

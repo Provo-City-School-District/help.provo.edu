@@ -30,6 +30,9 @@ if (isset($form_task_required)) {
     $task_required = 1;
 }
 
+$_SESSION['current_status'] = "Task created successfully";
+$_SESSION['status_type'] = 'success';
+
 if (isset($assigned_tech)) {
     // Send email to new employee for task assignment
     $tech_name = get_client_name($assigned_tech);

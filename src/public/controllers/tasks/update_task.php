@@ -2,6 +2,8 @@
 require "helpdbconnect.php";
 require "ticket_utils.php";
 
+session_start();
+
 $task_id = filter_input(INPUT_POST, 'task_id', FILTER_VALIDATE_INT);
 $updated_assigned_tech = $_POST['assigned_tech'];
 $updated_description = strip_tags($_POST['description']);
@@ -44,9 +46,14 @@ if (!$update_result) {
     die;
 }
 
+$_SESSION['current_status'] = "Task updated successfully";
+$_SESSION['status_type'] = 'success';
+
 $ticket_id = $old_task_data["ticket_id"];
 // Send email to new employee for task assignment
-if (isset($updated_assigned_tech) && $updated_assigned_tech != $old_task_data["assigned_tech"]) {
+if (isset($updated_assigned_tech) && 
+    strtolower($updated_assigned_tech != "unassigned") &&
+    $updated_assigned_tech != $old_task_data["assigned_tech"]) {
     $tech_name = get_client_name($updated_assigned_tech);
     $firstname = $tech_name["firstname"];
     $lastname = $tech_name["lastname"];

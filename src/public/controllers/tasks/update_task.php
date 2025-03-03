@@ -46,7 +46,7 @@ if (!$update_result) {
 
 $ticket_id = $old_task_data["ticket_id"];
 // Send email to new employee for task assignment
-if ($updated_assigned_tech != $old_task_data["assigned_tech"]) {
+if (isset($updated_assigned_tech) && $updated_assigned_tech != $old_task_data["assigned_tech"]) {
     $tech_name = get_client_name($updated_assigned_tech);
     $firstname = $tech_name["firstname"];
     $lastname = $tech_name["lastname"];

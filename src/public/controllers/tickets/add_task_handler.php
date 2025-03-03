@@ -30,6 +30,29 @@ if (isset($form_task_required)) {
     $task_required = 1;
 }
 
+if (isset($assigned_tech)) {
+    // Send email to new employee for task assignment
+    $tech_name = get_client_name($assigned_tech);
+    $firstname = $tech_name["firstname"];
+    $lastname = $tech_name["lastname"];
+
+    $task_subject = "A task on ticket $ticket_id has been created and assigned to $firstname $lastname";
+    $template = new Template(from_root("/includes/templates/task_created.phtml"));
+
+    $template->assigned_tech_name = $firstname." ".$lastname;
+    $template->ticket_id = $ticket_id;
+    $template->site_url = getenv('ROOTDOMAIN');
+    $template->description = $updated_description;
+
+    $assigned_tech_email = email_address_from_username($assigned_tech);
+
+    $res = send_email_and_add_to_ticket($ticket_id, $assigned_tech_email, $task_subject, $template);
+    if (!$res) {
+        $_SESSION['current_status'] = "Failed to send assigned task email to $assigned_tech_email";
+        $_SESSION['status_type'] = 'error';
+    }
+}
+
 $res = HelpDB::get()->execute_query("INSERT INTO help.ticket_tasks (ticket_id, description, required, completed, assigned_tech) VALUES (?, ?, ?, ?, ?)", [$ticket_id, $ticket_desc, $task_required, $task_complete, $assigned_tech]);
 logTicketChange(HelpDB::get(), $ticket_id, $username, "Task \"$ticket_desc\" created", "", "");
 header("Location: edit_ticket.php?id=$ticket_id");

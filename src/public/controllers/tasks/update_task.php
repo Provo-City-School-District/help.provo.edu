@@ -61,7 +61,11 @@ if ($updated_assigned_tech != $old_task_data["assigned_tech"]) {
 
     $assigned_tech_email = email_address_from_username($updated_assigned_tech);
 
-    send_email_and_add_to_ticket($ticket_id, $updated_assigned_tech, $task_subject, $template);
+    $res = send_email_and_add_to_ticket($ticket_id, $assigned_tech_email, $task_subject, $template);
+    if (!$res) {
+        $_SESSION['current_status'] = "Failed to send assigned task email to $assigned_tech_email";
+        $_SESSION['status_type'] = 'error';
+    }
 }
 
 header("Location: /controllers/tickets/edit_ticket.php?id=$ticket_id");

@@ -42,7 +42,7 @@ if (isset($assigned_tech)) {
     $template->assigned_tech_name = $firstname." ".$lastname;
     $template->ticket_id = $ticket_id;
     $template->site_url = getenv('ROOTDOMAIN');
-    $template->description = $updated_description;
+    $template->description = $ticket_desc;
 
     $assigned_tech_email = email_address_from_username($assigned_tech);
 

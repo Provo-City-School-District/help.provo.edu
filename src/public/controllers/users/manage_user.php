@@ -45,6 +45,7 @@ $can_create_tickets = $row['can_create_tickets'];
 $can_edit_tickets = $row['can_edit_tickets'];
 $supervisor_username = $row['supervisor_username'];
 $man_location = $row['location_manager_sitenumber'];
+$department = $row['department'];
 ?>
 <?php
 // Check if a success message is set
@@ -107,6 +108,21 @@ if ($_SESSION['permissions']['is_admin'] == 1) {
                 // Determine whether this option should be selected
                 $selected = $supervisor['username'] == $supervisor_username ? 'selected' : '';
                 echo '<option value="' . $supervisor['username'] . '" ' . $selected . '>' . $supervisor['firstname'] . ' ' . $supervisor['lastname'] . '</option>';
+            }
+            ?>
+        </select><br>
+
+        <label for="department">Department:</label>
+        <select name="department" id="department">
+            <option value="" selected></option>
+            <?php
+            // Query the locations table to get the departments
+            $department_result = HelpDB::get()->execute_query("SELECT location_id, location_name FROM locations WHERE is_department = 1 ORDER BY location_name ASC");
+
+            // Loop through the departments and create an option for each one
+            while ($department_row = mysqli_fetch_assoc($department_result)) {
+                $selected = $department_row['location_id'] == $department ? 'selected' : '';
+                echo '<option value="' . $department_row['location_id'] . '" ' . $selected . '>' . $department_row['location_name'] . '</option>';
             }
             ?>
         </select><br>
@@ -201,7 +217,7 @@ if ($_SESSION['permissions']['is_admin'] == 1) {
             </div>
         </div>
 
-        <input type="submit" value="Update User">
+        <input type="submit" class="button" value="Update User">
     </form>
 <?php
 }

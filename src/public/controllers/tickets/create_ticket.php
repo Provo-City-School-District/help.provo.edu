@@ -11,7 +11,8 @@ $twig = new \Twig\Environment($loader, [
     'auto_reload' => true
 ]);
 // Fetch the tech usernames
-$tech_usernames = get_tech_usernames();
+$department = $_SESSION['department'] ?? null;
+$tech_usernames = get_tech_usernames($department);
 // Fetch the departments
 $department_result = HelpDB::get()->execute_query("SELECT * FROM locations WHERE is_department = TRUE ORDER BY location_name ASC");
 $depts = [];

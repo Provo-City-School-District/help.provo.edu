@@ -1064,7 +1064,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                         <label for="assigned_tech">Assigned Tech: </label>
                         <select id="assigned-tech" name="assigned_tech">
                             <option value="">Unassigned</option>
-                            <?php foreach ($techusernames as $username) : ?>
+                            <?php foreach ($tech_usernames as $username) : ?>
                                 <?php
                                 $name = get_local_name_for_user($username);
                                 $firstname = $name["firstname"];

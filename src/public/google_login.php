@@ -119,6 +119,7 @@ if (isset($_GET['code'])) {
             'supervisor_username' => $local_query_data['supervisor_username'],
             'is_location_manager' => $local_query_data['is_location_manager'],
             'location_manager_sitenumber' => $local_query_data['location_manager_sitenumber'],
+            'can_see_all_techs' => $local_query_data['can_see_all_techs'],
         );
         // Set color scheme
         $_SESSION['color_scheme'] = $local_query_data['color_scheme'];

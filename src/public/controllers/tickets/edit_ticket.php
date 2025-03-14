@@ -634,7 +634,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                         <option hidden disabled selected value></option>
                         <?php
                         // Query the locations table to get the departments
-                        $department_query = "SELECT sitenumber, location_name FROM locations WHERE is_department = TRUE ORDER BY location_name ASC";
+                        $department_query = "SELECT sitenumber, location_name FROM locations WHERE is_department = TRUE AND is_archived = FALSE ORDER BY location_name ASC";
                         $department_result = HelpDB::get()->execute_query($department_query);
 
                         //Create a "Department" optgroup and create an option for each department
@@ -658,7 +658,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
 
 
                         // Query the locations table to get the locations
-                        $location_query = "SELECT sitenumber, location_name FROM locations WHERE is_department = FALSE ORDER BY location_name ASC";
+                        $location_query = "SELECT sitenumber, location_name FROM locations WHERE is_department = FALSE AND is_archived = FALSE ORDER BY location_name ASC";
                         $location_result = HelpDB::get()->execute_query($location_query);
 
                         // Create a "Location" optgroup and create an option for each location

@@ -23,7 +23,7 @@ if ($can_see_all_techs) {
 
 
 // Fetch the departments
-$department_result = HelpDB::get()->execute_query("SELECT * FROM locations WHERE is_department = TRUE ORDER BY location_name ASC");
+$department_result = HelpDB::get()->execute_query("SELECT * FROM locations WHERE is_department = TRUE AND is_archived = FALSE ORDER BY location_name ASC");
 $depts = [];
 while ($row = mysqli_fetch_assoc($department_result)) {
     $select = false;
@@ -48,7 +48,7 @@ while ($row = mysqli_fetch_assoc($department_result)) {
 }
 
 // Fetch the locations
-$location_result = HelpDB::get()->execute_query("SELECT * FROM locations WHERE is_department = FALSE ORDER BY location_name ASC");
+$location_result = HelpDB::get()->execute_query("SELECT * FROM locations WHERE is_department = FALSE AND is_archived = FALSE ORDER BY location_name ASC");
 $locations = [];
 while ($row = mysqli_fetch_assoc($location_result)) {
     $select = false;

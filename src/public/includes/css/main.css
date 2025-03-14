@@ -252,6 +252,11 @@ blockquote {
 	margin-left: 5px;
 }
 
+.nextToCanvas {
+	margin-top: 0;
+	text-align: center;
+}
+
 /* =============================== Header Styles =============================== */
 #mainHeader {
 	background: linear-gradient(to bottom, var(--header-grad-start), var(--header-grad-end) 50%, var(--header-grad-end) 55%, var(--header-grad-start));
@@ -696,6 +701,10 @@ select {
 
 .alerts_wrapper .warn {
 	background-color: var(--warn-color);
+}
+
+.canvasjsreport .alerts_wrapper {
+	width: 100%;
 }
 
 /* =============================== Tickets Log =============================== */

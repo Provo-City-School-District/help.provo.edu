@@ -2,15 +2,15 @@
 var table;
 
 function getDataTableOptions() {
-    const options = {
-        paging: true,
-        pageLength: ticketLimit, // Enable pagination
-        stateSave: true, // Enable state saving
-        ordering: true, // Enable sorting
-        autoWidth: false, // Disable auto width calculation
-    };
+  const options = {
+    paging: true,
+    pageLength: ticketLimit, // Enable pagination
+    stateSave: true, // Enable state saving
+    ordering: true, // Enable sorting
+    autoWidth: false, // Disable auto width calculation
+  };
 
-    return options;
+  return options;
 }
 
 // Initialize the data table library on the table with the class data-table
@@ -55,6 +55,15 @@ $(document).ready(function () {
 // Initialize the data table library on the table with the class nst (non standard table)
 $(document).ready(function () {
   table = $(".nst").DataTable({
+    paging: true, // Enable pagination
+    pageLength: 10, // Set the number of rows per page
+    stateSave: true, // Enable state saving
+    ordering: true, // Enable sorting
+    autoWidth: false, // Disable auto width calculation
+  });
+});
+$(document).ready(function () {
+  $("#alertsTable").DataTable({
     paging: true, // Enable pagination
     pageLength: 10, // Set the number of rows per page
     stateSave: true, // Enable state saving

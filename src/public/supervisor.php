@@ -11,7 +11,7 @@ if ($_SESSION['permissions']['is_supervisor'] != 1) {
 
 require_once('helpdbconnect.php');
 require_once("ticket_utils.php");
-$managed_location = $_SESSION['permissions']['location_manager_sitenumber'];
+$department = $_SESSION['department'] ?? null;
 
 function process_query_result($query_result, $label_field)
 {
@@ -87,9 +87,11 @@ $tech_query = <<<STR
     SELECT t.employee, u.id 
     FROM tickets t 
     JOIN users u ON t.employee = u.username 
-    WHERE t.status NOT IN ('closed', 'resolved')
-    STR;
-$tech_query_result = HelpDB::get()->execute_query($tech_query);
+    JOIN user_settings us ON u.id = us.user_id
+    WHERE t.status NOT IN ('closed', 'resolved') 
+    AND us.department = ?
+STR;
+$tech_query_result = HelpDB::get()->execute_query($tech_query, [$department]);
 $url_path_techs = "/controllers/users/manage_user.php?id=";
 $allTechs = process_query_result_wlinks($tech_query_result, "employee", "id", $url_path_techs);
 

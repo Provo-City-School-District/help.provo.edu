@@ -552,19 +552,20 @@ function displayTotalTime($total_hours, $total_minutes)
     }
 }
 // TODO: similar function in search_tickets.php. lets consolidate
-function location_name_from_id(string $site_id)
+function location_name_from_id(?string $site_id): string
 {
-    if ($site_id == "")
+    if ($site_id === null || $site_id === "") {
         return "Unknown";
-
+    }
 
     $location_result = HelpDB::get()->execute_query("SELECT location_name FROM help.locations WHERE sitenumber = ?", [$site_id]);
-    if (!isset($location_result)) {
+    if (!$location_result) {
         log_app(LOG_ERR, "[location_name_from_id] Failed to get location query result");
+        return "Unknown";
     }
 
     $location_data = mysqli_fetch_assoc($location_result);
-    if (!isset($location_data)) {
+    if (!$location_data) {
         log_app(LOG_ERR, "[location_name_from_id] Failed to get location data for id $site_id");
         return "Site " . $site_id;
     }

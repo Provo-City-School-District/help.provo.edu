@@ -102,7 +102,7 @@ function display_tickets_table($tickets, $database, $custom_data_table_class = n
             (!empty($location_name) ? $location_name . '<br><br>' : '') .
             (!empty($ticket['room']) ? 'RM ' . $ticket['room'] : '') .
             '</td>' .
-            '<td data-cell="Department">' . $ticket["department"] . '</td>' .
+            '<td data-cell="Department">' . location_name_from_id($ticket["department"]) . '</td>' .
             '<td data-cell="Request Category">' .  $request_type_name . '</td>
             <td data-cell="Current Status">' . $ticket["status"] . '</td>
             <td data-cell="Priority">' . '<span class="sort-value">' . $ticket['priority'] . '</span>' . $priorityTypes[$ticket["priority"]] . '</td>

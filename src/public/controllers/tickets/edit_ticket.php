@@ -360,7 +360,7 @@ if (strtolower($ticket["employee"]) == strtolower($username)) {
     $right_ticket_id = $assigned_ticket_ids[$right_idx];
 }
 
-$alerts_res = HelpDB::get()->execute_query("SELECT * FROM alerts WHERE alerts.ticket_id = ?", [$ticket_id]);
+$alerts_res = HelpDB::get()->execute_query("SELECT * FROM alerts WHERE alerts.ticket_id = ? AND supervisor_alert=0", [$ticket_id]);
 $alert_data = [];
 while ($row = $alerts_res->fetch_assoc()) {
     $alert_data[] = $row;

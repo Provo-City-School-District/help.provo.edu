@@ -16,6 +16,7 @@ function display_tickets_table($tickets, $database, $custom_data_table_class = n
                 <th class=\"tLatestNote\">Latest Note</th>
                 <th class=\"client\">Client</th>
                 <th class=\"tLocation\">Location</th>
+                <th class=\"department\">Department</th>
                 <th class=\"category\">Request Category</th>
                 <th class=\"status\">Current Status</th>
                 <th class=\"priority\">Priority</th>
@@ -23,7 +24,6 @@ function display_tickets_table($tickets, $database, $custom_data_table_class = n
                 <th class=\"tDate\">Last Updated</th>
                 <th class=\"date\">Due</th>
                 <th class=\"\">Assigned</th>
-                <th class=\"alertLevel\">Alert</th>
             </tr>
         </thead>
         <tbody>";
@@ -93,7 +93,7 @@ function display_tickets_table($tickets, $database, $custom_data_table_class = n
             $location_name = "N/A";
         }
         echo '<tr class="' . $row_color . '">'
-        .$extra_td_if_needed.'
+            . $extra_td_if_needed . '
             <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id=' . $ticket["id"] . '">' . $ticket["id"] . '</a></td>
             <td class="details" data-cell="Request Detail"><a href="/controllers/tickets/edit_ticket.php?id=' . $ticket["id"] . '">' . $ticket["name"] . ':</a>' . limitChars($descriptionWithoutLinks, 100) . '</td>
             <td class="latestNote" data-cell="Latest Note:">' . limitChars($latest_note_str, 150) . '</td>
@@ -102,6 +102,7 @@ function display_tickets_table($tickets, $database, $custom_data_table_class = n
             (!empty($location_name) ? $location_name . '<br><br>' : '') .
             (!empty($ticket['room']) ? 'RM ' . $ticket['room'] : '') .
             '</td>' .
+            '<td data-cell="Department">' . location_name_from_id($ticket["department"]) . '</td>' .
             '<td data-cell="Request Category">' .  $request_type_name . '</td>
             <td data-cell="Current Status">' . $ticket["status"] . '</td>
             <td data-cell="Priority">' . '<span class="sort-value">' . $ticket['priority'] . '</span>' . $priorityTypes[$ticket["priority"]] . '</td>
@@ -109,7 +110,6 @@ function display_tickets_table($tickets, $database, $custom_data_table_class = n
             <td data-cell="Last Updated">' . $ticket["last_updated"] . '</td>
             <td data-cell="Due">' . $ticket["due_date"] . '</td>
             <td data-cell="Assigned">' . $ticket["employee"] . '</td>
-            <td data-cell="Alert Levels">' . (isset($ticket["alert_levels"]) ? $ticket["alert_levels"] : '') . '</td>
         </tr>';
     }
 

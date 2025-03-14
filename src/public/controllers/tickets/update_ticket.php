@@ -144,7 +144,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $updatedDueDate = $new_due_date->format('Y-m-d');
     }
 
-
+    // Check if the department has changed, Set the employee to "unassigned" if the department has changed
+    if (isset($old_ticket_data['department'], $updatedDepartment) && $old_ticket_data['department'] != $updatedDepartment) {
+        $updatedEmployee = "unassigned";
+        $assigned_tech_changed = true;
+    }
 
     // Perform SQL UPDATE queries to update the ticket information
     $update_ticket_query = "UPDATE tickets SET
@@ -403,7 +407,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $result = HelpDB::get()->execute_query(
-        "SELECT attachment_path from help.tickets WHERE id = ?", [$ticket_id]);
+        "SELECT attachment_path from help.tickets WHERE id = ?",
+        [$ticket_id]
+    );
     if (!$result) {
         log_app(LOG_ERR, "Failed to get old attachment_path");
     }

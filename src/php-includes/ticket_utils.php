@@ -862,29 +862,36 @@ function ldapspecialchars($string)
     return str_replace(array_keys($sanitized), array_values($sanitized), $string);
 }
 
-function get_tech_usernames()
+function get_tech_usernames($department = null)
 {
-
-    $usernamesResult = HelpDB::get()->execute_query("
+    $query = "
         SELECT u.username, us.is_tech 
         FROM users u
         LEFT JOIN user_settings us ON u.id = us.user_id
-        WHERE us.is_tech = 1 
-        ORDER BY u.username ASC
-    ");
+        WHERE us.is_tech = 1
+    ";
+
+    if ($department !== null) {
+        $query .= " AND us.department = ?";
+        $usernamesResult = HelpDB::get()->execute_query($query, [$department]);
+    } else {
+        $query .= " ORDER BY u.username ASC";
+        $usernamesResult = HelpDB::get()->execute_query($query);
+    }
+
     if (!$usernamesResult) {
         log_app(LOG_ERR, "[get_tech_usernames] Failed to query database");
         return [];
     }
 
     // Store the usernames in an array
-    $tmp = [];
+    $tech_usernames = [];
     while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
         if ($usernameRow['is_tech']) {
-            $tmp[] = strtolower($usernameRow['username']);
+            $tech_usernames[] = $usernameRow['username'];
         }
     }
-    return $tmp;
+    return $tech_usernames;
 }
 function getPriorityName(int $priority)
 {

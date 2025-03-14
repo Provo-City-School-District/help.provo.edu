@@ -264,25 +264,53 @@ if (in_array($ticket['location'], $dep_locations)) {
     $ticket['department'] = $ticket['location'];
 }
 
-// Fetch the list of usernames from the users table
-$usernamesQuery = "
-    SELECT u.username, us.is_tech 
-    FROM users u
-    LEFT JOIN user_settings us ON u.id = us.user_id
-    WHERE us.is_tech = 1
-    ORDER BY u.username ASC
-";
-$usernamesResult = HelpDB::get()->execute_query($usernamesQuery);
+// Fetch the current user's department
+$user_department_query = "SELECT department FROM user_settings WHERE user_id = (SELECT id FROM users WHERE username = ?)";
+$user_department_result = HelpDB::get()->execute_query($user_department_query, [$username]);
 
-if (!$usernamesResult) {
-    die('Error fetching usernames: ' . mysqli_error(HelpDB::get()));
+if (!$user_department_result) {
+    die('Error fetching user department: ' . mysqli_error(HelpDB::get()));
 }
 
-// Store the usernames in an array
-$techusernames = [];
-while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
-    if ($usernameRow['is_tech'] == 1) {
-        $techusernames[] = $usernameRow['username'];
+$user_department_row = mysqli_fetch_assoc($user_department_result);
+$user_department = $user_department_row['department'];
+
+// Check if the user has permission to see all techs
+$can_see_all_techs = $_SESSION['permissions']['can_see_all_techs'] ?? 0;
+
+
+// Fetch the list of tech usernames from the users table
+if ($can_see_all_techs) {
+    // Fetch all tech usernames
+    $tech_usernames_query = "
+        SELECT u.username, us.is_tech 
+        FROM users u
+        LEFT JOIN user_settings us ON u.id = us.user_id
+        WHERE us.is_tech = 1
+        ORDER BY u.username ASC
+    ";
+    $tech_usernames_result = HelpDB::get()->execute_query($tech_usernames_query);
+} else {
+    // Fetch tech usernames in the same department
+    $tech_usernames_query = "
+        SELECT u.username, us.is_tech 
+        FROM users u
+        LEFT JOIN user_settings us ON u.id = us.user_id
+        WHERE us.is_tech = 1 AND us.department = ?
+        ORDER BY u.username ASC
+    ";
+    $tech_usernames_result = HelpDB::get()->execute_query($tech_usernames_query, [$user_department]);
+}
+
+if (!$tech_usernames_result) {
+    die('Error fetching tech usernames: ' . mysqli_error(HelpDB::get()));
+}
+
+// Store the tech usernames in an array
+$tech_usernames = [];
+while ($username_row = mysqli_fetch_assoc($tech_usernames_result)) {
+    if ($username_row['is_tech'] == 1) {
+        $tech_usernames[] = $username_row['username'];
     }
 }
 
@@ -585,17 +613,18 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
             } else {
                 // Display Fields that tech can edit
             ?>
-                <div> <label for="employee">Assigned Tech:</label>
+                <div>
+                    <label for="employee">Assigned Tech:</label>
                     <select id="employee" name="employee">
                         <option value="unassigned">Unassigned</option>
-                        <?php foreach ($techusernames as $username) : ?>
+                        <?php foreach ($tech_usernames as $tech_username) : ?>
                             <?php
-                            $name = get_local_name_for_user($username);
+                            $name = get_local_name_for_user($tech_username);
                             $firstname = ucwords(strtolower($name["firstname"]));
                             $lastname = ucwords(strtolower($name["lastname"]));
-                            $display_string = $firstname . " " . $lastname . " - " . location_name_from_id(get_fast_client_location($username) ?: "");
+                            $display_string = $firstname . " " . $lastname . " - " . location_name_from_id(get_fast_client_location($tech_username) ?: "");
                             ?>
-                            <option value="<?= $username ?>" <?= $ticket['employee'] === $username ? 'selected' : '' ?>><?= $display_string ?></option>
+                            <option value="<?= $tech_username ?>" <?= $ticket['employee'] === $tech_username ? 'selected' : '' ?>><?= $display_string ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -1035,7 +1064,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                         <label for="assigned_tech">Assigned Tech: </label>
                         <select id="assigned-tech" name="assigned_tech">
                             <option value="">Unassigned</option>
-                            <?php foreach ($techusernames as $username) : ?>
+                            <?php foreach ($tech_usernames as $username) : ?>
                                 <?php
                                 $name = get_local_name_for_user($username);
                                 $firstname = $name["firstname"];

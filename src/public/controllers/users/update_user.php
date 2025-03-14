@@ -34,6 +34,7 @@ $is_loc_man = isset($_POST['is_loc_man']) ? 1 : 0;
 $supervisor_username = trim(htmlspecialchars($_POST['supervisor']));
 $man_location = trim(htmlspecialchars($_POST['man_location']));
 $department = trim(htmlspecialchars($_POST['department']));
+$can_see_all_techs = isset($_POST['can_see_all_techs']) ? 1 : 0;
 
 // Update the user data in the users table
 $user_query = "UPDATE users SET firstname = ?, lastname = ?, email = ?, ifasid = ? WHERE id = ?";
@@ -47,9 +48,9 @@ if (!$user_stmt) {
 }
 
 // Update the user settings in the user_settings table
-$settings_query = "UPDATE user_settings SET is_admin = ?, is_tech = ?, is_intern = ?, intern_site = ?, is_supervisor = ?, is_location_manager = ?, location_manager_sitenumber = ?, can_view_tickets = ?, can_create_tickets = ?, can_edit_tickets = ?, supervisor_username = ?, department = ? WHERE user_id = ?";
+$settings_query = "UPDATE user_settings SET is_admin = ?, is_tech = ?, is_intern = ?, intern_site = ?, is_supervisor = ?, is_location_manager = ?, location_manager_sitenumber = ?, can_view_tickets = ?, can_create_tickets = ?, can_edit_tickets = ?, supervisor_username = ?, department = ?, can_see_all_techs = ? WHERE user_id = ?";
 $settings_stmt = mysqli_prepare(HelpDB::get(), $settings_query);
-mysqli_stmt_bind_param($settings_stmt, "iiiiiiiiiisii", $is_admin, $is_tech, $is_intern, $intern_site, $is_supervisor, $is_loc_man, $man_location, $can_view_tickets, $can_create_tickets, $can_edit_tickets, $supervisor_username, $department, $user_id);
+mysqli_stmt_bind_param($settings_stmt, "iiiiiiiiiisiii", $is_admin, $is_tech, $is_intern, $intern_site, $is_supervisor, $is_loc_man, $man_location, $can_view_tickets, $can_create_tickets, $can_edit_tickets, $supervisor_username, $department, $can_see_all_techs, $user_id);
 mysqli_stmt_execute($settings_stmt);
 
 // Check if the query was successful

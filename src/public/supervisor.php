@@ -11,7 +11,10 @@ if ($_SESSION['permissions']['is_supervisor'] != 1) {
 
 require_once('helpdbconnect.php');
 require_once("ticket_utils.php");
-$managed_location = $_SESSION['permissions']['location_manager_sitenumber'];
+
+$department = $_SESSION['department'] ?? null;
+$sitenumber = get_sitenumber_from_location_id($department);
+
 
 function process_query_result($query_result, $label_field)
 {
@@ -87,18 +90,22 @@ $tech_query = <<<STR
     SELECT t.employee, u.id 
     FROM tickets t 
     JOIN users u ON t.employee = u.username 
-    WHERE t.status NOT IN ('closed', 'resolved')
-    STR;
-$tech_query_result = HelpDB::get()->execute_query($tech_query);
+    JOIN user_settings us ON u.id = us.user_id
+    WHERE t.status NOT IN ('closed', 'resolved') 
+    AND us.department = ?
+STR;
+$tech_query_result = HelpDB::get()->execute_query($tech_query, [$department]);
 $url_path_techs = "/controllers/users/manage_user.php?id=";
 $allTechs = process_query_result_wlinks($tech_query_result, "employee", "id", $url_path_techs);
 
 // Query open tickets based on location:
+
 $location_query = <<<STR
     SELECT locations.location_name, tickets.location
     FROM tickets 
     INNER JOIN locations ON tickets.location = locations.sitenumber 
     WHERE tickets.status NOT IN ('closed', 'resolved')
+    AND locations.is_archived = 0
 STR;
 
 $location_query_result = HelpDB::get()->execute_query($location_query);
@@ -116,6 +123,22 @@ $allLocations = process_query_result($location_query_result, "location_name");
 // $field_tech_query_result = HelpDB::get()->execute_query($field_tech_query);
 // $fieldTechs = process_query_result($field_tech_query_result, "employee");
 
+
+
+// Query supervisor alerts for users within the current user's department
+$supervisor_alerts_query = <<<alerts
+    SELECT a.*
+    FROM alerts a
+    INNER JOIN users u ON a.employee = u.username
+    INNER JOIN user_settings us ON u.id = us.user_id
+    WHERE a.supervisor_alert = 1
+    AND us.department = ?
+alerts;
+
+
+
+$supervisor_alerts_result = HelpDB::get()->execute_query($supervisor_alerts_query, [$department]);
+$supervisorAlerts = mysqli_fetch_all($supervisor_alerts_result, MYSQLI_ASSOC);
 ?>
 <h1>Supervisor</h1>
 <form>
@@ -131,9 +154,38 @@ $allLocations = process_query_result($location_query_result, "location_name");
     </select>
 </form>
 <h2>Reports</h2>
-<div class="grid2 canvasjsreport">
+<div class="grid3 canvasjsreport">
     <div id="techOpenTicket" style="height: 370px; width: 100%;"></div>
     <div id="byLocation" style="height: 370px; width: 100%;"></div>
+    <div class="alerts_wrapper">
+        <h1 class="nextToCanvas">Supervisor Alerts</h1>
+        <table id="alertsTable" class="display">
+            <thead>
+                <tr>
+                    <th>Ticket ID</th>
+                    <th>Message</th>
+                    <th>Assigned To</th>
+                    <!-- <th>Alert Level</th> -->
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                if (count($supervisorAlerts) != 0) {
+                    foreach ($supervisorAlerts as $alert) {
+                        echo "<tr>";
+                        echo "<td><a href='/controllers/tickets/edit_ticket.php?id=" . $alert['ticket_id'] . "'>" . $alert['ticket_id'] . "</a></td>";
+                        echo "<td>" . $alert['message'] . "</td>";
+                        echo "<td>" . $alert['employee'] . "</td>";
+                        // echo "<td>" . $alert['alert_level'] . "</td>";
+                        echo "</tr>";
+                    }
+                } else {
+                    echo "<tr><td colspan='4'>No alerts found</td></tr>";
+                }
+                ?>
+            </tbody>
+        </table>
+    </div>
     <!-- <div id="fieldTechOpen" style="height: 370px; width: 100%;"></div> -->
 </div>
 
@@ -148,19 +200,21 @@ $allLocations = process_query_result($location_query_result, "location_name");
 
 //query for unassigned tickets for location
 $unassigned_ticket_query = <<<unassigned_tickets
-SELECT tickets.*, GROUP_CONCAT(DISTINCT alerts.alert_level) AS alert_levels
+SELECT *
 FROM tickets
-LEFT JOIN alerts ON tickets.id = alerts.ticket_id
 WHERE status NOT IN ('closed', 'resolved') 
-AND (tickets.employee IS NULL OR tickets.employee = 'unassigned' OR tickets.employee = '')
-GROUP BY tickets.id
+AND (employee IS NULL OR employee = 'unassigned' OR employee = '')
+AND department = ?
+GROUP BY id
 unassigned_tickets;
 
-
-$ticket_result = HelpDB::get()->execute_query($unassigned_ticket_query);
+$ticket_result = HelpDB::get()->execute_query($unassigned_ticket_query, [$sitenumber]);
 display_tickets_table($ticket_result, HelpDB::get());
+
+
 ?>
 <script src="/includes/js/charts.js?v=0.1.0" type="text/javascript"></script>
+
 <script>
     let allTechs = <?php echo json_encode($allTechs, JSON_NUMERIC_CHECK); ?>;
     let byLocation = <?php echo json_encode($allLocations, JSON_NUMERIC_CHECK); ?>;
@@ -199,3 +253,8 @@ display_tickets_table($ticket_result, HelpDB::get());
 </script>
 <?php include("footer.php"); ?>
 <script src="/includes/js/external/canvasjs.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#alertsTable').DataTable();
+    });
+</script>

@@ -1014,3 +1014,11 @@ function get_departments()
 
     return $tmp;
 }
+
+function get_sitenumber_from_location_id($department)
+{
+    $sitenumber_query = "SELECT sitenumber FROM locations WHERE location_id = ?";
+    $sitenumber_result = HelpDB::get()->execute_query($sitenumber_query, [$department]);
+    $sitenumber_row = mysqli_fetch_assoc($sitenumber_result);
+    return $sitenumber_row['sitenumber'] ?? null;
+}

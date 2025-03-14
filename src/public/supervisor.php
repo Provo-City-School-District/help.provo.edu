@@ -11,7 +11,10 @@ if ($_SESSION['permissions']['is_supervisor'] != 1) {
 
 require_once('helpdbconnect.php');
 require_once("ticket_utils.php");
+
 $department = $_SESSION['department'] ?? null;
+$sitenumber = get_sitenumber_from_location_id($department);
+
 
 function process_query_result($query_result, $label_field)
 {
@@ -96,11 +99,13 @@ $url_path_techs = "/controllers/users/manage_user.php?id=";
 $allTechs = process_query_result_wlinks($tech_query_result, "employee", "id", $url_path_techs);
 
 // Query open tickets based on location:
+
 $location_query = <<<STR
     SELECT locations.location_name, tickets.location
     FROM tickets 
     INNER JOIN locations ON tickets.location = locations.sitenumber 
     WHERE tickets.status NOT IN ('closed', 'resolved')
+    AND locations.is_archived = 0
 STR;
 
 $location_query_result = HelpDB::get()->execute_query($location_query);
@@ -150,17 +155,18 @@ $allLocations = process_query_result($location_query_result, "location_name");
 
 //query for unassigned tickets for location
 $unassigned_ticket_query = <<<unassigned_tickets
-SELECT tickets.*, GROUP_CONCAT(DISTINCT alerts.alert_level) AS alert_levels
+SELECT *
 FROM tickets
-LEFT JOIN alerts ON tickets.id = alerts.ticket_id
 WHERE status NOT IN ('closed', 'resolved') 
-AND (tickets.employee IS NULL OR tickets.employee = 'unassigned' OR tickets.employee = '')
-GROUP BY tickets.id
+AND (employee IS NULL OR employee = 'unassigned' OR employee = '')
+AND department = ?
+GROUP BY id
 unassigned_tickets;
 
-
-$ticket_result = HelpDB::get()->execute_query($unassigned_ticket_query);
+$ticket_result = HelpDB::get()->execute_query($unassigned_ticket_query, [$sitenumber]);
 display_tickets_table($ticket_result, HelpDB::get());
+
+
 ?>
 <script src="/includes/js/charts.js?v=0.1.0" type="text/javascript"></script>
 <script>

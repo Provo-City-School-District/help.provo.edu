@@ -16,6 +16,15 @@ function username_from_email_address(string $email)
     return str_replace("@provo.edu", "", $email);
 }
 
+function get_info_from_email(string $email)
+{
+    $domain = substr(strstr($email, '@'), 1);
+    $user = substr($email, 0, strrpos($email, '@'));
+
+    return ['domain' => $domain, 'user' => $user];
+}
+
+
 /*
 Returns true on success, false otherwise
 */
@@ -26,7 +35,7 @@ function send_email(
     array $cc_recipients = [],
     array $bcc_recipients = [],
     array $attachments = [],
-    string &$messageID = null
+    ?string &$messageID = null
 ) {
     // Create a new PHPMailer instance
     $mailer = new PHPMailer(true);

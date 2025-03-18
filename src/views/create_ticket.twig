@@ -72,26 +72,26 @@
                 <input type="text" id="client" name="client" value="{{ _get['client']|escape }}">
             </div>
             <div>
-    <label for="request_type">Request Type:</label>
-    <select id="request_type" name="request_type">
-        <option value="0">Select a more specific request type otherwise (Other)</option>
-        {% for topLevel in requestTypes %}
-            <option disabled value="{{ topLevel.id }}" {% if topLevel.id == _get['request_type'] %}selected{% endif %}>
-                {{ topLevel.name }}
-            </option>
-            {% for child in topLevel.children %}
-                <option value="{{ child.id }}" {% if child.id == _get['request_type'] %}selected{% endif %}>
-                    &nbsp;&nbsp;&nbsp;&nbsp;{{ child.name }}
-                </option>
-                {% for grandchild in child.children %}
-                    <option value="{{ grandchild.id }}" {% if grandchild.id == _get['request_type'] %}selected{% endif %}>
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ grandchild.name }}
+            <label for="request_type">Request Type:</label>
+            <select id="request_type" name="request_type">
+                <option value="0">Select a more specific request type otherwise (Other)</option>
+                {% for topLevel in requestTypes %}
+                    <option disabled value="{{ topLevel.id }}" {% if topLevel.id == _get['request_type'] %}selected{% endif %}>
+                        {{ topLevel.name }}
                     </option>
+                    {% for child in topLevel.children %}
+                        <option value="{{ child.id }}" {% if child.id == _get['request_type'] %}selected{% endif %}>
+                            &nbsp;&nbsp;&nbsp;&nbsp;{{ child.name }}
+                        </option>
+                        {% for grandchild in child.children %}
+                            <option value="{{ grandchild.id }}" {% if grandchild.id == _get['request_type'] %}selected{% endif %}>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ grandchild.name }}
+                            </option>
+                        {% endfor %}
+                    {% endfor %}
                 {% endfor %}
-            {% endfor %}
-        {% endfor %}
-    </select>
-</div>
+            </select>
+        </div>
         {% endif %}
         </div>
 

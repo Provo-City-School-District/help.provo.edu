@@ -34,6 +34,27 @@
         <input type="text" class="form-control" id="search_name" name="search_name" value="{{ search_name }}">
     </div>
     <div class="form-group">
+        <label for="request_type">Request Type:</label>
+        <select id="request_type" name="request_type">
+            <option value="0">Select a more specific request type otherwise (Other)</option>
+            {% for topLevel in requestTypes %}
+                <option disabled value="{{ topLevel.id }}" {% if topLevel.id == search_request_type %}selected{% endif %}>
+                    {{ topLevel.name }}
+                </option>
+                {% for child in topLevel.children %}
+                    <option value="{{ child.id }}" {% if child.id == search_request_type %}selected{% endif %}>
+                        &nbsp;&nbsp;&nbsp;&nbsp;{{ child.name }}
+                    </option>
+                    {% for grandchild in child.children %}
+                        <option value="{{ grandchild.id }}" {% if grandchild.id == search_request_type %}selected{% endif %}>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ grandchild.name }}
+                        </option>
+                    {% endfor %}
+                {% endfor %}
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
         <label for="search_status">Status:</label>
         <select id="search_status" name="search_status">
             <option value="" selected></option>
@@ -45,7 +66,6 @@
         </select>
     </div>
     
-
     {% if isTech %}
     <!-- Fields for tech users go here -->
     <div class="form-group">

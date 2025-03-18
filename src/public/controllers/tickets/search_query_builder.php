@@ -52,6 +52,9 @@ if (!empty($search_client)) {
 if (!empty($search_status)) {
     $ticket_query .= " AND status LIKE '$search_status'";
 }
+if (!empty($search_request_type)) {
+    $ticket_query .= " AND request_type_id LIKE '$search_request_type'";
+}
 if (!empty($search_start_date) && !empty($search_end_date) && !empty($dates_searched)) {
     $search_end_date = date('Y-m-d', strtotime($search_end_date . ' +1 day'));
 

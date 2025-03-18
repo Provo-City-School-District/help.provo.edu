@@ -1,0 +1,30 @@
+{% extends "base.twig" %}
+{% block mainNav %}
+{% endblock %}
+   {% block workHours %}
+   {% endblock %}
+{% block content %}
+ <h1>Feedback Form for Ticket #{{ ticket_id|e }}</h1>
+    <form method="POST" action="feedback.php" class="singleColForm">
+        <input type="hidden" name="ticket_id" value="{{ ticket_id|e }}">
+        <input type="hidden" name="feedback_id" value="{{ feedback_id|e }}">
+        
+        <div class="grid2">
+            <label for="rating">Rating:</label>
+            <select name="rating" id="rating" required>
+                <option value="5">5 - Very Satisfied</option>
+                <option value="4">4 - Satisfied</option>
+                <option value="3">3 - Neutral</option>
+                <option value="2">2 - Dissatisfied</option>
+                <option value="1">1 - Very Dissatisfied</option>
+            </select>
+        </div>
+     
+        <div class="grid2">
+            <label for="comments">Comments:</label>
+            <textarea name="comments" id="comments"></textarea>
+        </div>
+ 
+        <button type="submit" class="button">Submit Feedback</button>
+    </form>
+{% endblock %}

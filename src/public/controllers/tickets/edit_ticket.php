@@ -255,7 +255,8 @@ $dep_locations = [
     1300,
     1310,
     1360,
-    1370
+    1370,
+    1200
 ];
 
 // Check if the ticket location is in the list and set the department variable
@@ -263,19 +264,53 @@ if (in_array($ticket['location'], $dep_locations)) {
     $ticket['department'] = $ticket['location'];
 }
 
-// Fetch the list of usernames from the users table
-$usernamesQuery = "SELECT username, is_tech FROM users WHERE is_tech = 1 ORDER BY username ASC";
-$usernamesResult = HelpDB::get()->execute_query($usernamesQuery);
+// Fetch the current user's department
+$user_department_query = "SELECT department FROM user_settings WHERE user_id = (SELECT id FROM users WHERE username = ?)";
+$user_department_result = HelpDB::get()->execute_query($user_department_query, [$username]);
 
-if (!$usernamesResult) {
-    die('Error fetching usernames: ' . mysqli_error(HelpDB::get()));
+if (!$user_department_result) {
+    die('Error fetching user department: ' . mysqli_error(HelpDB::get()));
 }
 
-// Store the usernames in an array
-$techusernames = [];
-while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
-    if ($usernameRow['is_tech'] == 1) {
-        $techusernames[] = $usernameRow['username'];
+$user_department_row = mysqli_fetch_assoc($user_department_result);
+$user_department = $user_department_row['department'];
+
+// Check if the user has permission to see all techs
+$can_see_all_techs = $_SESSION['permissions']['can_see_all_techs'] ?? 0;
+
+
+// Fetch the list of tech usernames from the users table
+if ($can_see_all_techs) {
+    // Fetch all tech usernames
+    $tech_usernames_query = "
+        SELECT u.username, us.is_tech 
+        FROM users u
+        LEFT JOIN user_settings us ON u.id = us.user_id
+        WHERE us.is_tech = 1
+        ORDER BY u.username ASC
+    ";
+    $tech_usernames_result = HelpDB::get()->execute_query($tech_usernames_query);
+} else {
+    // Fetch tech usernames in the same department
+    $tech_usernames_query = "
+        SELECT u.username, us.is_tech 
+        FROM users u
+        LEFT JOIN user_settings us ON u.id = us.user_id
+        WHERE us.is_tech = 1 AND us.department = ?
+        ORDER BY u.username ASC
+    ";
+    $tech_usernames_result = HelpDB::get()->execute_query($tech_usernames_query, [$user_department]);
+}
+
+if (!$tech_usernames_result) {
+    die('Error fetching tech usernames: ' . mysqli_error(HelpDB::get()));
+}
+
+// Store the tech usernames in an array
+$tech_usernames = [];
+while ($username_row = mysqli_fetch_assoc($tech_usernames_result)) {
+    if ($username_row['is_tech'] == 1) {
+        $tech_usernames[] = $username_row['username'];
     }
 }
 
@@ -325,7 +360,7 @@ if (strtolower($ticket["employee"]) == strtolower($username)) {
     $right_ticket_id = $assigned_ticket_ids[$right_idx];
 }
 
-$alerts_res = HelpDB::get()->execute_query("SELECT * FROM alerts WHERE alerts.ticket_id = ?", [$ticket_id]);
+$alerts_res = HelpDB::get()->execute_query("SELECT * FROM alerts WHERE alerts.ticket_id = ? AND supervisor_alert=0", [$ticket_id]);
 $alert_data = [];
 while ($row = $alerts_res->fetch_assoc()) {
     $alert_data[] = $row;
@@ -411,6 +446,9 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
     <!-- Form for updating ticket information -->
     <div class="ticketButtons">
         <div>
+            <?php if (!$readonly) : ?>
+                <button id="unread-ticket-button" class="button">Unread Ticket</button>
+            <?php endif; ?>
             <?php if ($readonly && !session_is_intern() && $ticket['status'] != 'closed' && !$hasNotes) : ?>
                 <button id="close-ticket-button" class="button">Close Ticket</button>
             <?php endif; ?>
@@ -526,17 +564,31 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
             ?>
 
                 <div>
-                    <span>Assigned Tech:</span> <?= $ticket['employee'] ?>
+                    <span>Assigned Tech:</span>
+                    <?php
+                    if (!empty($ticket['employee'])) {
+                        $tech_nice_name = get_local_name_for_user($ticket['employee']);
+                        echo $tech_nice_name['firstname'] . ' ' . $tech_nice_name['lastname'];
+                    } else {
+                        echo "Unassigned";
+                    }
+                    ?>
                 </div>
                 <input type="hidden" id="employee" name="employee" value="<?= $ticket['employee'] ?>">
 
                 <div>
-                    <span>Location:</span> <?= $ticket['location'] ?>
+                    <span>Location:</span> <?= location_name_from_id($ticket['location']) ?>
                 </div>
                 <input type="hidden" id="location" name="location" value="<?= $ticket['location'] ?>">
 
                 <div>
-                    <span>Department:</span> <?= $ticket['department'] ?>
+                    <span>Department:</span><?php
+                                            if (!empty($ticket['department'])) {
+                                                echo location_name_from_id($ticket['department']);
+                                            } else {
+                                                echo "Not Assigned";
+                                            }
+                                            ?>
                 </div>
                 <input type="hidden" id="department" name="department" value="<?= $ticket['department'] ?>">
                 <div>
@@ -544,7 +596,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                 </div>
                 <input type="hidden" id="status" name="status" value="<?= $ticket['status'] ?>">
                 <div>
-                    <span>Request Type:</span> <?= $ticket['request_type_id'] ?>
+                    <span>Request Type:</span> <?= request_name_for_type($ticket['request_type_id']) ?>
                 </div>
                 <input type="hidden" id="request_type" name="request_type" value="<?= $ticket['location'] ?>">
 
@@ -561,17 +613,18 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
             } else {
                 // Display Fields that tech can edit
             ?>
-                <div> <label for="employee">Assigned Tech:</label>
+                <div>
+                    <label for="employee">Assigned Tech:</label>
                     <select id="employee" name="employee">
                         <option value="unassigned">Unassigned</option>
-                        <?php foreach ($techusernames as $username) : ?>
+                        <?php foreach ($tech_usernames as $tech_username) : ?>
                             <?php
-                            $name = get_local_name_for_user($username);
+                            $name = get_local_name_for_user($tech_username);
                             $firstname = ucwords(strtolower($name["firstname"]));
                             $lastname = ucwords(strtolower($name["lastname"]));
-                            $display_string = $firstname . " " . $lastname . " - " . location_name_from_id(get_fast_client_location($username) ?: "");
+                            $display_string = $firstname . " " . $lastname . " - " . location_name_from_id(get_fast_client_location($tech_username) ?: "");
                             ?>
-                            <option value="<?= $username ?>" <?= $ticket['employee'] === $username ? 'selected' : '' ?>><?= $display_string ?></option>
+                            <option value="<?= $tech_username ?>" <?= $ticket['employee'] === $tech_username ? 'selected' : '' ?>><?= $display_string ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -581,7 +634,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                         <option hidden disabled selected value></option>
                         <?php
                         // Query the locations table to get the departments
-                        $department_query = "SELECT sitenumber, location_name FROM locations WHERE is_department = TRUE ORDER BY location_name ASC";
+                        $department_query = "SELECT sitenumber, location_name FROM locations WHERE is_department = TRUE AND is_archived = FALSE ORDER BY location_name ASC";
                         $department_result = HelpDB::get()->execute_query($department_query);
 
                         //Create a "Department" optgroup and create an option for each department
@@ -605,7 +658,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
 
 
                         // Query the locations table to get the locations
-                        $location_query = "SELECT sitenumber, location_name FROM locations WHERE is_department = FALSE ORDER BY location_name ASC";
+                        $location_query = "SELECT sitenumber, location_name FROM locations WHERE is_department = FALSE AND is_archived = FALSE ORDER BY location_name ASC";
                         $location_result = HelpDB::get()->execute_query($location_query);
 
                         // Create a "Location" optgroup and create an option for each location
@@ -763,7 +816,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
 
 
         <div class="detailContainer">
-            <div class="grid2 ticketSubject">
+            <div class="ticketSubject">
                 <label for="ticket_name">Ticket Title:</label>
                 <input type="text" id="ticket_name" name="ticket_name" value="<?= $ticket['name'] ?>" maxlength="100">
             </div>
@@ -928,6 +981,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                     <th>Ticket Assigned To</th>
                     <th>Ticket Title</th>
                     <th>Ticket Description</th>
+                    <th>Ticket Location</th>
                 </tr>
                 <?php
                 foreach ($child_tickets as $child_ticket) {
@@ -938,6 +992,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                         <td data-cell="Tech"><?= $child_ticket['employee'] ?></td>
                         <td data-cell="Ticket Title"><?= $child_ticket['name'] ?></td>
                         <td data-cell="Request Detail" class="child-ticket-details"><?= mb_substr(strip_tags(html_entity_decode($child_ticket['description'])), 0, 100) ?>...</td>
+                        <td data-cell="Ticket Location"><?= location_name_from_id($child_ticket['location']) ?></td>
                     </tr>
                 <?php
                 }
@@ -972,7 +1027,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                 $checked_if_done = $task_complete ? "checked" : "";
                 $checked_if_required = $task_required ? "checked" : "";
 
-                if (isset($assigned_tech)) {
+                if (isset($assigned_tech) && $assigned_tech != "unassigned") {
                     $assigned_tech_name = get_local_name_for_user($assigned_tech);
                     $assigned_tech_str = $assigned_tech_name["firstname"] . " " . $assigned_tech_name["lastname"];
                 } else {
@@ -1009,7 +1064,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                         <label for="assigned_tech">Assigned Tech: </label>
                         <select id="assigned-tech" name="assigned_tech">
                             <option value="">Unassigned</option>
-                            <?php foreach ($techusernames as $username) : ?>
+                            <?php foreach ($tech_usernames as $username) : ?>
                                 <?php
                                 $name = get_local_name_for_user($username);
                                 $firstname = $name["firstname"];
@@ -1147,7 +1202,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                             foreach ($asset_tag_matches[0] as $match) {
                                 $match_str = $match[0];
                                 $scheme = null;
-        
+
                                 if (str_starts_with(strtolower($match_str), 'bc')) {
                                     $scheme = 'barcode';
                                 } else {
@@ -1325,8 +1380,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
     if (session_is_tech() && mysqli_num_rows($log_result) > 0) {
     ?>
         <div class="ticket_log">
-            <h2>Ticket History</h2>
-            <p id="ticket-history-status">(collapsed)</p>
+            <h2 id="ticket-history-status">Expand Ticket History <span id="chevron" style="font-size: 0.8em;">&#x2192;</span></h2>
             <table id="ticket-history">
                 <tr class="ticket-history-header">
                     <th class="tableDate">Created At</th>
@@ -1367,6 +1421,18 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                                 case str_contains($log_row['field_name'], 'Task'):
                                     $note_str = $log_row['field_name'];
                                     break;
+                                case 'location':
+                                    $note_str = 'Location Changed From: ' . location_name_from_id($old_value) . ' To: ' . location_name_from_id($new_value);
+                                    break;
+                                case 'department':
+                                    $note_str = 'Location Changed From: ' . location_name_from_id($old_value) . ' To: ' . location_name_from_id($new_value);
+                                    break;
+                                case 'priority':
+                                    $note_str = 'Priority Changed From: ' . getPriorityName($old_value) . ' To: ' . getPriorityName($new_value);
+                                    break;
+                                case 'request_type_id':
+                                    $note_str = 'Request Type Changed From: ' . request_name_for_type($old_value) . ' To: ' . request_name_for_type($new_value);
+                                    break;
                                 default:
                                     $note_str = formatFieldName($log_row['field_name']) . ' From: ' . html_entity_decode($old_value) . ' To: ' . html_entity_decode($new_value);
                                     break;
@@ -1397,22 +1463,24 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
     // Make links in note content open in new tab
     $('.note-content a').attr('target', '_blank');
 
-    // Toggle ticket history visibility to closed on page load
-    $('#ticket-history .ticket-history-header').nextUntil('tr.header').toggle();
-
     // Toggle ticket history visibility when clicked
-    $('#ticket-history .ticket-history-header').click(function() {
-        $(this).nextUntil('tr.header').toggle();
+    $('#ticket-history-status').click(function() {
         const ticketHistoryStatus = document.getElementById("ticket-history-status");
+        const ticketHistory = $('#ticket-history');
+        const chevron = document.getElementById("chevron");
+        let ticketHistoryStatusText = ticketHistoryStatus.textContent.trim();
 
-        let ticketHistoryStatusText = ticketHistoryStatus.textContent;
-
-        if (ticketHistoryStatusText == "(collapsed)")
-            ticketHistoryStatusText = "(expanded)"
-        else if (ticketHistoryStatusText == "(expanded)")
-            ticketHistoryStatusText = "(collapsed)"
+        if (ticketHistoryStatusText.includes("Expand Ticket History")) {
+            ticketHistoryStatusText = "Hide Ticket History";
+            chevron.innerHTML = "&#x2193;"; // Down chevron
+        } else if (ticketHistoryStatusText.includes("Hide Ticket History")) {
+            ticketHistoryStatusText = "Expand Ticket History";
+            chevron.innerHTML = "&#x2192;"; // Right chevron
+        }
 
         ticketHistoryStatus.textContent = ticketHistoryStatusText;
+        ticketHistoryStatus.appendChild(chevron); // Re-append the chevron
+        ticketHistory.toggle();
     });
 
     const title = document.getElementById("ticket-title");
@@ -1480,7 +1548,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
 
     // Pass the note order from PHP to JavaScript
     var noteOrder = "<?php echo $note_order; ?>";
-
+    // Close Ticket Button call to AJAX
     $(document).ready(function() {
         $('#close-ticket-button').click(function() {
             $.ajax({
@@ -1492,6 +1560,25 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                 success: function(data, textStatus, xhr) {
                     console.log("Ticket closed successfully");
                     location.reload();
+                },
+                error: function() {
+                    alert("Error: Autocomplete AJAX call failed");
+                },
+            });
+        });
+    });
+    // Unread Button Call to AJAX
+    $(document).ready(function() {
+        $('#unread-ticket-button').click(function() {
+            $.ajax({
+                url: "/ajax/unread_ticket.php",
+                method: "POST",
+                data: {
+                    ticket_id: <?= $ticket_id ?>,
+                },
+                success: function(data, textStatus, xhr) {
+                    console.log("Ticket unread successfully");
+                    window.location.href = "/tickets.php";
                 },
                 error: function() {
                     alert("Error: Autocomplete AJAX call failed");
@@ -1517,27 +1604,6 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
             },
         });
     }
-
-    /*
-    function taskRequiredChanged(obj, task_id) {
-        $.ajax({
-            url: "/ajax/ticket_tasks/update_task.php",
-            method: "POST",
-            data: {
-                task_id: task_id,
-                new_status: obj.checked ? 1 : 0,
-                update_type: "required_change"
-            },
-            success: function(data, textStatus, xhr) {
-                console.log("Ticket task status changed successfully");
-            },
-            error: function() {
-                alert("Error: Ticket task status AJAX call failed");
-            },
-        });
-    }
-    */
-
 
     function confirmDeleteTask(task_id) {
         if (confirm("Are you sure you want to delete this task?")) {
@@ -1613,40 +1679,3 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
             expand_row.textContent = `Expand ${num_items_str} more ${note_str}...`;
     }
 </script>
-<!-- <script>
-    $(document).ready(function() {
-        $('#note-submit').on('submit', function(e) {
-            e.preventDefault();
-
-            $.ajax({
-                type: 'POST',
-                url: 'add_note_handler.php',
-                data: $(this).serialize(),
-                success: function(response) {
-                    // Reload the notes section
-                    $('#note-table').load(location.href + ' #note-table', function() {
-                        // Scroll to the new note
-                        var newNote = $('#note-table .note').first(); // or .last() depending on user settings
-                        $('html, body').animate({
-                            scrollTop: newNote.offset().top
-                        }, 200); // 2000 milliseconds
-                    });
-
-                    // Close the modal
-                    $('#new-note-form-background').hide();
-                    $('#new-note-form').hide();
-                    // Clear the TinyMCE editor
-                    tinymce.get('note').setContent('');
-                    // clear time input fields
-                    $('#work_minutes').val(0);
-                    $('#work_hours').val(0);
-                    $('#travel_hours').val(0);
-                    $('#travel_minutes').val(0);
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    console.log(textStatus, errorThrown);
-                }
-            });
-        });
-    });
-</script> -->

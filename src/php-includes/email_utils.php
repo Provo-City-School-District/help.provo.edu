@@ -20,7 +20,7 @@ function get_info_from_email(string $email)
 {
     $domain = substr(strstr($email, '@'), 1);
     $user = substr($email, 0, strrpos($email, '@'));
-
+  
     return ['domain' => $domain, 'user' => $user];
 }
 

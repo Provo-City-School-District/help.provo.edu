@@ -4,7 +4,8 @@ require_once from_root("/new-controllers/base_variables.php");
 
 $loader = new \Twig\Loader\FilesystemLoader(from_root('/../views'));
 $twig = new \Twig\Environment($loader, [
-    'cache' => from_root('/../twig-cache')
+    'cache' => from_root('/../twig-cache'),
+    'auto_reload' => true
 ]);
 
 
@@ -17,16 +18,24 @@ if (!$user_result) {
 }
 $user_data = mysqli_fetch_assoc($user_result);
 
+$user_settings_query = HelpDB::get()->execute_query("SELECT * FROM user_settings WHERE user_id = ?", [$user_data['id']]);
+if (!$user_settings_query) {
+    die("Query failed: " . mysqli_error($conn));
+}
+$user_settings = mysqli_fetch_assoc($user_settings_query);
+
+
+
 $user_id = $user_data['id'];
 $employee_id = $user_data['ifasid'];
 $username = $user_data['username'];
 $firstname = ucfirst(strtolower($user_data['firstname']));
 $lastname = ucfirst(strtolower($user_data['lastname']));
 $email = $user_data['email'];
-$color_scheme = $user_data['color_scheme'];
-// $note_order = $user_data['note_order'];
-$hide_alerts = $user_data['hide_alerts'];
-$note_count = $user_data['note_count'];
+$color_scheme = $user_settings['color_scheme'];
+$hide_alerts = $user_settings['hide_alerts'];
+$note_count = $user_settings['note_count'];
+$show_alerts = $user_settings['show_alerts'];
 
 if ($permissions["is_tech"]) {
     require_once("time_utils.php");
@@ -80,4 +89,5 @@ echo $twig->render('profile.twig', [
     'user_times' => $user_times,
     'user_time_total' => $user_time_total,
     'note_count' => $note_count,
+    'show_alerts' => $show_alerts
 ]);

@@ -5,17 +5,8 @@
 <div id="timeoutModal" style="display: none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4);">
     <div style="background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%;">
         <h2>Inactivity Alert</h2>
-        <p>You've been inactive for more than 30 minutes.</p>
-        <?php
-        // $time_difference = calculateTimeSinceLastLogin();
-        // // Check if the user has been logged in for more than 2 hours and display the appropriate message about session likely broken
-        // if ($time_difference > 3 * 60 * 60) {
-        //     echo "<p>Your session may have expired. It's recommended to log out and back in.</p>";
-        //     if (isset($_SESSION['username'])) {
-        //         log_app(LOG_INFO, $_SESSION['username'] . " alerted of old session");
-        //     }
-        // }
-        ?>
+        <p>This tab has been inactive for over 30 minutes. <strong>Your session may have ended.</strong></p>
+
         <button class="button" onclick="dismiss_timeout_modal()">Dismiss</button>
         <button class="button" onclick="location.reload()">Reload Page</button>
     </div>
@@ -24,7 +15,7 @@
 <script src="/includes/js/external/jquery-3.7.1.min.js" type="text/javascript"></script>
 <script src="/includes/js/external/jquery-ui.min.js" type="text/javascript"></script>
 <script src="/includes/js/external/lightbox.js"></script>
-<script src="/includes/js/external/dataTables/jquery.dataTables.min.js" type="text/javascript"></script>
+<script src="/includes/js/external/dataTables/datatables.min.js" type="text/javascript"></script>
 <script src="/includes/js/external/tinymce/tinymce.min.js" referrerpolicy="origin"></script>
 <script>
     var userPref = '<?php echo isset($_SESSION['color_scheme']) ? $_SESSION['color_scheme'] : 'light'; ?>';

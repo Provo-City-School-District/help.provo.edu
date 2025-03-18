@@ -1,7 +1,4 @@
 <?php
-if (!session_id())
-    session_start();
-
 require "ticket_utils.php";
 if (session_is_intern()) {
     require from_root("/controllers/tickets/intern_tickets.php");
@@ -75,6 +72,6 @@ echo $twig->render('tickets.twig', [
     'open_tickets' => $client_tickets,
     'alerts' => $alerts,
     'hide_alerts' => $_SESSION['hide_alerts'],
-    // 'show_alerts' => $show_alerts
-    'show_alerts' => 1
+    'show_alerts' => $show_alerts
+    // 'show_alerts' => 1
 ]);

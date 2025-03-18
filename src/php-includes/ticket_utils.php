@@ -1,6 +1,7 @@
 <?php
 require_once("email_utils.php");
 require_once("template.php");
+
 // DB connection can fail if not included first, TODO fix maybe
 
 function session_logged_in()
@@ -187,12 +188,67 @@ function create_note(
 
     // Send email to assigned tech on update if the client updates ticket
     $client = client_for_ticket($ticket_id_clean);
+    $assigned_tech = assigned_tech_for_ticket($ticket_id_clean) ?? 'unassigned';
     $cc_emails = explode(',', emails_for_ticket($ticket_id_clean, false));
     $bcc_emails = explode(',', emails_for_ticket($ticket_id_clean, true));
-
     $user_email = email_address_from_username(strtolower($username));
 
-    log_app(LOG_INFO, "username: $username, client: $client");
+
+    // Mark ticket as unread for assigned tech if anyone else puts in a note
+    if ($username != $assigned_tech && user_exists_locally($assigned_tech)) {
+        mark_ticket_unread($assigned_tech, $ticket_id_clean);
+    }
+
+    log_app(LOG_INFO, $client);
+
+    // Mark ticket as unread for client if anyone else puts in a note
+    if ($username != $client && user_exists_locally($client)) {
+        mark_ticket_unread($client, $ticket_id_clean);
+    }
+
+
+    // Mark ticket as unread for any CC users that are in the system if anyone else puts in a note
+    foreach ($cc_emails as $cc_email) {
+        $data = get_info_from_email($cc_email);
+        $email_user = $data["user"];
+        $email_domain = $data["domain"];
+
+        // non provo.edu can never be in the system, so skip
+        if ($email_domain != 'provo.edu')
+            continue;
+
+        // if not in system, skip
+        if (!user_exists_locally($email_user))
+            continue;
+
+        // no need to clear ticket status for ourselves (we put in the note)
+        if ($email_user == $username)
+            continue;
+
+        mark_ticket_unread($email_user, $ticket_id);
+    }
+
+
+    // Mark ticket as unread for any BCC users that are in the system if anyone else puts in a note
+    foreach ($bcc_emails as $bcc_email) {
+        $data = get_info_from_email($bcc_email);
+        $email_user = $data["user"];
+        $email_domain = $data["domain"];
+
+        // non provo.edu can never be in the system, so skip
+        if ($email_domain != 'provo.edu')
+            continue;
+
+        // if not in system, skip
+        if (!user_exists_locally($email_user))
+            continue;
+
+        // no need to clear ticket status for ourselves (we put in the note)
+        if ($email_user == $username)
+            continue;
+
+        mark_ticket_unread($email_user, $ticket_id);
+    }
 
     // Allow pseudo-clients to update ticket status if in CC/BCC field
     if ((strtolower($username) == strtolower($client) ||
@@ -215,7 +271,6 @@ function create_note(
             }
         }
 
-        $assigned_tech = assigned_tech_for_ticket($ticket_id_clean);
         $client_name = get_client_name($username);
         $location_name = location_name_from_id(location_for_ticket($ticket_id_clean));
         $ticket_desc = description_for_ticket($ticket_id_clean);
@@ -252,7 +307,7 @@ function create_note(
 
 
         // Email tech if client has updated ticket
-        $email_subject = "Ticket $ticket_id_clean Updated)";
+        $email_subject = "Ticket $ticket_id_clean (Updated)";
         $template_tech = new Template(from_root("/includes/templates/ticket_updated_tech.phtml"));
 
         $template_tech->client = $client_name["firstname"] . " " . $client_name["lastname"];
@@ -496,20 +551,21 @@ function displayTotalTime($total_hours, $total_minutes)
         }
     }
 }
-
-function location_name_from_id(string $site_id)
+// TODO: similar function in search_tickets.php. lets consolidate
+function location_name_from_id(?string $site_id): string
 {
-    if ($site_id == "")
+    if ($site_id === null || $site_id === "") {
         return "Unknown";
-
+    }
 
     $location_result = HelpDB::get()->execute_query("SELECT location_name FROM help.locations WHERE sitenumber = ?", [$site_id]);
-    if (!isset($location_result)) {
+    if (!$location_result) {
         log_app(LOG_ERR, "[location_name_from_id] Failed to get location query result");
+        return "Unknown";
     }
 
     $location_data = mysqli_fetch_assoc($location_result);
-    if (!isset($location_data)) {
+    if (!$location_data) {
         log_app(LOG_ERR, "[location_name_from_id] Failed to get location data for id $site_id");
         return "Site " . $site_id;
     }
@@ -689,27 +745,24 @@ function get_parsed_ticket_data($ticket_data)
         $tmp["title"] = $row["name"];
         $tmp["description"] = limitChars(strip_tags(html_entity_decode($row["description"])), 100);
 
-        $notes_query = "SELECT creator, note FROM help.notes WHERE linked_id = ? ORDER BY
-			(CASE WHEN date_override IS NULL THEN created ELSE date_override END) DESC
-		";
-        $notes_stmt = mysqli_prepare(HelpDB::get(), $notes_query);
-        $creator = null;
-        $note_data = null;
-        if ($notes_stmt) {
-            mysqli_stmt_bind_param($notes_stmt, "i", $row["id"]);
-            mysqli_stmt_execute($notes_stmt);
-
-            mysqli_stmt_bind_result($notes_stmt, $creator, $note_data);
-            // Fetch the result
-            mysqli_stmt_fetch($notes_stmt);
-
-            // Use $location_name as needed
-            mysqli_stmt_close($notes_stmt);
+        if (session_is_tech()) {
+            $notes_query = "SELECT creator, note FROM help.notes WHERE linked_id = ? ORDER BY
+                (CASE WHEN date_override IS NULL THEN created ELSE date_override END) DESC
+            ";
+        } else {
+            $notes_query = "SELECT creator, note FROM help.notes WHERE (linked_id = ? AND visible_to_client = 1) ORDER BY
+            (CASE WHEN date_override IS NULL THEN created ELSE date_override END) DESC";
         }
+        $notes_stmt_result = HelpDB::get()->execute_query($notes_query, [$row["id"]]);
+        $notes_stmt_data = $notes_stmt_result->fetch_assoc();
+
         $latest_note_str = "";
-        if ($creator != null && $note_data != null) {
-            $tmp["latest_note_author"] = $creator;
-            $tmp["latest_note"] = limitChars(strip_tags(html_entity_decode($note_data)), 150);
+        if (
+            isset($notes_stmt_data) && array_key_exists("creator", $notes_stmt_data) &&
+            array_key_exists("note", $notes_stmt_data)
+        ) {
+            $tmp["latest_note_author"] = $notes_stmt_data["creator"];
+            $tmp["latest_note"] = limitChars(strip_tags(html_entity_decode($notes_stmt_data["note"])), 150);
         }
 
         $tmp["client_username"] = $row["client"];
@@ -810,23 +863,36 @@ function ldapspecialchars($string)
     return str_replace(array_keys($sanitized), array_values($sanitized), $string);
 }
 
-function get_tech_usernames()
+function get_tech_usernames($department = null)
 {
+    $query = "
+        SELECT u.username, us.is_tech 
+        FROM users u
+        LEFT JOIN user_settings us ON u.id = us.user_id
+        WHERE us.is_tech = 1
+    ";
 
-    $usernamesResult = HelpDB::get()->execute_query("SELECT username, is_tech FROM users WHERE is_tech = 1 ORDER BY username ASC");
+    if ($department !== null) {
+        $query .= " AND us.department = ?";
+        $usernamesResult = HelpDB::get()->execute_query($query, [$department]);
+    } else {
+        $query .= " ORDER BY u.username ASC";
+        $usernamesResult = HelpDB::get()->execute_query($query);
+    }
+
     if (!$usernamesResult) {
         log_app(LOG_ERR, "[get_tech_usernames] Failed to query database");
         return [];
     }
 
     // Store the usernames in an array
-    $tmp = [];
+    $tech_usernames = [];
     while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
         if ($usernameRow['is_tech']) {
-            $tmp[] = strtolower($usernameRow['username']);
+            $tech_usernames[] = $usernameRow['username'];
         }
     }
-    return $tmp;
+    return $tech_usernames;
 }
 function getPriorityName(int $priority)
 {
@@ -887,4 +953,72 @@ function get_user_setting($userId, $settingName)
         log_app(LOG_ERR, "Failed to get user setting: $settingName for user: $userId");
         return null;
     }
+}
+
+
+
+function get_id_for_user(string $username)
+{
+    $user_id_res = HelpDB::get()->execute_query("SELECT id FROM help.users WHERE username = ?", [$username]);
+    return $user_id_res->fetch_assoc()["id"];
+}
+
+function mark_ticket_unread(string $username, int $ticket_id)
+{
+    $user_id = get_id_for_user($username);
+    log_app(LOG_INFO, $user_id);
+
+    $remove_read_query = "DELETE FROM ticket_viewed WHERE (user_id = ? AND ticket_id = ?)";
+    $remove_read_res = HelpDB::get()->execute_query($remove_read_query, [$user_id, $ticket_id]);
+
+    return (bool)$remove_read_res;
+}
+
+function user_exists_locally(string $username)
+{
+
+    $check_query = "SELECT * FROM users WHERE username = ?";
+    $result = HelpDB::get()->execute_query($check_query, [$username]);
+
+    // If a row is returned, the user exists
+    return mysqli_num_rows($result) > 0;
+}
+
+function set_field_for_ticket(int $ticket_id, string $field, $value)
+{
+    // add to this later
+    $allowed_fields = ["employee", "status", "department"];
+    if (!in_array($field, $allowed_fields, true)) {
+        return false;
+    }
+
+    $result = HelpDB::get()->execute_query("UPDATE tickets SET $field = ? WHERE id = ?", [$value, $ticket_id]);
+    if (!$result) {
+        log_app(LOG_ERR, "Failed to update ticket field \"$field\" for id=$ticket_id");
+        return false;
+    }
+
+    return true;
+}
+
+function get_departments()
+{
+    // Query the locations table to get the departments
+    $department_query = "SELECT sitenumber, location_name FROM locations WHERE is_department = TRUE ORDER BY location_name ASC";
+    $department_result = HelpDB::get()->execute_query($department_query);
+
+    $tmp = [];
+    while ($row = $department_result->fetch_assoc()) {
+        $tmp[] = $row;
+    }
+
+    return $tmp;
+}
+
+function get_sitenumber_from_location_id($department)
+{
+    $sitenumber_query = "SELECT sitenumber FROM locations WHERE location_id = ?";
+    $sitenumber_result = HelpDB::get()->execute_query($sitenumber_query, [$department]);
+    $sitenumber_row = mysqli_fetch_assoc($sitenumber_result);
+    return $sitenumber_row['sitenumber'] ?? null;
 }

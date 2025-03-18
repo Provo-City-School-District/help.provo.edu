@@ -16,7 +16,12 @@ require_once("tickets_template.php");
 // Retrieve the user with the corresponding ID
 $user_id = $_GET['id'];
 // User is an admin
-$result = HelpDB::get()->execute_query("SELECT * FROM users WHERE id = ?", [$user_id]);
+$result = HelpDB::get()->execute_query("
+    SELECT u.*, us.*
+    FROM users u
+    LEFT JOIN user_settings us ON u.id = us.user_id
+    WHERE u.id = ?
+", [$user_id]);
 // Check if the query was successful
 if (!$result) {
     die("Query failed: " . mysqli_error($conn));
@@ -38,9 +43,10 @@ $last_login = $row['last_login'];
 $can_view_tickets = $row['can_view_tickets'];
 $can_create_tickets = $row['can_create_tickets'];
 $can_edit_tickets = $row['can_edit_tickets'];
-$can_delete_tickets = $row['can_delete_tickets'];
 $supervisor_username = $row['supervisor_username'];
 $man_location = $row['location_manager_sitenumber'];
+$department = $row['department'];
+$can_see_all_techs = $row['can_see_all_techs'];
 ?>
 <?php
 // Check if a success message is set
@@ -66,7 +72,12 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
 if ($_SESSION['permissions']['is_admin'] == 1) {
 
     // Query to get all supervisors
-    $supervisors_result = HelpDB::get()->execute_query("SELECT firstname, lastname, username FROM users WHERE is_supervisor = 1");
+    $supervisors_result = HelpDB::get()->execute_query("
+        SELECT u.firstname, u.lastname, u.username 
+        FROM users u
+        LEFT JOIN user_settings us ON u.id = us.user_id
+        WHERE us.is_supervisor = 1
+    ");
 
     // Check if the query was successful
     if (!$supervisors_result) {
@@ -98,6 +109,21 @@ if ($_SESSION['permissions']['is_admin'] == 1) {
                 // Determine whether this option should be selected
                 $selected = $supervisor['username'] == $supervisor_username ? 'selected' : '';
                 echo '<option value="' . $supervisor['username'] . '" ' . $selected . '>' . $supervisor['firstname'] . ' ' . $supervisor['lastname'] . '</option>';
+            }
+            ?>
+        </select><br>
+
+        <label for="department">Department:</label>
+        <select name="department" id="department">
+            <option value="" selected></option>
+            <?php
+            // Query the locations table to get the departments
+            $department_result = HelpDB::get()->execute_query("SELECT location_id, location_name FROM locations WHERE is_department = 1 ORDER BY location_name ASC");
+
+            // Loop through the departments and create an option for each one
+            while ($department_row = mysqli_fetch_assoc($department_result)) {
+                $selected = $department_row['location_id'] == $department ? 'selected' : '';
+                echo '<option value="' . $department_row['location_id'] . '" ' . $selected . '>' . $department_row['location_name'] . '</option>';
             }
             ?>
         </select><br>
@@ -190,13 +216,13 @@ if ($_SESSION['permissions']['is_admin'] == 1) {
                 <label for="can_edit_tickets">Can Edit Tickets:</label>
                 <input type="checkbox" id="can_edit_tickets" name="can_edit_tickets" <?= $can_edit_tickets == 1 ? 'checked' : '' ?>>
             </div>
-            <!-- <div>
-            <label for="can_delete_tickets">Can Delete Tickets:</label>
-            <input type="checkbox" id="can_delete_tickets" name="can_delete_tickets" <?= $can_delete_tickets == 1 ? 'checked' : '' ?>>
-        </div> -->
+            <div>
+                <label for="can_see_all_techs">Can See All Techs:</label>
+                <input type="checkbox" id="can_see_all_techs" name="can_see_all_techs" <?= $can_see_all_techs == 1 ? 'checked' : '' ?>>
+            </div>
         </div>
 
-        <input type="submit" value="Update User">
+        <input type="submit" class="button" value="Update User">
     </form>
 <?php
 }

@@ -12,12 +12,22 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
 require_once('helpdbconnect.php');
 
 
-// Execute the SELECT query to retrieve all users from the users table
-$user_result = HelpDB::get()->execute_query("SELECT * FROM users ORDER BY username ASC");
+// Execute the SELECT query to retrieve all users and their permissions/settings
+$user_query = <<<SQL
+SELECT u.*, us.*
+FROM users u
+LEFT JOIN user_settings us ON u.id = us.user_id
+ORDER BY u.username ASC
+SQL;
+
+$user_result = HelpDB::get()->execute_query($user_query);
+
 // Check if the query was successful
 if (!$user_result) {
-    die("Query failed: " . mysqli_error($conn));
+    die("Query failed: " . mysqli_error(HelpDB::get()));
 }
+
+
 
 // Check if an error message is set
 if (isset($_SESSION['current_status'])) {
@@ -47,7 +57,7 @@ ORDER BY tickets.id ASC
 STR;
 
 $ticket_result = HelpDB::get()->execute_query($ticket_query);
-display_tickets_table($ticket_result, HelpDB::get());
+display_tickets_table($ticket_result, HelpDB::get(), "admin-data-table", true);
 ?>
 
 <h2>All Users</h2>
@@ -69,7 +79,6 @@ display_tickets_table($ticket_result, HelpDB::get());
     <tbody>
         <?php // Display the results in an HTML table
         while ($user_row = mysqli_fetch_assoc($user_result)) {
-
         ?>
             <tr>
                 <td data-cell="User Name"><a href="controllers/users/manage_user.php?id=<?= $user_row['id'] ?>"><?= $user_row['username'] ?></a></td>
@@ -95,6 +104,7 @@ display_tickets_table($ticket_result, HelpDB::get());
     <div>
         <label for="exclude_day">Exclude Day:</label>
         <input type="date" id="exclude_day" name="exclude_day">
+        <input type="hidden" name="username" value="<?= $_SESSION['username'] ?>">
     </div>
     <button class="button" type="submit">Add Exclude Day</button>
 </form>
@@ -106,15 +116,19 @@ $exclude_result = HelpDB::get()->execute_query("SELECT * FROM exclude_days WHERE
 <table class="exclude_days nst">
     <thead>
         <tr>
-            <th>Exclude Day</th>
-            <th></th>
+            <th>Excluded Date</th>
+            <th>Added By</th>
+            <th>When Created</th>
+            <th>Options</th>
         </tr>
     </thead>
     <tbody>
         <?php while ($exclude_row = mysqli_fetch_assoc($exclude_result)) : ?>
             <tr>
-                <td data-cell="Excluded Day"><?= $exclude_row['exclude_day'] ?></td>
-                <td data-cell="Remove Excluded Day"><a href="/controllers/admin/delete_exclude_day.php?id=<?= $exclude_row['id'] ?>">Delete</a></td>
+                <td data-cell="Excluded Day" class="center"><?= $exclude_row['exclude_day'] ?></td>
+                <td data-cell="Added By" class="center"><?= $exclude_row['entered_by'] ?></td>
+                <td data-cell="Date Added" class="center"><?= $exclude_row['entered_at'] ?></td>
+                <td data-cell="Remove Excluded Day" class="center"><a href="/controllers/admin/delete_exclude_day.php?id=<?= $exclude_row['id'] ?>">Delete</a></td>
             </tr>
         <?php endwhile; ?>
     </tbody>
@@ -127,3 +141,159 @@ $exclude_result = HelpDB::get()->execute_query("SELECT * FROM exclude_days WHERE
     <button class="button" type="submit">Merge</button><br>
 </form>
 <?php include("footer.php"); ?>
+<div id="bulk-actions-container">
+    <form action="/ajax/bulk_action.php" id="bulk-actions-form">
+        <div id="bulk-actions-content">
+            <div class="bulk-actions-element">
+                <p id="bulk-actions-row-count"></p>
+            </div>
+            <div class="bulk-actions-element bulk-actions-center-element">
+                <label for="ticket_action">Ticket action:</label>
+                <select id="ticket-action-dropdown" name="ticket_action">
+                    <option value="assign_tech">Assign Tech</option>
+                    <option value="assign_dept">Assign Department</option>
+                    <option value="resolve">Resolve</option>
+                    <option value="close">Close</option>
+                </select>
+            </div>
+            <div id="assigned-tech-container" class="bulk-actions-element bulk-actions-center-element">
+                <label for="assigned_tech">Assigned Tech:</label>
+                <select name="assigned_tech">
+                    <option value="unassigned">Unassigned</option>
+                    <?php foreach (get_tech_usernames() as $username) : ?>
+                        <?php
+                        $name = get_local_name_for_user($username);
+                        $firstname = ucwords(strtolower($name["firstname"]));
+                        $lastname = ucwords(strtolower($name["lastname"]));
+                        $display_string = $firstname . " " . $lastname . " - " . location_name_from_id(get_fast_client_location($username) ?: "");
+                        ?>
+                        <option value="<?= $username ?>"><?= $display_string ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div id="assigned-dept-container" class="bulk-actions-element bulk-actions-center-element hidden">
+                <label for="assigned_dept">Assigned Dept:</label>
+                <select name="assigned_dept">
+                    <option hidden disabled selected value></option>
+                    <?php foreach (get_departments() as $dept) : ?>
+                        <?php
+                        $display_string = $dept["location_name"];
+                        ?>
+                        <option value="<?= $dept["sitenumber"] ?>"><?= $display_string ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="bulk-actions-element bulk-actions-center-element">
+                <input type="submit" value="Commit action">
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    $("#bulk-actions-form").submit(do_bulk_action);
+
+    function do_bulk_action(e) {
+        const ticket_ids = get_selected_tickets();
+        for (const ticket_id of ticket_ids) {
+            $("<input />").attr("type", "hidden")
+                .attr("name", "ticket_ids[]")
+                .attr("value", ticket_id)
+                .appendTo("#bulk-actions-form");
+        }
+
+
+        e.preventDefault();
+
+        var form = $(this);
+        var action_url = form.attr('action');
+        console.log(form);
+
+        $.ajax({
+            type: "POST",
+            url: action_url,
+            data: form.serialize(),
+            success: function(data) {
+                window.location.reload();
+            }
+        });
+    }
+
+    function get_selected_tickets() {
+        const admin_table = $(".admin-data-table").first().DataTable();
+        const row_data = admin_table.rows({
+            selected: true
+        }).data();
+
+        let ticket_ids = [];
+        row_data.each(function(value, index) {
+            // This relies on ticket id being in the 2nd column as well as being parsable (pretty crusty)
+            const ticket_url = value[1];
+            ticket_id = ticket_url.replace(/<\/?[^>]+(>|$)/g, "");
+            ticket_ids.push(ticket_id);
+        });
+        return ticket_ids;
+    }
+
+
+    function update_bulk_actions_container(e, dt, type, indexes) {
+        const row_count = dt.rows({
+            'selected': true
+        }).count();
+        if (row_count == 0) {
+            $('#bulk-actions-container').hide();
+        } else {
+            $('#bulk-actions-container').show();
+            $('#bulk-actions-row-count').text(`Selected rows: ${row_count}`);
+        }
+    }
+
+    function dt_row_selected(e, dt, type, indexes) {
+        update_bulk_actions_container(e, dt, type, indexes);
+    }
+
+    function dt_row_deselected(e, dt, type, indexes) {
+        update_bulk_actions_container(e, dt, type, indexes);
+    }
+
+
+    const options = getDataTableOptions();
+    options.columnDefs = [{
+        target: 0,
+        orderable: false,
+        render: DataTable.render.select(),
+    }];
+
+    options.select = {
+        style: 'multi',
+        selector: 'td:first-child input[type="checkbox"]'
+    };
+
+
+    const admin_table = $(".admin-data-table").first().DataTable(options);
+
+    admin_table.on('select', function(e, dt, type, indexes) {
+        if (type === 'row') {
+            dt_row_selected(e, dt, type, indexes);
+        }
+    });
+
+    admin_table.on('deselect', function(e, dt, type, indexes) {
+        if (type === 'row') {
+            dt_row_deselected(e, dt, type, indexes);
+        }
+    });
+
+    $("#ticket-action-dropdown").change(function() {
+        const new_value = this.value;
+        if (new_value == "assign_tech") {
+            $('#assigned-tech-container').show();
+            $('#assigned-dept-container').hide();
+        } else if (new_value == "assign_dept") {
+            $('#assigned-dept-container').show();
+            $('#assigned-tech-container').hide();
+        } else {
+            $('#assigned-tech-container').hide();
+            $('#assigned-dept-container').hide();
+        }
+    });
+</script>

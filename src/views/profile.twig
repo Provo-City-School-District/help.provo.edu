@@ -16,7 +16,7 @@
     <input type="hidden" name="id" value="{{ user_id }}">
     <input type="hidden" name="referer" value="profile.php">
     <!-- User Options -->
-    <div>
+    <div class="grid2">
         <label for="color_scheme">Color Scheme:</label>
         <select id="color_scheme" name="color_scheme">
             {% if color_scheme == "system" %}
@@ -34,15 +34,19 @@
             {% endif %}
         </select>
     </div>
-    <div>
-        <label for="hide_alerts">Hide Alerts Banner on "My Tickets" Page:</label>
+    <div class="grid2">
+        <label for="show_alerts">Show Full Row Coloring:</label>
+        <input type="checkbox" id="show_alerts" name="show_alerts" {% if show_alerts %} checked="checked" {% endif %}>
+    </div>
+    <div class="grid2">
+        <label for="hide_alerts">Hide Alerts Banners on "My Tickets" Page:</label>
         {% if hide_alerts %}
         <input type="checkbox" id="hide_alerts" name="hide_alerts" checked="checked">
         {% else %}
         <input type="checkbox" id="hide_alerts" name="hide_alerts">
         {% endif %}
     </div>
-    <div>
+    <div class="grid2">
         <label for="ticket_limit">Default Entries Per Page:</label>
         <select id="ticket_limit" name="ticket_limit">
             {% if ticket_limit == 10 %}
@@ -66,10 +70,9 @@
             <option value="50">50</option>
             <option value="100" selected>100</option>
             {% endif %}
-
         </select>
     </div>
-    <div>
+    <div class="grid2">
         <label for="note_count">Default Note Count:</label>
         <select id="note_count" name="note_count">
             {% if note_count == 5 %}

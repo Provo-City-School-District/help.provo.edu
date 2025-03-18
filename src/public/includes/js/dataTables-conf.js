@@ -1,16 +1,22 @@
 // Define the table variable
 var table;
 
-// Initialize the data table library on the table with the class data-table
-$(document).ready(function () {
-  // Define general properties
-  var options = {
+function getDataTableOptions() {
+  const options = {
     paging: true,
     pageLength: ticketLimit, // Enable pagination
     stateSave: true, // Enable state saving
     ordering: true, // Enable sorting
     autoWidth: false, // Disable auto width calculation
   };
+
+  return options;
+}
+
+// Initialize the data table library on the table with the class data-table
+$(document).ready(function () {
+  // Define general properties
+  let options = getDataTableOptions();
 
   // Modify properties for specific cases
   if (
@@ -24,7 +30,7 @@ $(document).ready(function () {
     window.location.pathname === "/admin.php" ||
     window.location.pathname === "/tickets.php"
   ) {
-    options.order = [[8, "asc"]];
+    options.order = [[9, "asc"]];
   } else if (
     window.location.pathname === "/controllers/tickets/subordinate_tickets.php"
   ) {
@@ -49,6 +55,15 @@ $(document).ready(function () {
 // Initialize the data table library on the table with the class nst (non standard table)
 $(document).ready(function () {
   table = $(".nst").DataTable({
+    paging: true, // Enable pagination
+    pageLength: 10, // Set the number of rows per page
+    stateSave: true, // Enable state saving
+    ordering: true, // Enable sorting
+    autoWidth: false, // Disable auto width calculation
+  });
+});
+$(document).ready(function () {
+  $("#alertsTable").DataTable({
     paging: true, // Enable pagination
     pageLength: 10, // Set the number of rows per page
     stateSave: true, // Enable state saving

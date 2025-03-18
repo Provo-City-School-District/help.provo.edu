@@ -74,7 +74,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         //add in archived tickets if the checkbox is checked
         if ($search_archived == 1) {
             while ($row = mysqli_fetch_assoc($old_ticket_result)) {
-                $row["client_name"] = get_sw_client_name($row["CLIENT_ID"]);
+                if (!empty($row["CLIENT_ID"])) {
+                    $row["client_name"] = get_sw_client_name($row["CLIENT_ID"]);
+                } else {
+                    $row["client_name"] = "Unknown Client";
+                }
                 $combined_results[] = $row;
             }
         }
@@ -100,7 +104,12 @@ $locations = mysqli_fetch_all($location_result, MYSQLI_ASSOC);
 //===================================================
 // Get the usernames for the search form
 //===================================================
-$usernamesQuery = "SELECT username,is_tech FROM users ORDER BY username ASC";
+$usernamesQuery = "
+    SELECT u.username, us.is_tech 
+    FROM users u
+    LEFT JOIN user_settings us ON u.id = us.user_id
+    ORDER BY u.username ASC
+";
 $usernamesResult = HelpDB::get()->execute_query($usernamesQuery);
 
 if (!$usernamesResult) {

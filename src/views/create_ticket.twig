@@ -8,7 +8,7 @@
         <input type="hidden" name="client" value="{{ username }}">
         <div class="ticketGrid">
              <div>
-                <label for="department">Department:</label>
+                <label for="department">For Department:</label>
                 <select id="department" name="department">
                     <option hidden disabled selected value></option>
                     {% for dept in depts %}
@@ -22,7 +22,7 @@
                 </select>
             </div>
             <div>
-                <label for="location">Location:</label>
+                <label for="location">At Location:</label>
                 <select id="location" name="location" required>
                     <option hidden disabled selected value></option>
    
@@ -38,24 +38,24 @@
             </div>
 
             <div>
-                <label for="room">Room:</label>
+                <label for="room">In Room:</label>
                 <input type="text" id="room" name="room" value="{{ _get['room']|escape }}">
             </div>
             <div>
-                <label for="phone">Phone:</label>
+                <label for="phone">My Phone #:</label>
                 <input type="tel" id="phone" name="phone" value="{{ _get['phone']|escape }}">
             </div>
             <div>
-                <label for="cc_emails">CC</label>
+                <label for="cc_emails">Carbon Copy:</label>
                 <input type="text" id="cc_emails" name="cc_emails" value="{{ _get['cc_emails']|escape }}">
             </div>
-            <div>
-                <label for="bcc_emails">BCC</label>
+            {# <div>
+                <label for="bcc_emails">Blind Carbon Copy:</label>
                 <input type="text" id="bcc_emails" name="bcc_emails" value="{{ _get['bcc_emails']|escape }}">
-            </div>
+            </div> #}
         {% if user_permissions.is_tech %}
             <div>
-                <label for="assigned">Assigned to</label>
+                <label for="assigned">Assign to:</label>
                 <select id="assigned" name="assigned">
                     <option value="unassigned">Unassigned</option>
                 {% for tech_username in tech_usernames %}
@@ -68,7 +68,7 @@
                 </select>
             </div>
             <div>
-                <label for="client">Client:</label>
+                <label for="client">Client Override:</label>
                 <input type="text" id="client" name="client" value="{{ _get['client']|escape }}">
             </div>
             <div>
@@ -96,7 +96,7 @@
         </div>
 
         <div class="detailContainer">
-            <div class="grid2 ticketSubject">
+            <div class="ticketSubject">
                 <label for="ticket_name">Ticket Title:</label>
                 <input type="text" id="ticket_name" name="ticket_name" value="{{ _get['ticket_name']|escape }}" maxlength="100">
             </div>

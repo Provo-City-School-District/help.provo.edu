@@ -25,7 +25,7 @@ if (isset($_SESSION['username'])) {
 }
 
 $subord_result = HelpDB::get()->execute_query(
-    "SELECT COUNT(*) AS supervisor_count FROM users WHERE supervisor_username = ?",
+    "SELECT COUNT(*) AS supervisor_count FROM user_settings WHERE supervisor_username = ?",
     [$username]
 );
 $subord_row = $subord_result->fetch_assoc();
@@ -83,13 +83,18 @@ $num_assigned_tasks_result = HelpDB::get()->execute_query($num_assigned_tasks_qu
 $num_assigned_tasks = $num_assigned_tasks_result->fetch_column(0);
 
 $num_subordinate_tickets_query = <<<STR
-    SELECT COUNT(*) FROM alerts WHERE employee IN
-        (SELECT username FROM users WHERE supervisor_username = ?)
+    SELECT COUNT(*) FROM alerts
+    INNER JOIN users ON users.username = alerts.employee
+    INNER JOIN user_settings ON user_settings.user_id = users.id
+    WHERE user_settings.supervisor_username = ?
 STR;
 
-$num_subordinate_tickets_result = HelpDB::get()->execute_query($num_subordinate_tickets_query, [$username]);
 
-$num_subordinate_tickets = $num_subordinate_tickets_result->fetch_column(0);
+if (isset($_SESSION['username']) && $_SESSION['username'] != "") {
+    $num_subordinate_tickets_result = HelpDB::get()->execute_query($num_subordinate_tickets_query, [$username]);
+    $num_subordinate_tickets = $num_subordinate_tickets_result->fetch_column(0);
+}
+
 
 
 ?>
@@ -100,10 +105,11 @@ $num_subordinate_tickets = $num_subordinate_tickets_result->fetch_column(0);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Help For Provo City School District</title>
-    <link rel="stylesheet" href="/includes/js/external/dataTables/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="/includes/js/external/dataTables/datatables.min.css">
     <link rel="stylesheet" href="/includes/css/main.css?v=<?= $app_version; ?>">
     <link rel="icon" type="image/png" href="/includes/img/favicons/favicon-16x16.png" sizes="16x16">
     <link rel="stylesheet" href="/includes/css/external/jquery-ui.min.css">
+    <link rel="stylesheet" type="text/css" href="/includes/css/variables-common.css?v=<?= $app_version; ?>">
     <?php
     //load color scheme if set. loads light scheme if not set
     if (isset($_SESSION['color_scheme'])) {

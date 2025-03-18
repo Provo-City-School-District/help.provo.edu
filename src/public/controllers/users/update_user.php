@@ -33,15 +33,28 @@ $can_delete_tickets = isset($_POST['can_delete_tickets']) ? 1 : 0;
 $is_loc_man = isset($_POST['is_loc_man']) ? 1 : 0;
 $supervisor_username = trim(htmlspecialchars($_POST['supervisor']));
 $man_location = trim(htmlspecialchars($_POST['man_location']));
+$department = trim(htmlspecialchars($_POST['department']));
+$can_see_all_techs = isset($_POST['can_see_all_techs']) ? 1 : 0;
 
-// Update the user data in the database
-$query = "UPDATE users SET firstname = ?, lastname = ?, email = ?, ifasid = ?, is_admin = ?, is_tech = ?, is_intern = ?, intern_site = ?, is_supervisor = ?,is_location_manager = ?,location_manager_sitenumber = ?, can_view_tickets = ?, can_create_tickets = ?, can_edit_tickets = ?,can_delete_tickets = ?,supervisor_username = ? WHERE id = ?";
-$stmt = mysqli_prepare(HelpDB::get(), $query);
-mysqli_stmt_bind_param($stmt, "ssssiiiiiiiiiiisi", $firstname, $lastname, $email, $ifasid, $is_admin, $is_tech, $is_intern, $intern_site, $is_supervisor, $is_loc_man, $man_location, $can_view_tickets, $can_create_tickets, $can_edit_tickets, $can_delete_tickets, $supervisor_username, $user_id);
-mysqli_stmt_execute($stmt);
+// Update the user data in the users table
+$user_query = "UPDATE users SET firstname = ?, lastname = ?, email = ?, ifasid = ? WHERE id = ?";
+$user_stmt = mysqli_prepare(HelpDB::get(), $user_query);
+mysqli_stmt_bind_param($user_stmt, "ssssi", $firstname, $lastname, $email, $ifasid, $user_id);
+mysqli_stmt_execute($user_stmt);
 
 // Check if the query was successful
-if (!$stmt) {
+if (!$user_stmt) {
+    die("Query failed: " . mysqli_error(HelpDB::get()));
+}
+
+// Update the user settings in the user_settings table
+$settings_query = "UPDATE user_settings SET is_admin = ?, is_tech = ?, is_intern = ?, intern_site = ?, is_supervisor = ?, is_location_manager = ?, location_manager_sitenumber = ?, can_view_tickets = ?, can_create_tickets = ?, can_edit_tickets = ?, supervisor_username = ?, department = ?, can_see_all_techs = ? WHERE user_id = ?";
+$settings_stmt = mysqli_prepare(HelpDB::get(), $settings_query);
+mysqli_stmt_bind_param($settings_stmt, "iiiiiiiiiisiii", $is_admin, $is_tech, $is_intern, $intern_site, $is_supervisor, $is_loc_man, $man_location, $can_view_tickets, $can_create_tickets, $can_edit_tickets, $supervisor_username, $department, $can_see_all_techs, $user_id);
+mysqli_stmt_execute($settings_stmt);
+
+// Check if the query was successful
+if (!$settings_stmt) {
     die("Query failed: " . mysqli_error(HelpDB::get()));
 }
 

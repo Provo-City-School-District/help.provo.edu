@@ -1,6 +1,7 @@
 <?php
 require(from_root('/../vendor/autoload.php'));
 require("authentication_utils.php");
+require "ticket_utils.php";
 
 session_start();
 session_regenerate_id(true);
@@ -30,7 +31,7 @@ if (isset($_GET['code'])) {
 
         // store access token
         $_SESSION['access_token'] = $token['access_token'];
-/*
+        /*
         Could potentially be used to resolve login issues (7 day cache)
 
         // refresh token
@@ -83,13 +84,14 @@ if (isset($_GET['code'])) {
             create_user_in_local_db($username);
         }
         // Query Local user information
-        $local_query_results = HelpDB::get()->execute_query("SELECT * FROM users WHERE username = ?", [$_SESSION["username"]]);
+        $local_query_results = HelpDB::get()->execute_query("SELECT * FROM user_settings WHERE user_id = ?", [get_id_for_user($_SESSION["username"])]);
         $local_query_data = mysqli_fetch_assoc($local_query_results);
 
         // if user is still not found, LDAP failed to insert user into local database
         if ($local_query_data == null) {
             // print_r($_SESSION);
             $msg = "Error: User not found in local database.";
+            log_app(LOG_ERR, $username . " Error: User not found in local database.");
             // unset session variables
             session_unset();
             session_destroy();
@@ -109,7 +111,6 @@ if (isset($_GET['code'])) {
             'can_view_tickets' => $local_query_data['can_view_tickets'],
             'can_create_tickets' => $local_query_data['can_create_tickets'],
             'can_edit_tickets' => $local_query_data['can_edit_tickets'],
-            'can_delete_tickets' => $local_query_data['can_delete_tickets'],
             'is_admin' => $local_query_data['is_admin'],
             'is_tech' => $local_query_data['is_tech'],
             'is_supervisor' => $local_query_data['is_supervisor'],
@@ -118,12 +119,14 @@ if (isset($_GET['code'])) {
             'supervisor_username' => $local_query_data['supervisor_username'],
             'is_location_manager' => $local_query_data['is_location_manager'],
             'location_manager_sitenumber' => $local_query_data['location_manager_sitenumber'],
+            'can_see_all_techs' => $local_query_data['can_see_all_techs'],
         );
         // Set color scheme
         $_SESSION['color_scheme'] = $local_query_data['color_scheme'];
         $_SESSION['note_order'] = $local_query_data['note_order'];
         $_SESSION['hide_alerts'] = $local_query_data['hide_alerts'];
         $_SESSION['ticket_limit'] = $local_query_data['ticket_limit'];
+        $_SESSION['department'] = $local_query_data['department'];
         // Store user's permissions in the session
         $_SESSION['permissions'] = $permissions;
 

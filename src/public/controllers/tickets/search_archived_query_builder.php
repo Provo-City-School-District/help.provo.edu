@@ -43,10 +43,15 @@ if (!empty($search_employee)) {
     $employee_stmt->execute();
     $employee_result = $employee_stmt->get_result();
     $employee_row = $employee_result->fetch_assoc();
-    $employee_id = $employee_row['CURRENT_DASHBOARD_ID'];
 
-    // Now, you can use $employee_id in your main query to get the tickets assigned to the given tech
-    $old_ticket_query .= " AND ASSIGNED_TECH_ID = $employee_id";
+    if ($employee_row) {
+        $employee_id = $employee_row['CURRENT_DASHBOARD_ID'];
+        // Now, you can use $employee_id in your main query to get the tickets assigned to the given tech
+        $old_ticket_query .= " AND ASSIGNED_TECH_ID = $employee_id";
+    } else {
+        // Handle the case where the user does not exist in the old system
+        $old_ticket_query .= " AND ASSIGNED_TECH_ID IS NULL";
+    }
 }
 if (!empty($search_client)) {
     $old_ticket_query .= " AND CLIENT_ID LIKE '%$search_client%'";

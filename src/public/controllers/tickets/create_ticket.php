@@ -5,18 +5,25 @@ require_once("ticket_utils.php");
 require from_root("/../vendor/autoload.php");
 require from_root("/new-controllers/base_variables.php");
 
-if (!session_id())
-    session_start();
-
 $loader = new \Twig\Loader\FilesystemLoader(from_root('/../views'));
 $twig = new \Twig\Environment($loader, [
     'cache' => from_root('/../twig-cache'),
     'auto_reload' => true
 ]);
 // Fetch the tech usernames
-$tech_usernames = get_tech_usernames();
+$department = $_SESSION['department'] ?? null;
+$can_see_all_techs = $_SESSION['permissions']['can_see_all_techs'] ?? 0;
+
+// Fetch the tech usernames
+if ($can_see_all_techs) {
+    $tech_usernames = get_tech_usernames();
+} else {
+    $tech_usernames = get_tech_usernames($department);
+}
+
+
 // Fetch the departments
-$department_result = HelpDB::get()->execute_query("SELECT * FROM locations WHERE is_department = TRUE ORDER BY location_name ASC");
+$department_result = HelpDB::get()->execute_query("SELECT * FROM locations WHERE is_department = TRUE AND is_archived = FALSE ORDER BY location_name ASC");
 $depts = [];
 while ($row = mysqli_fetch_assoc($department_result)) {
     $select = false;
@@ -41,7 +48,7 @@ while ($row = mysqli_fetch_assoc($department_result)) {
 }
 
 // Fetch the locations
-$location_result = HelpDB::get()->execute_query("SELECT * FROM locations WHERE is_department = FALSE ORDER BY location_name ASC");
+$location_result = HelpDB::get()->execute_query("SELECT * FROM locations WHERE is_department = FALSE AND is_archived = FALSE ORDER BY location_name ASC");
 $locations = [];
 while ($row = mysqli_fetch_assoc($location_result)) {
     $select = false;

@@ -94,6 +94,10 @@ function get_ldap_info(string $username, int $request_flags)
     $ldap_result = ldap_search($ldap_conn, $ldap_dn, $search);
     $entries = ldap_get_entries($ldap_conn, $ldap_result);
 
+    if (!$entries) {
+        return false;
+    }
+
     $first_entry = $entries[0];
 
     $result = [];
@@ -252,17 +256,15 @@ function calculateTimeSinceLastLogin()
 //TODO: have session_is_tech and user_is_tech which might be used as the same thing
 function user_is_tech(string $username)
 {
-    $userPermissionsResult = HelpDB::get()->execute_query("SELECT is_tech FROM users WHERE username = ?", [$username]);
+    $userPermissionsResult = HelpDB::get()->execute_query("
+        SELECT us.is_tech 
+        FROM users u
+        LEFT JOIN user_settings us ON u.id = us.user_id
+        WHERE u.username = ?
+    ", [$username]);
     $userPermissionsData = mysqli_fetch_assoc($userPermissionsResult);
     if (isset($userPermissionsResult) && isset($userPermissionsData))
         return $userPermissionsData["is_tech"] != 0;
     else
         return false;
-}
-
-
-function get_id_for_user(string $username)
-{
-    $user_id_res = HelpDB::get()->execute_query("SELECT id FROM help.users WHERE username = ?", [$username]);
-    return $user_id_res->fetch_assoc()["id"];
 }

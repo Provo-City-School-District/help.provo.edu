@@ -1,7 +1,6 @@
 @import url("reset.css?v=2.0");
-@import url("variables-common.css?v=1.2.13");
-@import url("headings.css?v=1.2.13");
-@import url("fonts.css?v=1.2.13");
+@import url("headings.css?v=1.4.8");
+@import url("fonts.css?v=1.4.8");
 
 /* =============================== General Styles =============================== */
 
@@ -96,8 +95,9 @@ blockquote {
 /* =============================== Utility Styles =============================== */
 .grid2 {
 	display: grid;
-	grid-template-columns: 1fr 1fr;
-	gap: 10px;
+	grid-template-columns: 1fr;
+	/* gap: 10px; */
+	/* margin: 1em 0; */
 }
 
 .grid3 {
@@ -191,34 +191,70 @@ blockquote {
 }
 
 .blue-dot {
-    height: 9px;
-    width: 9px;
-    background-color: #03a5fc;
-    border-radius: 50%;
-    display: inline-block;
+	height: 9px;
+	width: 9px;
+	background-color: #03a5fc;
+	border-radius: 50%;
+	/* display: inline-block; */
 }
 
 .yellow-dot {
-    height: 9px;
-    width: 9px;
-    background-color: var(--warn-color);
-    border-radius: 50%;
-    display: inline-block;
+	height: 9px;
+	width: 9px;
+	background-color: var(--warn-color);
+	border-radius: 50%;
+	/* display: inline-block; */
 }
 
 .red-dot {
-    height: 9px;
-    width: 9px;
-    background-color: var(--crit-color);
-    border-radius: 50%;
-    display: inline-block;
+	height: 9px;
+	width: 9px;
+	background-color: var(--crit-color);
+	border-radius: 50%;
+	/* display: inline-block; */
 }
 
 .alert-dot-container {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    padding-top: 4px;
+	display: flex;
+	justify-content: center;
+	max-width: 100%;
+	padding-top: 4px;
+}
+
+.singleColForm {
+	max-width: 800px;
+}
+
+.singleColForm label {
+	background-color: var(--theme-primary);
+	color: var(--theme-white);
+	padding: 1em 0 1em 1em;
+}
+
+.singleColForm input {
+	justify-self: start;
+	padding: 1em;
+}
+
+.singleColForm select {
+	padding: 1em 0 1em 1em;
+	font-size: 1em;
+}
+
+.singleColForm input[type="checkbox"] {
+	width: 20px;
+	height: 20px;
+	align-self: center;
+}
+
+#chevron {
+	font-size: 0.8em;
+	margin-left: 5px;
+}
+
+.nextToCanvas {
+	margin-top: 0;
+	text-align: center;
 }
 
 /* =============================== Header Styles =============================== */
@@ -268,6 +304,36 @@ blockquote {
 	background-color: var(--page-background);
 }
 
+#bulk-actions-container {
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	display: none;
+	/* hide at first */
+}
+
+#bulk-actions-content {
+	border-radius: 8px;
+	margin: 0px 10px 10px 10px;
+	padding: 10px 20px 10px 20px;
+	background-color: var(--theme-primary);
+	display: grid;
+	grid-auto-columns: auto;
+	grid-auto-flow: column;
+	align-items: center;
+	color: white;
+}
+
+.bulk-actions-center-element {
+	text-align: center;
+}
+
+.bulk-actions-element {
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+
 /* =============================== Table Styles =============================== */
 
 table,
@@ -312,7 +378,8 @@ th {
 
 .data-table tr.warn a,
 .data-table tr.crit a {
-	color: var(--theme-black);
+	color: var(--theme-white);
+	text-decoration-color: underline;
 }
 
 .data-table tr.warn {
@@ -339,14 +406,19 @@ td {
 	display: block;
 }
 
-td::before:not(#expand-row) {
+td::before {
 	content: attr(data-cell) ": ";
 	font-weight: 700;
 	text-transform: capitalize;
 }
 
+#expand-row td::before {
+	content: unset;
+}
+
 table.dataTable .details a {
 	display: block;
+	font-size: 1.1em;
 	margin-bottom: 1em;
 }
 
@@ -359,6 +431,16 @@ table.dataTable .details {
 .tableLocation strong {
 	display: block;
 
+}
+
+.alertsTD div {
+	display: flex;
+	gap: 1em;
+
+}
+
+.exclude_days th {
+	text-align: left !important;
 }
 
 /* =============================== Sub Menu Styles =============================== */
@@ -454,6 +536,7 @@ select {
 }
 
 .ticketSubject {
+	display: grid;
 	grid-template-columns: 150px 1fr;
 	align-items: center;
 }
@@ -529,7 +612,6 @@ select {
 }
 
 .ticket_note {
-	margin: 1em 0;
 	word-wrap: break-word;
 }
 
@@ -621,7 +703,19 @@ select {
 	background-color: var(--warn-color);
 }
 
+.canvasjsreport .alerts_wrapper {
+	width: 100%;
+}
+
 /* =============================== Tickets Log =============================== */
+#ticket-history {
+	display: none;
+}
+
+#ticket-history-status {
+	margin-bottom: 1em;
+}
+
 .ticket_log .note-container {
 	overflow: hidden;
 	height: 20px;
@@ -788,6 +882,17 @@ select {
 	.note th:nth-child(1),
 	.note td:nth-child(2) {
 		width: 100px;
+	}
+
+	.alertsTD div {
+		display: grid;
+
+		gap: 1em;
+
+	}
+
+	.grid2 {
+		grid-template-columns: 1fr 1fr;
 	}
 
 	.grid3 {

@@ -598,7 +598,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                 <div>
                     <span>Request Type:</span> <?= request_name_for_type($ticket['request_type_id']) ?>
                 </div>
-                <input type="hidden" id="request_type" name="request_type" value="<?= $ticket['location'] ?>">
+                <input type="hidden" id="request_type" name="request_type" value="<?= $ticket['request_type_id'] ?>">
 
 
 

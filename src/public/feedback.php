@@ -1,0 +1,57 @@
+<?php
+require from_root("/../vendor/autoload.php");
+require_once('helpdbconnect.php');
+require_once('functions.php');
+
+$feedback_id = $_GET['id'] ?? null;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $feedback_id = $_POST['feedback_id'];
+    $rating = $_POST['rating'];
+    $comments = $_POST['comments'];
+    $ticket_id = $_POST['ticket_id'];
+
+    // Store the feedback in the database
+    $insert_query = "INSERT INTO help.feedback (feedback_id,ticket_id, rating, comments) VALUES (? ,? , ?, ?)";
+    $insert_stmt = HelpDB::get()->prepare($insert_query);
+    $insert_stmt->bind_param('siis', $feedback_id, $ticket_id, $rating, $comments);
+    $insert_stmt->execute();
+    log_app(LOG_INFO, "Inserting feedback for ticket $feedback_id");
+    echo "Thank you for your feedback!";
+    echo "<script>
+    setTimeout(function() {
+        window.location.href = '/';
+    }, 3000);
+  </script>";
+    exit;
+}
+
+if (!$feedback_id) {
+    echo "Invalid feedback ID.";
+    exit;
+}
+
+// Retrieve the ticket information using the feedback ID
+$ticket_query = "SELECT * FROM help.tickets WHERE feedback_id = ?";
+$ticket_results = HelpDB::get()->execute_query($ticket_query, [$feedback_id]);
+$ticket = $ticket_results->fetch_assoc();
+if (!$ticket_results) {
+    echo "Invalid feedback ID.";
+    exit;
+}
+$loader = new \Twig\Loader\FilesystemLoader(from_root('/../views'));
+$twig = new \Twig\Environment($loader, [
+    'cache' => from_root('/../twig-cache'),
+    'auto_reload' => true
+]);
+echo $twig->render('feedback.twig', [
+    // base variables
+    'color_scheme' => 'light',
+    'current_year' => $current_year,
+    'app_version' => $app_version,
+
+    // Page variables
+    'ticket_id' => $ticket['id'],
+    'feedback_id' => $feedback_id,
+
+]);

@@ -271,7 +271,7 @@ function create_note(
             }
         }
 
-        $client_name = get_client_name($username);
+        $client_name = get_client_name(client_for_ticket($ticket_id_clean));
         $location_name = location_name_from_id(location_for_ticket($ticket_id_clean));
         $ticket_desc = description_for_ticket($ticket_id_clean);
 

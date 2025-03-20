@@ -47,6 +47,7 @@ $supervisor_username = $row['supervisor_username'];
 $man_location = $row['location_manager_sitenumber'];
 $department = $row['department'];
 $can_see_all_techs = $row['can_see_all_techs'];
+$can_input_maintenance_tickets = $row['can_input_maintenance_tickets'];
 ?>
 <?php
 // Check if a success message is set
@@ -219,6 +220,10 @@ if ($_SESSION['permissions']['is_admin'] == 1) {
             <div>
                 <label for="can_see_all_techs">Can See All Techs:</label>
                 <input type="checkbox" id="can_see_all_techs" name="can_see_all_techs" <?= $can_see_all_techs == 1 ? 'checked' : '' ?>>
+            </div>
+            <div>
+                <label for="can_input_maintenance_tickets">Can Input Maintenance Tickets:</label>
+                <input type="checkbox" id="can_input_maintenance_tickets" name="can_input_maintenance_tickets" <?= $can_input_maintenance_tickets == 1 ? 'checked' : '' ?>>
             </div>
         </div>
 

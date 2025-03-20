@@ -58,14 +58,18 @@
                 <label for="assigned">Assign to:</label>
                 <select id="assigned" name="assigned">
                     <option value="unassigned">Unassigned</option>
-                {% for tech_username in tech_usernames %}
-                    {% if tech_username == username %}
-                    <option value="{{ tech_username }}" selected>{{ tech_username }}</option>
-                    {% else %}
-                    <option value="{{ tech_username }}">{{ tech_username }}</option>
-                    {% endif %}
-                {% endfor %}
+                    {% for tech_username in tech_usernames %}
+                        {% if tech_username == username %}
+                        <option value="{{ tech_username }}" selected>{{ tech_username }}</option>
+                        {% else %}
+                        <option value="{{ tech_username }}">{{ tech_username }}</option>
+                        {% endif %}
+                    {% endfor %}
                 </select>
+                <div id="assign_to_self" style="display: none;">
+                    <input type="checkbox" id="assign_to_self_checkbox" name="assign_to_self" value="1">
+                    <label for="assign_to_self_checkbox">Assign to myself</label>
+                </div>
             </div>
             <div>
                 <label for="client">Client Override:</label>
@@ -116,5 +120,8 @@
     </form>
 </article>
 <script src="/includes/js/external/jquery-3.7.1.min.js"></script>
-<script src="/includes/js/pages/create_ticket.js?v=0.0.2"></script>
+<script>
+    var canInputMaintenance = {{ can_input_maintenance ? 'true' : 'false' }};
+</script>
+<script src="/includes/js/pages/create_ticket.js?v=1.0.0"></script>
 {% endblock %}

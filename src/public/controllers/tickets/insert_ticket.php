@@ -29,9 +29,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $phone = filter_input(INPUT_POST, 'phone', FILTER_SANITIZE_SPECIAL_CHARS);
     $cc_emails = filter_input(INPUT_POST, 'cc_emails', FILTER_SANITIZE_SPECIAL_CHARS);
     $bcc_emails = filter_input(INPUT_POST, 'bcc_emails', FILTER_SANITIZE_SPECIAL_CHARS);
-    $assigned_tech = filter_input(INPUT_POST, 'assigned', FILTER_SANITIZE_SPECIAL_CHARS);
     $department = filter_input(INPUT_POST, 'department', FILTER_SANITIZE_SPECIAL_CHARS);
     $requestType = filter_input(INPUT_POST, 'request_type', FILTER_SANITIZE_SPECIAL_CHARS) ?? 0;
+    $assigned_tech = filter_input(INPUT_POST, 'assigned', FILTER_SANITIZE_SPECIAL_CHARS);
+    $assign_to_self = filter_input(INPUT_POST, 'assign_to_self', FILTER_SANITIZE_SPECIAL_CHARS);
 
 
     if ($client === "") {
@@ -140,13 +141,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         list($failed_files, $uploadPaths) = handleFileUploads($_FILES);
     }
 
-
     if (isset($assigned_tech)) {
         $techusernames = get_tech_usernames();
         if ($assigned_tech != "unassigned" && !in_array($assigned_tech, $techusernames)) {
             log_app(LOG_ERR, "Assigned tech was not an actual tech. Aborting ticket creation...");
             die;
         }
+    }
+
+    // Check if the user is assigning the ticket to themselves with checkbox
+    if (isset($assign_to_self) && $assign_to_self === '1') {
+        $assigned_tech = $_SESSION['username'];
+    } else {
+        $assigned_tech = null;
     }
 
 

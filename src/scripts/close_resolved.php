@@ -16,7 +16,7 @@ foreach ($select_tickets_result as $ticket) {
     $client_email = email_address_from_username($ticket['client']);
     $client_name_array = get_local_name_for_user($ticket['client']);
     $client_name = $client_name_array['firstname'] . " " . $client_name_array['lastname'];
-    $unique_id = bin2hex(random_bytes(16)); // Generate a unique ID
+    $unique_id = bin2hex(random_bytes(64)); // Generate a unique ID
 
     // Update the ticket status to 'closed' and store the unique ID
     $update_query = "UPDATE help.tickets SET status = 'closed', feedback_id = ? WHERE id = ?";

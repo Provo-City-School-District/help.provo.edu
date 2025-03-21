@@ -3,7 +3,7 @@ require from_root("/../vendor/autoload.php");
 require_once('helpdbconnect.php');
 require_once('functions.php');
 
-$feedback_id = $_GET['id'] ?? null;
+$feedback_id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_SPECIAL_CHARS);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $feedback_id = filter_input(INPUT_POST, 'feedback_id', FILTER_SANITIZE_SPECIAL_CHARS);

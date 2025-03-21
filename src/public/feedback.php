@@ -10,11 +10,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $rating = filter_input(INPUT_POST, 'rating', FILTER_SANITIZE_SPECIAL_CHARS);
     $comments = filter_input(INPUT_POST, 'comments', FILTER_SANITIZE_SPECIAL_CHARS);
     $ticket_id = filter_input(INPUT_POST, 'ticket_id', FILTER_SANITIZE_SPECIAL_CHARS);
+    $client_name = filter_input(INPUT_POST, 'client', FILTER_SANITIZE_SPECIAL_CHARS);
 
     // Store the feedback in the database
-    $insert_query = "INSERT INTO help.feedback (feedback_id,ticket_id, rating, comments) VALUES (? ,? , ?, ?)";
+    $insert_query = "INSERT INTO help.feedback (feedback_id,ticket_id, rating, comments,client) VALUES (? ,? , ?, ?, ?)";
     $insert_stmt = HelpDB::get()->prepare($insert_query);
-    $insert_stmt->bind_param('siis', $feedback_id, $ticket_id, $rating, $comments);
+    $insert_stmt->bind_param('siiss', $feedback_id, $ticket_id, $rating, $comments, $client_name);
     $insert_stmt->execute();
     log_app(LOG_INFO, "Inserting feedback for ticket $feedback_id");
     echo "Thank you for your feedback!";
@@ -39,6 +40,8 @@ if (!$ticket_results) {
     echo "Invalid feedback ID.";
     exit;
 }
+$client_name = $ticket['client'];
+
 $loader = new \Twig\Loader\FilesystemLoader(from_root('/../views'));
 $twig = new \Twig\Environment($loader, [
     'cache' => from_root('/../twig-cache'),
@@ -53,5 +56,5 @@ echo $twig->render('feedback.twig', [
     // Page variables
     'ticket_id' => $ticket['id'],
     'feedback_id' => $feedback_id,
-
+    'client_name' => $client_name
 ]);

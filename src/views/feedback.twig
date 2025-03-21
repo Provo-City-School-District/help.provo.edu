@@ -8,6 +8,7 @@
     <form method="POST" action="feedback.php" class="singleColForm">
         <input type="hidden" name="ticket_id" value="{{ ticket_id|e }}">
         <input type="hidden" name="feedback_id" value="{{ feedback_id|e }}">
+        <input type="hidden" name="client" value="{{ client_name }}">
         
         <div class="grid2">
             <label for="rating">Rating:</label>

@@ -34,7 +34,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $assigned_tech = filter_input(INPUT_POST, 'assigned', FILTER_SANITIZE_SPECIAL_CHARS);
     $assign_to_self = filter_input(INPUT_POST, 'assign_to_self', FILTER_SANITIZE_SPECIAL_CHARS);
 
-
     if ($client === "") {
         $client = $username;
     } else if (!user_exists_remotely($client)) {
@@ -150,10 +149,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Check if the user is assigning the ticket to themselves with checkbox
-    if (isset($assign_to_self) && $assign_to_self === '1') {
-        $assigned_tech = $_SESSION['username'];
-    } else {
-        $assigned_tech = null;
+    if ($department == '1700') {
+        if (isset($assign_to_self) && $assign_to_self === '1') {
+            $assigned_tech = $_SESSION['username'];
+        } else {
+            $assigned_tech = 'unassigned';
+        }
     }
 
 

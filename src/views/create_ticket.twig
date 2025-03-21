@@ -58,40 +58,44 @@
                 <label for="assigned">Assign to:</label>
                 <select id="assigned" name="assigned">
                     <option value="unassigned">Unassigned</option>
-                {% for tech_username in tech_usernames %}
-                    {% if tech_username == username %}
-                    <option value="{{ tech_username }}" selected>{{ tech_username }}</option>
-                    {% else %}
-                    <option value="{{ tech_username }}">{{ tech_username }}</option>
-                    {% endif %}
-                {% endfor %}
+                    {% for tech_username in tech_usernames %}
+                        {% if tech_username == username %}
+                        <option value="{{ tech_username }}" selected>{{ tech_username }}</option>
+                        {% else %}
+                        <option value="{{ tech_username }}">{{ tech_username }}</option>
+                        {% endif %}
+                    {% endfor %}
                 </select>
+                <div id="assign_to_self" style="display: none;">
+                    <input type="checkbox" id="assign_to_self_checkbox" name="assign_to_self" value="1">
+                    <label for="assign_to_self_checkbox">Assign to myself</label>
+                </div>
             </div>
             <div>
                 <label for="client">Client Override:</label>
                 <input type="text" id="client" name="client" value="{{ _get['client']|escape }}">
             </div>
             <div>
-    <label for="request_type">Request Type:</label>
-    <select id="request_type" name="request_type">
-        <option value="0">Select a more specific request type otherwise (Other)</option>
-        {% for topLevel in requestTypes %}
-            <option disabled value="{{ topLevel.id }}" {% if topLevel.id == _get['request_type'] %}selected{% endif %}>
-                {{ topLevel.name }}
-            </option>
-            {% for child in topLevel.children %}
-                <option value="{{ child.id }}" {% if child.id == _get['request_type'] %}selected{% endif %}>
-                    &nbsp;&nbsp;&nbsp;&nbsp;{{ child.name }}
-                </option>
-                {% for grandchild in child.children %}
-                    <option value="{{ grandchild.id }}" {% if grandchild.id == _get['request_type'] %}selected{% endif %}>
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ grandchild.name }}
+            <label for="request_type">Request Type:</label>
+            <select id="request_type" name="request_type">
+                <option value="0">Select a more specific request type otherwise (Other)</option>
+                {% for topLevel in requestTypes %}
+                    <option disabled value="{{ topLevel.id }}" {% if topLevel.id == _get['request_type'] %}selected{% endif %}>
+                        {{ topLevel.name }}
                     </option>
+                    {% for child in topLevel.children %}
+                        <option value="{{ child.id }}" {% if child.id == _get['request_type'] %}selected{% endif %}>
+                            &nbsp;&nbsp;&nbsp;&nbsp;{{ child.name }}
+                        </option>
+                        {% for grandchild in child.children %}
+                            <option value="{{ grandchild.id }}" {% if grandchild.id == _get['request_type'] %}selected{% endif %}>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ grandchild.name }}
+                            </option>
+                        {% endfor %}
+                    {% endfor %}
                 {% endfor %}
-            {% endfor %}
-        {% endfor %}
-    </select>
-</div>
+            </select>
+        </div>
         {% endif %}
         </div>
 
@@ -116,5 +120,8 @@
     </form>
 </article>
 <script src="/includes/js/external/jquery-3.7.1.min.js"></script>
-<script src="/includes/js/pages/create_ticket.js?v=0.0.2"></script>
+<script>
+    var canInputMaintenance = {{ can_input_maintenance ? 'true' : 'false' }};
+</script>
+<script src="/includes/js/pages/create_ticket.js?v=1.0.0"></script>
 {% endblock %}

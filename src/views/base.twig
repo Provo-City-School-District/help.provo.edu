@@ -20,7 +20,7 @@
                 <a href="/tickets.php">
                     <img id="pcsd-logo" src="/includes/img/pcsd-logo-website-header-160w.png" alt="Provo City School District Logo" />
                 </a>
-                
+                {% block mainNav %}
                 <div id="headerNav">
                     <span id="mobileMenu">&#9776; Menu</span>
                     <nav id="mainNav">
@@ -38,10 +38,13 @@
                     </nav>
 
                 </div>
+                {% endblock %}
+                {% block workHours %}
                 <div id="dayWOHours">
                     <div>Today's WO time:</div> 
 					{{ wo_time }} hrs
                 </div>
+                {% endblock %}
             </header>
 			{% if status_alert_message is not null %}
 			<link rel="stylesheet" href="/includes/css/status_popup.css?v={{ app_version}}">

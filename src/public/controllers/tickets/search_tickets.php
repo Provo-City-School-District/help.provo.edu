@@ -20,6 +20,7 @@ $search_start_date = '';
 $search_end_date = '';
 $dates_searched = [];
 $pageScripts = '/includes/js/pages/search_tickets.js';
+$search_request_type = '';
 
 //====================================================================================================
 // parse the search form if it was submitted
@@ -41,6 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $search_end_date = isset($_GET['end_date']) ? mysqli_real_escape_string(HelpDB::get(), $_GET['end_date']) : '';
         $dates_searched = isset($_GET['dates']) ? $_GET['dates'] : [];
         $search_archived = isset($_GET['search_archived']) ? mysqli_real_escape_string(HelpDB::get(), $_GET['search_archived']) : '';
+        $search_request_type = isset($_GET['request_type']) ? mysqli_real_escape_string(HelpDB::get(), $_GET['request_type']) : '';
 
         // Query the archived_location_id values for the given sitenumber
         $archived_location_ids = array();
@@ -133,6 +135,49 @@ while ($usernameRow = mysqli_fetch_assoc($usernamesResult)) {
 }
 
 asort($tech_display_names);
+
+//===================================================
+// Fetch Request Types
+//===================================================
+$topLevelQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_parent IS NULL ORDER BY request_name";
+$topLevelResult = HelpDB::get()->query($topLevelQuery);
+
+$requestTypes = [];
+
+while ($topLevelRow = $topLevelResult->fetch_assoc()) {
+    $topLevelId = $topLevelRow['request_id'];
+    $requestTypes[$topLevelId] = [
+        'id' => $topLevelId,
+        'name' => $topLevelRow['request_name'],
+        'children' => []
+    ];
+
+    // Fetch the child request types
+    $childQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_parent = $topLevelId ORDER BY request_name";
+    $childResult = HelpDB::get()->query($childQuery);
+
+    while ($childRow = $childResult->fetch_assoc()) {
+        $childId = $childRow['request_id'];
+        $requestTypes[$topLevelId]['children'][$childId] = [
+            'id' => $childId,
+            'name' => $childRow['request_name'],
+            'children' => []
+        ];
+
+        // Fetch the grandchild request types
+        $grandchildQuery = "SELECT * FROM request_type WHERE is_archived = 0 AND request_parent = $childId ORDER BY request_name";
+        $grandchildResult = HelpDB::get()->query($grandchildQuery);
+
+        while ($grandchildRow = $grandchildResult->fetch_assoc()) {
+            $grandchildId = $grandchildRow['request_id'];
+            $requestTypes[$topLevelId]['children'][$childId]['children'][$grandchildId] = [
+                'id' => $grandchildId,
+                'name' => $grandchildRow['request_name']
+            ];
+        }
+    }
+}
+
 //====================================================================================================
 //Display View
 //====================================================================================================
@@ -195,7 +240,9 @@ echo $twig->render('search_tickets.twig', [
     'search_archived' => isset($search_archived) && $search_archived != null ? 1 : 0,
     'search_employee' => $search_employee,
     'search_client' => $search_client,
+    'search_request_type' => $search_request_type,
     'priorityTypes' => $priorityTypes,
+    'requestTypes' => $requestTypes,
 
 ]);
 

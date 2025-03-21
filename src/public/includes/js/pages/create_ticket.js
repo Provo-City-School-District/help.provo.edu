@@ -170,16 +170,30 @@ document.getElementById("department").addEventListener("change", function () {
   var attachmentFields = document.getElementById("attachment-fields");
   var submitButton = document.querySelector('input[type="submit"]');
   var message = document.getElementById("message");
-
+  var assignedField = document.getElementById("assigned");
+  var assignToSelfCheckbox = document.getElementById("assign_to_self");
   if (selectedValue === "1700") {
-    detailContainer.style.display = "none";
-    attachmentFields.style.display = "none";
-    submitButton.style.display = "none";
-    message.style.display = "block";
+    if (canInputMaintenance) {
+      detailContainer.style.display = "block";
+      attachmentFields.style.display = "block";
+      submitButton.style.display = "block";
+      message.style.display = "none";
+      assignedField.style.display = "none";
+      assignToSelfCheckbox.style.display = "block";
+    } else {
+      detailContainer.style.display = "none";
+      attachmentFields.style.display = "none";
+      submitButton.style.display = "none";
+      message.style.display = "block";
+      assignedField.style.display = "none";
+      assignToSelfCheckbox.style.display = "none";
+    }
   } else {
     detailContainer.style.display = "block";
     attachmentFields.style.display = "block";
     submitButton.style.display = "block";
     message.style.display = "none";
+    assignedField.style.display = "block";
+    assignToSelfCheckbox.style.display = "none";
   }
 });

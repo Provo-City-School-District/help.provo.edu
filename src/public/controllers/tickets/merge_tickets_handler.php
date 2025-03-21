@@ -126,6 +126,16 @@ if (!$result) {
     log_app(LOG_ERR, "Failed to merged combined attachment paths into $ticket_id_host. Ignoring...");
 }
 
+
+// Move tasks from the source ticket to the host ticket if they are not complete
+$move_tasks_query = "UPDATE ticket_tasks SET ticket_id = ? WHERE ticket_id = ? AND completed != 1";
+$move_tasks_stmt = mysqli_prepare(HelpDB::get(), $move_tasks_query);
+mysqli_stmt_bind_param($move_tasks_stmt, "ii", $ticket_id_host, $ticket_id_source);
+$result = mysqli_stmt_execute($move_tasks_stmt);
+if (!$result) {
+    log_app(LOG_ERR, "Failed to move tasks from source ticket $ticket_id_source to host ticket $ticket_id_host. Ignoring...");
+}
+
 $username = $_SESSION["username"];
 
 // Create note on host ticket

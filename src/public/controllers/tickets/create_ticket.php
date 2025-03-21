@@ -21,6 +21,7 @@ if ($can_see_all_techs) {
     $tech_usernames = get_tech_usernames($department);
 }
 
+$can_input_maintenance = get_user_setting(get_id_for_user($_SESSION['username']), 'can_input_maintenance_tickets');
 
 // Fetch the departments
 $department_result = HelpDB::get()->execute_query("SELECT * FROM locations WHERE is_department = TRUE AND is_archived = FALSE ORDER BY location_name ASC");
@@ -107,6 +108,7 @@ while ($topLevelRow = $topLevelResult->fetch_assoc()) {
 
 
 
+
 echo $twig->render('create_ticket.twig', [
     // base variables
     'color_scheme' => $color_scheme,
@@ -125,5 +127,6 @@ echo $twig->render('create_ticket.twig', [
     'requestTypes' => $requestTypes,
     'tech_usernames' => $tech_usernames,
     'username' => $_SESSION['username'],
+    'can_input_maintenance' => $can_input_maintenance,
     '_get' => $_GET
 ]);

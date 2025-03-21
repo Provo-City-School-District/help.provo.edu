@@ -34,6 +34,65 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $updatedSendBCCEmails = isset($_POST['send_bcc_emails']) ? 1 : 0;
     $updatedInternTicketStatus = isset($_POST['intern_ticket_status']) ? 1 : 0;
 
+    /////////Ensure the assigned tech is not unset if the user cannot select the tech because outside department
+    // Fetch the current user's department
+    $user_department_query = "SELECT department FROM user_settings WHERE user_id = (SELECT id FROM users WHERE username = ?)";
+    $user_department_result = HelpDB::get()->execute_query($user_department_query, [$_SESSION['username']]);
+
+    if (!$user_department_result) {
+        die('Error fetching user department: ' . mysqli_error(HelpDB::get()));
+    }
+
+    $user_department_row = mysqli_fetch_assoc($user_department_result);
+    $user_department = $user_department_row['department'];
+
+    // Check if the user has permission to see all techs
+    $can_see_all_techs = $_SESSION['permissions']['can_see_all_techs'] ?? 0;
+
+    // Fetch the list of tech usernames from the users table
+    if ($can_see_all_techs) {
+        // Fetch all tech usernames
+        $tech_usernames_query = "
+            SELECT u.username, us.is_tech 
+            FROM users u
+            LEFT JOIN user_settings us ON u.id = us.user_id
+            WHERE us.is_tech = 1
+            ORDER BY u.username ASC
+        ";
+        $tech_usernames_result = HelpDB::get()->execute_query($tech_usernames_query);
+    } else {
+        // Fetch tech usernames in the same department
+        $tech_usernames_query = "
+            SELECT u.username, us.is_tech 
+            FROM users u
+            LEFT JOIN user_settings us ON u.id = us.user_id
+            WHERE us.is_tech = 1 AND us.department = ?
+            ORDER BY u.username ASC
+        ";
+        $tech_usernames_result = HelpDB::get()->execute_query($tech_usernames_query, [$user_department]);
+    }
+
+    if (!$tech_usernames_result) {
+        die('Error fetching tech usernames: ' . mysqli_error(HelpDB::get()));
+    }
+
+    // Store the tech usernames in an array
+    $tech_usernames = [];
+    while ($username_row = mysqli_fetch_assoc($tech_usernames_result)) {
+        if ($username_row['is_tech'] == 1) {
+            $tech_usernames[] = $username_row['username'];
+        }
+    }
+
+    // get old ticket data
+    $original_ticket_query = HelpDB::get()->execute_query("SELECT * FROM tickets WHERE id = ?", [$ticket_id]);
+    $original_ticket_data = mysqli_fetch_assoc($original_ticket_query);
+
+    // Ensure the assigned tech is not unset if the user cannot select the tech because outside department
+    if (!in_array($updatedEmployee, $tech_usernames)) {
+        $updatedEmployee = $original_ticket_data['employee'];
+    }
+
 
     if ($updatedStatus == "resolved") {
         $notes_result = HelpDB::get()->execute_query("SELECT COUNT(*) as count FROM notes WHERE linked_id = ?", [$ticket_id]);

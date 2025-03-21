@@ -278,7 +278,6 @@ $user_department = $user_department_row['department'];
 // Check if the user has permission to see all techs
 $can_see_all_techs = $_SESSION['permissions']['can_see_all_techs'] ?? 0;
 
-
 // Fetch the list of tech usernames from the users table
 if ($can_see_all_techs) {
     // Fetch all tech usernames

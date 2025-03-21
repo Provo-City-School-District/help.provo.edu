@@ -6,10 +6,10 @@ require_once('functions.php');
 $feedback_id = $_GET['id'] ?? null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $feedback_id = filter_input(INPUT_POST, 'feedback_id', FILTER_SANITIZE_STRING);
-    $rating = filter_input(INPUT_POST, 'rating', FILTER_SANITIZE_NUMBER_INT);
-    $comments = filter_input(INPUT_POST, 'comments', FILTER_SANITIZE_STRING);
-    $ticket_id = filter_input(INPUT_POST, 'ticket_id', FILTER_SANITIZE_NUMBER_INT);
+    $feedback_id = filter_input(INPUT_POST, 'feedback_id', FILTER_SANITIZE_SPECIAL_CHARS);
+    $rating = filter_input(INPUT_POST, 'rating', FILTER_SANITIZE_SPECIAL_CHARS);
+    $comments = filter_input(INPUT_POST, 'comments', FILTER_SANITIZE_SPECIAL_CHARS);
+    $ticket_id = filter_input(INPUT_POST, 'ticket_id', FILTER_SANITIZE_SPECIAL_CHARS);
 
     // Store the feedback in the database
     $insert_query = "INSERT INTO help.feedback (feedback_id,ticket_id, rating, comments) VALUES (? ,? , ?, ?)";

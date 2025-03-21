@@ -625,6 +625,15 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                             ?>
                             <option value="<?= $tech_username ?>" <?= $ticket['employee'] === $tech_username ? 'selected' : '' ?>><?= $display_string ?></option>
                         <?php endforeach; ?>
+                        <?php if (!in_array($ticket['employee'], $tech_usernames)) : ?>
+                            <?php
+                            $current_tech_name = get_local_name_for_user($ticket['employee']);
+                            $current_firstname = ucwords(strtolower($current_tech_name["firstname"]));
+                            $current_lastname = ucwords(strtolower($current_tech_name["lastname"]));
+                            $current_display_string = $current_firstname . " " . $current_lastname . " - " . location_name_from_id(get_fast_client_location($ticket['employee']) ?: "");
+                            ?>
+                            <option value="<?= $ticket['employee'] ?>" selected disabled><?= $current_display_string ?> (Current Assigned Tech)</option>
+                        <?php endif; ?>
                     </select>
                 </div>
                 <div>

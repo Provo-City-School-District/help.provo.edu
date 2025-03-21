@@ -38,7 +38,11 @@ if (isset($_SESSION['current_status'])) {
     unset($_SESSION['status_type']);
 }
 
-
+// fetch ticket feedback   
+$feedback_query = <<<STR
+Select * from feedback
+STR;
+$feedback_result = HelpDB::get()->execute_query($feedback_query);
 
 ?>
 <h1>Admin</h1>
@@ -140,6 +144,34 @@ $exclude_result = HelpDB::get()->execute_query("SELECT * FROM exclude_days WHERE
     Source Ticket ID:<input type="text" id="ticket_id_source" name="ticket_id_source" value=""><br>
     <button class="button" type="submit">Merge</button><br>
 </form>
+
+<h2>Feedback</h2>
+<table class="feedback nst">
+    <thead>
+        <tr>
+            <th>Ticket</th>
+            <th>Client</th>
+            <th>Rating</th>
+            <th>Comment</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php while ($feedback = mysqli_fetch_assoc($feedback_result)) : ?>
+
+            <tr>
+                <td data-cell="Ticket" class="center"><a href="https://help.provo.edu/controllers/tickets/edit_ticket.php?id=<?= $feedback['ticket_id'] ?>"><?= $feedback['ticket_id'] ?></a></td>
+                <td data-cell="Client" class="center"><?= $feedback['client'] ?></td>
+                <td data-cell="Rating" class="center"><?= $feedback['rating'] ?></td>
+                <td data-cell="Comment" class="center"><?= $feedback['comments'] ?></td>
+                <td data-cell="Date" class="center"><?= $feedback['created_at'] ?></td>
+
+            </tr>
+        <?php endwhile;
+        ?>
+    </tbody>
+</table>
+
 <?php include("footer.php"); ?>
 <div id="bulk-actions-container">
     <form action="/ajax/bulk_action.php" id="bulk-actions-form">

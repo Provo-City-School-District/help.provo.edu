@@ -278,7 +278,6 @@ $user_department = $user_department_row['department'];
 // Check if the user has permission to see all techs
 $can_see_all_techs = $_SESSION['permissions']['can_see_all_techs'] ?? 0;
 
-
 // Fetch the list of tech usernames from the users table
 if ($can_see_all_techs) {
     // Fetch all tech usernames
@@ -626,6 +625,15 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                             ?>
                             <option value="<?= $tech_username ?>" <?= $ticket['employee'] === $tech_username ? 'selected' : '' ?>><?= $display_string ?></option>
                         <?php endforeach; ?>
+                        <?php if (!in_array($ticket['employee'], $tech_usernames)) : ?>
+                            <?php
+                            $current_tech_name = get_local_name_for_user($ticket['employee']);
+                            $current_firstname = ucwords(strtolower($current_tech_name["firstname"]));
+                            $current_lastname = ucwords(strtolower($current_tech_name["lastname"]));
+                            $current_display_string = $current_firstname . " " . $current_lastname . " - " . location_name_from_id(get_fast_client_location($ticket['employee']) ?: "");
+                            ?>
+                            <option value="<?= $ticket['employee'] ?>" selected disabled><?= $current_display_string ?> (Current Assigned Tech)</option>
+                        <?php endif; ?>
                     </select>
                 </div>
                 <div>

@@ -627,12 +627,18 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                         <?php endforeach; ?>
                         <?php if (!in_array($ticket['employee'], $tech_usernames)) : ?>
                             <?php
-                            $current_tech_name = get_local_name_for_user($ticket['employee']);
-                            $current_firstname = ucwords(strtolower($current_tech_name["firstname"]));
-                            $current_lastname = ucwords(strtolower($current_tech_name["lastname"]));
-                            $current_display_string = $current_firstname . " " . $current_lastname . " - " . location_name_from_id(get_fast_client_location($ticket['employee']) ?: "");
+                            if ($ticket['employee']) {
+                                $current_tech_name = get_local_name_for_user($ticket['employee']);
+                                $current_firstname = ucwords(strtolower($current_tech_name["firstname"]));
+                                $current_lastname = ucwords(strtolower($current_tech_name["lastname"]));
+                                $current_display_string = $current_firstname . " " . $current_lastname . " - " . location_name_from_id(get_fast_client_location($ticket['employee']) ?: "");
+                            } else {
+                                $current_display_string = 'Unassigned';
+                            }
                             ?>
-                            <option value="<?= $ticket['employee'] ?>" selected disabled><?= ($current_display_string && strtolower($current_display_string) === 'unknown') ? $current_display_string : 'Unassigned' ?> (Current Assigned Tech)</option>
+                            <option value="<?= $ticket['employee'] ?>" selected disabled>
+                                <?= ($current_display_string && strtolower($current_display_string) !== 'unknown') ? $current_display_string : 'Unassigned' ?> (Current Assigned Tech)
+                            </option>
                         <?php endif; ?>
                     </select>
 

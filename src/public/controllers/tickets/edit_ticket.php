@@ -637,7 +637,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                             }
                             ?>
                             <option value="<?= $ticket['employee'] ?>" selected disabled>
-                                <?= ($current_display_string && strtolower($current_display_string) !== 'unknown') ? $current_display_string : 'Unassigned' ?> (Current Assigned Tech)
+                                <?= ($current_display_string && strtolower($current_display_string) == 'unknown') ? $current_display_string : 'Unassigned' ?> (Current Assigned Tech)
                             </option>
                         <?php endif; ?>
                     </select>

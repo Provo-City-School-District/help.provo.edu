@@ -632,9 +632,10 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                             $current_lastname = ucwords(strtolower($current_tech_name["lastname"]));
                             $current_display_string = $current_firstname . " " . $current_lastname . " - " . location_name_from_id(get_fast_client_location($ticket['employee']) ?: "");
                             ?>
-                            <option value="<?= $ticket['employee'] ?>" selected disabled><?= $current_display_string ?> (Current Assigned Tech)</option>
+                            <option value="<?= $ticket['employee'] ?>" selected disabled><?= ($current_display_string && strtolower($current_display_string) === 'unknown') ? $current_display_string : 'Unassigned' ?> (Current Assigned Tech)</option>
                         <?php endif; ?>
                     </select>
+
                 </div>
                 <div>
                     <label for="department">Department:</label>

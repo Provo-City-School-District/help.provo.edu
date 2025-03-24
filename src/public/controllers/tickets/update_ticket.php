@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $original_ticket_data = mysqli_fetch_assoc($original_ticket_query);
 
     // Ensure the assigned tech is not unset if the user cannot select the tech because outside department
-    if (!in_array($updatedEmployee, $tech_usernames)) {
+    if (!in_array($updatedEmployee, $tech_usernames) && $updatedEmployee !== 'unassigned' && $updatedEmployee !== null) {
         $updatedEmployee = $original_ticket_data['employee'];
     }
 

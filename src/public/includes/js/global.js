@@ -6,3 +6,7 @@ document.getElementById("mobileMenu").addEventListener("click", function () {
     nav.style.display = "none";
   }
 });
+
+function disableSubmitButton() {
+  document.getElementById("submitButton").disabled = true;
+}

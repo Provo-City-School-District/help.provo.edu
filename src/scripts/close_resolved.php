@@ -32,6 +32,7 @@ foreach ($select_tickets_result as $ticket) {
         $headers = "From: no-reply@yourdomain.com";
         // Send the email
         send_email($client_email, $subject, $message);
+        log_app(LOG_INFO, "close_resolved.php: feedback email sent to $client_email for ticket $ticket_id");
     }
 
     log_app(LOG_INFO, "close_resolved.php completed");

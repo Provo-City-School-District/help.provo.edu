@@ -27,7 +27,6 @@ $(document).ready(function () {
     options.order = [[9, "desc"]];
   } else if (
     window.location.pathname === "/supervisor.php" ||
-    window.location.pathname === "/admin.php" ||
     window.location.pathname === "/tickets.php"
   ) {
     options.order = [[9, "asc"]];
@@ -69,5 +68,10 @@ $(document).ready(function () {
     stateSave: true, // Enable state saving
     ordering: true, // Enable sorting
     autoWidth: false, // Disable auto width calculation
+  });
+});
+$(document).ready(function () {
+  $(".feedback").DataTable({
+    order: [[4, "desc"]],
   });
 });

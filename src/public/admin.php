@@ -147,7 +147,7 @@ $exclude_result = HelpDB::get()->execute_query("SELECT * FROM exclude_days WHERE
 </form>
 
 <h2>Feedback</h2>
-<table class="feedback nst">
+<table class="feedback">
     <thead>
         <tr>
             <th>Ticket</th>

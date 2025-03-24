@@ -40,7 +40,8 @@ if (isset($_SESSION['current_status'])) {
 
 // fetch ticket feedback   
 $feedback_query = <<<STR
-Select * from feedback
+SELECT * FROM feedback
+ORDER BY id DESC
 STR;
 $feedback_result = HelpDB::get()->execute_query($feedback_query);
 

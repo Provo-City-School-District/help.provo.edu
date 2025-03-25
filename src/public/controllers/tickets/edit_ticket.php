@@ -449,7 +449,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                 <button id="unread-ticket-button" class="button">Unread Ticket</button>
             <?php endif; ?>
             <?php if ($readonly && !session_is_intern() && $ticket['status'] != 'closed' && !$hasNotes) : ?>
-                <button id="close-ticket-button" class="button">Close Ticket</button>
+                <button id="close-ticket-button" class="button">Resolve Ticket</button>
             <?php endif; ?>
             <?php if (!$readonly || $ticket['status'] != 'closed') : ?>
                 <button class="new-note-button button">New Note</button>
@@ -695,9 +695,9 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                         <option value="open" <?= ($ticket['status'] == 'open') ? ' selected' : '' ?>>Open</option>
                         <option value="closed" <?= ($ticket['status'] == 'closed') ? ' selected' : '' ?>>Closed</option>
                         <option value="resolved" <?= ($ticket['status'] == 'resolved') ? ' selected' : '' ?>>Resolved</option>
-                        <!-- <option value="pending" <?= ($ticket['status'] == 'pending') ? ' selected' : '' ?>>Pending</option> -->
-                        <option value="vendor" <?= ($ticket['status'] == 'vendor') ? ' selected' : '' ?>>Vendor</option>
-                        <option value="maintenance" <?= ($ticket['status'] == 'maintenance') ? ' selected' : '' ?>>Maintenance</option>
+                        <option value="pending" <?= ($ticket['status'] == 'pending') ? ' selected' : '' ?>>Pending</option>
+                        <!-- <option value="vendor" <?= ($ticket['status'] == 'vendor') ? ' selected' : '' ?>>Vendor</option>
+                        <option value="maintenance" <?= ($ticket['status'] == 'maintenance') ? ' selected' : '' ?>>Maintenance</option> -->
                     </select>
                 </div>
                 <div>
@@ -1566,20 +1566,23 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
     // Close Ticket Button call to AJAX
     $(document).ready(function() {
         $('#close-ticket-button').click(function() {
-            $.ajax({
-                url: "/ajax/close_ticket.php",
-                method: "POST",
-                data: {
-                    ticket_id: <?= $ticket_id ?>,
-                },
-                success: function(data, textStatus, xhr) {
-                    console.log("Ticket closed successfully");
-                    location.reload();
-                },
-                error: function() {
-                    alert("Error: Autocomplete AJAX call failed");
-                },
-            });
+            const p = "Are you sure you want to close this ticket? Once closed, it will be removed from the work queue, and you won't be able to add notes. A new ticket will be required for any additional work.";
+            if (confirm(p)) {
+                $.ajax({
+                    url: "/ajax/close_ticket.php",
+                    method: "POST",
+                    data: {
+                        ticket_id: <?= $ticket_id ?>,
+                    },
+                    success: function(data, textStatus, xhr) {
+                        console.log("Ticket closed successfully");
+                        location.reload();
+                    },
+                    error: function() {
+                        alert("Error: Autocomplete AJAX call failed");
+                    },
+                });
+            }
         });
     });
     // Unread Button Call to AJAX

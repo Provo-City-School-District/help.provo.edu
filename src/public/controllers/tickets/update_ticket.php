@@ -342,7 +342,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else if (!isset($old_ticket_data['employee'])) {
         $assigned_tech_changed = true;
     }
+    // Ensure the assigned tech is not unset if the user cannot select the tech because outside department
+    if (!in_array($updatedEmployee, $tech_usernames) && $updatedEmployee !== 'unassigned' && $updatedEmployee !== null) {
+        $updatedEmployee = $original_ticket_data['employee'];
+    }
 
+    // Check if the department has changed, Set the employee to "unassigned" if the department has changed
+    if (isset($old_ticket_data['department'], $updatedDepartment) && $old_ticket_data['department'] != $updatedDepartment) {
+        $updatedEmployee = "unassigned";
+        $assigned_tech_changed = true;
+    }
     if (isset($old_ticket_data['location'], $updatedLocation) && $old_ticket_data['location'] != $updatedLocation) {
         logTicketChange(HelpDB::get(), $ticket_id, $updatedby, $locationColumn, $old_ticket_data['location'], $updatedLocation);
         $changesMessage .= "<li>Changed Location from " . $old_ticket_data['location'] . " to " . $updatedLocation . "</li>";

@@ -34,11 +34,7 @@ a:hover {
 }
 
 strong {
-	font-size: 120%;
-}
-
-.latestNote strong {
-	font-size: 100%;
+	font-family: "Campton-Bold";
 }
 
 em {

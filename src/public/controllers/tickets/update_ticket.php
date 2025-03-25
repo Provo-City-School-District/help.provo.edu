@@ -34,6 +34,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $updatedSendBCCEmails = isset($_POST['send_bcc_emails']) ? 1 : 0;
     $updatedInternTicketStatus = isset($_POST['intern_ticket_status']) ? 1 : 0;
 
+    // Columns for the ticket_logs table
+    $clientColumn  = "client";
+    $employeeColumn  = "employee";
+    $locationColumn  = "location";
+    $departmentColumn = "department";
+    $roomColumn  = "room";
+    $nameColumn  = "name";
+    $descriptionColumn  = "description";
+    $dueDateColumn  = "due_date";
+    $statusColumn  = "status";
+    $phoneColumn  = "phone";
+    $priorityColumn  = "priority";
+    $requestTypeColumn  = "request_type_id";
+    $ccEmailsColumn = "cc_emails";
+    $bccEmailsColumn = "bcc_emails";
+    $parentTicketColumn = "parent_ticket";
+
+
     /////////Ensure the assigned tech is not unset if the user cannot select the tech because outside department
     // Fetch the current user's department
     $user_department_query = "SELECT department FROM user_settings WHERE user_id = (SELECT id FROM users WHERE username = ?)";
@@ -293,23 +311,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$updateTicketResult) {
         die('Error updating ticket: ' . mysqli_error(HelpDB::get()));
     }
-
-    // Columns for the ticket_logs table
-    $clientColumn  = "client";
-    $employeeColumn  = "employee";
-    $locationColumn  = "location";
-    $departmentColumn = "department";
-    $roomColumn  = "room";
-    $nameColumn  = "name";
-    $descriptionColumn  = "description";
-    $dueDateColumn  = "due_date";
-    $statusColumn  = "status";
-    $phoneColumn  = "phone";
-    $priorityColumn  = "priority";
-    $requestTypeColumn  = "request_type_id";
-    $ccEmailsColumn = "cc_emails";
-    $bccEmailsColumn = "bcc_emails";
-    $parentTicketColumn = "parent_ticket";
 
     // Log the ticket changes and build message of changes for email
     if (isset($old_ticket_data['priority'], $updatedPriority) && $old_ticket_data['priority'] != $updatedPriority) {

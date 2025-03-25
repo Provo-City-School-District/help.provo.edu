@@ -1566,20 +1566,23 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
     // Close Ticket Button call to AJAX
     $(document).ready(function() {
         $('#close-ticket-button').click(function() {
-            $.ajax({
-                url: "/ajax/close_ticket.php",
-                method: "POST",
-                data: {
-                    ticket_id: <?= $ticket_id ?>,
-                },
-                success: function(data, textStatus, xhr) {
-                    console.log("Ticket closed successfully");
-                    location.reload();
-                },
-                error: function() {
-                    alert("Error: Autocomplete AJAX call failed");
-                },
-            });
+            const p = "Are you sure you want to close this ticket? Once closed, it will be removed from the work queue, and you won't be able to add notes. A new ticket will be required for any additional work.";
+            if (confirm(p)) {
+                $.ajax({
+                    url: "/ajax/close_ticket.php",
+                    method: "POST",
+                    data: {
+                        ticket_id: <?= $ticket_id ?>,
+                    },
+                    success: function(data, textStatus, xhr) {
+                        console.log("Ticket closed successfully");
+                        location.reload();
+                    },
+                    error: function() {
+                        alert("Error: Autocomplete AJAX call failed");
+                    },
+                });
+            }
         });
     });
     // Unread Button Call to AJAX

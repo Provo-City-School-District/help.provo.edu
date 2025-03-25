@@ -324,14 +324,3 @@ if (searchResults) {
     }
   });
 }
-document
-  .getElementById("close-ticket-button")
-  .addEventListener("click", function (event) {
-    var confirmClose = confirm(
-      "Are you sure you want to close this ticket? Once closed, it will be removed from the work queue, and you won’t be able to add notes. A new ticket will be required for any additional work."
-    );
-    if (!confirmClose) {
-      // Prevent the default action if the user cancels
-      event.preventDefault();
-    }
-  });

@@ -695,9 +695,9 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                         <option value="open" <?= ($ticket['status'] == 'open') ? ' selected' : '' ?>>Open</option>
                         <option value="closed" <?= ($ticket['status'] == 'closed') ? ' selected' : '' ?>>Closed</option>
                         <option value="resolved" <?= ($ticket['status'] == 'resolved') ? ' selected' : '' ?>>Resolved</option>
-                        <!-- <option value="pending" <?= ($ticket['status'] == 'pending') ? ' selected' : '' ?>>Pending</option> -->
-                        <option value="vendor" <?= ($ticket['status'] == 'vendor') ? ' selected' : '' ?>>Vendor</option>
-                        <option value="maintenance" <?= ($ticket['status'] == 'maintenance') ? ' selected' : '' ?>>Maintenance</option>
+                        <option value="pending" <?= ($ticket['status'] == 'pending') ? ' selected' : '' ?>>Pending</option>
+                        <!-- <option value="vendor" <?= ($ticket['status'] == 'vendor') ? ' selected' : '' ?>>Vendor</option>
+                        <option value="maintenance" <?= ($ticket['status'] == 'maintenance') ? ' selected' : '' ?>>Maintenance</option> -->
                     </select>
                 </div>
                 <div>

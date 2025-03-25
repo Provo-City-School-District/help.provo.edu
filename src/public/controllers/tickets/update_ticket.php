@@ -559,7 +559,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $tech = $tech_name["firstname"] . " " . $tech_name["lastname"];
         }
         $desc = $row["description"];
-        $remaining_tasks[] =  ["tech_name" => $tech, "description" => $desc];
+        $remaining_tasks[] = ["tech_name" => $tech, "description" => $desc];
     }
 
     $template_tech->remaining_tasks = $remaining_tasks;
@@ -585,7 +585,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($assigned_tech_changed) {
         if ($updatedEmployee != "unassigned") {
-            $assigned_tech_name = get_local_name_for_user($updatedEmployee);
+            if (!empty($assigned_tech_name)) {
+                $assigned_tech_name = get_local_name_for_user($updatedEmployee);
+            }
             $firstname = $assigned_tech_name["firstname"];
             $lastname = $assigned_tech_name["lastname"];
 

@@ -523,7 +523,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $client_name = get_client_name($updatedClient);
     $location_name = location_name_from_id($updatedLocation);
     $department_name = location_name_from_id($updatedDepartment ?? '');
-    $assigned_tech_email = email_address_from_username($updatedEmployee);
+    $assigned_tech_email = $updatedEmployee !== null ? email_address_from_username($updatedEmployee) : null;
+
 
     $template_tech = new Template(from_root("/includes/templates/{$template_path}_tech.phtml"));
 

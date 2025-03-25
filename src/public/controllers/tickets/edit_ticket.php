@@ -449,7 +449,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                 <button id="unread-ticket-button" class="button">Unread Ticket</button>
             <?php endif; ?>
             <?php if ($readonly && !session_is_intern() && $ticket['status'] != 'closed' && !$hasNotes) : ?>
-                <button id="close-ticket-button" class="button">Close Ticket</button>
+                <button id="close-ticket-button" class="button">Resolve Ticket</button>
             <?php endif; ?>
             <?php if (!$readonly || $ticket['status'] != 'closed') : ?>
                 <button class="new-note-button button">New Note</button>

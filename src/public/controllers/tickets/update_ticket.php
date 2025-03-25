@@ -203,6 +203,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $updatedDueDate = $new_due_date->format('Y-m-d');
     }
 
+    if (isset($old_ticket_data['employee'], $updatedEmployee) && $old_ticket_data['employee'] != $updatedEmployee) {
+        logTicketChange(HelpDB::get(), $ticket_id, $updatedby, $employeeColumn, $old_ticket_data['employee'], $updatedEmployee);
+
+        $assigned_tech_changed = true;
+
+        // Handle the case where the employee is unassigned
+        if ($old_ticket_data['employee'] !== null && $old_ticket_data['employee'] !== 'unassigned') {
+            // this will force emails
+            $old_assigned_email = email_address_from_username($old_ticket_data['employee']);
+        } else {
+            $old_ticket_data['employee'] = "unassigned";
+        }
+        $changesMessage .= "<li>Changed Employee from " . $old_ticket_data['employee'] . " to " . $updatedEmployee . "</li>";
+        // If the ticket was re-assigned, remove the alerts, they will be re-added within an hour for the new user.
+        removeAllAlertsByTicketId($ticket_id);
+    } else if (!isset($old_ticket_data['employee'])) {
+        $assigned_tech_changed = true;
+    }
+
+    // Ensure the assigned tech is not unset if the user cannot select the tech because outside department
+    if (!in_array($updatedEmployee, $tech_usernames) && $updatedEmployee !== 'unassigned' && $updatedEmployee !== null) {
+        $updatedEmployee = $original_ticket_data['employee'];
+    }
+
     // Check if the department has changed, Set the employee to "unassigned" if the department has changed
     if (isset($old_ticket_data['department'], $updatedDepartment) && $old_ticket_data['department'] != $updatedDepartment) {
         $updatedEmployee = "unassigned";
@@ -211,28 +235,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Perform SQL UPDATE queries to update the ticket information
     $update_ticket_query = "UPDATE tickets SET
-        client = ?,
-        employee = ?,
-        location = ?,
-        department = ?,
-        room = ?,
-        name = ?,
-        description = ?,
-        due_date = ?,
-        status = ?,
-        phone = ?,
-        cc_emails = ?,
-        bcc_emails = ?,
-        priority = ?,
-        request_type_id = ?,
-        parent_ticket = ?,
-        last_updated = NOW(),
-        send_client_email = ?,
-        send_tech_email = ?,
-        send_cc_emails = ?,
-        send_bcc_emails = ?,
-        intern_visible = ?
-        WHERE id = ?";
+    client = ?,
+    employee = ?,
+    location = ?,
+    department = ?,
+    room = ?,
+    name = ?,
+    description = ?,
+    due_date = ?,
+    status = ?,
+    phone = ?,
+    cc_emails = ?,
+    bcc_emails = ?,
+    priority = ?,
+    request_type_id = ?,
+    parent_ticket = ?,
+    last_updated = NOW(),
+    send_client_email = ?,
+    send_tech_email = ?,
+    send_cc_emails = ?,
+    send_bcc_emails = ?,
+    intern_visible = ?
+    WHERE id = ?";
 
     $update_ticket_query_vars = [
         $updatedClient,
@@ -571,11 +595,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         log_app(LOG_INFO, "[update_ticket.php] Sent assignment emails");
 
-        $res = send_email_and_add_to_ticket($ticket_id, $assigned_tech_email, $new_subject, $template_tech, [], [], $attachment_paths);
-        if (!$res) {
-            $send_errors[] = "Newly Assigned Tech";
-        } else {
-            $sent_tech_email_log_msg .= $assigned_tech_email . ", ";
+        if ($updatedEmployee !== null && $updatedEmployee !== 'unassigned') {
+            $assigned_tech_email = email_address_from_username($updatedEmployee);
+            $res = send_email_and_add_to_ticket($ticket_id, $assigned_tech_email, $new_subject, $template_tech, [], [], $attachment_paths);
+            if (!$res) {
+                $send_errors[] = "Newly Assigned Tech";
+            } else {
+                $sent_tech_email_log_msg .= $assigned_tech_email . ", ";
+            }
         }
 
         if (isset($old_assigned_email)) {

@@ -34,11 +34,10 @@ a:hover {
 }
 
 strong {
-	font-weight: bolder;
 	font-size: 120%;
 }
 
-table strong {
+.latestNote strong {
 	font-size: 100%;
 }
 

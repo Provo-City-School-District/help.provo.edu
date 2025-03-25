@@ -9,3 +9,8 @@
     font-family: "Campton-Medium";
     src: url('../fonts/CamptonMedium/font.woff2') format('woff2'), url('../fonts/CamptonMedium/font.woff') format('woff');
 }
+
+@font-face {
+    font-family: "Campton-Bold";
+    src: url('../fonts/CamptonBold.woff') format('woff'), url('../fonts/CamptonBold.woff') format('woff');
+}

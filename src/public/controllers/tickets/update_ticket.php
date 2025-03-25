@@ -550,7 +550,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     while ($row = $remaining_tasks_result->fetch_assoc()) {
         $tech_name = null;
         $assigned_tech = $row["assigned_tech"];
-        if (isset($assigned_tech)) {
+        if (!empty($assigned_tech)) {
             $tech_name = get_local_name_for_user($assigned_tech);
         }
 

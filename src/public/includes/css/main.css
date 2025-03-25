@@ -963,7 +963,16 @@ select {
 	}
 
 	.taskTable {
-		max-width: 50%;
+		/* max-width: 50%; */
+	}
+
+	.taskTable .edit_task_cell {
+		padding: 5px;
+
+	}
+
+	.taskTable .edit_task_cell .button {
+		margin: unset;
 	}
 
 	.taskTable tr {

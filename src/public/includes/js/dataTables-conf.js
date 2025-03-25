@@ -24,7 +24,7 @@ $(document).ready(function () {
     window.location.pathname === "/controllers/tickets/recent_tickets.php" ||
     window.location.pathname === "/controllers/tickets/flagged_tickets.php"
   ) {
-    options.order = [[9, "desc"]];
+    options.order = [[10, "desc"]];
   } else if (
     window.location.pathname === "/supervisor.php" ||
     window.location.pathname === "/tickets.php"

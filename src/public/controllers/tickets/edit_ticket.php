@@ -627,17 +627,24 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                         <?php endforeach; ?>
                         <?php if (!in_array($ticket['employee'], $tech_usernames)) : ?>
                             <?php
-                            if ($ticket['employee']) {
+                            if (!empty($ticket['employee']) && strtolower($ticket['employee']) !== 'unassigned') {
+                                // Attempt to get the local name for the assigned employee
                                 $current_tech_name = get_local_name_for_user($ticket['employee']);
-                                $current_firstname = ucwords(strtolower($current_tech_name["firstname"]));
-                                $current_lastname = ucwords(strtolower($current_tech_name["lastname"]));
-                                $current_display_string = $current_firstname . " " . $current_lastname . " - " . location_name_from_id(get_fast_client_location($ticket['employee']) ?: "");
+                                if ($current_tech_name) {
+                                    $current_firstname = ucwords(strtolower($current_tech_name["firstname"]));
+                                    $current_lastname = ucwords(strtolower($current_tech_name["lastname"]));
+                                    $current_display_string = $current_firstname . " " . $current_lastname . " - " . location_name_from_id(get_fast_client_location($ticket['employee']) ?: "");
+                                } else {
+                                    // If the user is not found, fallback to "Assigned outside the department"
+                                    $current_display_string = 'Assigned outside the department';
+                                }
                             } else {
+                                // Handle unassigned or null employee
                                 $current_display_string = 'Unassigned';
                             }
                             ?>
                             <option value="<?= $ticket['employee'] ?>" selected disabled>
-                                <?= ($current_display_string && strtolower($current_display_string) == 'unknown') ? $current_display_string : 'Unassigned' ?> (Current Assigned Tech)
+                                <?= $current_display_string ?> (Current Assigned Tech)
                             </option>
                         <?php endif; ?>
                     </select>

@@ -116,8 +116,7 @@ foreach ($oldTickets as $oldTicket) {
     if (
         $lastUpdated < $date7DaysBack &&
         (
-            $oldTicket['status'] == 'vendor' ||
-            $oldTicket['status'] == 'maintenance' ||
+            $oldTicket['status'] == 'pending' ||
             $oldTicket['priority'] == 15 ||
             ($oldTicket['priority'] == 30 && $oldTicket['client'] != $oldTicket['employee']) ||
             ($oldTicket['priority'] != 60 && $oldTicket['priority'] != 30)
@@ -128,8 +127,7 @@ foreach ($oldTickets as $oldTicket) {
     } else {
         if (
             $lastUpdated < $date48HoursBack &&
-            ($oldTicket['status'] != 'vendor' &&
-                $oldTicket['status'] != 'maintenance' &&
+            ($oldTicket['status'] != 'pending' &&
                 $oldTicket['priority'] != 15 &&
                 ($oldTicket['priority'] != 30 && $oldTicket['client'] != $oldTicket['employee']) &&
                 $oldTicket['priority'] != 60)

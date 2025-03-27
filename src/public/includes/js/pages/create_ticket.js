@@ -164,6 +164,7 @@ $("#client").on("input", function () {
   });
 });
 // Hide detailContainer, attachment-fields, and submit button if department is Maintenance(1700)
+console.log(userDepartment);
 document.getElementById("department").addEventListener("change", function () {
   var selectedValue = this.value;
   var detailContainer = document.querySelector(".detailContainer");
@@ -173,7 +174,7 @@ document.getElementById("department").addEventListener("change", function () {
   var assignedField = document.getElementById("assigned");
   var assignToSelfCheckbox = document.getElementById("assign_to_self");
   if (selectedValue === "1700") {
-    if (canInputMaintenance) {
+    if (canInputMaintenance || userDepartment === 1700) {
       detailContainer.style.display = "block";
       attachmentFields.style.display = "block";
       submitButton.style.display = "block";

@@ -40,7 +40,7 @@ window.addEventListener("load", function () {
     height: 1000,
     animationEnabled: true,
     title: {
-      text: "All Open Tickets By Location",
+      text: "Department Open Tickets By Location",
     },
     axisY: {
       title: "Ticket Count",

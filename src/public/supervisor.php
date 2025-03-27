@@ -103,12 +103,15 @@ $allTechs = process_query_result_wlinks($tech_query_result, "employee", "id", $u
 $location_query = <<<STR
     SELECT locations.location_name, tickets.location
     FROM tickets 
-    INNER JOIN locations ON tickets.location = locations.sitenumber 
+    INNER JOIN locations ON tickets.location = locations.sitenumber
+    INNER JOIN users ON tickets.employee = users.username
+    INNER JOIN user_settings ON users.id = user_settings.user_id
     WHERE tickets.status NOT IN ('closed', 'resolved')
     AND locations.is_archived = 0
+    AND user_settings.department = ?
 STR;
 
-$location_query_result = HelpDB::get()->execute_query($location_query);
+$location_query_result = HelpDB::get()->execute_query($location_query, [$department]);
 $allLocations = process_query_result($location_query_result, "location_name");
 
 // Query open tickets based on field tech:

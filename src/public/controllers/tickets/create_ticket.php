@@ -13,6 +13,7 @@ $twig = new \Twig\Environment($loader, [
 // Fetch the tech usernames
 $department = $_SESSION['department'] ?? null;
 $can_see_all_techs = $_SESSION['permissions']['can_see_all_techs'] ?? 0;
+$department_location = get_sitenumber_from_location_id($department);
 
 // Fetch the tech usernames
 if ($can_see_all_techs) {
@@ -123,6 +124,7 @@ echo $twig->render('create_ticket.twig', [
 
     // create_ticket variables
     'depts' => $depts,
+    'user_department' => $department_location,
     'locations' => $locations,
     'requestTypes' => $requestTypes,
     'tech_usernames' => $tech_usernames,

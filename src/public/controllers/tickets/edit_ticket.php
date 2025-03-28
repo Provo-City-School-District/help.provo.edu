@@ -1145,8 +1145,11 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
             foreach ($notes as $note) :
                 // Hidden notes should only be viewable by admins
                 if (
-                    $note['visible_to_client'] == 0 &&
-                    !$_SESSION['permissions']['is_tech']
+                    $note['visible_to_client'] == 0 && (
+                        !$_SESSION['permissions']['is_tech'] ||
+                        !are_users_in_same_department($note['creator'], $_SESSION['username'])
+                    )
+
                 )
                     continue;
                 $num_notes++;

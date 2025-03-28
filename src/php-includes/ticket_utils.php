@@ -745,7 +745,7 @@ function get_parsed_ticket_data($ticket_data)
         $tmp["title"] = $row["name"];
         $tmp["description"] = limitChars(strip_tags(html_entity_decode($row["description"])), 100);
 
-        if (session_is_tech()) {
+        if (session_is_tech() && are_users_in_same_department($row["latest_note_author"], $_SESSION["username"])) {
             $notes_query = "SELECT creator, note FROM help.notes WHERE linked_id = ? ORDER BY
                 (CASE WHEN date_override IS NULL THEN created ELSE date_override END) DESC
             ";
@@ -1021,4 +1021,27 @@ function get_sitenumber_from_location_id($department)
     $sitenumber_result = HelpDB::get()->execute_query($sitenumber_query, [$department]);
     $sitenumber_row = mysqli_fetch_assoc($sitenumber_result);
     return $sitenumber_row['sitenumber'] ?? null;
+}
+function are_users_in_same_department($creator_username, $current_username)
+{
+    // Query to fetch the department of both users
+    $query = "SELECT u.username, us.department 
+              FROM users u
+              INNER JOIN user_settings us ON u.id = us.user_id
+              WHERE u.username IN (?, ?)";
+    $result = HelpDB::get()->execute_query($query, [$creator_username, $current_username]);
+
+    if (!$result) {
+        log_app(LOG_ERR, "Failed to fetch departments for users: $creator_username and $current_username");
+        return false;
+    }
+
+    $departments = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        $departments[$row['username']] = $row['department'];
+    }
+
+    // Ensure both users were found and compare their departments
+    return isset($departments[$creator_username], $departments[$current_username]) &&
+        $departments[$creator_username] === $departments[$current_username];
 }

@@ -133,10 +133,10 @@ function create_note(
     int $travel_hours,
     int $travel_minutes,
     bool $visible_to_client,
+    int $department_id = null,
     string $date_override = null,
-    string $email_msg_id = null,
+    string $email_msg_id = null
 ) {
-
     $ticket_id_clean = trim(htmlspecialchars($ticket_id));
     $note_content_clean = trim(htmlspecialchars($note_content));
     $username_clean = trim(htmlspecialchars($username));
@@ -144,7 +144,9 @@ function create_note(
     $work_minutes_clean = trim(htmlspecialchars($work_minutes));
     $travel_hours_clean = trim(htmlspecialchars($travel_hours));
     $travel_minutes_clean = trim(htmlspecialchars($travel_minutes));
+    $department_id_clean = trim(htmlspecialchars($department_id));
     $timestamp = date('Y-m-d H:i:s');
+
 
     if (!isset($work_hours) || $work_hours === null || !isset($work_minutes) || $work_minutes === null || !isset($travel_hours) || $travel_hours === null || !isset($travel_minutes) || $travel_minutes === null) {
         return false;
@@ -177,12 +179,14 @@ function create_note(
     mysqli_stmt_execute($insert_stmt);
     mysqli_stmt_close($insert_stmt);
 
+
+
     // Log the creation of the new note in the ticket_logs table
-    $log_query = "INSERT INTO ticket_logs (ticket_id, user_id, field_name, old_value, new_value, created_at) VALUES (?, ?, ?, NULL, ?, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'))";
+    $log_query = "INSERT INTO ticket_logs (ticket_id, user_id, field_name, old_value, new_value, created_at, department_id) VALUES (?, ?, ?, NULL, ?, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'), ?)";
     $log_stmt = mysqli_prepare(HelpDB::get(), $log_query);
 
     $notecolumn = "note";
-    mysqli_stmt_bind_param($log_stmt, "isss", $ticket_id, $username, $notecolumn, $note_content_clean);
+    mysqli_stmt_bind_param($log_stmt, "isssi", $ticket_id, $username, $notecolumn, $note_content_clean, $department_id_clean);
     mysqli_stmt_execute($log_stmt);
     mysqli_stmt_close($log_stmt);
 
@@ -1022,6 +1026,22 @@ function get_sitenumber_from_location_id($department)
     $sitenumber_row = mysqli_fetch_assoc($sitenumber_result);
     return $sitenumber_row['sitenumber'] ?? null;
 }
+// get users department
+function get_user_department($username)
+{
+    // Query to fetch the department of the user
+    $query = "SELECT us.department FROM users u INNER JOIN user_settings us ON u.id = us.user_id WHERE u.username = ?";
+    $result = HelpDB::get()->execute_query($query, [$username]);
+
+    if (!$result) {
+        log_app(LOG_ERR, "Failed to fetch department for user: $username");
+        return null;
+    }
+
+    $row = mysqli_fetch_assoc($result);
+    return $row['department'] ?? null;
+}
+// Check if two users are in the same department
 function are_users_in_same_department($creator_username, $current_username)
 {
     // Query to fetch the department of both users

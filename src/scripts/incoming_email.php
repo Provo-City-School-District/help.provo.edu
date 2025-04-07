@@ -175,7 +175,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
             }
 
             // add note on existing ticket
-            create_note($existing_ticket_id, $sender_username, $message, 0, 0, 0, 0, true, null, $email_msg_id);
+            create_note($existing_ticket_id, $sender_username, $message, 0, 0, 0, 0, true, get_user_department($sender_username), null, $email_msg_id);
         } else {
             $ticket_exists_result = HelpDB::get()->execute_query("SELECT linked_id FROM notes WHERE email_msg_id = ?", [$email_ancestor_id]);
             $ticket_exists_data = mysqli_fetch_assoc($ticket_exists_result);
@@ -189,7 +189,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
                     continue;
                 }
 
-                create_note($existing_ticket_id, $sender_username, $message, 0, 0, 0, 0, true, null, $email_msg_id);
+                create_note($existing_ticket_id, $sender_username, $message, 0, 0, 0, 0, true, get_user_department($sender_username), null, $email_msg_id);
             } else {
                 $failed_email_ids[] = $i;
                 log_app(LOG_ERR, "Failed to find ancestor id ( \"$email_ancestor_id\" ) in database for message \"$email_msg_id\". This shouldn't happen on a receipt email we sent out.");
@@ -240,7 +240,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
             }
 
             // ticket syntax is valid, add a note on that ticket
-            create_note($subject_ticket_id, $sender_username, $message, 0, 0, 0, 0, true, null);
+            create_note($subject_ticket_id, $sender_username, $message, 0, 0, 0, 0, true, get_user_department($sender_username), null);
         }
     }
 

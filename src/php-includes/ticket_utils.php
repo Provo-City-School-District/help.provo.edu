@@ -135,7 +135,7 @@ function create_note(
     bool $visible_to_client,
     ?int $department_id = null,
     string $date_override = null,
-    string $email_msg_id = null
+    string $email_msg_id = null,
 ) {
     $ticket_id_clean = trim(htmlspecialchars($ticket_id));
     $note_content_clean = trim(htmlspecialchars($note_content));
@@ -183,11 +183,11 @@ function create_note(
 
 
     // Log the creation of the new note in the ticket_logs table
-    $log_query = "INSERT INTO ticket_logs (ticket_id, user_id, field_name, old_value, new_value, created_at, department_id) VALUES (?, ?, ?, NULL, ?, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'), ?)";
+    $log_query = "INSERT INTO ticket_logs (ticket_id, user_id, field_name, old_value, new_value, created_at, department_id, visible_to_client) VALUES (?, ?, ?, NULL, ?, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'), ?, ?)";
     $log_stmt = mysqli_prepare(HelpDB::get(), $log_query);
 
     $notecolumn = "note";
-    mysqli_stmt_bind_param($log_stmt, "isssi", $ticket_id, $username, $notecolumn, $note_content_clean, $department_id_clean);
+    mysqli_stmt_bind_param($log_stmt, "isssii", $ticket_id, $username, $notecolumn, $note_content_clean, $department_id_clean, $visible_to_client);
     mysqli_stmt_execute($log_stmt);
     mysqli_stmt_close($log_stmt);
 

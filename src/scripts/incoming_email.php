@@ -117,6 +117,10 @@ for ($i = 1; $i <= $msg_count; $i++) {
         }
     }
 
+    // check department of sender
+    $department_id = get_user_department($sender_username);
+    $department_id = is_numeric($department_id) ? intval($department_id) : null;
+
     // Thanks https://stackoverflow.com/a/43181298
     $obj_structure = imap_fetchstructure($mbox, $i);
 
@@ -174,8 +178,9 @@ for ($i = 1; $i <= $msg_count; $i++) {
                 continue;
             }
 
+
             // add note on existing ticket
-            create_note($existing_ticket_id, $sender_username, $message, 0, 0, 0, 0, true, get_user_department($sender_username), null, $email_msg_id);
+            create_note($existing_ticket_id, $sender_username, $message, 0, 0, 0, 0, true, $department_id, null, $email_msg_id);
         } else {
             $ticket_exists_result = HelpDB::get()->execute_query("SELECT linked_id FROM notes WHERE email_msg_id = ?", [$email_ancestor_id]);
             $ticket_exists_data = mysqli_fetch_assoc($ticket_exists_result);
@@ -189,7 +194,7 @@ for ($i = 1; $i <= $msg_count; $i++) {
                     continue;
                 }
 
-                create_note($existing_ticket_id, $sender_username, $message, 0, 0, 0, 0, true, get_user_department($sender_username), null, $email_msg_id);
+                create_note($existing_ticket_id, $sender_username, $message, 0, 0, 0, 0, true, $department_id, null, $email_msg_id);
             } else {
                 $failed_email_ids[] = $i;
                 log_app(LOG_ERR, "Failed to find ancestor id ( \"$email_ancestor_id\" ) in database for message \"$email_msg_id\". This shouldn't happen on a receipt email we sent out.");

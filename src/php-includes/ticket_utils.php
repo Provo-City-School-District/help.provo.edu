@@ -133,7 +133,7 @@ function create_note(
     int $travel_hours,
     int $travel_minutes,
     bool $visible_to_client,
-    int $department_id = null,
+    ?int $department_id = null,
     string $date_override = null,
     string $email_msg_id = null
 ) {
@@ -144,7 +144,8 @@ function create_note(
     $work_minutes_clean = trim(htmlspecialchars($work_minutes));
     $travel_hours_clean = trim(htmlspecialchars($travel_hours));
     $travel_minutes_clean = trim(htmlspecialchars($travel_minutes));
-    $department_id_clean = trim(htmlspecialchars($department_id));
+    $department_id_clean = $department_id !== null ? intval($department_id) : null; // Handle NULL
+
     $timestamp = date('Y-m-d H:i:s');
 
 

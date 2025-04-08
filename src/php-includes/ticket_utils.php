@@ -133,10 +133,10 @@ function create_note(
     int $travel_hours,
     int $travel_minutes,
     bool $visible_to_client,
+    ?int $department_id = null,
     string $date_override = null,
     string $email_msg_id = null,
 ) {
-
     $ticket_id_clean = trim(htmlspecialchars($ticket_id));
     $note_content_clean = trim(htmlspecialchars($note_content));
     $username_clean = trim(htmlspecialchars($username));
@@ -144,7 +144,10 @@ function create_note(
     $work_minutes_clean = trim(htmlspecialchars($work_minutes));
     $travel_hours_clean = trim(htmlspecialchars($travel_hours));
     $travel_minutes_clean = trim(htmlspecialchars($travel_minutes));
+    $department_id_clean = $department_id !== null ? intval($department_id) : null;
+
     $timestamp = date('Y-m-d H:i:s');
+
 
     if (!isset($work_hours) || $work_hours === null || !isset($work_minutes) || $work_minutes === null || !isset($travel_hours) || $travel_hours === null || !isset($travel_minutes) || $travel_minutes === null) {
         return false;
@@ -177,12 +180,14 @@ function create_note(
     mysqli_stmt_execute($insert_stmt);
     mysqli_stmt_close($insert_stmt);
 
+
+
     // Log the creation of the new note in the ticket_logs table
-    $log_query = "INSERT INTO ticket_logs (ticket_id, user_id, field_name, old_value, new_value, created_at) VALUES (?, ?, ?, NULL, ?, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'))";
+    $log_query = "INSERT INTO ticket_logs (ticket_id, user_id, field_name, old_value, new_value, created_at, department_id, visible_to_client) VALUES (?, ?, ?, NULL, ?, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'), ?, ?)";
     $log_stmt = mysqli_prepare(HelpDB::get(), $log_query);
 
     $notecolumn = "note";
-    mysqli_stmt_bind_param($log_stmt, "isss", $ticket_id, $username, $notecolumn, $note_content_clean);
+    mysqli_stmt_bind_param($log_stmt, "isssii", $ticket_id, $username, $notecolumn, $note_content_clean, $department_id_clean, $visible_to_client);
     mysqli_stmt_execute($log_stmt);
     mysqli_stmt_close($log_stmt);
 
@@ -745,7 +750,7 @@ function get_parsed_ticket_data($ticket_data)
         $tmp["title"] = $row["name"];
         $tmp["description"] = limitChars(strip_tags(html_entity_decode($row["description"])), 100);
 
-        if (session_is_tech()) {
+        if (session_is_tech() && are_users_in_same_department($row["latest_note_author"], $_SESSION["username"])) {
             $notes_query = "SELECT creator, note FROM help.notes WHERE linked_id = ? ORDER BY
                 (CASE WHEN date_override IS NULL THEN created ELSE date_override END) DESC
             ";
@@ -1021,4 +1026,43 @@ function get_sitenumber_from_location_id($department)
     $sitenumber_result = HelpDB::get()->execute_query($sitenumber_query, [$department]);
     $sitenumber_row = mysqli_fetch_assoc($sitenumber_result);
     return $sitenumber_row['sitenumber'] ?? null;
+}
+// get users department
+function get_user_department($username)
+{
+    // Query to fetch the department of the user
+    $query = "SELECT us.department FROM users u INNER JOIN user_settings us ON u.id = us.user_id WHERE u.username = ?";
+    $result = HelpDB::get()->execute_query($query, [$username]);
+
+    if (!$result) {
+        log_app(LOG_ERR, "Failed to fetch department for user: $username");
+        return null;
+    }
+
+    $row = mysqli_fetch_assoc($result);
+    return $row['department'] ?? null;
+}
+// Check if two users are in the same department
+function are_users_in_same_department($creator_username, $current_username)
+{
+    // Query to fetch the department of both users
+    $query = "SELECT u.username, us.department 
+              FROM users u
+              INNER JOIN user_settings us ON u.id = us.user_id
+              WHERE u.username IN (?, ?)";
+    $result = HelpDB::get()->execute_query($query, [$creator_username, $current_username]);
+
+    if (!$result) {
+        log_app(LOG_ERR, "Failed to fetch departments for users: $creator_username and $current_username");
+        return false;
+    }
+
+    $departments = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        $departments[$row['username']] = $row['department'];
+    }
+
+    // Ensure both users were found and compare their departments
+    return isset($departments[$creator_username], $departments[$current_username]) &&
+        $departments[$creator_username] === $departments[$current_username];
 }

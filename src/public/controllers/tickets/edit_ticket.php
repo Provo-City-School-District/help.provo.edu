@@ -1145,8 +1145,11 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
             foreach ($notes as $note) :
                 // Hidden notes should only be viewable by admins
                 if (
-                    $note['visible_to_client'] == 0 &&
-                    !$_SESSION['permissions']['is_tech']
+                    $note['visible_to_client'] == 0 && (
+                        !$_SESSION['permissions']['is_tech'] ||
+                        !are_users_in_same_department($note['creator'], $_SESSION['username'])
+                    )
+
                 )
                     continue;
                 $num_notes++;
@@ -1411,6 +1414,14 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                 </tr>
                 <?php
                 while ($log_row = mysqli_fetch_assoc($log_result)) {
+                    // check if visible to client and if the user is in the same department
+                    if (
+                        $log_row['visible_to_client'] == 0 &&
+                        $log_row['department_id'] != get_user_department($_SESSION['username'])
+                    ) {
+                        continue; // Skip this log entry if not in the same department
+                    }
+
                     $uniqueNoteId = $log_row['id'];
                 ?>
                     <tr>

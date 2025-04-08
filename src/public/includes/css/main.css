@@ -420,6 +420,7 @@ table.dataTable .details a {
 table.dataTable .latestNote,
 table.dataTable .details {
 	overflow-wrap: break-word;
+	word-break: break-word;
 }
 
 .latestNote strong,

@@ -144,7 +144,7 @@ function create_note(
     $work_minutes_clean = trim(htmlspecialchars($work_minutes));
     $travel_hours_clean = trim(htmlspecialchars($travel_hours));
     $travel_minutes_clean = trim(htmlspecialchars($travel_minutes));
-    $department_id_clean = $department_id !== null ? intval($department_id) : null; // Handle NULL
+    $department_id_clean = $department_id !== null ? intval($department_id) : null;
 
     $timestamp = date('Y-m-d H:i:s');
 

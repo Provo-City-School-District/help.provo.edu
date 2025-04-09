@@ -1,0 +1,39 @@
+{% extends "base.twig" %}
+
+{% block content %}
+    <h1>API Keys</h1>
+
+    {% if new_key %}
+        <div class="alert">
+            <strong>New API Key (copy now!):</strong><br><br>
+            <code>{{ new_key }}</code>
+        </div>
+    {% endif %}
+
+    <form method="POST">
+        <input type="text" name="name" placeholder="New key name" required>
+        <button type="submit" name="add">Add Key</button>
+    </form>
+
+    <div style="margin-top: 5px;">
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Actions</th>
+            </tr>
+            {% for api_key in api_keys %}
+            <tr>
+                <td>{{ api_key.name }}</td>
+                <td>
+                    <form method="POST" style="display:inline;">
+                        <button name="regenerate" value="{{ api_key.name }}">Regenerate</button>
+                    </form>
+                    <form method="POST" style="display:inline;">
+                        <button name="delete" value="{{ api_key.name }}" onclick="return confirm('Are you sure?')">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

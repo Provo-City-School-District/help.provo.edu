@@ -7,12 +7,13 @@ require_once('email_utils.php');
 log_app(LOG_INFO, "close_resolved.php running");
 
 // Prepare a SQL statement to select tickets that need to be closed
-$select_tickets_query = "SELECT id, client,employee FROM help.tickets WHERE status = 'resolved' AND last_updated < NOW() - INTERVAL 10 DAY";
+$select_tickets_query = "SELECT id, client, name, employee FROM help.tickets WHERE status = 'resolved' AND last_updated < NOW() - INTERVAL 10 DAY";
 $select_tickets_result = HelpDB::get()->execute_query($select_tickets_query);
 
 
 foreach ($select_tickets_result as $ticket) {
     $ticket_id = $ticket['id'];
+    $ticket_subject = $ticket['name'];
     $client_email = email_address_from_username($ticket['client']);
     $client_name_array = get_local_name_for_user($ticket['client']);
     $client_name = $client_name_array['firstname'] . " " . $client_name_array['lastname'];
@@ -27,8 +28,8 @@ foreach ($select_tickets_result as $ticket) {
     if ($ticket['client'] !== $ticket['employee']) {
         // Send an email to the client with the feedback URL
         $feedback_url = "https://help.provo.edu/feedback.php?id=$unique_id";
-        $subject = "Ticket $ticket_id has been Closed - We Would Value Your Feedback";
-        $message = "Dear $client_name,<br><br>ticket $ticket_id has been closed. We would appreciate your feedback. Please click the link below to provide your feedback:<br><br>$feedback_url<br><br>Thank you!";
+        $subject = "Ticket $ticket_id - $ticket_subject has been Closed - We Would Value Your Feedback";
+        $message = "Dear $client_name,<br><br>Your ticket with subject: $ticket_subject, and ID: $ticket_id has been closed. We would appreciate your feedback. Please click the link below to provide your feedback:<br><br>$feedback_url<br><br>Thank you!";
         $headers = "From: no-reply@yourdomain.com";
         // Send the email
         send_email($client_email, $subject, $message);

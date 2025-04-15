@@ -4,7 +4,50 @@
    {% block workHours %}
    {% endblock %}
 {% block content %}
+
  <h1>Feedback Form for Ticket #{{ ticket_id|e }}</h1>
+ <div class="grid2">
+    <div>
+        <h2>Ticket Details</h2>
+        <div class="ticketDetails">
+            <p><strong>Ticket ID:</strong> {{ ticket_id|e }}</p>
+            <p><strong>Client Name:</strong> {{ client_name|e }}</p>
+            <p><strong>Tech Assigned Ticket:</strong> {{ ticket_tech|e }}</p>
+            <p><strong>Ticket Location:</strong> {{ ticket_location|e }}</p>
+            {% if ticket_data.room %}
+            <p><strong>Ticket Room:</strong> {{ ticket_data.room|e }}</p>
+            {% endif %}
+            <p><strong>Ticket Department:</strong> {{ ticket_department|e }}</p>
+            <p><strong>Ticket Subject:</strong> {{ ticket_subject|e }}</p>
+            <p><strong>Ticket Description:</strong> {{ ticket_description|raw }}</p>
+        </div>
+    </div>
+    <div>
+    <h2>Recent Notes</h2>
+    <table>
+        <tr>
+            <th>Created By</th>
+            <th>Created At</th>
+            <th>Note</th>
+        </tr>
+        {% for note in recent_notes %}
+        <tr>
+            <td>{{ note.creator|e }}</td>
+            <td>{{ note.created|e }}</td>
+            <td>{{ note.note|raw }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="3">No recent notes available.</td>
+        </tr>
+        {% endfor %}
+        
+    </table>
+
+
+    </div>
+ </div>
+ <h2>Submit Feedback for Ticket #{{ ticket_id|e }}</h2>
     <form method="POST" action="feedback.php" class="singleColForm">
         <input type="hidden" name="ticket_id" value="{{ ticket_id|e }}">
         <input type="hidden" name="feedback_id" value="{{ feedback_id|e }}">

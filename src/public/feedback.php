@@ -2,6 +2,7 @@
 require from_root("/../vendor/autoload.php");
 require_once('helpdbconnect.php');
 require_once('functions.php');
+require_once('ticket_utils.php');
 
 $feedback_id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_SPECIAL_CHARS);
 
@@ -40,7 +41,16 @@ if (!$ticket_results) {
     echo "Invalid feedback ID.";
     exit;
 }
-$client_name = $ticket['client'];
+$get_client_name = get_local_name_for_user($ticket['client']);
+$get_tech_name = get_local_name_for_user($ticket['employee']);
+$client_name = $get_client_name['firstname'] . " " . $get_client_name['lastname'];
+$ticket_tech = $get_tech_name['firstname'] . " " . $get_tech_name['lastname'];
+
+$ticket_description = html_entity_decode($ticket['description']);
+$ticket_location = location_name_from_id($ticket['location']);
+$ticket_department = location_name_from_id($ticket['department']);
+$ticket_subject = $ticket['name'];
+$recent_notes = get_ticket_notes($ticket['id'], 3);
 
 $loader = new \Twig\Loader\FilesystemLoader(from_root('/../views'));
 $twig = new \Twig\Environment($loader, [
@@ -54,7 +64,14 @@ echo $twig->render('feedback.twig', [
     'app_version' => $app_version,
 
     // Page variables
+    // 'ticket_data' => $ticket,
     'ticket_id' => $ticket['id'],
+    'ticket_description' => $ticket_description,
+    'ticket_tech' => $ticket_tech,
+    'ticket_location' => $ticket_location,
+    'ticket_department' => $ticket_department,
+    'ticket_subject' => $ticket_subject,
     'feedback_id' => $feedback_id,
-    'client_name' => $client_name
+    'client_name' => $client_name,
+    'recent_notes' => $recent_notes,
 ]);

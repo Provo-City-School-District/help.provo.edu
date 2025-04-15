@@ -27,7 +27,7 @@ foreach ($select_tickets_result as $ticket) {
     // Check that employee and client do not match before sending email
     if ($ticket['client'] !== $ticket['employee']) {
         // Send an email to the client with the feedback URL
-        $feedback_url = "https://help.provo.edu/feedback.php?id=$unique_id";
+        $feedback_url = getenv('ROOTDOMAIN') . "/feedback.php?id=$unique_id";
         $subject = "Ticket $ticket_id - $ticket_subject has been Closed - We Would Value Your Feedback";
         $message = "Dear $client_name,<br><br>Your ticket with subject: $ticket_subject, and ID: $ticket_id has been closed. We would appreciate your feedback. Please click the link below to provide your feedback:<br><br>$feedback_url<br><br>Thank you!";
         $headers = "From: no-reply@yourdomain.com";

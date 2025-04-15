@@ -11,12 +11,14 @@ if (!user_is_tech($username)) {
     exit;
 }
 
-$ticket_id = $_POST['ticket_id'];
-$ticket_desc = strip_tags($_POST['task_description']);
-$assigned_tech = $_POST['assigned_tech'];
+
+$ticket_id = filter_var($_POST['ticket_id'], FILTER_SANITIZE_NUMBER_INT);
+$ticket_desc = htmlspecialchars(trim($_POST['task_description']), ENT_QUOTES, 'UTF-8');
+$assigned_tech = isset($_POST['assigned_tech']) ? htmlspecialchars(trim($_POST['assigned_tech']), ENT_QUOTES, 'UTF-8') : null;
 if (empty($assigned_tech)) {
     $assigned_tech = null;
 }
+
 $form_task_complete = $_POST['task_complete'];
 $form_task_required = $_POST['required'];
 
@@ -42,7 +44,7 @@ if (isset($assigned_tech)) {
     $task_subject = "A task on ticket $ticket_id has been created and assigned to $firstname $lastname";
     $template = new Template(from_root("/includes/templates/task_created.phtml"));
 
-    $template->assigned_tech_name = $firstname." ".$lastname;
+    $template->assigned_tech_name = $firstname . " " . $lastname;
     $template->ticket_id = $ticket_id;
     $template->site_url = getenv('ROOTDOMAIN');
     $template->description = $ticket_desc;

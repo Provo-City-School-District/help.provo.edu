@@ -970,9 +970,6 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
         $hasfiles = true;
     }
     ?>
-
-
-
     <div id="file-upload-form" style="display: none;">
         <h3>Upload Files</h3>
         <p class="help-message">When you click 'Choose Files', a dialog box will appear. You can select either one file or multiple files at once from your computer. After making your selection, remember to click 'Upload' to attach the files to the ticket.</p>

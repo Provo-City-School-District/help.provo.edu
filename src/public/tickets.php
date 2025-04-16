@@ -18,7 +18,10 @@ $twig = new \Twig\Environment($loader, [
 ]);
 
 $tech_ticket_query = <<<STR
-    SELECT tickets.*, GROUP_CONCAT(DISTINCT CASE WHEN alerts.supervisor_alert = 0 THEN alerts.alert_level END) AS alert_levels
+    SELECT tickets.*, 
+           GROUP_CONCAT(DISTINCT CASE WHEN alerts.supervisor_alert = 0 THEN alerts.alert_level END) AS alert_levels,
+           (SELECT creator FROM help.notes WHERE linked_id = tickets.id ORDER BY 
+               (CASE WHEN date_override IS NULL THEN created ELSE date_override END) DESC LIMIT 1) AS latest_note_author
     FROM tickets
     LEFT JOIN alerts ON tickets.id = alerts.ticket_id
     WHERE tickets.status NOT IN ('Closed', 'Resolved')

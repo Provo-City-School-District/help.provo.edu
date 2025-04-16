@@ -736,7 +736,8 @@ function get_parsed_ticket_data($ticket_data)
     while ($row = $ticket_data->fetch_assoc()) {
         $tmp = [];
         $tmp["id"] = $row["id"];
-
+        // Handle missing latest_note_author
+        $tmp["latest_note_author"] = $row["latest_note_author"] ?? "Unknown";
 
         if (isset($row['alert_levels'])) {
             $alerts_split = explode(',', $row['alert_levels']);
@@ -750,7 +751,7 @@ function get_parsed_ticket_data($ticket_data)
         $tmp["title"] = $row["name"];
         $tmp["description"] = limitChars(strip_tags(html_entity_decode($row["description"])), 100);
 
-        if (session_is_tech() && are_users_in_same_department($row["latest_note_author"], $_SESSION["username"])) {
+        if (isset($row["latest_note_author"]) && session_is_tech() && are_users_in_same_department($row["latest_note_author"], $_SESSION["username"])) {
             $notes_query = "SELECT creator, note FROM help.notes WHERE linked_id = ? ORDER BY
                 (CASE WHEN date_override IS NULL THEN created ELSE date_override END) DESC
             ";

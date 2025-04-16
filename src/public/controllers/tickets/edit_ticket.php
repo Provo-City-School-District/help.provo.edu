@@ -970,9 +970,6 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
         $hasfiles = true;
     }
     ?>
-
-
-
     <div id="file-upload-form" style="display: none;">
         <h3>Upload Files</h3>
         <p class="help-message">When you click 'Choose Files', a dialog box will appear. You can select either one file or multiple files at once from your computer. After making your selection, remember to click 'Upload' to attach the files to the ticket.</p>
@@ -1058,7 +1055,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
             ?>
                 <tr>
                     <td data-cell="Assigned Tech"><?= $assigned_tech_str ?></td>
-                    <td data-cell="Task Description"><?= htmlspecialchars($row['description']); ?></td>
+                    <td data-cell="Task Description"><?= html_entity_decode($row['description']); ?></td>
                     <td data-cell="Completed"><input type="checkbox" onclick="taskStatusChanged(this, '<?= $task_id ?>');" <?= $checked_if_done ?> /></td>
                     <td class="edit_task_cell" data-cell="Edit Task"><button class="button" onclick="location.href='/controllers/tasks/edit_task.php?task_id=<?= $task_id ?>'">Edit Task</button></td>
                 </tr>

@@ -1,7 +1,6 @@
 <?php
 require_once 'block_file.php';
 require_once 'time_utils.php';
-session_regenerate_id(true);
 if (!session_id()) {
     session_start();
 }

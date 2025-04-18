@@ -26,6 +26,7 @@
 <?php endif; ?>
 <!-- <script src="/includes/js/clientSearch.js?v=1.0.0" type="text/javascript"></script> -->
 <script src="/includes/js/tinyMCE-conf.js?v=<?= $app_version; ?>" type="text/javascript"></script>
+<script src="/includes/js/external/tinymce-prism.js?v=<?= $app_version; ?>" type="text/javascript"></script>
 <script src="/includes/js/dataTables-conf.js?v=<?= $app_version; ?>" type="text/javascript"></script>
 <script src="/includes/js/global.js?v=<?= $app_version; ?>" type="text/javascript"></script>
 </body>

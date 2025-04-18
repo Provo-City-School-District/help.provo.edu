@@ -138,7 +138,7 @@ function create_note(
     string $email_msg_id = null,
 ) {
     $ticket_id_clean = trim(htmlspecialchars($ticket_id));
-    $note_content_clean = trim(htmlspecialchars($note_content));
+    $note_content_clean = htmlspecialchars(trim($note_content), ENT_QUOTES, 'UTF-8');
     $username_clean = trim(htmlspecialchars($username));
     $work_hours_clean = trim(htmlspecialchars($work_hours));
     $work_minutes_clean = trim(htmlspecialchars($work_minutes));

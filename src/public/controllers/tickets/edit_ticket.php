@@ -1188,7 +1188,8 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                     $archived_ticket_pattern = "/WO#A-\\d{1,6}/";
                     $asset_tag_pattern = "/(BC|SN|bc|sn)#([\w]*)(\s|$|)/";
                     if ($note['note'] !== null) {
-                        $note_data = strip_tags(sanitize_html($note['note']));
+                        // $note_data = strip_tags(sanitize_html($note['note']));
+                        $note_data = html_entity_decode($note['note'], ENT_QUOTES, 'UTF-8');
                     }
                     if (isset($note_data)) {
 
@@ -1261,7 +1262,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                                 } else {
                                     echo 'class="note-content clientVisible"';
                                 } ?>>
-                            <?php echo html_entity_decode($note_data); ?>
+                            <?php echo $note_data; ?>
                         </span>
                     <?php
                     }

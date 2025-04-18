@@ -35,7 +35,7 @@ if (($note['creator'] !== $_SESSION['username']) && !session_is_admin()) {
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Get the updated note and time from the form data
-    $updated_note = trim(htmlspecialchars($_POST['note']));
+    $updated_note = htmlspecialchars(trim($_POST['note']), ENT_QUOTES, 'UTF-8');
     $work_hours = trim(htmlspecialchars($_POST['work_hours']));
     $work_minutes = trim(htmlspecialchars($_POST['work_minutes']));
     $travel_hours = trim(htmlspecialchars($_POST['travel_hours']));
@@ -99,8 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <input type="hidden" name="note_id" value="<?= $note_id ?>">
     <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
     <label for="note">Note:</label>
-    <textarea id="note" name="note" class="tinyMCEtextarea"><?= html_entity_decode($note['note']) ?></textarea><br>
-
+    <textarea id="note" name="note" class="tinyMCEtextarea"><?= $note['note'] ?></textarea>
     <?php if (session_is_tech()) : ?>
         <h4>Work Time</h4>
         <div>

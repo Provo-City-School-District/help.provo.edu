@@ -42,6 +42,4 @@ tinymce.init({
   link_default_target: "_blank",
   text_patterns: false,
   autosave_interval: "10s",
-  // entity_encoding: "raw", // Prevents double-encoding of HTML entities
-  // valid_elements: "*[*]", // Allow all HTML elements and attributes
 });

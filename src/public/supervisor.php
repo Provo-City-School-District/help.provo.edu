@@ -182,8 +182,6 @@ $supervisorAlerts = mysqli_fetch_all($supervisor_alerts_result, MYSQLI_ASSOC);
                         // echo "<td>" . $alert['alert_level'] . "</td>";
                         echo "</tr>";
                     }
-                } else {
-                    echo "<tr><td colspan='4'>No alerts found</td></tr>";
                 }
                 ?>
             </tbody>

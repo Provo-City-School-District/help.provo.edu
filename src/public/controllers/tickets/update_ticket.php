@@ -591,7 +591,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($assigned_tech_changed) {
         if ($updatedEmployee != "unassigned") {
-            if (!empty($assigned_tech_name)) {
+            if (!empty($updatedEmployee)) {
                 $assigned_tech_name = get_local_name_for_user($updatedEmployee);
             }
             $firstname = $assigned_tech_name["firstname"];

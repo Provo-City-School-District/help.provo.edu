@@ -992,17 +992,31 @@ function user_exists_locally(string $username)
 
 function set_field_for_ticket(int $ticket_id, string $field, $value)
 {
-    // add to this later
+    // Add to this later
     $allowed_fields = ["employee", "status", "department"];
     if (!in_array($field, $allowed_fields, true)) {
         return false;
     }
 
+    // Fetch the current value of the field
+    $current_value_result = HelpDB::get()->execute_query("SELECT $field FROM tickets WHERE id = ?", [$ticket_id]);
+    if (!$current_value_result) {
+        log_app(LOG_ERR, "Failed to fetch current value of field \"$field\" for ticket id=$ticket_id");
+        return false;
+    }
+
+    $current_value = $current_value_result->fetch_assoc()[$field] ?? null;
+
+    // Update the field in the database
     $result = HelpDB::get()->execute_query("UPDATE tickets SET $field = ? WHERE id = ?", [$value, $ticket_id]);
     if (!$result) {
         log_app(LOG_ERR, "Failed to update ticket field \"$field\" for id=$ticket_id");
         return false;
     }
+
+    // Log the change
+    $updated_by = $_SESSION['username'] ?? 'system';
+    logTicketChange(HelpDB::get(), $ticket_id, $updated_by, $field, $current_value, $value);
 
     return true;
 }

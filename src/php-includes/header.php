@@ -129,6 +129,7 @@ if (isset($_SESSION['username']) && $_SESSION['username'] != "") {
     }
     ?>
     <link href="/includes/css/external/lightbox.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/includes/css/external/tinymce-prism.css">
 </head>
 
 <body>

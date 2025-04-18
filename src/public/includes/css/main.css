@@ -252,14 +252,7 @@ blockquote {
 	text-align: center;
 }
 
-.language-markup {
-	background-color: var(--theme-grey);
-	color: var(--theme-primary);
-	padding: 1em;
-	border-radius: 8px;
-}
-
-.language-markup:before {
+code.language-markup:before {
 	content: "Code:";
 	display: block;
 	font-size: 120%;

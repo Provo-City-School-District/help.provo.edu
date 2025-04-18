@@ -19,7 +19,7 @@ if (userPref === "dark") {
 tinymce.init({
   selector: ".tinyMCEtextarea",
   toolbar:
-    "undo redo restoredraft | bold italic strikethrough | blockquote | paste pastetext removeformat | numlist bullist | code | link unlink | emoticons",
+    "undo redo restoredraft | bold italic strikethrough | blockquote | paste pastetext removeformat | numlist bullist | code | link unlink | emoticons | codesample | wordcount",
   menubar: false,
   license_key: "gpl",
   paste_as_text: true,
@@ -33,6 +33,7 @@ tinymce.init({
     "autolink",
     "wordcount",
     "emoticons",
+    "codesample",
   ],
   skin: skin,
   content_style: content_styles,

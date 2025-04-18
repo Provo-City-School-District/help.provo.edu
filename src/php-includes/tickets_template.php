@@ -89,7 +89,7 @@ function display_tickets_table($tickets, $database, $custom_data_table_class = n
             $clientFirstName = $result['firstname'];
             $clientLastName = $result['lastname'];
         }
-        if (!isset($ticket['location']) || $ticket['location'] == null) {
+        if (!isset($ticket['location']) || $ticket['location'] == null || $ticket['location'] == "" || $ticket['location'] == "0") {
             $location_name = "N/A";
         }
         echo '<tr class="' . $row_color . '">'

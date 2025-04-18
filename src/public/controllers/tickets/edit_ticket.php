@@ -1145,8 +1145,8 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                     $note['visible_to_client'] == 0 && (
                         !$_SESSION['permissions']['is_tech'] ||
                         !are_users_in_same_department($note['creator'], $_SESSION['username'])
-                    )
-
+                    ) &&
+                    $note['creator'] !== 'System' // Allow if the creator is "System"
                 )
                     continue;
                 $num_notes++;
@@ -1415,7 +1415,8 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                     // check if visible to client and if the user is in the same department
                     if (
                         $log_row['visible_to_client'] == 0 &&
-                        $log_row['department_id'] != get_user_department($_SESSION['username'])
+                        $log_row['department_id'] != get_user_department($_SESSION['username']) &&
+                        $log_row['user_id'] !== 'System'
                     ) {
                         continue; // Skip this log entry if not in the same department
                     }

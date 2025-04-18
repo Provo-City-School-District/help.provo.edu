@@ -252,6 +252,21 @@ blockquote {
 	text-align: center;
 }
 
+.language-markup {
+	background-color: var(--theme-grey);
+	color: var(--theme-primary);
+	padding: 1em;
+	border-radius: 8px;
+}
+
+.language-markup:before {
+	content: "Code:";
+	display: block;
+	font-size: 120%;
+	margin-bottom: 1em;
+
+}
+
 /* =============================== Header Styles =============================== */
 #mainHeader {
 	background: linear-gradient(to bottom, var(--header-grad-start), var(--header-grad-end) 50%, var(--header-grad-end) 55%, var(--header-grad-start));

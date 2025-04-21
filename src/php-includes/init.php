@@ -1,7 +1,7 @@
 <?php
 
 // Get the user agent
-$user_agent = $_SERVER['HTTP_USER_AGENT'];
+$user_agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
 
 // Check if the user agent is from InterMapper
 if (strpos($user_agent, 'InterMapper') === false && !session_id()) {

@@ -1,4 +1,5 @@
 <?php
+require "helpdbconnect.php";
 $headers = apache_request_headers();
 
 // check that api key is included

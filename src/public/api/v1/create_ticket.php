@@ -1,7 +1,6 @@
 <?php
-require "helpdbconnect.php";
-require "ticket_utils.php";
 require "api_authenticate.php";
+require "ticket_utils.php";
 
 // make sure ticket title and ticket description are set
 if (!isset($_POST["ticket_title"]) || 

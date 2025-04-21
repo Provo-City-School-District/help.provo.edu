@@ -20,13 +20,22 @@ if ($result && $result->num_rows > 0) {
     // api key exists, continue
 
     // make sure ticket title and ticket description are set
-    if (!isset($_POST["ticket_title"]) || !isset($_POST["ticket_description"])) {
+    if (!isset($_POST["ticket_title"]) || 
+        !isset($_POST["ticket_description"]) ||
+        !isset($_POST["ticket_department"]) ||
+        !isset($_POST["ticket_location"])) {
         http_response_code(400);
         exit;
     }
 
-    $created_ticket_id = 0;
-    create_ticket("donotreply", $_POST["ticket_title"], $_POST["ticket_description"], "", 0, $created_ticket_id);
+    $params = [
+        'client' => "donotreply",
+        'title' => $_POST["ticket_title"],
+        'desc' => $_POST["ticket_description"],
+        'location' => $_POST["ticket_location"],
+        'department' => $_POST["ticket_department"]
+    ];
+    $created_ticket_id = __create_ticket($params);
 
     $data = [];
     $data["ticket_id"] = $created_ticket_id;

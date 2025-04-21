@@ -385,27 +385,54 @@ function create_note(
     return true;
 }
 
-// Returns true on success, false on failure
-function create_ticket(string $client, string $subject, string $content, string $email_msg_id, int $location_code, int &$created_ticket_id)
+/*
+ticket_params should be an associative array with these values set:
+REQUIRED:
+    client (string) => the ticket client 
+    title (string) => the ticket title
+    desc (string) => the ticket description / request body
+OPTIONAL:
+    priority (int) => ticket priority, default=10
+    location (int) => location code, default=null
+    department (int) => department, default=1897 (tech dept)
+    email_msg_id (string) => associate the ticket with an email message id 
+        such that replies to this email get inserted as notes
+    
+RETURNS:
+    created ticket_id or 0 if failed
+*/
+
+function __create_ticket(array $ticket_params)
 {
+    $client = $ticket_params['client'];
+    $subject = $ticket_params['title'];
+    $content = $ticket_params['desc'];
+    if (!isset($client) || !isset($subject) || !isset($content)) {
+        // can't create ticket, return 0
+        return 0;
+    }
+
+    $priority = $ticket_params['priority'] ?? 10;
+    $location_code = $ticket_params['location'] ?? null;
+    $department_code = $ticket_params['department'] ?? 1897;
+    $email_msg_id = $ticket_params['email_msg_id'] ?? null;
+
 
     $client_clean = trim(htmlspecialchars($client));
     $subject_clean = limitChars(trim(htmlspecialchars($subject)), 100);
     $content_clean = trim(htmlspecialchars($content));
 
     // Create an SQL INSERT query
-    $insertQuery = "INSERT INTO tickets (location, room, name, description, created, last_updated, due_date, status, client,attachment_path,phone,cc_emails,bcc_emails,request_type_id,priority)
-                VALUES (?, NULL, ?, ?, ?, ?, ?, 'open', ?, '', '', '', '', 0, 10)";
+    $insert_query = "INSERT INTO tickets (location, room, name, description, created, last_updated, due_date, status, client,attachment_path,phone,cc_emails,bcc_emails,request_type_id,priority,department)
+                VALUES (?, NULL, ?, ?, ?, ?, ?, 'open', ?, '', '', '', '', 0, 10, ?)";
 
     // Prepare the SQL statement
-    $create_stmt = mysqli_prepare(HelpDB::get(), $insertQuery);
+    $create_stmt = mysqli_prepare(HelpDB::get(), $insert_query);
 
     if ($create_stmt === false) {
         log_app(LOG_ERR, 'Error preparing insert query: ' . mysqli_error(HelpDB::get()));
-        return false;
+        return 0;
     }
-
-    $priority = 10;
 
     $created_time = date("Y-m-d H:i:s");
     // Calculate the due date by adding the priority days to the created date
@@ -426,7 +453,7 @@ function create_ticket(string $client, string $subject, string $content, string 
 
     mysqli_stmt_bind_param(
         $create_stmt,
-        'issssss',
+        'issssssi',
         $location_code,
         $subject_clean,
         $content_clean,
@@ -434,6 +461,7 @@ function create_ticket(string $client, string $subject, string $content, string 
         $created_time,
         $due_date,
         $client_clean,
+        $department_code
     );
 
 
@@ -442,14 +470,34 @@ function create_ticket(string $client, string $subject, string $content, string 
         log_app(LOG_INFO, "create_ticket success");
 
         $created_ticket_id = mysqli_insert_id(HelpDB::get());
-        add_ticket_msg_id_mapping($email_msg_id, $created_ticket_id);
-        return true;
+        if (isset($email_msg_id)) {
+            add_ticket_msg_id_mapping($email_msg_id, $created_ticket_id);
+        }
+        return $created_ticket_id;
     } else {
         log_app(LOG_ERR, "create_ticket failure");
-        return false;
+        return 0;
     }
+}
 
-    mysqli_stmt_close($create_stmt);
+// Returns true on success, false on failure
+function create_ticket(
+    string $client, 
+    string $subject, 
+    string $content, 
+    string $email_msg_id, 
+    int $location_code, 
+    int &$created_ticket_id)
+{
+    $params = [
+        'client' => $client,
+        'title' => $subject,
+        'desc' => $content,
+        'location' => $location_code,
+        'email_msg_id' => $email_msg_id
+    ];
+    $created_ticket_id = __create_ticket($params);
+    return $created_ticket_id != 0;
 }
 
 // Messages for alerts

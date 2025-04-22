@@ -482,8 +482,8 @@ ol#subMenu {
 }
 
 .ticketButtons {
+    display: grid;
 	place-items: start;
-
 }
 
 .ticketButtons>div {

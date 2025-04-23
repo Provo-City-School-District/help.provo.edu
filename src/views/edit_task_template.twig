@@ -1,0 +1,40 @@
+{% extends "base.twig" %}
+
+{% block content %}
+<form method="POST" class="singleColForm">
+    {% if error_message %}
+        <p style="color: red;">{{ error_message|e }}</p>
+    {% endif %}
+    <div class="grid2">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" value="{{ template.name|e }}" required>
+    </div>
+
+    <div class="grid2">
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" required>{{ template.description|e }}</textarea>
+    </div>
+
+    <div class="grid2">
+        <label for="required">Required:</label>
+        <input type="checkbox" id="required" name="required" {{ template.required ? 'checked' : '' }}>
+    </div>
+
+    <div class="grid2">
+         <label for="assigned_tech">Assigned Tech:</label>
+        <select name="assigned_tech" id="assigned_tech">
+            <option value="unassigned" {{ template.assigned_tech is null or template.assigned_tech == 'unassigned' ? 'selected' : '' }}>Unassigned</option>
+            {% for tech in tech_usernames_parsed %}
+                <option value="{{ tech.username|e }}" {{ template.assigned_tech == tech.username ? 'selected' : '' }}>
+                    {{ tech.display_string|e }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+   
+    
+    <input type="hidden" name="created_by" value="{{ template.created_by|e }}">
+    <input type="hidden" name="org_template_name" value="{{ template.name|e }}">
+    <button type="submit" class="button">Update Template</button>
+</form>
+{% endblock %}

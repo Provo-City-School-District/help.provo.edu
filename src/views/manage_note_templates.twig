@@ -1,0 +1,61 @@
+{% extends "base.twig" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Manage Note Templates</h2>
+
+    <!-- Add Note Template Form -->
+    <form action="manage_note_templates.php" method="POST" class="mb-4">
+        <div class="mb-3">
+            <label for="name" class="form-label">Template Name</label>
+            <input type="text" name="name" id="name" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label for="content" class="form-label">Template Content</label>
+            <textarea class="tinyMCEtextarea" name="content" id="content" class="form-control" rows="4"></textarea>
+        </div>
+        <button class="button" type="submit" class="btn btn-primary">Add / Update Template</button>
+    </form>
+
+    <!-- Existing Note Templates Table -->
+    <h3>Existing Templates</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Content</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for template in templates %}
+            <tr>
+                <td>{{ template.name }}</td>
+                <td>
+                    <div class="preview" style="max-height: 150px; overflow: auto;">
+                        {{ template.content|raw }}
+                    </div>
+                </td>
+                <td>
+                    <form action="edit_note_template.php" method="GET" style="display:inline;">
+                        <input type="hidden" name="name" value="{{ template.name }}">
+                        <button type="submit" class="btn btn-warning btn-sm">Edit</button>
+                    </form>
+                    <form action="manage_note_templates.php" method="POST" style="display:inline;">
+                        <input type="hidden" name="name" value="{{ template.name }}">
+                        <button type="submit" class="btn btn-danger btn-sm"
+                                onclick="return confirm('Are you sure you want to delete this template?');">
+                            Delete
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3" class="text-center">No templates found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

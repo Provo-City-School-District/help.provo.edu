@@ -1,0 +1,17 @@
+{% extends "base.twig" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Edit Template: {{ name }}</h2>
+
+    <form action="manage_note_templates.php" method="POST">
+        <input type="hidden" name="name" value="{{ name }}">
+        <div class="mb-3">
+            <label for="content" class="form-label">Template Content</label>
+            <textarea name="content" id="content" class="form-control tinyMCEtextarea" rows="10">{{ content }}</textarea>
+        </div>
+        <button class="button" type="submit" class="btn btn-primary">Save Changes</button>
+        <button class="button" type="button" onclick="window.location.href='manage_note_templates.php'">Cancel</button>
+    </form>
+</div>
+{% endblock %}

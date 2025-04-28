@@ -13,7 +13,7 @@ if (
     exit;
 }
 // Check for client, default to "donotreply" if not provided
-$client = isset($_POST["client"]) ? $_POST["client"] : "donotreply";
+$client = isset($_POST["ticket_client"]) ? $_POST["ticket_client"] : "donotreply";
 
 $params = [
     'client' => $client,

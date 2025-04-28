@@ -9,7 +9,27 @@
     <li>Email: {{ email }}</li>
     <li>Employee ID: {{ employee_id }}</li>
 </ul>
-
+{% if user_permissions.is_tech %}
+<h2>Current Week Work Order Hours</h2>
+    <table id="profile_time_table">
+        <tr>
+            <th>Monday</th>
+            <th>Tuesday</th>
+            <th>Wednesday</th>
+            <th>Thursday</th>
+            <th>Friday</th>
+            <th>Total</th>
+        </tr>
+        <tr>
+            <td data-cell="Monday">{{ user_times[0] }} hrs</td>
+            <td data-cell="Tuesday">{{ user_times[1] }} hrs</td>
+            <td data-cell="Wednesday">{{ user_times[2] }} hrs</td>
+            <td data-cell="Thursday">{{ user_times[3] }} hrs</td>
+            <td data-cell="Friday">{{ user_times[4] }} hrs</td>
+            <td data-cell="Week Total">{{ user_time_total }} hrs</td>
+        </tr>
+    </table>
+{% endif %}
 <h2>My Settings</h2>
 <form action="/controllers/users/update_user_settings.php" method="post" class="singleColForm">
     <!-- Controller Variables -->
@@ -98,30 +118,16 @@
             {% endif %}
         </select>
     </div>
-
     <input type="submit" class='button' value="Update">
 </form>
-<h2>Help / Documentation</h2>
-<a href="/note_shortcuts.php">Note Shorthand</a>
-{% if user_permissions.is_tech %}
-<h2>Current Week Work Order Hours</h2>
-    <table id="profile_time_table">
-        <tr>
-            <th>Monday</th>
-            <th>Tuesday</th>
-            <th>Wednesday</th>
-            <th>Thursday</th>
-            <th>Friday</th>
-            <th>Total</th>
-        </tr>
-        <tr>
-            <td data-cell="Monday">{{ user_times[0] }} hrs</td>
-            <td data-cell="Tuesday">{{ user_times[1] }} hrs</td>
-            <td data-cell="Wednesday">{{ user_times[2] }} hrs</td>
-            <td data-cell="Thursday">{{ user_times[3] }} hrs</td>
-            <td data-cell="Friday">{{ user_times[4] }} hrs</td>
-            <td data-cell="Week Total">{{ user_time_total }} hrs</td>
-        </tr>
-    </table>
-{% endif %}
+
+
+
+<h2>Resources & Tools</h2>
+<ul>
+    <li><a href="/note_shortcuts.php">Note Shorthand</a></li>
+    {# Hiding buttons until approved #}
+    {# <li><a href="/controllers/tickets/manage_task_template.php">Manage Task Templates</a></li> #}
+    {# <li><a href="/controllers/tickets/manage_note_templates.php">Manage Note Templates</a></li> #}
+</ul>
 {% endblock %}

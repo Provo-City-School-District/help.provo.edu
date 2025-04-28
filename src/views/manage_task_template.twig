@@ -1,0 +1,70 @@
+{% extends "base.twig" %}
+
+{% block content %}
+<h1>Manage Task Templates</h1>
+<table>
+    <tr>
+        <th>Template Group</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Required</th>
+        <th>Assigned Tech</th>
+        <th>Actions</th>
+    </tr>
+    {% for template in templates %}
+        <tr>
+            <td>{{ template.template_group|e }}</td>
+            <td>{{ template.name|e }}</td>
+            <td>{{ template.description|e }}</td>
+            <td>{{ template.required ? 'Yes' : 'No' }}</td>
+           <td>
+                {{ tech_usernames_map[template.assigned_tech]|default('None')|e }}
+            </td>
+            <td>
+                <a href="edit_task_template.php?created_by={{ template.created_by }}&name={{ template.name|url_encode }}">Edit</a>
+                <a href="delete_task_template.php?created_by={{ template.created_by }}&name={{ template.name|url_encode }}" onclick="return confirm('Are you sure?')">Delete</a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+
+<h1>Create Task Template</h1>
+{% if error_message %}
+    <p style="color: red;">{{ error_message|e }}</p>
+{% endif %}
+<form method="POST" class="singleColForm">
+    <div class="grid2">
+        <label for="template_group">Template Group:</label>
+        <input type="text" id="template_group" name="template_group" list="group_suggestions" required>
+        <datalist id="group_suggestions">
+            {% for group in groups %}
+                <option value="{{ group.template_group|e }}">{{ group.template_group|e }}</option>
+            {% endfor %}
+        </datalist>
+    </div>
+   <div class="grid2">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+    </div>
+    <div class="grid2">
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" required></textarea>
+    </div>
+    <div class="grid2">
+        <label for="required">Required:</label>
+        <input type="checkbox" id="required" name="required">
+    </div>
+    <div class="grid2">
+        <label for="assigned_tech">Assigned Tech:</label>
+        <select name="assigned_tech" id="assigned_tech">
+            <option value="unassigned">Unassigned</option>
+            {% for tech in tech_usernames_parsed %}
+                <option value="{{ tech.username|e }}">{{ tech.display_string|e }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    
+    <button type="submit" class="button">Create Template</button>
+</form>
+{% endblock %}

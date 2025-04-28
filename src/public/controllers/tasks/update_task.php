@@ -1,4 +1,5 @@
 <?php
+require "block_file.php";
 require "helpdbconnect.php";
 require "ticket_utils.php";
 

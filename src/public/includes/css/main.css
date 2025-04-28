@@ -224,16 +224,24 @@ blockquote {
 	background-color: var(--theme-primary);
 	color: var(--theme-white);
 	padding: 1em 0 1em 1em;
+	min-width: 400px;
 }
 
-.singleColForm input {
+.singleColForm input:not([type="submit"]) {
 	justify-self: start;
 	padding: 1em;
+	width: 100%;
 }
 
 .singleColForm select {
 	padding: 1em 0 1em 1em;
 	font-size: 1em;
+}
+
+.singleColForm textarea {
+	width: 100%;
+	padding: 1em;
+	height: 100px;
 }
 
 .singleColForm input[type="checkbox"] {
@@ -482,8 +490,8 @@ ol#subMenu {
 }
 
 .ticketButtons {
+	display: grid;
 	place-items: start;
-
 }
 
 .ticketButtons>div {

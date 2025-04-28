@@ -10,9 +10,11 @@ if (!isset($_POST["ticket_title"]) ||
     http_response_code(400);
     exit;
 }
+// Check for client, default to "donotreply" if not provided
+$client = isset($_POST["client"]) ? $_POST["client"] : "donotreply";
 
 $params = [
-    'client' => "donotreply",
+    'client' => $client,
     'title' => $_POST["ticket_title"],
     'desc' => $_POST["ticket_description"],
     'location' => $_POST["ticket_location"],

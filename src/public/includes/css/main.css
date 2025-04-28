@@ -227,7 +227,7 @@ blockquote {
 	min-width: 400px;
 }
 
-.singleColForm input {
+.singleColForm input:not([type="submit"]) {
 	justify-self: start;
 	padding: 1em;
 	width: 100%;
@@ -490,7 +490,7 @@ ol#subMenu {
 }
 
 .ticketButtons {
-    display: grid;
+	display: grid;
 	place-items: start;
 }
 

@@ -39,11 +39,11 @@
                 <td>
                     <form action="edit_note_template.php" method="GET" style="display:inline;">
                         <input type="hidden" name="name" value="{{ template.name }}">
-                        <button type="submit" class="btn btn-warning btn-sm">Edit</button>
+                        <button type="submit" class="button">Edit</button>
                     </form>
                     <form action="manage_note_templates.php" method="POST" style="display:inline;">
                         <input type="hidden" name="name" value="{{ template.name }}">
-                        <button type="submit" class="btn btn-danger btn-sm"
+                        <button type="submit" class="button"
                                 onclick="return confirm('Are you sure you want to delete this template?');">
                             Delete
                         </button>

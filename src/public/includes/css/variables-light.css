@@ -75,6 +75,7 @@ body {
 }
 
 .modal-form-background {
+    z-index: 1000 !important;
 	display: none;
 	/* Hidden by default */
 	position: fixed;

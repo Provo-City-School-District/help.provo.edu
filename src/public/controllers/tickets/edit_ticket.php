@@ -401,6 +401,13 @@ $insert_viewed_query = <<<STR
 STR;
 $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$user_id, $ticket_id]);
 
+
+$note_templates_query = <<<STR
+    SELECT * FROM note_templates WHERE user_id = ?
+STR;
+
+$note_templates = HelpDB::get()->execute_query($note_templates_query, [$user_id]);
+
 ?>
 <div class="alerts_wrapper">
     <?php foreach ($alert_data as $alert) : ?>
@@ -1073,7 +1080,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
 
     <div id="new-task-form-background" class="modal-form-background">
         <div id="new-task-form" class="modal-form" style="display: none;">
-            <div class="modal-form-header"><span id="new-task-form-close">&times;</span></div>
+            <div class="modal-form-header"><span class="modal-form-close" id="new-task-form-close">&times;</span></div>
             <h3>Add Task</h3>
             <form id="task-submit" method="post" action="add_task_handler.php">
                 <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
@@ -1109,6 +1116,25 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                 </div>
                 <input style="margin-top: 20px;" type="submit" class="button" value="Submit Task">
             </form>
+        </div>
+    </div>
+    <div id="note-template-form-background" class="modal-form-background">
+        <div id="note-template-form" class="modal-form" style="display: none;">
+            <div class="modal-form-header"><span class="modal-form-close" id="note-template-form-close">&times;</span></div>
+            <h3>Note Templates</h3><br>
+            <a href="/controllers/tickets/manage_note_templates.php">Manage Note Templates</a>
+            <table>
+                <th>Name</th>
+                <th>Content Preview</th>
+                <th>Actions</th>
+            <?php foreach ($note_templates as $template) : ?>
+                <tr>
+                    <td><?= $template['name'] ?></td>
+                    <td><?= limitChars($template['content'], 100) ?></td>
+                    <td><button class="button" onclick="insertTemplate('<?= $template['name'] ?>')">Insert</button></td>
+                 </tr>
+            <?php endforeach; ?>
+            </table>
         </div>
     </div>
     <!-- Loop through the notes and display them -->
@@ -1312,7 +1338,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                 <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
                 <div>
                     <label for="note">Note:</label>
-                    <textarea id="note" name="note" class="tinyMCEtextarea"></textarea>
+                    <textarea id="note-textbox" name="note" class="tinyMCEtextarea"></textarea>
                 </div>
                 <?php
                 if (session_is_tech()) {
@@ -1377,6 +1403,7 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
                 }
                 ?>
                 <br>
+                <button id="show-templates-button" type="button" class="button">Insert From Template</button><br>
                 <input type="submit" class="button" value="Submit Note">
             </form>
             <script src="/includes/js/external/jquery-3.7.1.min.js"></script>
@@ -1636,6 +1663,24 @@ $insert_viewed_status = HelpDB::get()->execute_query($insert_viewed_query, [$use
             },
             error: function() {
                 alert("Error: Ticket task status AJAX call failed");
+            },
+        });
+    }
+
+    function insertTemplate(template_name) {
+        $.ajax({
+            url: "/ajax/note_templates/get_template_content.php",
+            method: "GET",
+            data: {
+                template_name: template_name,
+            },
+            success: function(data, textStatus, xhr) {
+                const template_content = data.content;
+                tinymce.get('note-textbox').setContent(template_content);
+                dismissTemplateView();
+            },
+            error: function() {
+                alert("Error: Note template content AJAX call failed");
             },
         });
     }

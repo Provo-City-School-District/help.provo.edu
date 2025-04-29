@@ -1153,13 +1153,13 @@ while ($row = $groups_result->fetch_assoc()) {
                 <th>Name</th>
                 <th>Content Preview</th>
                 <th>Actions</th>
-            <?php foreach ($note_templates as $template) : ?>
-                <tr>
-                    <td><?= $template['name'] ?></td>
-                    <td><?= limitChars($template['content'], 100) ?></td>
-                    <td><button class="button" onclick="insertTemplate('<?= $template['name'] ?>')">Insert</button></td>
-                 </tr>
-            <?php endforeach; ?>
+                <?php foreach ($note_templates as $template) : ?>
+                    <tr>
+                        <td><?= $template['name'] ?></td>
+                        <td><?= limitChars($template['content'], 100) ?></td>
+                        <td><button class="button" onclick="insertTemplate('<?= $template['name'] ?>')">Insert</button></td>
+                    </tr>
+                <?php endforeach; ?>
             </table>
         </div>
     </div>

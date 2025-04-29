@@ -43,27 +43,36 @@ $(document).ready(function () {
       return parseInt(document.getElementById(field).value, 10) === 0;
     });
 
-    const values = fields.map((field) => parseInt(document.getElementById(field).value, 10));
+    const values = fields.map((field) =>
+      parseInt(document.getElementById(field).value, 10)
+    );
 
     const note_content = tinymce.activeEditor.getContent("note");
 
     // Check if the user is a tech user and if all the time fields are valid
     if (isTechUser) {
-        if (allZero) {
-            alert("Please enter a value greater than 0 for at least one of the time fields.");
-            e.preventDefault(); // Prevent the form submission
-            return;
-        } else if (values[0] < 0 || values[1] < 0 || values[2] < 0 || values[3] < 0) {
-            alert("Negative time values are not allowed.");
-            e.preventDefault(); // Prevent the form submission
-            return;
-        }
-    }
-    
-    if (!note_content) {
-        alert("Please enter some note content");
+      if (allZero) {
+        alert(
+          "Please enter a value greater than 0 for at least one of the time fields."
+        );
         e.preventDefault(); // Prevent the form submission
         return;
+      } else if (
+        values[0] < 0 ||
+        values[1] < 0 ||
+        values[2] < 0 ||
+        values[3] < 0
+      ) {
+        alert("Negative time values are not allowed.");
+        e.preventDefault(); // Prevent the form submission
+        return;
+      }
+    }
+
+    if (!note_content) {
+      alert("Please enter some note content");
+      e.preventDefault(); // Prevent the form submission
+      return;
     }
 
     e.preventDefault();
@@ -104,6 +113,7 @@ $(document).ready(function () {
         $("#travel_minutes").val(0);
         $("#total_time").val(0);
       },
+
       error: function (jqXHR, textStatus, errorThrown) {
         console.log(textStatus, errorThrown);
       },

@@ -408,6 +408,14 @@ STR;
 
 $note_templates = HelpDB::get()->execute_query($note_templates_query, [$user_id]);
 
+// Fetch available task groups
+$groups_query = "SELECT DISTINCT template_group FROM task_templates WHERE template_group IS NOT NULL";
+$groups_result = HelpDB::get()->execute_query($groups_query);
+$groups = [];
+while ($row = $groups_result->fetch_assoc()) {
+    $groups[] = $row;
+}
+
 ?>
 <div class="alerts_wrapper">
     <?php foreach ($alert_data as $alert) : ?>
@@ -1116,6 +1124,24 @@ $note_templates = HelpDB::get()->execute_query($note_templates_query, [$user_id]
                 </div>
                 <input style="margin-top: 20px;" type="submit" class="button" value="Submit Task">
             </form>
+
+
+            <!-- Add Template Group -->
+            <div>
+                <label for="task_group_selector" class="hidden">Select Task Group:</label>
+                <select id="task_group_selector" name="task_group">
+                    <option value="">-- Select a Task Group --</option>
+                    <?php foreach ($groups as $group): ?>
+                        <option value="<?= htmlspecialchars($group['template_group'], ENT_QUOTES, 'UTF-8') ?>">
+                            <?= htmlspecialchars($group['template_group'], ENT_QUOTES, 'UTF-8') ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+
+                <button id="apply-task-group-button" class="button">Apply Task Group</button>
+            </div>
+
+
         </div>
     </div>
     <div id="note-template-form-background" class="modal-form-background">
@@ -1759,4 +1785,41 @@ $note_templates = HelpDB::get()->execute_query($note_templates_query, [$user_id]
         else
             expand_row.textContent = `Expand ${num_items_str} more ${note_str}...`;
     }
+</script>
+
+
+<script>
+    document.getElementById('apply-task-group-button').addEventListener('click', function() {
+        const selectedGroup = document.getElementById('task_group_selector').value;
+
+        if (!selectedGroup) {
+            alert('Please select a task group before applying.');
+            return;
+        }
+
+        // Send the selected task group to the server
+        fetch('/controllers/tickets/apply_task_group.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ticket_id: <?= $ticket_id ?>,
+                    task_group: selectedGroup,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Task group applied successfully!');
+                    location.reload(); // Reload the page to show the updated tasks
+                } else {
+                    alert('Failed to apply task group: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while applying the task group.');
+            });
+    });
 </script>

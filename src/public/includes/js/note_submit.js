@@ -47,7 +47,7 @@ $(document).ready(function () {
       parseInt(document.getElementById(field).value, 10)
     );
 
-    const note_content = tinymce.activeEditor.getContent("note");
+    const note_content = tinymce.activeEditor.getContent("note-textbox");
 
     // Check if the user is a tech user and if all the time fields are valid
     if (isTechUser) {

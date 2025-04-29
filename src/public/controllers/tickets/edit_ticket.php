@@ -1125,7 +1125,7 @@ while ($row = $groups_result->fetch_assoc()) {
                 <input style="margin-top: 20px;" type="submit" class="button" value="Submit Task">
             </form>
 
-
+            <a href="/controllers/tickets/manage_task_template.php">Manage Tasks Templates</a>
             <!-- Add Template Group -->
             <div>
                 <label for="task_group_selector" class="hidden">Select Task Group:</label>

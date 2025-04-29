@@ -2,33 +2,7 @@
 
 {% block content %}
 <h1>Manage Task Templates</h1>
-<table>
-    <tr>
-        <th>Template Group</th>
-        <th>Name</th>
-        <th>Description</th>
-        <th>Required</th>
-        <th>Assigned Tech</th>
-        <th>Actions</th>
-    </tr>
-    {% for template in templates %}
-        <tr>
-            <td>{{ template.template_group|e }}</td>
-            <td>{{ template.name|e }}</td>
-            <td>{{ template.description|e }}</td>
-            <td>{{ template.required ? 'Yes' : 'No' }}</td>
-           <td>
-                {{ tech_usernames_map[template.assigned_tech]|default('None')|e }}
-            </td>
-            <td>
-                <a href="edit_task_template.php?created_by={{ template.created_by }}&name={{ template.name|url_encode }}">Edit</a>
-                <a href="delete_task_template.php?created_by={{ template.created_by }}&name={{ template.name|url_encode }}" onclick="return confirm('Are you sure?')">Delete</a>
-            </td>
-        </tr>
-    {% endfor %}
-</table>
-
-<h1>Create Task Template</h1>
+<h2>Create Task Template</h2>
 {% if error_message %}
     <p style="color: red;">{{ error_message|e }}</p>
 {% endif %}
@@ -67,4 +41,30 @@
     
     <button type="submit" class="button">Create Template</button>
 </form>
+<h2>Existing Task Templates</h2>
+<table>
+    <tr>
+        <th>Template Group</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Required</th>
+        <th>Assigned Tech</th>
+        <th>Actions</th>
+    </tr>
+    {% for template in templates %}
+        <tr>
+            <td>{{ template.template_group|e }}</td>
+            <td>{{ template.name|e }}</td>
+            <td>{{ template.description|e }}</td>
+            <td>{{ template.required ? 'Yes' : 'No' }}</td>
+           <td>
+                {{ tech_usernames_map[template.assigned_tech]|default('None')|e }}
+            </td>
+            <td>
+                <a href="edit_task_template.php?created_by={{ template.created_by }}&name={{ template.name|url_encode }}">Edit</a>
+                <a href="delete_task_template.php?created_by={{ template.created_by }}&name={{ template.name|url_encode }}" onclick="return confirm('Are you sure?')">Delete</a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
 {% endblock %}

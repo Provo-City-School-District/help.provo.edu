@@ -93,13 +93,16 @@ $(document).ready(function () {
         $("#new-note-form").hide();
 
         // Clear the TinyMCE editor
-        tinymce.get("note").setContent("");
+        if (tinymce.get("note-textbox")) {
+          tinymce.get("note-textbox").setContent("");
+        }
 
         // clear time input fields
         $("#work_minutes").val(0);
         $("#work_hours").val(0);
         $("#travel_hours").val(0);
         $("#travel_minutes").val(0);
+        $("#total_time").val(0);
       },
       error: function (jqXHR, textStatus, errorThrown) {
         console.log(textStatus, errorThrown);

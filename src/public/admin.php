@@ -73,6 +73,7 @@ display_tickets_table($ticket_result, HelpDB::get(), "admin-data-table", true);
             <th>First Name</th>
             <th>Last Name</th>
             <th>Email</th>
+            <th>Department</th>
             <th>Is Admin</th>
             <th>Is Tech</th>
             <th>is Supervisor</th>
@@ -90,6 +91,8 @@ display_tickets_table($ticket_result, HelpDB::get(), "admin-data-table", true);
                 <td data-cell="First Name"><?= ucwords(strtolower($user_row['firstname'])) ?></td>
                 <td data-cell="Last Name"><?= ucwords(strtolower($user_row['lastname'])) ?></td>
                 <td data-cell="Email"><?= $user_row['email'] ?></td>
+                <!-- <td data-cell="Department"><?= get_sitenumber_from_location_id(location_name_from_id($user_row['department'])) ?></td> -->
+                <td data-cell="Department"><?= location_name_from_id(get_sitenumber_from_location_id($user_row['department'])) ?></td>
                 <td data-cell="Is an Admin"><?= ($user_row['is_admin'] == 1 ? 'Yes' : 'No') ?></td>
                 <td data-cell="Is a Tech"><?= ($user_row['is_tech'] == 1 ? 'Yes' : 'No') ?></td>
                 <td data-cell="Is a Supervisor"><?= ($user_row['is_supervisor'] == 1 ? 'Yes' : 'No') ?></td>

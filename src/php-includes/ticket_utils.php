@@ -1105,6 +1105,20 @@ function get_user_department($username)
     $row = mysqli_fetch_assoc($result);
     return $row['department'] ?? null;
 }
+function get_user_department_name($department)
+{
+    // Query to fetch the department name
+    $query = "SELECT location_name FROM locations WHERE location_id = ?";
+    $result = HelpDB::get()->execute_query($query, [$department]);
+
+    if (!$result) {
+        log_app(LOG_ERR, "Failed to fetch department name for department: $department");
+        return null;
+    }
+
+    $row = mysqli_fetch_assoc($result);
+    return $row['location_name'] ?? null;
+}
 // Check if two users are in the same department
 function are_users_in_same_department($creator_username, $current_username)
 {

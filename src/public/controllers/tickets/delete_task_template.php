@@ -5,7 +5,8 @@ require_once('ticket_utils.php');
 
 // Get the template ID and the logged-in user's ID
 $user_id = filter_var($_GET['created_by'], FILTER_SANITIZE_NUMBER_INT);
-$template_name = rawurldecode($_GET['name']);
+$template_name = rawurldecode($_GET['template_group']);
+$template_description = htmlspecialchars($_GET['description'], ENT_QUOTES, 'UTF-8');
 
 
 // var_dump($template_name);
@@ -22,8 +23,8 @@ if (!$user_id) {
 }
 
 // Verify that the task template belongs to the logged-in user
-$template_query = "SELECT * FROM task_templates WHERE name = ? AND created_by = ?";
-$template_result = HelpDB::get()->execute_query($template_query, [$template_name, $user_id]);
+$template_query = "SELECT * FROM task_templates WHERE template_group = ? AND created_by = ? AND description = ?";
+$template_result = HelpDB::get()->execute_query($template_query, [$template_name, $user_id, $template_description]);
 $template = $template_result->fetch_assoc();
 
 if (!$template) {
@@ -32,8 +33,8 @@ if (!$template) {
 }
 
 // Delete the task template
-$delete_query = "DELETE FROM task_templates WHERE name = ? AND created_by = ?";
-$delete_result = HelpDB::get()->execute_query($delete_query, [$template_name, $user_id]);
+$delete_query = "DELETE FROM task_templates WHERE template_group = ? AND created_by = ? AND description = ?";
+$delete_result = HelpDB::get()->execute_query($delete_query, [$template_name, $user_id, $template_description]);
 
 if ($delete_result) {
     header('Location: manage_task_template.php');

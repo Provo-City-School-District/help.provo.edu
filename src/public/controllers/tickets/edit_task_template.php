@@ -4,12 +4,14 @@ require_once('helpdbconnect.php');
 require_once('ticket_utils.php');
 
 $template_user = filter_var($_GET['created_by'], FILTER_SANITIZE_NUMBER_INT);
-$template_name = filter_var($_GET['template_group'], FILTER_SANITIZE_STRING);
+$template_description = htmlspecialchars($_GET['description'], ENT_QUOTES, 'UTF-8');
+$template_group = htmlspecialchars($_GET['template_group'], ENT_QUOTES, 'UTF-8');
+
 $user_id = get_id_for_user($_SESSION['username']);
 
 // Fetch the task template to ensure it belongs to the user
-$template_query = "SELECT * FROM task_templates WHERE template_group = ? AND created_by = ?";
-$template_result = HelpDB::get()->execute_query($template_query, [$template_name, $template_user]);
+$template_query = "SELECT * FROM task_templates WHERE description = ? AND created_by = ? AND template_group = ?";
+$template_result = HelpDB::get()->execute_query($template_query, [$template_description, $template_user, $template_group]);
 $template = $template_result->fetch_assoc();
 if (!$template) {
     echo "Task template not found or not owned by you.";
@@ -60,14 +62,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $assigned_tech = isset($_POST['assigned_tech']) ? htmlspecialchars(trim($_POST['assigned_tech']), ENT_QUOTES, 'UTF-8') : null;
     $required = isset($_POST['required']) ? 1 : 0;
 
-    $update_query = "UPDATE task_templates SET template_group = ?, description = ?, required = ?, assigned_tech = ? WHERE template_group = ? AND created_by = ?";
-    $update_result = HelpDB::get()->execute_query($update_query, [$name, $description, $required, $assigned_tech, $org_template_name, $created_by]);
+    $check_query = "SELECT 1 FROM task_templates WHERE created_by = ? AND template_group = ? AND description = ? AND NOT (template_group = ? AND description = ?)";
+    $check_result = HelpDB::get()->execute_query($check_query, [$created_by, $name, $description, $org_template_name, $template['description']]);
 
-    if ($update_result) {
-        header('Location: manage_task_template.php');
-        exit;
+    if ($check_result->num_rows > 0) {
+        $error_message = "A task template with the same group and description already exists.";
     } else {
-        $error_message = "Failed to update task template.";
+        // Proceed with the update
+        $update_query = "UPDATE task_templates SET template_group = ?, description = ?, required = ?, assigned_tech = ? WHERE template_group = ? AND created_by = ? AND description = ?";
+        $update_result = HelpDB::get()->execute_query($update_query, [$name, $description, $required, $assigned_tech, $org_template_name, $created_by, $template['description']]);
+
+        if ($update_result) {
+            header('Location: manage_task_template.php');
+            exit;
+        } else {
+            $error_message = "Failed to update task template.";
+        }
     }
 }
 

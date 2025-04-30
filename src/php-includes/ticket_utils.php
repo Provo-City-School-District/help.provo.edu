@@ -477,7 +477,7 @@ function __create_ticket(array $ticket_params)
         // add attachments
         if (isset($ticket_params['attachments'])) {
             $files = $ticket_params['attachments'];
-            if (isset($files) && count($files) > 0) {
+            if (!empty($files)) {
                 handleFileUploads($files, $created_ticket_id);
             }
         }

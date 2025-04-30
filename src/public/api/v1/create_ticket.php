@@ -20,8 +20,10 @@ $params = [
     'title' => $_POST["ticket_title"],
     'desc' => $_POST["ticket_description"],
     'location' => $_POST["ticket_location"],
-    'department' => $_POST["ticket_department"]
+    'department' => $_POST["ticket_department"],
+    'attachments' => $_FILES
 ];
+
 $created_ticket_id = __create_ticket($params);
 
 $data = [];

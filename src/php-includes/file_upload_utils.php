@@ -189,5 +189,14 @@ function handleFileUploads($files, $ticket_id = null)
         }
     }
 
+    // Log the ticket changes
+    if (isset($ticket_id)) {
+        foreach ($uploaded_files as $fileName) {
+            $field_name = 'Attachment';
+            $oldValue = 'NA';
+            logTicketChange(HelpDB::get(), $ticket_id, $_SESSION['username'] ?? 'System', $field_name, $oldValue, $fileName);
+        }
+    }
+
     return [$failed_files, $uploaded_files];
 }

@@ -55,8 +55,8 @@
                 {{ tech_usernames_map[template.assigned_tech]|default('None')|e }}
             </td>
             <td>
-                <a href="edit_task_template.php?created_by={{ template.created_by }}&template_group={{ template.template_group|url_encode }}">Edit</a>
-                <a href="delete_task_template.php?created_by={{ template.created_by }}&template_group={{ template.template_group|url_encode }}" onclick="return confirm('Are you sure?')">Delete</a>
+                <a href="edit_task_template.php?created_by={{ template.created_by }}&description={{ template.description|url_encode }}&template_group={{ template.template_group|url_encode }}">Edit</a>
+                <a href="delete_task_template.php?created_by={{ template.created_by }}&description={{ template.description|url_encode }}&template_group={{ template.template_group|url_encode }}" onclick="return confirm('Are you sure?')">Delete</a>
             </td>
         </tr>
     {% endfor %}

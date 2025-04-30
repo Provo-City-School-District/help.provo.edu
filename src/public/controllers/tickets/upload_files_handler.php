@@ -37,12 +37,6 @@ if (isset($_FILES['attachment'])) {
     list($failed_files, $uploaded_files) = handleFileUploads($_FILES, $ticket_id);
 }
 
-// Log the ticket changes
-foreach ($uploaded_files as $fileName) {
-    $field_name = 'Attachment';
-    $oldValue = 'NA';
-    logTicketChange(HelpDB::get(), $ticket_id, $username, $field_name, $oldValue, $fileName);
-}
 // check for errors
 $failed_files_count = count($failed_files);
 if ($failed_files_count != 0) {

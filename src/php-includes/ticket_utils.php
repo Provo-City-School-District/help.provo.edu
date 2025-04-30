@@ -473,6 +473,15 @@ function __create_ticket(array $ticket_params)
         if (isset($email_msg_id)) {
             add_ticket_msg_id_mapping($email_msg_id, $created_ticket_id);
         }
+
+        // add attachments
+        if (isset($ticket_params['attachments'])) {
+            $files = $ticket_params['attachments'];
+            if (isset($files) && count($files) > 0) {
+                handleFileUploads($files, $created_ticket_id);
+            }
+        }
+
         return $created_ticket_id;
     } else {
         log_app(LOG_ERR, "create_ticket failure");

@@ -6,8 +6,8 @@
         <p style="color: red;">{{ error_message|e }}</p>
     {% endif %}
     <div class="grid2">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" value="{{ template.name|e }}" required>
+        <label for="template_group">Name:</label>
+        <input type="text" id="template_group" name="template_group" value="{{ template.template_group|e }}" required>
     </div>
 
     <div class="grid2">
@@ -34,7 +34,7 @@
    
     
     <input type="hidden" name="created_by" value="{{ template.created_by|e }}">
-    <input type="hidden" name="org_template_name" value="{{ template.name|e }}">
+    <input type="hidden" name="org_template_name" value="{{ template.template_group|e }}">
     <button type="submit" class="button">Update Template</button>
 </form>
 {% endblock %}

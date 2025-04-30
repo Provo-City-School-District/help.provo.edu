@@ -16,10 +16,6 @@
             {% endfor %}
         </datalist>
     </div>
-   <div class="grid2">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required>
-    </div>
     <div class="grid2">
         <label for="description">Description:</label>
         <textarea id="description" name="description" required></textarea>
@@ -45,7 +41,6 @@
 <table>
     <tr>
         <th>Template Group</th>
-        <th>Name</th>
         <th>Description</th>
         <th>Required</th>
         <th>Assigned Tech</th>
@@ -54,15 +49,14 @@
     {% for template in templates %}
         <tr>
             <td>{{ template.template_group|e }}</td>
-            <td>{{ template.name|e }}</td>
             <td>{{ template.description|e }}</td>
             <td>{{ template.required ? 'Yes' : 'No' }}</td>
            <td>
                 {{ tech_usernames_map[template.assigned_tech]|default('None')|e }}
             </td>
             <td>
-                <a href="edit_task_template.php?created_by={{ template.created_by }}&name={{ template.name|url_encode }}">Edit</a>
-                <a href="delete_task_template.php?created_by={{ template.created_by }}&name={{ template.name|url_encode }}" onclick="return confirm('Are you sure?')">Delete</a>
+                <a href="edit_task_template.php?created_by={{ template.created_by }}&template_group={{ template.template_group|url_encode }}">Edit</a>
+                <a href="delete_task_template.php?created_by={{ template.created_by }}&template_group={{ template.template_group|url_encode }}" onclick="return confirm('Are you sure?')">Delete</a>
             </td>
         </tr>
     {% endfor %}

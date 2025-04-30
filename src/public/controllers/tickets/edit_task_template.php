@@ -4,11 +4,11 @@ require_once('helpdbconnect.php');
 require_once('ticket_utils.php');
 
 $template_user = filter_var($_GET['created_by'], FILTER_SANITIZE_NUMBER_INT);
-$template_name = filter_var($_GET['name'], FILTER_SANITIZE_STRING);
+$template_name = filter_var($_GET['template_group'], FILTER_SANITIZE_STRING);
 $user_id = get_id_for_user($_SESSION['username']);
 
 // Fetch the task template to ensure it belongs to the user
-$template_query = "SELECT * FROM task_templates WHERE name = ? AND created_by = ?";
+$template_query = "SELECT * FROM task_templates WHERE template_group = ? AND created_by = ?";
 $template_result = HelpDB::get()->execute_query($template_query, [$template_name, $template_user]);
 $template = $template_result->fetch_assoc();
 if (!$template) {
@@ -53,14 +53,14 @@ while ($row = $groups_result->fetch_assoc()) {
 
 // Handle Form
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = htmlspecialchars(trim($_POST['name']), ENT_QUOTES, 'UTF-8');
+    $name = htmlspecialchars(trim($_POST['template_group']), ENT_QUOTES, 'UTF-8');
     $org_template_name = htmlspecialchars(trim($_POST['org_template_name']), ENT_QUOTES, 'UTF-8');
     $created_by = htmlspecialchars(trim($_POST['created_by']), ENT_QUOTES, 'UTF-8');
     $description = htmlspecialchars(trim($_POST['description']), ENT_QUOTES, 'UTF-8');
     $assigned_tech = isset($_POST['assigned_tech']) ? htmlspecialchars(trim($_POST['assigned_tech']), ENT_QUOTES, 'UTF-8') : null;
     $required = isset($_POST['required']) ? 1 : 0;
 
-    $update_query = "UPDATE task_templates SET name = ?, description = ?, required = ?, assigned_tech = ? WHERE name = ? AND created_by = ?";
+    $update_query = "UPDATE task_templates SET template_group = ?, description = ?, required = ?, assigned_tech = ? WHERE template_group = ? AND created_by = ?";
     $update_result = HelpDB::get()->execute_query($update_query, [$name, $description, $required, $assigned_tech, $org_template_name, $created_by]);
 
     if ($update_result) {

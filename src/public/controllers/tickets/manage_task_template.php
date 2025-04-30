@@ -7,7 +7,7 @@ $user_id = get_id_for_user($_SESSION['username']);
 // $username = $_SESSION['username'];
 
 // Fetch task templates created by the logged-in user
-$templates_query = "SELECT * FROM task_templates WHERE created_by = ? ORDER BY name ASC";
+$templates_query = "SELECT * FROM task_templates WHERE created_by = ? ORDER BY template_group ASC";
 $templates_result = HelpDB::get()->execute_query($templates_query, [$user_id]);
 $templates = $templates_result->fetch_all(MYSQLI_ASSOC);
 
@@ -44,7 +44,7 @@ while ($row = $groups_result->fetch_assoc()) {
 
 //Handle Form
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = htmlspecialchars(trim($_POST['name']), ENT_QUOTES, 'UTF-8');
+
     $description = htmlspecialchars(trim($_POST['description']), ENT_QUOTES, 'UTF-8');
     $required = isset($_POST['required']) ? 1 : 0;
     $assigned_tech = isset($_POST['assigned_tech']) ? htmlspecialchars(trim($_POST['assigned_tech']), ENT_QUOTES, 'UTF-8') : null;
@@ -52,9 +52,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $created_by = get_id_for_user($_SESSION['username']); // Get the logged-in user's ID
 
     // Insert the new task template
-    $insert_query = "INSERT INTO task_templates (name, description, required,assigned_tech, created_by, template_group) VALUES (?, ?, ?, ?, ?, ?)";
+    $insert_query = "INSERT INTO task_templates (description, required,assigned_tech, created_by, template_group) VALUES (?, ?, ?, ?, ?)";
     try {
-        $insert_result = HelpDB::get()->execute_query($insert_query, [$name, $description, $required, $assigned_tech, $created_by, $template_group]);
+        $insert_result = HelpDB::get()->execute_query($insert_query, [$description, $required, $assigned_tech, $created_by, $template_group]);
         header('Location: manage_task_template.php');
         exit;
     } catch (mysqli_sql_exception $e) {

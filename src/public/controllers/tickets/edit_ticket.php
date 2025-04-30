@@ -1125,9 +1125,9 @@ while ($row = $groups_result->fetch_assoc()) {
                 <input style="margin-top: 20px;" type="submit" class="button" value="Submit Task">
             </form>
 
-            <a href="/controllers/tickets/manage_task_template.php">Manage Tasks Templates</a>
+            <!-- <a href="/controllers/tickets/manage_task_template.php">Manage Tasks Templates</a> -->
             <!-- Add Template Group -->
-            <div>
+            <!-- <div>
                 <label for="task_group_selector" class="hidden">Select Task Group:</label>
                 <select id="task_group_selector" name="task_group">
                     <option value="">-- Select a Task Group --</option>
@@ -1139,7 +1139,7 @@ while ($row = $groups_result->fetch_assoc()) {
                 </select>
 
                 <button id="apply-task-group-button" class="button">Apply Task Group</button>
-            </div>
+            </div> -->
 
 
         </div>
@@ -1429,7 +1429,7 @@ while ($row = $groups_result->fetch_assoc()) {
                 }
                 ?>
                 <br>
-                <button id="show-templates-button" type="button" class="button">Insert From Template</button><br>
+                <!-- <button id="show-templates-button" type="button" class="button">Insert From Template</button><br> -->
                 <input type="submit" class="button" value="Submit Note">
             </form>
             <script src="/includes/js/external/jquery-3.7.1.min.js"></script>

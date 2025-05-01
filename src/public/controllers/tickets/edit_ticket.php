@@ -1429,8 +1429,9 @@ while ($row = $groups_result->fetch_assoc()) {
                 }
                 ?>
                 <br>
-                <button id="show-templates-button" type="button" class="button">Insert From Template</button><br>
+
                 <input type="submit" class="button" value="Submit Note">
+                <button id="show-templates-button" type="button" class="button">Insert From Template</button>
             </form>
             <script src="/includes/js/external/jquery-3.7.1.min.js"></script>
             <script>

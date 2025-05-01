@@ -800,9 +800,11 @@ function get_parsed_ticket_data($ticket_data)
             $alerts_split = explode(',', $row['alert_levels']);
             $tmp["red_alert_enabled"] = in_array('crit', $alerts_split);
             $tmp["yellow_alert_enabled"] = in_array('warn', $alerts_split);
+            $tmp["task_alert_enabled"] = in_array('Task', $alerts_split);
         } else {
             $tmp["red_alert_enabled"] = false;
             $tmp["yellow_alert_enabled"] = false;
+            $tmp["task_alert_enabled"] = false;
         }
 
         $tmp["title"] = $row["name"];

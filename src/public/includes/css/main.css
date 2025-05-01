@@ -188,7 +188,7 @@ blockquote {
 .blue-dot {
 	height: 9px;
 	width: 9px;
-	background-color: #03a5fc;
+	background-color: var(--unread-color);
 	border-radius: 50%;
 	/* display: inline-block; */
 }
@@ -205,6 +205,14 @@ blockquote {
 	height: 9px;
 	width: 9px;
 	background-color: var(--crit-color);
+	border-radius: 50%;
+	/* display: inline-block; */
+}
+
+.task-dot {
+	height: 9px;
+	width: 9px;
+	background-color: var(--task-color);
 	border-radius: 50%;
 	/* display: inline-block; */
 }

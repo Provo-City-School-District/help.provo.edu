@@ -19,18 +19,32 @@ $twig = new \Twig\Environment($loader, [
 
 $tech_ticket_query = <<<STR
     SELECT tickets.*, 
-           GROUP_CONCAT(DISTINCT CASE WHEN alerts.supervisor_alert = 0 THEN alerts.alert_level END) AS alert_levels,
+           GROUP_CONCAT(DISTINCT 
+               CASE 
+                   WHEN alerts.supervisor_alert = 0 THEN alerts.alert_level 
+                   WHEN tickets.id IN (
+                       SELECT ticket_id 
+                       FROM ticket_tasks 
+                       WHERE NOT completed AND assigned_tech = ?
+                   ) THEN 'Task'
+               END
+           ) AS alert_levels,
            (SELECT creator FROM help.notes WHERE linked_id = tickets.id ORDER BY 
                (CASE WHEN date_override IS NULL THEN created ELSE date_override END) DESC LIMIT 1) AS latest_note_author
     FROM tickets
     LEFT JOIN alerts ON tickets.id = alerts.ticket_id
     WHERE tickets.status NOT IN ('Closed', 'Resolved')
-    AND tickets.employee = ?
+      AND (tickets.employee = ? 
+           OR tickets.id IN (
+               SELECT ticket_id 
+               FROM ticket_tasks 
+               WHERE NOT completed AND assigned_tech = ?
+           ))
     GROUP BY tickets.id
     ORDER BY tickets.id ASC
     STR;
 
-$tech_ticket_result = HelpDB::get()->execute_query($tech_ticket_query, [$username]);
+$tech_ticket_result = HelpDB::get()->execute_query($tech_ticket_query, [$username, $username, $username]);
 $my_tickets = get_parsed_ticket_data($tech_ticket_result);
 
 

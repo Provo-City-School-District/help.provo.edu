@@ -11,6 +11,14 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
 // Get the exclude day ID from the query string
 $id = trim(htmlspecialchars($_GET['id']));
 
+if ($id == null || $id == "") {
+    $error = 'Exclude date ID was invalid';
+    $_SESSION['current_status'] = $error;
+    $_SESSION['status_type'] = 'error';
+    header('Location: /controllers/admin/exclude_days_management.php');
+    exit;
+}
+
 // Delete the exclude day from the database
 $query = "DELETE FROM exclude_days WHERE id = ?";
 $stmt = mysqli_prepare(HelpDB::get(), $query);
@@ -19,5 +27,5 @@ mysqli_stmt_execute($stmt);
 mysqli_stmt_close($stmt);
 
 // Redirect back to the exclude days page
-header('Location: /admin.php');
+header('Location: /controllers/admin/exclude_days_management.php');
 exit();

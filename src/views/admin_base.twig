@@ -1,11 +1,6 @@
 {% extends "base.twig" %}
 
 {% block menu %}
-<ul id="subMenu">
-    <li><a href="/admin.php">All Unassigned Tickets</a></li>
-    <li><a href="/controllers/admin/user_management.php">User Management</a></li>
-    <li><a href="/controllers/admin/exclude_days_management.php">Exclude Days Management</a></li>
-    <li><a href="/controllers/admin/merge_tickets.php">Merge Tickets</a></li>
-    <li><a href="/controllers/admin/view_feedback.php">View Feedback</a></li>
-</ul>
+     {# Include menu from exterior file so that we can use the same menu on a admin page that is not converted to twig #}
+    {% include "admin_menu.twig" %}
 {% endblock %}

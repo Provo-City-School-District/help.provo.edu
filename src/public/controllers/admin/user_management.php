@@ -1,0 +1,69 @@
+<?php
+require_once from_root('/../vendor/autoload.php');
+require_once from_root("/new-controllers/base_variables.php");
+require "ticket_utils.php";
+
+$loader = new \Twig\Loader\FilesystemLoader(from_root('/../views'));
+$twig = new \Twig\Environment($loader, [
+    'cache' => from_root('/../twig-cache'),
+    'auto_reload' => true
+]);
+
+if ($_SESSION['permissions']['is_admin'] != 1) {
+    // User is not an admin
+    echo 'You do not have permission to view this page.';
+    exit;
+}
+
+
+
+// Execute the SELECT query to retrieve all users and their permissions/settings
+$user_query = <<<SQL
+SELECT u.*, us.*
+FROM users u
+LEFT JOIN user_settings us ON u.id = us.user_id
+ORDER BY u.username ASC
+SQL;
+
+$user_result = HelpDB::get()->execute_query($user_query);
+
+// Check if the query was successful
+if (!$user_result) {
+    die("Query failed: " . mysqli_error(HelpDB::get()));
+}
+
+// Fetch all rows as an associative array
+$users = [];
+while ($row = $user_result->fetch_assoc()) {
+    $row['department'] = get_user_department_name($row['department']) ?? 'N/A';
+    $users[] = $row;
+}
+
+
+echo $twig->render('user_management.twig', [
+    // base variables
+    'color_scheme' => $color_scheme,
+    'current_year' => $current_year,
+    'user_permissions' => $permissions,
+    'wo_time' => $wo_time,
+    'user_pref' => $user_pref,
+    'ticket_limit' => $ticket_limit,
+    // 'status_alert_type' => $status_alert_type,
+    // 'status_alert_message' => $status_alert_message,
+    'app_version' => $app_version,
+
+    // Page Variables
+    'user_result' => $users,
+    // 'user_id' => $user_id,
+    // 'employee_id' => $employee_id,
+    // 'username' => $username,
+    // 'first_name' => $firstname,
+    // 'last_name' => $lastname,
+    // 'email' => $email,
+    // // 'note_order' => $note_order,
+    // 'hide_alerts' => $hide_alerts,
+    // 'user_times' => $user_times,
+    // 'user_time_total' => $user_time_total,
+    // 'note_count' => $note_count,
+    // 'show_alerts' => $show_alerts
+]);

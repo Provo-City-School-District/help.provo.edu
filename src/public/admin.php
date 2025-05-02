@@ -11,23 +11,20 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
 
 require_once('helpdbconnect.php');
 
-
-// Execute the SELECT query to retrieve all users and their permissions/settings
-$user_query = <<<SQL
-SELECT u.*, us.*
-FROM users u
-LEFT JOIN user_settings us ON u.id = us.user_id
-ORDER BY u.username ASC
-SQL;
-
-$user_result = HelpDB::get()->execute_query($user_query);
-
-// Check if the query was successful
-if (!$user_result) {
-    die("Query failed: " . mysqli_error(HelpDB::get()));
-}
+// Load Twig
+// require_once from_root('/../vendor/autoload.php');
+$loader = new \Twig\Loader\FilesystemLoader(from_root('/../views'));
+$twig = new \Twig\Environment($loader, [
+    'cache' => from_root('/../twig-cache'),
+    'auto_reload' => true
+]);
 
 
+// Render the admin menu
+$admin_menu = $twig->render('admin_menu.twig');
+
+// Display the menu
+echo $admin_menu;
 
 // Check if an error message is set
 if (isset($_SESSION['current_status'])) {
@@ -38,18 +35,6 @@ if (isset($_SESSION['current_status'])) {
     unset($_SESSION['status_type']);
 }
 
-// fetch ticket feedback   
-$feedback_query = <<<STR
-SELECT * FROM feedback
-ORDER BY id DESC
-STR;
-$feedback_result = HelpDB::get()->execute_query($feedback_query);
-
-?>
-<h1>Admin</h1>
-<h2>All Unassigned Tickets</h2>
-
-<?php
 //query for unassigned tickets
 $ticket_query = <<<STR
 SELECT tickets.*, GROUP_CONCAT(DISTINCT alerts.alert_level) AS alert_levels
@@ -62,118 +47,17 @@ ORDER BY tickets.id ASC
 STR;
 
 $ticket_result = HelpDB::get()->execute_query($ticket_query);
+
+
+echo '<h1>Admin</h1>';
+echo '<h2>All Unassigned Tickets</h2>';
+
 display_tickets_table($ticket_result, HelpDB::get(), "admin-data-table", true);
+
+include("footer.php");
 ?>
 
-<h2>All Users</h2>
-<table class="allUsers nst">
-    <thead>
-        <tr>
-            <th>Username</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Email</th>
-            <th>Department</th>
-            <th>Is Admin</th>
-            <th>Is Tech</th>
-            <th>is Supervisor</th>
-
-            <th>Last Login</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php // Display the results in an HTML table
-        while ($user_row = mysqli_fetch_assoc($user_result)) {
-        ?>
-            <tr>
-                <td data-cell="User Name"><a href="controllers/users/manage_user.php?id=<?= $user_row['id'] ?>"><?= $user_row['username'] ?></a></td>
-                <td data-cell="First Name"><?= ucwords(strtolower($user_row['firstname'])) ?></td>
-                <td data-cell="Last Name"><?= ucwords(strtolower($user_row['lastname'])) ?></td>
-                <td data-cell="Email"><?= $user_row['email'] ?></td>
-                <td data-cell="Department"><?= get_user_department_name($user_row['department']) ?></td>
-                <td data-cell="Is an Admin"><?= ($user_row['is_admin'] == 1 ? 'Yes' : 'No') ?></td>
-                <td data-cell="Is a Tech"><?= ($user_row['is_tech'] == 1 ? 'Yes' : 'No') ?></td>
-                <td data-cell="Is a Supervisor"><?= ($user_row['is_supervisor'] == 1 ? 'Yes' : 'No') ?></td>
-                <td data-cell="Last Login"><?= $user_row['last_login'] ?></td>
-            </tr>
-        <?php
-        }
-        ?>
-    </tbody>
-
-
-</table>
-
-<h1>Add Exclude Day</h1>
-<form method="POST" action="/controllers/admin/exclude_days.php">
-    <div>
-        <label for="exclude_day">Exclude Day:</label>
-        <input type="date" id="exclude_day" name="exclude_day">
-        <input type="hidden" name="username" value="<?= $_SESSION['username'] ?>">
-    </div>
-    <button class="button" type="submit">Add Exclude Day</button>
-</form>
-<h1>Exclude Days</h1>
-<?php
-// Fetch the exclude days from the database. only displaying current and future exclude days
-$exclude_result = HelpDB::get()->execute_query("SELECT * FROM exclude_days WHERE exclude_day >= CURDATE() ORDER BY exclude_day");
-?>
-<table class="exclude_days nst">
-    <thead>
-        <tr>
-            <th>Excluded Date</th>
-            <th>Added By</th>
-            <th>When Created</th>
-            <th>Options</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php while ($exclude_row = mysqli_fetch_assoc($exclude_result)) : ?>
-            <tr>
-                <td data-cell="Excluded Day" class="center"><?= $exclude_row['exclude_day'] ?></td>
-                <td data-cell="Added By" class="center"><?= $exclude_row['entered_by'] ?></td>
-                <td data-cell="Date Added" class="center"><?= $exclude_row['entered_at'] ?></td>
-                <td data-cell="Remove Excluded Day" class="center"><a href="/controllers/admin/delete_exclude_day.php?id=<?= $exclude_row['id'] ?>">Delete</a></td>
-            </tr>
-        <?php endwhile; ?>
-    </tbody>
-</table><br>
-<h2>Merge Tickets</h2>
-<form method="POST" action="/controllers/tickets/merge_tickets_handler.php">
-    <input type="hidden" name="username" value="<?= $_SESSION['username'] ?>">
-    Host Ticket ID: <input type="text" id="ticket_id_host" name="ticket_id_host" value=""><br>
-    Source Ticket ID:<input type="text" id="ticket_id_source" name="ticket_id_source" value=""><br>
-    <button class="button" type="submit">Merge</button><br>
-</form>
-
-<h2>Feedback</h2>
-<table class="feedback">
-    <thead>
-        <tr>
-            <th>Ticket</th>
-            <th>Client</th>
-            <th>Rating</th>
-            <th>Comment</th>
-            <th>Date</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php while ($feedback = mysqli_fetch_assoc($feedback_result)) : ?>
-
-            <tr>
-                <td data-cell="Ticket" class="center"><a href="https://help.provo.edu/controllers/tickets/edit_ticket.php?id=<?= $feedback['ticket_id'] ?>"><?= $feedback['ticket_id'] ?></a></td>
-                <td data-cell="Client" class="center"><?= $feedback['client'] ?></td>
-                <td data-cell="Rating" class="center"><?= $feedback['rating'] ?></td>
-                <td data-cell="Comment" class="center"><?= $feedback['comments'] ?></td>
-                <td data-cell="Date" class="center"><?= $feedback['created_at'] ?></td>
-
-            </tr>
-        <?php endwhile;
-        ?>
-    </tbody>
-</table>
-
-<?php include("footer.php"); ?>
+<!-- Page Specific Elements and Scripts  -->
 <div id="bulk-actions-container">
     <form action="/ajax/bulk_action.php" id="bulk-actions-form">
         <div id="bulk-actions-content">

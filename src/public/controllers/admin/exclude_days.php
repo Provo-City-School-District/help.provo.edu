@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Exclude date was invalid';
         $_SESSION['current_status'] = $error;
         $_SESSION['status_type'] = 'error';
-        header('Location: /admin.php');
+        header('Location: /controllers/admin/exclude_days_management.php');
         exit;
     }
     // Insert the exclude day into the database
@@ -27,6 +27,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
 
-    header('Location: /admin.php');
+    header('Location: /controllers/admin/exclude_days_management.php');
     exit;
 }

@@ -1,0 +1,30 @@
+{% extends "admin_base.twig" %}
+
+{% block content %}
+<h2>View Feedback</h2>
+
+<h2>Feedback</h2>
+<table class="feedback">
+    <thead>
+        <tr>
+            <th>Ticket</th>
+            <th>Client</th>
+            <th>Rating</th>
+            <th>Comment</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for feedback in feedback_parsed %}
+            <tr>
+                <td data-cell="Ticket" class="center"><a href="https://help.provo.edu/controllers/tickets/edit_ticket.php?id={{ feedback.ticket_id }}">{{ feedback.ticket_id }}</a></td>
+                <td data-cell="Client" class="center">{{ feedback.client }}</td>
+                <td data-cell="Rating" class="center">{{ feedback.rating }}</td>
+                <td data-cell="Comment" class="center">{{ feedback.comments }}</td>
+                <td data-cell="Date" class="center">{{ feedback.created_at }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

@@ -9,6 +9,13 @@ $twig = new \Twig\Environment($loader, [
     'auto_reload' => true
 ]);
 
+if ($_SESSION['permissions']['is_admin'] != 1) {
+    // User is not an admin
+    echo 'You do not have permission to view this page.';
+    exit;
+}
+
+
 
 // Execute the SELECT query to retrieve all users and their permissions/settings
 $user_query = <<<SQL

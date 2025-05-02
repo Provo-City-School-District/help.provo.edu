@@ -3,6 +3,13 @@ require_once from_root('/../vendor/autoload.php');
 require_once from_root("/new-controllers/base_variables.php");
 require "ticket_utils.php";
 
+if ($_SESSION['permissions']['is_admin'] != 1) {
+    // User is not an admin
+    echo 'You do not have permission to view this page.';
+    exit;
+}
+
+
 $loader = new \Twig\Loader\FilesystemLoader(from_root('/../views'));
 $twig = new \Twig\Environment($loader, [
     'cache' => from_root('/../twig-cache'),

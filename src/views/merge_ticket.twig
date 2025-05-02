@@ -1,0 +1,12 @@
+{% extends "admin_base.twig" %}
+
+{% block content %}
+<h2>Merge Ticket</h2>
+<h2>Merge Tickets</h2>
+<form method="POST" action="/controllers/tickets/merge_tickets_handler.php">
+    <input type="hidden" name="username" value="{{ username }}">
+    Host Ticket ID: <input type="text" id="ticket_id_host" name="ticket_id_host" value=""><br>
+    Source Ticket ID:<input type="text" id="ticket_id_source" name="ticket_id_source" value=""><br>
+    <button class="button" type="submit">Merge</button><br>
+</form>
+{% endblock %}

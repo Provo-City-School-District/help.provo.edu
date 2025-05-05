@@ -150,7 +150,10 @@ if ($_SESSION['permissions']['is_admin'] == 1) {
                 <label for="is_intern">Is Intern - Can Work On Intern Marked Tickets</label>
                 <input type="checkbox" id="is_intern" name="is_intern" <?= $is_intern == 1 ? 'checked' : '' ?>>
             </div>
-
+            <div>
+                <label for="is_developer">Is Developer - Can Access Developer Tools</label>
+                <input type="checkbox" id="is_developer" name="is_developer" <?= $row['is_developer'] == 1 ? 'checked' : '' ?>>
+            </div>
             <div>
                 <label for="is_loc_man">Is Location Manager - Has menu to see tickets at location</label>
                 <input type="checkbox" id="is_loc_man" name="is_loc_man" <?= $is_loc_man == 1 ? 'checked' : '' ?>>

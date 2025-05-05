@@ -29,38 +29,25 @@ if (isset($_GET['code'])) {
         // Setting Access token
         $client->setAccessToken($token['access_token']);
 
-        // store access token
-        $_SESSION['access_token'] = $token['access_token'];
-        /*
-        Could potentially be used to resolve login issues (7 day cache)
-
-        // refresh token
-        log_app(LOG_INFO, $token['refresh_token']);
-        setcookie("sso_refresh_token", 
-            $token["refresh_token"],
-            time() + 60 * 60 * 24 * 7, // 7 days
-            "",
-            "",
-            true,
-            true);
-*/
         // Get Account Profile using Google Service
         $gservice = new Google_Service_Oauth2($client);
 
+        $login_data = [];
         // Get User Data
         $udata = $gservice->userinfo->get();
         foreach ($udata as $k => $v) {
-            $_SESSION['login_' . $k] = $v;
+            $login_data['login_' . $k] = $v;
         }
-        $_SESSION['ucode'] = $user_ucode;
+        //$_SESSION['ucode'] = $user_ucode;
 
 
-        $email = $_SESSION['login_email'];
+        $email = $login_data['login_email'];
         $email = strtolower($email);
         $email = trim($email);
         $username = strtolower(str_replace('@provo.edu', '', $email));
 
         $_SESSION['username'] = $username;
+        $_SESSION['user_id'] = get_id_for_user($_SESSION["username"]);
         $_SESSION['last_timestamp'] = time();
 
         // Check if the user is authorized to use the helpdesk by checking if they are using a provo.edu email address
@@ -84,7 +71,7 @@ if (isset($_GET['code'])) {
             create_user_in_local_db($username);
         }
         // Query Local user information
-        $local_query_results = HelpDB::get()->execute_query("SELECT * FROM user_settings WHERE user_id = ?", [get_id_for_user($_SESSION["username"])]);
+        $local_query_results = HelpDB::get()->execute_query("SELECT * FROM user_settings WHERE user_id = ?", [$_SESSION["user_id"]]);
         $local_query_data = mysqli_fetch_assoc($local_query_results);
 
         // if user is still not found, LDAP failed to insert user into local database
@@ -133,19 +120,19 @@ if (isset($_GET['code'])) {
         $loc = get_client_location($username);
         // Update login timestamp and add google sso code to user record.
         $update_stmt = HelpDB::get()->prepare("UPDATE users SET last_login = NOW(), gsso = ?, ldap_location = ? WHERE email = ?");
-        $update_stmt->bind_param("sis", $user_ucode, $loc, $email);
+        
+        $login_token = hash('sha256', $_SESSION['user_id'].$_SERVER['HTTP_USER_AGENT'].time());
+        $update_stmt->bind_param("sis", $login_token, $loc, $email);
         $update_stmt->execute();
+
+        // 30 day
+        setcookie("COOKIE_REMEMBER_ME", $login_token, time() + (86400 * 30), "/");
+
         // Store the last login time in the session
         $_SESSION['last_login'] = date("Y-m-d H:i:s");
         if ($update_stmt === false) {
-            $error_message = 'Prepare failed: (' . HelpDB::get()->errno . ') ' . HelpDB::get()->error;
+            $error_message = 'Execute failed: (' . HelpDB::get()->errno . ') ' . HelpDB::get()->error;
             error_log($error_message, 0);
-        } else {
-            $update_stmt->bind_param("sis", $user_ucode, $loc, $email);
-            if ($update_stmt->execute() === false) {
-                $error_message = 'Execute failed: (' . $update_stmt->errno . ') ' . $update_stmt->error;
-                error_log($error_message, 0);
-            }
         }
 
         // Log the successful login

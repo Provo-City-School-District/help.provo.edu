@@ -11,17 +11,18 @@ if ($_SESSION['permissions']['is_admin'] != 1) {
 
 require_once('helpdbconnect.php');
 
-// Load Twig
-// require_once from_root('/../vendor/autoload.php');
+$is_developer = get_user_setting(get_id_for_user($_SESSION['username']), "is_developer") ?? 0;
+
 $loader = new \Twig\Loader\FilesystemLoader(from_root('/../views'));
 $twig = new \Twig\Environment($loader, [
     'cache' => from_root('/../twig-cache'),
     'auto_reload' => true
 ]);
 
-
-// Render the admin menu
-$admin_menu = $twig->render('admin_menu.twig');
+// Render the admin menu with the is_dev flag
+$admin_menu = $twig->render('admin_menu.twig', [
+    'is_developer' => $is_developer, // Pass the is_dev flag to Twig
+]);
 
 // Display the menu
 echo $admin_menu;

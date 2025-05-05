@@ -23,6 +23,13 @@ if (!empty($search_name)) {
             $ticket_query .= " AND ";
         }
     }
+    $ticket_query .= ") OR tickets.id IN (SELECT ticket_id FROM ticket_tasks WHERE ";
+    for ($i = 0; $i < $wordCount; $i++) {
+        $ticket_query .= "(description LIKE '%" . mysqli_real_escape_string(HelpDB::get(), $words[$i]) . "%')";
+        if ($i != $wordCount - 1) {
+            $ticket_query .= " AND ";
+        }
+    }
     $ticket_query .= "))";
 }
 

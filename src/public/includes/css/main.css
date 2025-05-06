@@ -268,6 +268,12 @@ blockquote {
 	text-align: center;
 }
 
+code {
+	background: #f5f2f0;
+	padding: 2px 5px;
+	font-family: Console, Monaco;
+}
+
 code.language-markup:before {
 	content: "Code:";
 	display: block;

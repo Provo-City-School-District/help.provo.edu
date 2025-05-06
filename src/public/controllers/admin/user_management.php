@@ -9,7 +9,9 @@ $twig = new \Twig\Environment($loader, [
     'auto_reload' => true
 ]);
 
-if ($_SESSION['permissions']['is_admin'] != 1) {
+// Check if user is Admin
+$is_admin = get_user_setting(get_id_for_user($_SESSION['username']), "is_admin") ?? 0;
+if ($is_admin != 1) {
     // User is not an admin
     echo 'You do not have permission to view this page.';
     exit;

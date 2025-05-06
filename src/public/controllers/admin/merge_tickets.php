@@ -3,7 +3,9 @@ require_once from_root('/../vendor/autoload.php');
 require_once from_root("/new-controllers/base_variables.php");
 require "ticket_utils.php";
 
-if ($_SESSION['permissions']['is_admin'] != 1) {
+// Check if user is Admin
+$is_admin = get_user_setting(get_id_for_user($_SESSION['username']), "is_admin") ?? 0;
+if ($is_admin != 1) {
     // User is not an admin
     echo 'You do not have permission to view this page.';
     exit;

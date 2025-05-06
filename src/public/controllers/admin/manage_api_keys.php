@@ -3,15 +3,21 @@
 require_once("block_file.php");
 require_once('init.php');
 require_once('helpdbconnect.php');
+require_once('ticket_utils.php');
 require from_root("/../vendor/autoload.php");
 require from_root("/new-controllers/base_variables.php");
 
-if ($_SESSION['permissions']['is_admin'] != 1) {
-    echo 'You do not have permission to use this form.';
+// Check if user is Developer
+$is_developer = get_user_setting(get_id_for_user($_SESSION['username']), "is_developer") ?? 0;
+
+if ($is_developer != 1) {
+    // User is not an admin
+    echo 'You do not have permission to view this page.';
     exit;
 }
 
-function generate_api_key() {
+function generate_api_key()
+{
     return bin2hex(random_bytes(32));
 }
 
@@ -64,7 +70,8 @@ echo $twig->render('manage_api_keys.twig', [
     'status_alert_message' => $status_alert_message,
     'app_version' => $app_version,
     'api_keys' => $api_keys,
-    'new_key' => $_SESSION['new_key'] ?? null
+    'new_key' => $_SESSION['new_key'] ?? null,
+    'is_developer' => $is_developer,
 ]);
 
 unset($_SESSION['new_key']); // only show once

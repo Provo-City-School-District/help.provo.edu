@@ -11,21 +11,24 @@ $twig = new \Twig\Environment($loader, [
 ]);
 
 $ticket_query = <<<QUERY
-	SELECT tickets.*, GROUP_CONCAT(DISTINCT alerts.alert_level) AS alert_levels
-	FROM tickets
-	LEFT JOIN (
-		SELECT linked_id
-		FROM notes
-		WHERE creator = ? AND created >= DATE_SUB(NOW(), INTERVAL 2 DAY)
-	) AS recent_notes ON tickets.id = recent_notes.linked_id
-	LEFT JOIN (
-		SELECT ticket_id
-		FROM ticket_logs
-		WHERE user_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 2 DAY)
-	) AS recent_logs ON tickets.id = recent_logs.ticket_id
-	LEFT JOIN alerts ON tickets.id = alerts.ticket_id
-	WHERE recent_notes.linked_id IS NOT NULL OR recent_logs.ticket_id IS NOT NULL
-	GROUP BY tickets.id
+	SELECT t.*, GROUP_CONCAT(DISTINCT a.alert_level) AS alert_levels
+    FROM tickets t
+    LEFT JOIN alerts a ON t.id = a.ticket_id
+    WHERE EXISTS (
+        SELECT 1
+        FROM notes n
+        WHERE n.linked_id = t.id
+        AND n.creator = ?
+        AND n.created >= DATE_SUB(NOW(), INTERVAL 2 DAY)
+    )
+    OR EXISTS (
+        SELECT 1
+        FROM ticket_logs l
+        WHERE l.ticket_id = t.id
+        AND l.user_id = ?
+        AND l.created_at >= DATE_SUB(NOW(), INTERVAL 2 DAY)
+    )
+    GROUP BY t.id;
 QUERY;
 
 $ticket_result = HelpDB::get()->execute_query($ticket_query, [$username, $username]);

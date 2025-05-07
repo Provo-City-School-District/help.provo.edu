@@ -2,9 +2,13 @@
 require_once("block_file.php");
 require_once('init.php');
 require_once('helpdbconnect.php');
+require_once('ticket_utils.php');
 
-if ($_SESSION['permissions']['is_admin'] != 1) {
-    echo 'You do not have permission to use this form.';
+// Check if user is Admin
+$is_admin = get_user_setting(get_id_for_user($_SESSION['username']), "is_admin") ?? 0;
+if ($is_admin != 1) {
+    // User is not an admin
+    echo 'You do not have permission to view this page.';
     exit;
 }
 

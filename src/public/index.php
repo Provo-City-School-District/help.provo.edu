@@ -1,12 +1,35 @@
 <?php
 require_once("status_popup.php");
 require_once("init.php");
+require_once "authentication_utils.php";
 
-// Check if user is already logged in
+// attempt login
+if (!isset($_SESSION['username'])) {
+    // attempt login if remember me is set
+    if (isset($_COOKIE['COOKIE_REMEMBER_ME'])) {
+        log_app(LOG_INFO, "Attempting to login from cookie");
+        $login_token = $_COOKIE['COOKIE_REMEMBER_ME'];
+
+        $user_result = HelpDB::get()->execute_query('SELECT id, username FROM users WHERE gsso = ?', [$login_token]);
+        // found user, log them in
+        if ($user_result->num_rows == 1) {
+            session_start();
+            $data = $user_result->fetch_assoc();
+            $user_id = $data["id"];
+            $username = $data["username"];
+            login_user($user_id, $username);
+        } else {
+            // Redirect to the login page
+            header('Location:' . getenv('ROOTDOMAIN'));
+            exit;
+        }
+    }
+}
+
 if (isset($_SESSION['username'])) {
     header('Location: tickets.php');
     exit();
-}
+} 
 
 // Display Front End
 include("header.php");

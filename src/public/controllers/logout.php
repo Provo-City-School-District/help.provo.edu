@@ -18,6 +18,8 @@ if (ini_get("session.use_cookies")) {
         $params["httponly"]
     );
 }
+
+setcookie("COOKIE_REMEMBER_ME", "", time() - 3600, "/");
 session_unset();
 // Finally, destroy the session.
 session_destroy();

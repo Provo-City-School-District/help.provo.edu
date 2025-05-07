@@ -3,25 +3,29 @@ include "header.php";
 require_once "tickets_template.php";
 require "status_popup.php";
 
-if ($_SESSION['permissions']['is_admin'] != 1) {
+// Check if user is Admin
+$is_admin = get_user_setting(get_id_for_user($_SESSION['username']), "is_admin") ?? 0;
+if ($is_admin != 1) {
     // User is not an admin
     echo 'You do not have permission to view this page.';
     exit;
 }
 
+// Check if user is Developer
+$is_developer = get_user_setting(get_id_for_user($_SESSION['username']), "is_developer") ?? 0;
+
 require_once('helpdbconnect.php');
 
-// Load Twig
-// require_once from_root('/../vendor/autoload.php');
 $loader = new \Twig\Loader\FilesystemLoader(from_root('/../views'));
 $twig = new \Twig\Environment($loader, [
     'cache' => from_root('/../twig-cache'),
     'auto_reload' => true
 ]);
 
-
-// Render the admin menu
-$admin_menu = $twig->render('admin_menu.twig');
+// Render the admin menu with the is_dev flag
+$admin_menu = $twig->render('admin_menu.twig', [
+    'is_developer' => $is_developer, // Pass the flag to Twig
+]);
 
 // Display the menu
 echo $admin_menu;

@@ -1,12 +1,12 @@
 <?php
 require("helpdbconnect.php");
-require("block_file.php");
-require("functions.php");
-require("ticket_utils.php");
+require_once("block_file.php");
+require_once("functions.php");
+require_once("ticket_utils.php");
 require_once("ldap_connection.php");
 
 $input = isset($_GET['name']) ? ldapspecialchars($_GET['name']) : '';
-log_app(LOG_INFO, "input: ".$input);
+log_app(LOG_INFO, "input: " . $input);
 
 
 $ldap_dn = getenv('LDAP_DN');
@@ -78,4 +78,3 @@ for ($i = 0; $i < $entries_archived['count']; $i++) {
 
 header('Content-Type: application/json');
 echo json_encode($results);
-?>

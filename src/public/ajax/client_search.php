@@ -1,7 +1,7 @@
 <?php
-require("block_file.php");
-require("ticket_utils.php");
-require("helpdbconnect.php");
+require_once("block_file.php");
+require_once("ticket_utils.php");
+require_once("helpdbconnect.php");
 require_once("ldap_connection.php");
 
 $firstname = isset($_POST['firstname']) ? ldapspecialchars($_POST['firstname']) : '';
@@ -44,4 +44,3 @@ for ($i = 0; $i < $entries['count']; $i++) {
 
 header('Content-Type: application/json');
 echo json_encode($results);
-?>

@@ -1,20 +1,23 @@
 <?php
-
 require from_root("/../vendor/autoload.php");
 require from_root("/new-controllers/ticket_base_variables.php");
 require_once "ticket_utils.php";
 
+
+
 $loader = new \Twig\Loader\FilesystemLoader(from_root('/../views'));
 $twig = new \Twig\Environment($loader, [
-    'cache' => from_root('/../twig-cache')
+    'cache' => from_root('/../twig-cache'),
+    'auto_reload' => true
 ]);
 
 $ticket_query = <<<QUERY
-    SELECT * FROM help.tickets WHERE id IN (
-        SELECT ticket_id FROM ticket_tasks WHERE (NOT completed AND assigned_tech = ?)
-    )
+    SELECT * FROM tickets
+    WHERE status NOT IN ('Closed', 'Resolved')
+    AND priority = 30
+    AND employee = ?
+    ORDER BY id ASC
 QUERY;
-
 
 $ticket_result = HelpDB::get()->execute_query($ticket_query, [$username]);
 $tickets = get_parsed_ticket_data($ticket_result);
@@ -42,6 +45,6 @@ echo $twig->render('ticket_table_base.twig', [
 
     // ticket_table_base variables
     'tickets' => $tickets,
-    'page_title' => 'Tickets With Assigned Tasks',
+    'page_title' => 'Project Tickets',
     'num_project_tickets' => $num_project_tickets
 ]);

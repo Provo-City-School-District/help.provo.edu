@@ -5,6 +5,15 @@ require_once "ticket_utils.php";
 $num_assigned_tickets = 0;
 $num_flagged_tickets = 0;
 
+$num_project_tickets_query = <<<STR
+    SELECT COUNT(*) FROM tickets
+    WHERE status NOT IN ('Closed', 'Resolved')
+    AND priority = 30
+    AND employee = ?
+    ORDER BY id ASC
+STR;
+$num_project_tickets_result = HelpDB::get()->execute_query($num_project_tickets_query, [$username]);
+$num_project_tickets = $num_project_tickets_result->fetch_column(0);
 
 $num_assigned_tickets_query = <<<STR
     SELECT 1

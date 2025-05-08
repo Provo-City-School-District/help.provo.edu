@@ -58,4 +58,5 @@ echo $twig->render('ticket_table_base.twig', [
 	// ticket_table_base variables
 	'tickets' => $tickets,
 	'page_title' => 'Recent Tickets',
+	'num_project_tickets' => $num_project_tickets
 ]);

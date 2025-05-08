@@ -243,6 +243,7 @@ echo $twig->render('search_tickets.twig', [
     'search_request_type' => $search_request_type,
     'priorityTypes' => $priorityTypes,
     'requestTypes' => $requestTypes,
+    'num_project_tickets' => $num_project_tickets
 
 ]);
 

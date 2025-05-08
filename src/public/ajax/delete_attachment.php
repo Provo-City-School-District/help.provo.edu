@@ -1,8 +1,8 @@
 <?php
-require("helpdbconnect.php");
-require("block_file.php");
-require("functions.php");
-require("ticket_utils.php");
+require_once("helpdbconnect.php");
+require_once("block_file.php");
+require_once("functions.php");
+require_once("ticket_utils.php");
 
 $post_filtered = filter_input_array(INPUT_POST, [
     "attachment_path" => FILTER_SANITIZE_STRING,
@@ -33,7 +33,7 @@ $update_attachment_res = HelpDB::get()->execute_query("UPDATE help.tickets SET a
 
 $real_filename = basename($attachment_path);
 $real_user_path = realpath(from_root("/../uploads/$real_filename"));
-$real_base_path = realpath(from_root("/../uploads/")).DIRECTORY_SEPARATOR;
+$real_base_path = realpath(from_root("/../uploads/")) . DIRECTORY_SEPARATOR;
 
 // Validate that the file is being accessed in ${PROJECT_ROOT}/uploads
 if ($real_user_path === false || (substr($real_user_path, 0, strlen($real_base_path)) != $real_base_path)) {

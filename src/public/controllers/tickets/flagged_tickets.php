@@ -27,7 +27,7 @@ STR;
 $ticket_result = HelpDB::get()->execute_query($ticket_query, [$username]);
 $tickets = get_parsed_ticket_data($ticket_result);
 
-echo $twig->render('flagged_tickets.twig', [
+echo $twig->render('ticket_table_base.twig', [
 	// base variables
 	'color_scheme' => $color_scheme,
 	'current_year' => $current_year,
@@ -43,10 +43,11 @@ echo $twig->render('flagged_tickets.twig', [
 	'subord_count' => $subord_count,
 	'num_assigned_tickets' => $num_assigned_tickets,
 	'num_flagged_tickets' => $num_flagged_tickets,
-    'num_assigned_intern_tickets' => $num_assigned_intern_tickets,
-    'num_assigned_tasks' => $num_assigned_tasks,
-    'num_subordinate_tickets' => $num_subordinate_tickets,
+	'num_assigned_intern_tickets' => $num_assigned_intern_tickets,
+	'num_assigned_tasks' => $num_assigned_tasks,
+	'num_subordinate_tickets' => $num_subordinate_tickets,
 
 	// ticket_table_base variables
-	'tickets' => $tickets
+	'tickets' => $tickets,
+	'page_title' => 'Flagged Tickets',
 ]);

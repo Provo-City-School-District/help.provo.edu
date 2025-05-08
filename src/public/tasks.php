@@ -19,7 +19,7 @@ QUERY;
 $ticket_result = HelpDB::get()->execute_query($ticket_query, [$username]);
 $tickets = get_parsed_ticket_data($ticket_result);
 
-echo $twig->render('tasks.twig', [
+echo $twig->render('ticket_table_base.twig', [
     // base variables
     'color_scheme' => $color_scheme,
     'current_year' => $current_year,
@@ -41,5 +41,6 @@ echo $twig->render('tasks.twig', [
 
 
     // ticket_table_base variables
-    'tickets' => $tickets
+    'tickets' => $tickets,
+    'page_title' => 'Tickets With Assigned Tasks',
 ]);

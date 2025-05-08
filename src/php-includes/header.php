@@ -128,8 +128,8 @@ if (isset($_SESSION['username']) && $_SESSION['username'] != "") {
     <?php
     }
     ?>
-    <link href="/includes/css/external/lightbox.css" rel="stylesheet" />
-    <link rel="stylesheet" href="/includes/css/external/tinymce-prism.css">
+    <link href="/includes/css/external/lightbox.css?v=<?= $app_version; ?>" rel="stylesheet" />
+    <link rel="stylesheet" href="/includes/css/external/tinymce-prism.css?v=<?= $app_version; ?>">
 </head>
 
 <body>

@@ -1,8 +1,8 @@
 <?php
 require 'block_file.php';
-require 'ticket_utils.php';
 require from_root("/../vendor/autoload.php");
 require from_root("/new-controllers/base_variables.php");
+require_once 'ticket_utils.php';
 
 $loader = new \Twig\Loader\FilesystemLoader(from_root('/../views'));
 $twig = new \Twig\Environment($loader, [

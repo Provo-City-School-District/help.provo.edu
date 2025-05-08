@@ -18,10 +18,6 @@ if (!isset($_SESSION['username'])) {
             $user_id = $data["id"];
             $username = $data["username"];
             login_user($user_id, $username);
-        } else {
-            // Redirect to the login page
-            header('Location:' . getenv('ROOTDOMAIN'));
-            exit;
         }
     }
 }

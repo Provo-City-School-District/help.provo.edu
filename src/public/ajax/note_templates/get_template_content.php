@@ -1,8 +1,8 @@
 <?php
 require("helpdbconnect.php");
 require("block_file.php");
-require("functions.php");
-require("ticket_utils.php");
+require_once("functions.php");
+require_once("ticket_utils.php");
 
 $get_filtered = filter_input_array(INPUT_GET, [
     "template_name" => FILTER_SANITIZE_STRING

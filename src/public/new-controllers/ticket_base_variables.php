@@ -4,6 +4,7 @@ require_once "ticket_utils.php";
 
 $num_assigned_tickets = 0;
 $num_flagged_tickets = 0;
+$num_project_tickets = 0;
 
 $num_project_tickets_query = <<<STR
     SELECT COUNT(*) FROM tickets

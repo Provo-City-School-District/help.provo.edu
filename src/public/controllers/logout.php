@@ -1,6 +1,9 @@
 <?php
+require_once 'helpdbconnect.php';
 session_start();
 
+HelpDB::get()->execute_query('UPDATE users SET gsso = NULL WHERE id = ?', [$_SESSION["user_id"]]);
+ 
 // Unset all of the session variables.
 $_SESSION = array();
 

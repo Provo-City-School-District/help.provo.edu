@@ -271,12 +271,11 @@ $num_project_tickets = $num_project_tickets_result->fetch_column(0);
                             <li><a href="/controllers/tickets/project_tickets.php">My Projects (<?= $num_project_tickets ?>)</a></li>
                         <?php
                         }
-                        if ($num_project)
-                            if ($num_flagged_tickets != 0) {
+                        if ($num_flagged_tickets != 0) {
                         ?>
                             <li><a href="/controllers/tickets/flagged_tickets.php">Flagged Tickets (<?= $num_flagged_tickets ?>)</a></li>
                         <?php
-                            }
+                        }
                         ?>
                         <li><a href="/controllers/tickets/recent_tickets.php">Recent Tickets</a></li>
                         <li><a href="/controllers/tickets/search_tickets.php">Search Tickets</a></li>

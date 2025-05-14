@@ -1,7 +1,7 @@
 <?php
-require "block_file.php";
-require "ticket_utils.php";
-require "helpdbconnect.php";
+require_once "block_file.php";
+require_once "ticket_utils.php";
+require_once "helpdbconnect.php";
 
 
 // Only admins are allowed to do bulk actions for now

@@ -1,8 +1,8 @@
 <?php
-require("helpdbconnect.php");
-require("block_file.php");
+require_once("helpdbconnect.php");
+require_once("block_file.php");
 require_once("functions.php");
-require("ticket_utils.php");
+require_once("ticket_utils.php");
 
 $post_filtered = filter_input_array(INPUT_POST, [
     "task_id" => FILTER_VALIDATE_INT,

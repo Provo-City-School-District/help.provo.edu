@@ -1,6 +1,6 @@
 <?php
-require("helpdbconnect.php");
-require("block_file.php");
+require_once("helpdbconnect.php");
+require_once("block_file.php");
 require_once("functions.php");
 require_once("ticket_utils.php");
 
@@ -11,11 +11,12 @@ $get_filtered = filter_input_array(INPUT_GET, [
 $username = $_SESSION["username"];
 $result = HelpDB::get()->execute_query(
     "SELECT content FROM note_templates WHERE (name = ? AND user_id = ?)",
-    [$get_filtered["template_name"], get_id_for_user($username)]);
+    [$get_filtered["template_name"], get_id_for_user($username)]
+);
 
 if (!$result) {
-   http_response_code(500);
-   die;
+    http_response_code(500);
+    die;
 }
 
 $data = [

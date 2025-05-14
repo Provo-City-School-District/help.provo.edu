@@ -1,7 +1,7 @@
 <?php
-require "block_file.php";
-require "helpdbconnect.php";
-require "ticket_utils.php";
+require_once "block_file.php";
+require_once "helpdbconnect.php";
+require_once "ticket_utils.php";
 
 session_start();
 
@@ -38,8 +38,10 @@ $update_task_query = <<<STR
 STR;
 
 $update_result = HelpDB::get()->execute_query($update_task_query, [
-    $updated_assigned_tech, $updated_required, 
-    $updated_description, $task_id
+    $updated_assigned_tech,
+    $updated_required,
+    $updated_description,
+    $task_id
 ]);
 
 if (!$update_result) {
@@ -52,9 +54,11 @@ $_SESSION['status_type'] = 'success';
 
 $ticket_id = $old_task_data["ticket_id"];
 // Send email to new employee for task assignment
-if (isset($updated_assigned_tech) && 
+if (
+    isset($updated_assigned_tech) &&
     strtolower($updated_assigned_tech != "unassigned") &&
-    $updated_assigned_tech != $old_task_data["assigned_tech"]) {
+    $updated_assigned_tech != $old_task_data["assigned_tech"]
+) {
     $tech_name = get_client_name($updated_assigned_tech);
     $firstname = $tech_name["firstname"];
     $lastname = $tech_name["lastname"];
@@ -62,7 +66,7 @@ if (isset($updated_assigned_tech) &&
     $task_subject = "A task on ticket $ticket_id has been reassigned to $firstname $lastname";
     $template = new Template(from_root("/includes/templates/task_assigned.phtml"));
 
-    $template->assigned_tech_name = $firstname." ".$lastname;
+    $template->assigned_tech_name = $firstname . " " . $lastname;
     $template->ticket_id = $ticket_id;
     $template->site_url = getenv('ROOTDOMAIN');
     $template->description = $updated_description;

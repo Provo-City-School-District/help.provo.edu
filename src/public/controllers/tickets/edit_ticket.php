@@ -1262,27 +1262,32 @@ $workflow_steps = $workflow_steps_res ? $workflow_steps_res->fetch_all(MYSQLI_AS
                 else
                     echo "<tr>";
             ?>
-                <td data-cell="Date"><a href="edit_note.php?note_id=<?= $note['note_id'] ?>&ticket_id=<?= $ticket_id ?>">
+                <td data-cell="Date">
+                    <a href="edit_note.php?note_id=<?= $note['note_id'] ?>&ticket_id=<?= $ticket_id ?>">
                         <?php
                         $date_override = $note['date_override'];
                         if ($date_override != null)
                             echo $date_override . "*";
                         else
                             echo $note['created'];
-                        ?></a></td>
-                <td data-cell="Created By"><?php
-                                            $creator = $note['creator'];
+                        ?>
+                    </a>
+                </td>
+                <td data-cell="Created By">
+                    <?php
+                    $creator = $note['creator'];
 
-                                            // Check if creator exists as a user
-                                            $creator_found_result = HelpDB::get()->execute_query('SELECT COUNT(*) AS count FROM users WHERE username = ?', [$creator]);
-                                            $creator_found_data = $creator_found_result->fetch_assoc();
-                                            if (isset($creator) && $creator_found_data["count"] > 0) {
-                                                $name = get_local_name_for_user($creator);
-                                                echo $name['firstname'] . ' ' . $name['lastname'];
-                                            } else {
-                                                echo $creator;
-                                            }
-                                            ?></td>
+                    // Check if creator exists as a user
+                    $creator_found_result = HelpDB::get()->execute_query('SELECT COUNT(*) AS count FROM users WHERE username = ?', [$creator]);
+                    $creator_found_data = $creator_found_result->fetch_assoc();
+                    if (isset($creator) && $creator_found_data["count"] > 0) {
+                        $name = get_local_name_for_user($creator);
+                        echo $name['firstname'] . ' ' . $name['lastname'];
+                    } else {
+                        echo $creator;
+                    }
+                    ?>
+                </td>
                 <td class="ticket_note" data-cell="Note Message">
                     <?php
                     $ticket_pattern = "/WO#\\d{1,6}/";

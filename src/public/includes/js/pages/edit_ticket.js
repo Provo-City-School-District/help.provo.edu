@@ -154,48 +154,44 @@ if (newTaskButton) {
   });
 }
 
-
-
 function dismissTemplateView() {
-    const templateModalBackground = document.getElementById(
-        "note-template-form-background"
-     );
-    const templateForm = document.getElementById("note-template-form");
+  const templateModalBackground = document.getElementById(
+    "note-template-form-background"
+  );
+  const templateForm = document.getElementById("note-template-form");
 
-    templateModalBackground.style.display = "none";
-    templateForm.style.display = "none";
+  templateModalBackground.style.display = "none";
+  templateForm.style.display = "none";
 }
 
 const showTemplatesButton = document.getElementById("show-templates-button");
 
 if (showTemplatesButton) {
-    showTemplatesButton.onclick = function (event) {
-        const templateModalBackground = document.getElementById(
-            "note-template-form-background"
-          );
-        const templateForm = document.getElementById("note-template-form");
-        if (templateForm.style.display === "none") {
-            templateForm.style.display = "block";
-            templateModalBackground.style.display = "block";
-        } else {
-            dismissTemplateView();
-        }
-    };
+  showTemplatesButton.onclick = function (event) {
+    const templateModalBackground = document.getElementById(
+      "note-template-form-background"
+    );
+    const templateForm = document.getElementById("note-template-form");
+    if (templateForm.style.display === "none") {
+      templateForm.style.display = "block";
+      templateModalBackground.style.display = "block";
+    } else {
+      dismissTemplateView();
+    }
+  };
 }
-
-
 
 const templateCloseButton = document.getElementById("note-template-form-close");
 if (templateCloseButton) {
-    templateCloseButton.onclick = function (event) {
-        const templateModalBackground = document.getElementById(
-            "note-template-form-background"
-        );
-        const templateForm = document.getElementById("note-template-form");
-        if (event.target == templateCloseButton) {
-            dismissTemplateView();
-        }
-    };
+  templateCloseButton.onclick = function (event) {
+    const templateModalBackground = document.getElementById(
+      "note-template-form-background"
+    );
+    const templateForm = document.getElementById("note-template-form");
+    if (event.target == templateCloseButton) {
+      dismissTemplateView();
+    }
+  };
 }
 
 const newTaskModalCloseButton = document.getElementById("new-task-form-close");
@@ -255,12 +251,12 @@ window.onclick = function (event) {
     newTaskForm.style.display = "none";
   }
 
-    const templateModalBackground = document.getElementById(
+  const templateModalBackground = document.getElementById(
     "note-template-form-background"
-    );
-    if (event.target == templateModalBackground) {
-       dismissTemplateView();
-    }
+  );
+  if (event.target == templateModalBackground) {
+    dismissTemplateView();
+  }
 };
 
 let newNoteModalCloseButton = document.getElementById("new-note-form-close");

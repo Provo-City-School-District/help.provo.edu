@@ -491,13 +491,13 @@ function __create_ticket(array $ticket_params)
 
 // Returns true on success, false on failure
 function create_ticket(
-    string $client, 
-    string $subject, 
-    string $content, 
-    string $email_msg_id, 
-    int $location_code, 
-    int &$created_ticket_id)
-{
+    string $client,
+    string $subject,
+    string $content,
+    string $email_msg_id,
+    int $location_code,
+    int &$created_ticket_id
+) {
     $params = [
         'client' => $client,
         'title' => $subject,

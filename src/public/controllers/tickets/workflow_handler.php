@@ -17,9 +17,15 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $assigned_user = htmlspecialchars(trim($_POST['assigned_user']), ENT_QUOTES, 'UTF-8');
         $step_order = intval($_POST['step_order']);
 
-        // insert into ticket_workflow_steps
+        // Increment step_order for all steps at or after the new step's order
         HelpDB::get()->execute_query(
-            "INSERT INTO ticket_workflow_steps (ticket_id ,step_order, step_name, assigned_user) VALUES (?, ?, ?, ?)",
+            "UPDATE ticket_workflow_steps SET step_order = step_order + 1 WHERE ticket_id = ? AND step_order >= ?",
+            [$ticket_id, $step_order]
+        );
+
+        // Now insert the new step
+        HelpDB::get()->execute_query(
+            "INSERT INTO ticket_workflow_steps (ticket_id, step_order, step_name, assigned_user) VALUES (?, ?, ?, ?)",
             [$ticket_id, $step_order, $step_name, $assigned_user]
         );
 
@@ -27,12 +33,6 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         HelpDB::get()->execute_query(
             "INSERT INTO ticket_logs (ticket_id,department_id,user_id, field_name, new_value, created_at) VALUES (?,?,?,?,?, NOW())",
             [$ticket_id, $user_department, $username, 'workflow', "Added workflow step: $step_name"]
-        );
-
-        // Auto-assign the first step's user to ticket
-        $first_step_res = HelpDB::get()->execute_query(
-            "SELECT * FROM ticket_workflow_steps WHERE ticket_id = ? ORDER BY step_order ASC LIMIT 1",
-            [$ticket_id]
         );
 
         header("Location: edit_ticket.php?id=$ticket_id");

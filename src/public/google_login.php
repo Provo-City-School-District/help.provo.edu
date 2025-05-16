@@ -125,7 +125,7 @@ if (isset($_GET['code'])) {
         $update_stmt->bind_param("sis", $login_token, $loc, $email);
         $update_stmt->execute();
 
-        setcookie("COOKIE_REMEMBER_ME", $login_token, time() + (86400 * getenv("REMEMBER_ME_COOKIE_DAYS")), "/", "", false, true);
+        setcookie("COOKIE_REMEMBER_ME", $login_token, time() + (86400 * (int)getenv("REMEMBER_ME_COOKIE_DAYS")), "/", "", false, true);
 
         // Store the last login time in the session
         $_SESSION['last_login'] = date("Y-m-d H:i:s");

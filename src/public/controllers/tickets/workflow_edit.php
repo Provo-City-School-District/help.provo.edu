@@ -53,6 +53,11 @@ $twig = new \Twig\Environment($loader, [
     'cache' => from_root('/../twig-cache'),
     'auto_reload' => true
 ]);
+$twig->addFunction(new \Twig\TwigFunction('render_tech_usernames_dropdown', function ($tech_usernames, $selected = null, $select_name = "assigned_tech", $include_unassigned = true) {
+    ob_start();
+    render_tech_usernames_dropdown($tech_usernames, $selected, $select_name, $include_unassigned);
+    return ob_get_clean();
+}, ['is_safe' => ['html']]));
 
 // Render Twig template
 echo $twig->render('workflow_edit.twig', [

@@ -6,21 +6,15 @@
     <input type="hidden" name="update_step_id" value="{{ step.id }}">
     <input type="hidden" name="ticket_id" value="{{ step.ticket_id }}">
 
-        <label for="assigned_user">Assign To:</label>
-        <select name="assigned_user" required>
-            {% for tech_username in tech_usernames %}
-                <option value="{{ tech_username|e }}" {% if step.assigned_user == tech_username %}selected{% endif %}>
-                    {{ tech_username|e }}
-                </option>
-            {% endfor %}
-        </select>
+    <label for="assigned_user">Assign To:</label>
+    {{ render_tech_usernames_dropdown(tech_usernames, ticket.employee, 'assigned_user', false) | raw }}
 
-        <label for="step_order">Order:</label>
-        <input type="number" name="step_order" min="1" value="{{ step.step_order|e }}" required>
+    <label for="step_order">Order:</label>
+    <input type="number" name="step_order" min="1" value="{{ step.step_order|e }}" required>
 
 
-        <label for="step_name">Workflow Step:</label>
-        <textarea type="text" name="step_name" required class="tinyMCEtextarea">{{ step.step_name|raw }}</textarea>
+    <label for="step_name">Workflow Step:</label>
+    <textarea type="text" name="step_name" required class="tinyMCEtextarea">{{ step.step_name|raw }}</textarea>
 
     <button type="submit" class="button">Update Step</button>
 </form>

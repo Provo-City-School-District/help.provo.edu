@@ -375,3 +375,31 @@ if (searchResults) {
     }
   });
 }
+
+// Show the Add Workflow Step modal
+document
+  .getElementById("new-workflow-button")
+  .addEventListener("click", function () {
+    document.getElementById("new-workflow-form-background").style.display =
+      "block";
+    document.getElementById("new-workflow-form").style.display = "block";
+  });
+
+// Close the modal when the close button is clicked
+document
+  .getElementById("new-workflow-form-close")
+  .addEventListener("click", function () {
+    document.getElementById("new-workflow-form-background").style.display =
+      "none";
+    document.getElementById("new-workflow-form").style.display = "none";
+  });
+
+// Optional: Close modal when clicking outside the form
+document
+  .getElementById("new-workflow-form-background")
+  .addEventListener("click", function (e) {
+    if (e.target === this) {
+      this.style.display = "none";
+      document.getElementById("new-workflow-form").style.display = "none";
+    }
+  });

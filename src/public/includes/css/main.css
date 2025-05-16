@@ -60,6 +60,10 @@ ol {
 	list-style-type: decimal;
 }
 
+.block {
+	display: block;
+}
+
 blockquote {
 	display: block;
 	margin: 1em 0;
@@ -93,6 +97,10 @@ blockquote {
 	grid-template-columns: 1fr;
 	/* gap: 10px; */
 	/* margin: 1em 0; */
+}
+
+.grid2.gap1 {
+	gap: 1em;
 }
 
 .grid3 {
@@ -993,12 +1001,14 @@ select {
 		/* max-width: 50%; */
 	}
 
-	.taskTable .edit_task_cell {
+	.taskTable .edit_task_cell,
+	.workflowTable .workflow-actions {
 		padding: 5px;
 
 	}
 
-	.taskTable .edit_task_cell .button {
+	.taskTable .edit_task_cell .button,
+	.workflowTable .workflow-actions .button {
 		margin: unset;
 	}
 

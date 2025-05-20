@@ -408,9 +408,10 @@ STR;
 
 $note_templates = HelpDB::get()->execute_query($note_templates_query, [$user_id]);
 
+$user_settings_id = get_id_for_user($username);
 // Fetch available task groups
-$groups_query = "SELECT DISTINCT template_group FROM task_templates WHERE template_group IS NOT NULL";
-$groups_result = HelpDB::get()->execute_query($groups_query);
+$groups_query = "SELECT DISTINCT template_group FROM task_templates WHERE template_group IS NOT NULL AND created_by = ?";
+$groups_result = HelpDB::get()->execute_query($groups_query, [$user_settings_id]);
 $groups = [];
 while ($row = $groups_result->fetch_assoc()) {
     $groups[] = $row;

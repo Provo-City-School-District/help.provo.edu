@@ -166,4 +166,41 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         header("Location: edit_ticket.php?id=$ticket_id");
         exit;
     }
+
+
+
+
+
+    // incomplete workflow step
+    if (isset($_POST['uncomplete_step_id'])) {
+        $step_id = intval($_POST['uncomplete_step_id']);
+        $ticket_id = intval($_POST['ticket_id']);
+
+        // Set step status back to pending and clear approved_at
+        HelpDB::get()->execute_query(
+            "UPDATE ticket_workflow_steps SET status = 'pending', approved_at = NULL WHERE id = ?",
+            [$step_id]
+        );
+
+        // Reassign the ticket to this user (the assigned_user for this step)
+        $step_res = HelpDB::get()->execute_query(
+            "SELECT assigned_user, step_name FROM ticket_workflow_steps WHERE id = ?",
+            [$step_id]
+        );
+        $step = $step_res ? $step_res->fetch_assoc() : null;
+        if ($step) {
+            HelpDB::get()->execute_query(
+                "UPDATE tickets SET employee = ? WHERE id = ?",
+                [$step['assigned_user'], $ticket_id]
+            );
+            // Log action
+            HelpDB::get()->execute_query(
+                "INSERT INTO ticket_logs (ticket_id,department_id,user_id, field_name, new_value, created_at) VALUES (?,?,?,?,?, NOW())",
+                [$ticket_id, $user_department, $username, 'workflow', "Uncompleted workflow step: {$step['step_name']}"]
+            );
+        }
+
+        header("Location: edit_ticket.php?id=$ticket_id");
+        exit;
+    }
 }

@@ -1132,7 +1132,9 @@ $workflow_steps = $workflow_steps_res ? $workflow_steps_res->fetch_all(MYSQLI_AS
                             <td class="workflow-actions">
                                 <?php
                                 $can_approve = strtolower(trim($step['assigned_user'])) === strtolower(trim($username)) && $step['status'] === 'pending';
+                                $can_uncomplete = strtolower(trim($step['assigned_user'])) === strtolower(trim($username)) && $step['status'] === 'approved';
                                 $previous_steps_approved = true;
+
                                 foreach ($workflow_steps as $prev_idx => $prev_step) {
                                     if ($prev_idx < $idx && $prev_step['status'] !== 'approved') {
                                         $previous_steps_approved = false;
@@ -1141,6 +1143,13 @@ $workflow_steps = $workflow_steps_res ? $workflow_steps_res->fetch_all(MYSQLI_AS
                                 }
                                 if ($step['status'] === 'approved') {
                                     echo '<span class="block">Complete</span>';
+                                    if ($can_uncomplete) { ?>
+                                        <form method="post" action="workflow_handler.php" style="display:inline;">
+                                            <input type="hidden" name="uncomplete_step_id" value="<?= $step['id'] ?>">
+                                            <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
+                                            <button type="submit" class="button">Uncomplete</button>
+                                        </form>
+                                    <?php }
                                 } elseif ($can_approve && $previous_steps_approved) { ?>
                                     <form method="post" action="workflow_handler.php" style="display:inline;">
                                         <input type="hidden" name="approve_step_id" value="<?= $step['id'] ?>">

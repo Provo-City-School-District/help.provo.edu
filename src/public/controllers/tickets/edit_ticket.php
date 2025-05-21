@@ -1066,6 +1066,9 @@ $workflow_steps = $workflow_steps_res ? $workflow_steps_res->fetch_all(MYSQLI_AS
             <div id="new-task-form-background" class="modal-form-background">
                 <div id="new-task-form" class="modal-form" style="display: none;">
                     <div class="modal-form-header"><span class="modal-form-close" id="new-task-form-close">&times;</span></div>
+                    <h3>Description</h3>
+                    Tasks are individual action items that need to be completed for this ticket. They can be assigned to different techs and checked off as work is done.<br><br>
+
                     <h3>Add Task</h3>
                     <form id="task-submit" method="post" action="add_task_handler.php">
                         <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
@@ -1188,6 +1191,11 @@ $workflow_steps = $workflow_steps_res ? $workflow_steps_res->fetch_all(MYSQLI_AS
             <div class="modal-form-header">
                 <span class="modal-form-close" id="new-workflow-form-close">&times;</span>
             </div>
+
+            <h3>Description</h3>
+            Workflows are a series of approval or process steps that must be completed in order. Each step is assigned to a specific user and must be completed before the next step can begin.
+            Ticket will Automatically re-assigned to the next user in the workflow when the previous step is completed.
+
             <h3>Add Workflow Step</h3>
             <form method="post" action="workflow_handler.php">
                 <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">

@@ -399,3 +399,18 @@ document
       document.getElementById("new-workflow-form").style.display = "none";
     }
   });
+
+// Show the uncomplete Workflow Step modal
+document.querySelectorAll(".uncomplete-step-btn").forEach(function (btn) {
+  btn.addEventListener("click", function () {
+    document.getElementById("uncomplete_step_id").value =
+      btn.getAttribute("data-step-id");
+    document.getElementById("uncomplete_ticket_id").value =
+      btn.getAttribute("data-ticket-id");
+    document.getElementById("uncomplete_reason").value = "";
+    document.getElementById("uncomplete-step-modal").style.display = "block";
+  });
+});
+document.getElementById("uncomplete-step-modal-close").onclick = function () {
+  document.getElementById("uncomplete-step-modal").style.display = "none";
+};

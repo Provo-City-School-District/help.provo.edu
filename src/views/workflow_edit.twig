@@ -7,7 +7,7 @@
     <input type="hidden" name="ticket_id" value="{{ step.ticket_id }}">
 
     <label for="assigned_user">Assign To:</label>
-    {{ render_tech_usernames_dropdown(tech_usernames, ticket.employee, 'assigned_user', false) | raw }}
+    {{ render_tech_usernames_dropdown(tech_usernames, step.assigned_user, 'assigned_user', false) | raw }}
 
     <label for="step_order">Order:</label>
     <input type="number" name="step_order" min="1" value="{{ step.step_order|e }}" required>

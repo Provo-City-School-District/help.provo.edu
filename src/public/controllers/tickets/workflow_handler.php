@@ -2,11 +2,13 @@
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
     require_once('helpdbconnect.php');
 
+
     session_start();
 
     $ticket_id = intval($_POST['ticket_id'] ?? 0);
     $user_department = $_SESSION['department'] ?? null;
     $username = $_SESSION['username'] ?? null;
+
 
 
 
@@ -42,6 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
 
 
+
     // Workflow approval
     if (isset($_POST['approve_step_id'])) {
         $step_id = intval($_POST['approve_step_id']);
@@ -69,6 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         header("Location: edit_ticket.php?id=$ticket_id");
         exit;
     }
+
 
 
 
@@ -109,6 +113,8 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         header("Location: edit_ticket.php?id=$ticket_id");
         exit;
     }
+
+
 
 
 
@@ -175,6 +181,9 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     if (isset($_POST['uncomplete_step_id'])) {
         $step_id = intval($_POST['uncomplete_step_id']);
         $ticket_id = intval($_POST['ticket_id']);
+        $reason = trim($_POST['uncomplete_reason'] ?? '');
+        $username = $_SESSION['username'];
+        $user_department = $_SESSION['department'] ?? null;
 
         // Set step status back to pending and clear approved_at
         HelpDB::get()->execute_query(
@@ -193,10 +202,24 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                 "UPDATE tickets SET employee = ? WHERE id = ?",
                 [$step['assigned_user'], $ticket_id]
             );
+
+            // Add a note to the ticket (requires ticket_utils.php)
+            require_once('ticket_utils.php');
+            create_note(
+                $ticket_id,
+                $username,
+                "[Workflow Step Uncompleted] " . $reason,
+                0,
+                0,
+                0,
+                0, // work/travel time
+                1
+            );
+
             // Log action
             HelpDB::get()->execute_query(
                 "INSERT INTO ticket_logs (ticket_id,department_id,user_id, field_name, new_value, created_at) VALUES (?,?,?,?,?, NOW())",
-                [$ticket_id, $user_department, $username, 'workflow', "Uncompleted workflow step: {$step['step_name']}"]
+                [$ticket_id, $user_department, $username, 'workflow', "Uncompleted workflow step: {$step['step_name']} Reason: $reason"]
             );
         }
 

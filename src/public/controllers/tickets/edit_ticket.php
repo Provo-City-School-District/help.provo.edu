@@ -1135,7 +1135,7 @@ $workflow_steps = $workflow_steps_res ? $workflow_steps_res->fetch_all(MYSQLI_AS
                             <td class="workflow-actions">
                                 <?php
                                 $can_approve = strtolower(trim($step['assigned_user'])) === strtolower(trim($username)) && $step['status'] === 'pending';
-                                $can_uncomplete = strtolower(trim($step['assigned_user'])) === strtolower(trim($username)) && $step['status'] === 'approved';
+                                $can_uncomplete = (strtolower(trim($step['assigned_user'])) === strtolower(trim($username))) || ($_SESSION['permissions']['is_supervisor'] ?? 0) && $step['status'] === 'approved';
                                 $previous_steps_approved = true;
 
                                 foreach ($workflow_steps as $prev_idx => $prev_step) {
@@ -1150,7 +1150,7 @@ $workflow_steps = $workflow_steps_res ? $workflow_steps_res->fetch_all(MYSQLI_AS
                                         <form method="post" action="workflow_handler.php" style="display:inline;">
                                             <input type="hidden" name="uncomplete_step_id" value="<?= $step['id'] ?>">
                                             <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
-                                            <button type="submit" class="button">Uncomplete</button>
+                                            <button type="button" class="button uncomplete-step-btn" data-step-id="<?= $step['id'] ?>" data-ticket-id="<?= $ticket_id ?>">Uncomplete</button>
                                         </form>
                                     <?php }
                                 } elseif ($can_approve && $previous_steps_approved) { ?>
@@ -1210,6 +1210,23 @@ $workflow_steps = $workflow_steps_res ? $workflow_steps_res->fetch_all(MYSQLI_AS
         </div>
     </div>
 
+    <!-- Reject/Uncomplete workflow modal -->
+    <div id="uncomplete-step-modal" class="modal-form-background" style="display:none;">
+        <div class="modal-form">
+            <div class="modal-form-header">
+                <span class="modal-form-close" id="uncomplete-step-modal-close">&times;</span>
+            </div>
+            <h3>Uncomplete Workflow Step</h3>
+            <form id="uncomplete-step-form" method="post" action="workflow_handler.php">
+                <input type="hidden" name="uncomplete_step_id" id="uncomplete_step_id">
+                <input type="hidden" name="ticket_id" id="uncomplete_ticket_id">
+                <label for="uncomplete_reason">Reason for uncompleting:</label>
+                <textarea name="uncomplete_reason" id="uncomplete_reason" class="" required></textarea>
+                <br>
+                <button type="submit" class="button">Submit</button>
+            </form>
+        </div>
+    </div>
 
     <div id="note-template-form-background" class="modal-form-background">
         <div id="note-template-form" class="modal-form" style="display: none;">
@@ -1911,4 +1928,17 @@ $workflow_steps = $workflow_steps_res ? $workflow_steps_res->fetch_all(MYSQLI_AS
             if (tinymce.get('step_name')) tinymce.get('step_name').focus();
         }
     });
+</script>
+<script>
+    document.querySelectorAll('.uncomplete-step-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            document.getElementById('uncomplete_step_id').value = btn.getAttribute('data-step-id');
+            document.getElementById('uncomplete_ticket_id').value = btn.getAttribute('data-ticket-id');
+            document.getElementById('uncomplete_reason').value = '';
+            document.getElementById('uncomplete-step-modal').style.display = 'block';
+        });
+    });
+    document.getElementById('uncomplete-step-modal-close').onclick = function() {
+        document.getElementById('uncomplete-step-modal').style.display = 'none';
+    };
 </script>

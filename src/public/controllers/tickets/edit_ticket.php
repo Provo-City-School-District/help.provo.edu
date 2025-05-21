@@ -1221,7 +1221,7 @@ $workflow_steps = $workflow_steps_res ? $workflow_steps_res->fetch_all(MYSQLI_AS
                 <input type="hidden" name="uncomplete_step_id" id="uncomplete_step_id">
                 <input type="hidden" name="ticket_id" id="uncomplete_ticket_id">
                 <label for="uncomplete_reason">Reason for uncompleting:</label>
-                <textarea name="uncomplete_reason" id="uncomplete_reason" class="" required></textarea>
+                <textarea name="uncomplete_reason" id="uncomplete_reason" class="tinyMCEtextarea"></textarea>
                 <br>
                 <button type="submit" class="button">Submit</button>
             </form>

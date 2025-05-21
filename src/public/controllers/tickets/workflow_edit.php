@@ -1,6 +1,6 @@
 <?php
 require_once from_root('/../vendor/autoload.php');
-require_once from_root("/new-controllers/base_variables.php");
+require_once from_root("/new-controllers/ticket_base_variables.php");
 require_once "ticket_utils.php";
 
 
@@ -76,6 +76,7 @@ echo $twig->render('workflow_edit.twig', [
     'subord_count' => $subord_count,
     'num_assigned_tickets' => $num_assigned_tickets,
     'num_flagged_tickets' => $num_flagged_tickets,
+    'num_assigned_intern_tickets' => $num_assigned_intern_tickets,
     'num_assigned_tasks' => $num_assigned_tasks,
     'num_subordinate_tickets' => $num_subordinate_tickets,
 

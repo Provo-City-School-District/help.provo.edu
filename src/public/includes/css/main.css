@@ -741,6 +741,26 @@ select {
 	width: 100%;
 }
 
+#workflow_template_table .actions_column,
+#workflow_template_table .group_column,
+#workflow_template_table .order_column {
+	width: 10%;
+}
+
+#workflow_template_table .assigned_column {
+	width: 30%;
+}
+
+.action_cell {
+	padding: 5px;
+	display: flex;
+	gap: 10px;
+}
+
+.action_cell * {
+	margin: 0;
+}
+
 /* =============================== Tickets Log =============================== */
 #ticket-history {
 	display: none;

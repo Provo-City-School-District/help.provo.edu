@@ -154,48 +154,44 @@ if (newTaskButton) {
   });
 }
 
-
-
 function dismissTemplateView() {
-    const templateModalBackground = document.getElementById(
-        "note-template-form-background"
-     );
-    const templateForm = document.getElementById("note-template-form");
+  const templateModalBackground = document.getElementById(
+    "note-template-form-background"
+  );
+  const templateForm = document.getElementById("note-template-form");
 
-    templateModalBackground.style.display = "none";
-    templateForm.style.display = "none";
+  templateModalBackground.style.display = "none";
+  templateForm.style.display = "none";
 }
 
 const showTemplatesButton = document.getElementById("show-templates-button");
 
 if (showTemplatesButton) {
-    showTemplatesButton.onclick = function (event) {
-        const templateModalBackground = document.getElementById(
-            "note-template-form-background"
-          );
-        const templateForm = document.getElementById("note-template-form");
-        if (templateForm.style.display === "none") {
-            templateForm.style.display = "block";
-            templateModalBackground.style.display = "block";
-        } else {
-            dismissTemplateView();
-        }
-    };
+  showTemplatesButton.onclick = function (event) {
+    const templateModalBackground = document.getElementById(
+      "note-template-form-background"
+    );
+    const templateForm = document.getElementById("note-template-form");
+    if (templateForm.style.display === "none") {
+      templateForm.style.display = "block";
+      templateModalBackground.style.display = "block";
+    } else {
+      dismissTemplateView();
+    }
+  };
 }
-
-
 
 const templateCloseButton = document.getElementById("note-template-form-close");
 if (templateCloseButton) {
-    templateCloseButton.onclick = function (event) {
-        const templateModalBackground = document.getElementById(
-            "note-template-form-background"
-        );
-        const templateForm = document.getElementById("note-template-form");
-        if (event.target == templateCloseButton) {
-            dismissTemplateView();
-        }
-    };
+  templateCloseButton.onclick = function (event) {
+    const templateModalBackground = document.getElementById(
+      "note-template-form-background"
+    );
+    const templateForm = document.getElementById("note-template-form");
+    if (event.target == templateCloseButton) {
+      dismissTemplateView();
+    }
+  };
 }
 
 const newTaskModalCloseButton = document.getElementById("new-task-form-close");
@@ -255,12 +251,12 @@ window.onclick = function (event) {
     newTaskForm.style.display = "none";
   }
 
-    const templateModalBackground = document.getElementById(
+  const templateModalBackground = document.getElementById(
     "note-template-form-background"
-    );
-    if (event.target == templateModalBackground) {
-       dismissTemplateView();
-    }
+  );
+  if (event.target == templateModalBackground) {
+    dismissTemplateView();
+  }
 };
 
 let newNoteModalCloseButton = document.getElementById("new-note-form-close");
@@ -375,3 +371,46 @@ if (searchResults) {
     }
   });
 }
+
+// Show the Add Workflow Step modal
+document
+  .getElementById("new-workflow-button")
+  .addEventListener("click", function () {
+    document.getElementById("new-workflow-form-background").style.display =
+      "block";
+    document.getElementById("new-workflow-form").style.display = "block";
+  });
+
+// Close the modal when the close button is clicked
+document
+  .getElementById("new-workflow-form-close")
+  .addEventListener("click", function () {
+    document.getElementById("new-workflow-form-background").style.display =
+      "none";
+    document.getElementById("new-workflow-form").style.display = "none";
+  });
+
+// Optional: Close modal when clicking outside the form
+document
+  .getElementById("new-workflow-form-background")
+  .addEventListener("click", function (e) {
+    if (e.target === this) {
+      this.style.display = "none";
+      document.getElementById("new-workflow-form").style.display = "none";
+    }
+  });
+
+// Show the uncomplete Workflow Step modal
+document.querySelectorAll(".uncomplete-step-btn").forEach(function (btn) {
+  btn.addEventListener("click", function () {
+    document.getElementById("uncomplete_step_id").value =
+      btn.getAttribute("data-step-id");
+    document.getElementById("uncomplete_ticket_id").value =
+      btn.getAttribute("data-ticket-id");
+    document.getElementById("uncomplete_reason").value = "";
+    document.getElementById("uncomplete-step-modal").style.display = "block";
+  });
+});
+document.getElementById("uncomplete-step-modal-close").onclick = function () {
+  document.getElementById("uncomplete-step-modal").style.display = "none";
+};

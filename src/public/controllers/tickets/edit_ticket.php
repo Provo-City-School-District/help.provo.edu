@@ -410,11 +410,11 @@ $note_templates = HelpDB::get()->execute_query($note_templates_query, [$user_id]
 
 $user_settings_id = get_id_for_user($username);
 // Fetch available task groups
-$groups_query = "SELECT DISTINCT template_group FROM task_templates WHERE template_group IS NOT NULL AND created_by = ?";
-$groups_result = HelpDB::get()->execute_query($groups_query, [$user_settings_id]);
-$groups = [];
-while ($row = $groups_result->fetch_assoc()) {
-    $groups[] = $row;
+$task_groups_query = "SELECT DISTINCT template_group FROM task_templates WHERE template_group IS NOT NULL AND created_by = ?";
+$task_groups_result = HelpDB::get()->execute_query($task_groups_query, [$user_settings_id]);
+$task_groups = [];
+while ($row = $task_groups_result->fetch_assoc()) {
+    $task_groups[] = $row;
 }
 $workflow_groups_query = "SELECT DISTINCT workflow_group FROM workflow_templates WHERE workflow_group IS NOT NULL AND created_by = ?";
 $workflow_groups_result = HelpDB::get()->execute_query($workflow_groups_query, [$user_settings_id]);
@@ -1105,7 +1105,7 @@ $workflow_steps = $workflow_steps_res ? $workflow_steps_res->fetch_all(MYSQLI_AS
                         <label for="task_group_selector" class="hidden">Select Task Group:</label>
                         <select id="task_group_selector" name="task_group">
                             <option value="">-- Select a Task Group --</option>
-                            <?php foreach ($groups as $group): ?>
+                            <?php foreach ($task_groups as $group): ?>
                                 <option value="<?= htmlspecialchars($group['template_group'], ENT_QUOTES, 'UTF-8') ?>">
                                     <?= htmlspecialchars($group['template_group'], ENT_QUOTES, 'UTF-8') ?>
                                 </option>

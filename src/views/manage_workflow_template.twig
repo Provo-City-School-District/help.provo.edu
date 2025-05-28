@@ -54,7 +54,10 @@
             <td data-cell="Step Name">{{ template.step_name|e }}</td>
             <td data-cell="Assigned User">{{ tech_usernames_map[template.assigned_user]|default('Unassigned')|e }}</td>
             <td data-cell="Actions" class="action_cell">
-                <a href="edit_workflow_template.php?step_id={{ template.id }}" class="button">Edit</a>
+                   <form action="edit_workflow_template.php" method="POST" style="display:inline;">
+                        <input type="hidden" name="step_id" value="{{ template.id }}">
+                        <button type="submit" class="button">Edit</button>
+                    </form>
                 <form action="delete_workflow_template.php" method="POST" onsubmit="return confirm('Are you sure?');">
                     <input type="hidden" name="step_id" value="{{ template.id }}">
                     <button type="submit" class="button">Delete</button>

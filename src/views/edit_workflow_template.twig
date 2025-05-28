@@ -1,0 +1,46 @@
+{% extends "base.twig" %}
+
+{% block content %}
+<h1>Edit Workflow Template</h1>
+
+{% if error_message %}
+    <p>{{ error_message|e }}</p>
+{% endif %}
+
+<form method="POST" class="singleColForm">
+    <input type="hidden" name="step_id" value="{{ template.id }}">
+    <div class="grid2">
+        <label for="workflow_group">Workflow Group:</label>
+        <input type="text" id="workflow_group" name="workflow_group" list="workflow_group_suggestions"
+               value="{{ template.workflow_group|e }}" required>
+        <datalist id="workflow_group_suggestions">
+            {% for group in groups %}
+                <option value="{{ group.workflow_group|e }}">{{ group.workflow_group|e }}</option>
+            {% endfor %}
+        </datalist>
+    </div>
+    <div class="grid2">
+        <label for="step_order">Step Order:</label>
+        <input type="number" id="step_order" name="step_order" min="1" value="{{ template.step_order }}" required>
+    </div>
+    <div class="grid2">
+        <label for="step_name">Step Name:</label>
+        <textarea id="step_name" name="step_name" required>{{ template.step_name|e }}</textarea>
+    </div>
+    <div class="grid2">
+        <label for="assigned_user">Assigned User:</label>
+        <select name="assigned_user" id="assigned_user">
+            <option value="" {% if not template.assigned_user %}selected{% endif %}>Unassigned</option>
+            {% for tech in tech_usernames_parsed %}
+                <option value="{{ tech.username|e }}"
+                    {% if tech.username == template.assigned_user %}selected{% endif %}>
+                    {{ tech.display_string|e }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+    <input type="hidden" name="action" value="save_workflow_template">
+    <button type="submit" class="button">Save Changes</button>
+    <a href="manage_workflow_template.php" class="button">Cancel</a>
+</form>
+{% endblock %}

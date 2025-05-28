@@ -1,9 +1,11 @@
 <?php
 require_once('init.php');
 require_once('helpdbconnect.php');
+require_once('ticket_utils.php');
 
 header('Content-Type: application/json');
 
+$username = $_SESSION["username"];
 $data = json_decode(file_get_contents('php://input'), true);
 $ticket_id = filter_var($data['ticket_id'], FILTER_SANITIZE_NUMBER_INT);
 $task_group = filter_var($data['task_group'], FILTER_SANITIZE_STRING);
@@ -25,12 +27,15 @@ if (!$tasks_result) {
 // Add tasks to the ticket
 while ($task = $tasks_result->fetch_assoc()) {
     $insert_task_query = "INSERT INTO ticket_tasks (ticket_id, description, required, assigned_tech) VALUES (?, ?, ?, ?)";
+    $task_description = htmlspecialchars(trim($task['description']), ENT_QUOTES, 'UTF-8');
     $insert_result = HelpDB::get()->execute_query($insert_task_query, [
         $ticket_id,
-        $task['description'],
+        $task_description,
         $task['required'],
         $task['assigned_tech']
     ]);
+
+    logTicketChange(HelpDB::get(), $ticket_id, $username, "Task \"$task_description\" created", "", "");
 
     if (!$insert_result) {
         echo json_encode(['success' => false, 'message' => 'Failed to add tasks to the ticket.']);

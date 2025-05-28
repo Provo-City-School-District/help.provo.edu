@@ -60,6 +60,10 @@ ol {
 	list-style-type: decimal;
 }
 
+.block {
+	display: block;
+}
+
 blockquote {
 	display: block;
 	margin: 1em 0;
@@ -93,6 +97,10 @@ blockquote {
 	grid-template-columns: 1fr;
 	/* gap: 10px; */
 	/* margin: 1em 0; */
+}
+
+.grid2.gap1 {
+	gap: 1em;
 }
 
 .grid3 {
@@ -733,6 +741,26 @@ select {
 	width: 100%;
 }
 
+#workflow_template_table .actions_column,
+#workflow_template_table .group_column,
+#workflow_template_table .order_column {
+	width: 10%;
+}
+
+#workflow_template_table .assigned_column {
+	width: 30%;
+}
+
+.action_cell {
+	padding: 5px;
+	display: flex;
+	gap: 10px;
+}
+
+.action_cell * {
+	margin: 0;
+}
+
 /* =============================== Tickets Log =============================== */
 #ticket-history {
 	display: none;
@@ -993,12 +1021,14 @@ select {
 		/* max-width: 50%; */
 	}
 
-	.taskTable .edit_task_cell {
+	.taskTable .edit_task_cell,
+	.workflowTable .workflow-actions {
 		padding: 5px;
 
 	}
 
-	.taskTable .edit_task_cell .button {
+	.taskTable .edit_task_cell .button,
+	.workflowTable .workflow-actions .button {
 		margin: unset;
 	}
 

@@ -376,8 +376,8 @@ function create_note(
         $template_tech->remaining_tasks = $remaining_tasks;
         $template_tech->attachment_urls = $attachment_urls;
 
-        // Skip email to tech if ticket is still unassigned
-        if ($assigned_tech !== null) {
+        // Skip email to tech if ticket is still unassigned or if client == tech
+        if ($assigned_tech !== null && (client_for_ticket($ticket_id_clean) != $username)) {
             log_app(LOG_INFO, "Emailing assigned tech $assigned_tech that client is updating ticket");
             send_email_and_add_to_ticket($ticket_id_clean, email_address_from_username($assigned_tech), $email_subject, $template_tech, [], [], $attachment_paths);
         }
@@ -491,13 +491,13 @@ function __create_ticket(array $ticket_params)
 
 // Returns true on success, false on failure
 function create_ticket(
-    string $client, 
-    string $subject, 
-    string $content, 
-    string $email_msg_id, 
-    int $location_code, 
-    int &$created_ticket_id)
-{
+    string $client,
+    string $subject,
+    string $content,
+    string $email_msg_id,
+    int $location_code,
+    int &$created_ticket_id
+) {
     $params = [
         'client' => $client,
         'title' => $subject,
@@ -1153,4 +1153,46 @@ function are_users_in_same_department($creator_username, $current_username)
     // Ensure both users were found and compare their departments
     return isset($departments[$creator_username], $departments[$current_username]) &&
         $departments[$creator_username] === $departments[$current_username];
+}
+// Build dropdown for assigned tech that shows all tech in the department
+function render_tech_usernames_dropdown($tech_usernames, $selected = null, $select_name = "assigned_tech", $include_unassigned = true)
+{
+?>
+    <select name="<?= htmlspecialchars($select_name) ?>" id="<?= htmlspecialchars($select_name) ?>">
+        <?php if ($include_unassigned): ?>
+            <option value="unassigned" <?= ($selected === "unassigned" || $selected === "" || $selected === null) ? 'selected' : '' ?>>Unassigned</option>
+        <?php endif; ?>
+        <?php foreach ($tech_usernames as $tmp_username) : ?>
+            <?php
+            $name = get_local_name_for_user($tmp_username);
+            $firstname = ucwords(strtolower($name["firstname"]));
+            $lastname = ucwords(strtolower($name["lastname"]));
+            $display_string = $firstname . " " . $lastname . " - " . location_name_from_id(get_fast_client_location($tmp_username) ?: "");
+            ?>
+            <option value="<?= $tmp_username ?>" <?= ($selected === $tmp_username) ? 'selected' : '' ?>>
+                <?= $display_string ?>
+            </option>
+        <?php endforeach; ?>
+        <?php
+        // If the selected tech is not in the dropdown, show them as a disabled selected option
+        if (
+            !empty($selected) &&
+            $selected !== "unassigned" &&
+            !in_array($selected, $tech_usernames)
+        ) {
+            $current_tech_name = get_local_name_for_user($selected);
+            if ($current_tech_name) {
+                $current_firstname = ucwords(strtolower($current_tech_name["firstname"]));
+                $current_lastname = ucwords(strtolower($current_tech_name["lastname"]));
+                $current_display_string = $current_firstname . " " . $current_lastname . " - " . location_name_from_id(get_fast_client_location($selected) ?: "");
+            } else {
+                $current_display_string = 'Assigned outside the department';
+            }
+        ?>
+            <option value="<?= htmlspecialchars($selected) ?>" selected disabled>
+                <?= $current_display_string ?> (Current Assigned Tech)
+            </option>
+        <?php } ?>
+    </select>
+<?php
 }

@@ -1,0 +1,70 @@
+{% extends "base.twig" %}
+
+{% block content %}
+<h1>Manage Workflow Templates</h1>
+
+{% if error_message %}
+    <p style="color: red;">{{ error_message|e }}</p>
+{% endif %}
+<h2>Create Workflow Template</h2>
+<form method="POST" class="singleColForm">
+    <div class="grid2">
+        <label for="workflow_group">Workflow Group:</label>
+        <input type="text" id="workflow_group" name="workflow_group" list="workflow_group_suggestions" required>
+        <datalist id="workflow_group_suggestions">
+            {% for group in groups %}
+                <option value="{{ group.workflow_group|e }}">{{ group.workflow_group|e }}</option>
+            {% endfor %}
+        </datalist>
+    </div>
+    <div class="grid2">
+        <label for="step_order">Step Order:</label>
+        <input type="number" id="step_order" name="step_order" min="1" value="1" required>
+    </div>
+    <div class="grid2">
+        <label for="step_name">Step Name:</label>
+        <textarea id="step_name" name="step_name" required></textarea>
+    </div>
+    <div class="grid2">
+        <label for="assigned_user">Assigned User:</label>
+        <select name="assigned_user" id="assigned_user">
+            <option value="">Unassigned</option>
+            {% for tech in tech_usernames_parsed %}
+                <option value="{{ tech.username|e }}">{{ tech.display_string|e }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="submit" class="button">Create Workflow Step</button>
+</form>
+
+
+<h2>Existing Workflow Templates</h2>
+<table id="workflow_template_table">
+    <tr>
+        <th class="group_column">Workflow Group</th>
+        <th class="order_column">Step Order</th>
+        <th>Step Name</th>
+        <th class="assigned_column">Assigned User</th>
+        <th class="actions_column">Actions</th>
+    </tr>
+    {% for template in templates %}
+        <tr>
+            <td data-cell="Workflow Group">{{ template.workflow_group|e }}</td>
+            <td data-cell="Step Order">{{ template.step_order }}</td>
+            <td data-cell="Step Name">{{ template.step_name|e }}</td>
+            <td data-cell="Assigned User">{{ tech_usernames_map[template.assigned_user]|default('Unassigned')|e }}</td>
+            <td data-cell="Actions" class="action_cell">
+                   <form action="edit_workflow_template.php" method="POST" style="display:inline;">
+                        <input type="hidden" name="step_id" value="{{ template.id }}">
+                        <button type="submit" class="button">Edit</button>
+                    </form>
+                <form action="delete_workflow_template.php" method="POST" onsubmit="return confirm('Are you sure?');">
+                    <input type="hidden" name="step_id" value="{{ template.id }}">
+                    <button type="submit" class="button">Delete</button>
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

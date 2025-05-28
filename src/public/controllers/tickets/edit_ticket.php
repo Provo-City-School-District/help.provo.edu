@@ -408,14 +408,26 @@ STR;
 
 $note_templates = HelpDB::get()->execute_query($note_templates_query, [$user_id]);
 
+$user_settings_id = get_id_for_user($username);
 // Fetch available task groups
-$groups_query = "SELECT DISTINCT template_group FROM task_templates WHERE template_group IS NOT NULL";
-$groups_result = HelpDB::get()->execute_query($groups_query);
-$groups = [];
-while ($row = $groups_result->fetch_assoc()) {
-    $groups[] = $row;
+$task_groups_query = "SELECT DISTINCT template_group FROM task_templates WHERE template_group IS NOT NULL AND created_by = ?";
+$task_groups_result = HelpDB::get()->execute_query($task_groups_query, [$user_settings_id]);
+$task_groups = [];
+while ($row = $task_groups_result->fetch_assoc()) {
+    $task_groups[] = $row;
 }
-
+$workflow_groups_query = "SELECT DISTINCT workflow_group FROM workflow_templates WHERE workflow_group IS NOT NULL AND created_by = ?";
+$workflow_groups_result = HelpDB::get()->execute_query($workflow_groups_query, [$user_settings_id]);
+$workflow_groups = [];
+while ($row = $workflow_groups_result->fetch_assoc()) {
+    $workflow_groups[] = $row;
+}
+// Fetch workflow steps for this ticket
+$workflow_steps_res = HelpDB::get()->execute_query(
+    "SELECT * FROM ticket_workflow_steps WHERE ticket_id = ? ORDER BY step_order ASC",
+    [$ticket_id]
+);
+$workflow_steps = $workflow_steps_res ? $workflow_steps_res->fetch_all(MYSQLI_ASSOC) : [];
 ?>
 <div class="alerts_wrapper">
     <?php foreach ($alert_data as $alert) : ?>
@@ -629,41 +641,7 @@ while ($row = $groups_result->fetch_assoc()) {
             ?>
                 <div>
                     <label for="employee">Assigned Tech:</label>
-                    <select id="employee" name="employee">
-                        <option value="unassigned">Unassigned</option>
-                        <?php foreach ($tech_usernames as $tech_username) : ?>
-                            <?php
-                            $name = get_local_name_for_user($tech_username);
-                            $firstname = ucwords(strtolower($name["firstname"]));
-                            $lastname = ucwords(strtolower($name["lastname"]));
-                            $display_string = $firstname . " " . $lastname . " - " . location_name_from_id(get_fast_client_location($tech_username) ?: "");
-                            ?>
-                            <option value="<?= $tech_username ?>" <?= $ticket['employee'] === $tech_username ? 'selected' : '' ?>><?= $display_string ?></option>
-                        <?php endforeach; ?>
-                        <?php if (!in_array($ticket['employee'], $tech_usernames)) : ?>
-                            <?php
-                            if (!empty($ticket['employee']) && strtolower($ticket['employee']) !== 'unassigned') {
-                                // Attempt to get the local name for the assigned employee
-                                $current_tech_name = get_local_name_for_user($ticket['employee']);
-                                if ($current_tech_name) {
-                                    $current_firstname = ucwords(strtolower($current_tech_name["firstname"]));
-                                    $current_lastname = ucwords(strtolower($current_tech_name["lastname"]));
-                                    $current_display_string = $current_firstname . " " . $current_lastname . " - " . location_name_from_id(get_fast_client_location($ticket['employee']) ?: "");
-                                } else {
-                                    // If the user is not found, fallback to "Assigned outside the department"
-                                    $current_display_string = 'Assigned outside the department';
-                                }
-                            } else {
-                                // Handle unassigned or null employee
-                                $current_display_string = 'Unassigned';
-                            }
-                            ?>
-                            <option value="<?= $ticket['employee'] ?>" selected disabled>
-                                <?= $current_display_string ?> (Current Assigned Tech)
-                            </option>
-                        <?php endif; ?>
-                    </select>
-
+                    <?php render_tech_usernames_dropdown($tech_usernames, $ticket['employee'], "employee", true); ?>
                 </div>
                 <div>
                     <label for="department">Department:</label>
@@ -1037,113 +1015,236 @@ while ($row = $groups_result->fetch_assoc()) {
     <?php
     }
     ?>
-    <h2>Tasks</h2>
-    <?php
-    // Show existing tasks on ticket
-    $tasks_res = HelpDB::get()->execute_query("SELECT id, description, completed, required, assigned_tech FROM help.ticket_tasks WHERE ticket_id = ?", [$ticket_id]);
-    $task_rows = $tasks_res->fetch_all(MYSQLI_ASSOC);
 
-    if (count($task_rows) > 0) {
-    ?>
-        <table class="taskTable">
-            <tr>
-                <th>Assigned Tech</th>
-                <th>Task Description</th>
-                <th>Completed</th>
-                <th>Edit Task</th>
-            </tr>
+    <div class="grid2 gap1">
+        <div>
+
+            <h2>Tasks</h2>
             <?php
-            foreach ($task_rows as $row) {
-                $task_complete = isset($row['completed']) && $row['completed'] != 0;
-                $task_required = isset($row['required']) && $row['required'] != 0;
-                $task_id = $row['id'];
-                $assigned_tech = $row['assigned_tech'];
-                $checked_if_done = $task_complete ? "checked" : "";
-                $checked_if_required = $task_required ? "checked" : "";
+            // Show existing tasks on ticket
+            $tasks_res = HelpDB::get()->execute_query("SELECT id, description, completed, required, assigned_tech FROM help.ticket_tasks WHERE ticket_id = ?", [$ticket_id]);
+            $task_rows = $tasks_res->fetch_all(MYSQLI_ASSOC);
 
-                if (isset($assigned_tech) && $assigned_tech != "unassigned") {
-                    $assigned_tech_name = get_local_name_for_user($assigned_tech);
-                    $assigned_tech_str = $assigned_tech_name["firstname"] . " " . $assigned_tech_name["lastname"];
-                } else {
-                    $assigned_tech_str = "Unassigned";
-                }
+            if (count($task_rows) > 0) {
             ?>
-                <tr>
-                    <td data-cell="Assigned Tech"><?= $assigned_tech_str ?></td>
-                    <td data-cell="Task Description"><?= html_entity_decode($row['description']); ?></td>
-                    <td data-cell="Completed"><input type="checkbox" onclick="taskStatusChanged(this, '<?= $task_id ?>');" <?= $checked_if_done ?> /></td>
-                    <td class="edit_task_cell" data-cell="Edit Task"><button class="button" onclick="location.href='/controllers/tasks/edit_task.php?task_id=<?= $task_id ?>'">Edit Task</button></td>
-                </tr>
+                <table class="taskTable">
+                    <tr>
+                        <th>Assigned Tech</th>
+                        <th>Task Description</th>
+                        <th>Completed</th>
+                        <th>Edit Task</th>
+                    </tr>
+                    <?php
+                    foreach ($task_rows as $row) {
+                        $task_complete = isset($row['completed']) && $row['completed'] != 0;
+                        $task_required = isset($row['required']) && $row['required'] != 0;
+                        $task_id = $row['id'];
+                        $assigned_tech = $row['assigned_tech'];
+                        $checked_if_done = $task_complete ? "checked" : "";
+                        $checked_if_required = $task_required ? "checked" : "";
+
+                        if (isset($assigned_tech) && $assigned_tech != "unassigned") {
+                            $assigned_tech_name = get_local_name_for_user($assigned_tech);
+                            $assigned_tech_str = $assigned_tech_name["firstname"] . " " . $assigned_tech_name["lastname"];
+                        } else {
+                            $assigned_tech_str = "Unassigned";
+                        }
+                    ?>
+                        <tr>
+                            <td data-cell="Assigned Tech"><?= $assigned_tech_str ?></td>
+                            <td data-cell="Task Description"><?= html_entity_decode($row['description']); ?></td>
+                            <td data-cell="Completed"><input type="checkbox" onclick="taskStatusChanged(this, '<?= $task_id ?>');" <?= $checked_if_done ?> /></td>
+                            <td class="edit_task_cell" data-cell="Edit Task"><button class="button" onclick="location.href='/controllers/tasks/edit_task.php?task_id=<?= $task_id ?>'">Edit Task</button></td>
+                        </tr>
+                    <?php
+                    }
+                    ?>
+                </table>
             <?php
             }
             ?>
-        </table><br>
-    <?php
-    }
-    ?>
 
-    <?php if (!$readonly || $ticket['status'] != 'closed') : ?>
-        <button id="new-task-button" class="button">Add Task</button><br>
-    <?php endif; ?>
+            <?php if (!$readonly || $ticket['status'] != 'closed') : ?>
+                <button id="new-task-button" class="button">Add Task</button>
+            <?php endif; ?>
 
-    <div id="new-task-form-background" class="modal-form-background">
-        <div id="new-task-form" class="modal-form" style="display: none;">
-            <div class="modal-form-header"><span class="modal-form-close" id="new-task-form-close">&times;</span></div>
-            <h3>Add Task</h3>
-            <form id="task-submit" method="post" action="add_task_handler.php">
-                <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
-                <input type="hidden" name="username" value="<?= $_SESSION['username'] ?>">
-                <div>
+            <div id="new-task-form-background" class="modal-form-background">
+                <div id="new-task-form" class="modal-form" style="display: none;">
+                    <div class="modal-form-header"><span class="modal-form-close" id="new-task-form-close">&times;</span></div>
+                    <h3>Description</h3>
+                    Tasks are individual action items that need to be completed for this ticket. They can be assigned to different techs and checked off as work is done.<br><br>
+
+                    <h3>Add Task</h3>
+                    <form id="task-submit" method="post" action="add_task_handler.php">
+                        <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
+                        <input type="hidden" name="username" value="<?= $_SESSION['username'] ?>">
+                        <div>
+                            <div>
+                                <label for="assigned_tech">Assigned Tech: </label>
+                                <?php render_tech_usernames_dropdown($tech_usernames, null, "assigned_tech", true); ?>
+                            </div>
+                            <div>
+                                <label for="task_description">Task description: </label>
+                                <textarea id="task-description" name="task_description" class="tinyMCEtextarea"></textarea>
+                            </div>
+                            <div>
+                                <label for="task_complete">Completed: </label>
+                                <input type="checkbox" name="task_complete"></input>
+                            </div>
+                            <div>
+                                <label for="required">Required: </label>
+                                <input type="checkbox" name="required" checked></input>
+                            </div>
+                        </div>
+                        <input style="margin-top: 20px;" type="submit" class="button" value="Submit Task">
+                    </form>
+
+                    <a href="/controllers/tickets/manage_task_template.php">Manage Tasks Templates</a>
+                    <!-- Add Template Group -->
                     <div>
-                        <label for="assigned_tech">Assigned Tech: </label>
-                        <select id="assigned-tech" name="assigned_tech">
-                            <option value="">Unassigned</option>
-                            <?php foreach ($tech_usernames as $username) : ?>
-                                <?php
-                                $name = get_local_name_for_user($username);
-                                $firstname = $name["firstname"];
-                                $lastname = $name["lastname"];
-                                $display_string = $firstname . " " . $lastname . " - " . location_name_from_id(get_fast_client_location($username) ?: "");
-                                ?>
-                                <option value="<?= $username ?>"><?= $display_string ?></option>
+                        <label for="task_group_selector" class="hidden">Select Task Group:</label>
+                        <select id="task_group_selector" name="task_group">
+                            <option value="">-- Select a Task Group --</option>
+                            <?php foreach ($task_groups as $group): ?>
+                                <option value="<?= htmlspecialchars($group['template_group'], ENT_QUOTES, 'UTF-8') ?>">
+                                    <?= htmlspecialchars($group['template_group'], ENT_QUOTES, 'UTF-8') ?>
+                                </option>
                             <?php endforeach; ?>
                         </select>
+
+                        <button id="apply-task-group-button" class="button">Apply Task Group</button>
                     </div>
-                    <div>
-                        <label for="task_description">Task description: </label>
-                        <textarea id="task-description" name="task_description" class="tinyMCEtextarea"></textarea>
-                    </div>
-                    <div>
-                        <label for="task_complete">Completed: </label>
-                        <input type="checkbox" name="task_complete"></input>
-                    </div>
-                    <div>
-                        <label for="required">Required: </label>
-                        <input type="checkbox" name="required" checked></input>
-                    </div>
+
+
                 </div>
-                <input style="margin-top: 20px;" type="submit" class="button" value="Submit Task">
-            </form>
-
-            <a href="/controllers/tickets/manage_task_template.php">Manage Tasks Templates</a>
-            <!-- Add Template Group -->
-            <div>
-                <label for="task_group_selector" class="hidden">Select Task Group:</label>
-                <select id="task_group_selector" name="task_group">
-                    <option value="">-- Select a Task Group --</option>
-                    <?php foreach ($groups as $group): ?>
-                        <option value="<?= htmlspecialchars($group['template_group'], ENT_QUOTES, 'UTF-8') ?>">
-                            <?= htmlspecialchars($group['template_group'], ENT_QUOTES, 'UTF-8') ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-
-                <button id="apply-task-group-button" class="button">Apply Task Group</button>
             </div>
+        </div>
+        <div>
+            <h2>Workflow</h2>
+            <?php if (count($workflow_steps) > 0): ?>
+                <table class="workflowTable">
+                    <tr>
+                        <th>Step Number</th>
+                        <th>Step Name</th>
+                        <th>Assigned To</th>
 
+                        <th>Status / Actions</th>
+                    </tr>
+                    <?php foreach ($workflow_steps as $idx => $step): ?>
+                        <tr>
+                            <td><?= $idx + 1 ?></td>
+                            <td><?= html_entity_decode($step['step_name']) ?></td>
+                            <td>
+                                <?= !empty($step['assigned_user']) ? htmlspecialchars($step['assigned_user']) : 'unassigned' ?>
+                            </td>
+                            <td class="workflow-actions">
+                                <?php
+                                $can_approve = strtolower(trim($step['assigned_user'])) === strtolower(trim($username)) && $step['status'] === 'pending';
+                                $can_uncomplete = (strtolower(trim($step['assigned_user'])) === strtolower(trim($username))) || ($_SESSION['permissions']['is_supervisor'] ?? 0) && $step['status'] === 'approved';
+                                $previous_steps_approved = true;
+
+                                foreach ($workflow_steps as $prev_idx => $prev_step) {
+                                    if ($prev_idx < $idx && $prev_step['status'] !== 'approved') {
+                                        $previous_steps_approved = false;
+                                        break;
+                                    }
+                                }
+                                if ($step['status'] === 'approved') {
+                                    echo '<span class="block">Complete</span>';
+                                    if ($can_uncomplete) { ?>
+                                        <form method="post" action="workflow_handler.php" style="display:inline;">
+                                            <input type="hidden" name="uncomplete_step_id" value="<?= $step['id'] ?>">
+                                            <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
+                                            <button type="button" class="button uncomplete-step-btn" data-step-id="<?= $step['id'] ?>" data-ticket-id="<?= $ticket_id ?>">Uncomplete</button>
+                                        </form>
+                                    <?php }
+                                } elseif ($can_approve && $previous_steps_approved) { ?>
+                                    <form method="post" action="workflow_handler.php" style="display:inline;">
+                                        <input type="hidden" name="approve_step_id" value="<?= $step['id'] ?>">
+                                        <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
+                                        <button type="submit" class="button">Complete</button><br><br>
+                                    </form>
+                                <?php } elseif (!$previous_steps_approved) {
+                                    echo '<span class="block">Pending previous step</span>';
+                                }
+                                // Admin/Supervisor actions
+                                if ((get_user_setting(get_id_for_user($_SESSION['username']), "is_admin") || get_user_setting(get_id_for_user($_SESSION['username']), "is_supervisor")) && $step['status'] != 'approved'): ?>
+                                    <button class="button" onclick="location.href='workflow_edit.php?step_id=<?= $step['id'] ?>'">Edit</button>
+                                    <form method="post" action="workflow_handler.php" style="display:inline;">
+                                        <input type="hidden" name="delete_step_id" value="<?= $step['id'] ?>">
+                                        <input type="hidden" name="old_value" value="<?= $step['step_name'] ?>">
+                                        <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
+                                        <button type="submit" class="button">Delete</button>
+                                    </form>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </table>
+            <?php endif; ?>
+
+            <?php if ($_SESSION['permissions']['is_admin'] || $_SESSION['permissions']['is_supervisor']) : ?>
+                <button id="new-workflow-button" class="button">Add Workflow Step</button>
+            <?php endif; ?>
 
         </div>
     </div>
+
+    <!-- Add Workflow Step Modal -->
+    <div id="new-workflow-form-background" class="modal-form-background">
+        <div id="new-workflow-form" class="modal-form" style="display: none;">
+            <div class="modal-form-header">
+                <span class="modal-form-close" id="new-workflow-form-close">&times;</span>
+            </div>
+
+            <h3>Description</h3>
+            Workflows are a series of approval or process steps that must be completed in order. Each step is assigned to a specific user and must be completed before the next step can begin.
+            Ticket will Automatically re-assigned to the next user in the workflow when the previous step is completed.
+
+            <h3>Add Workflow Step</h3>
+            <form method="post" action="workflow_handler.php">
+                <input type="hidden" name="ticket_id" value="<?= $ticket_id ?>">
+                <label for="assigned_user">Assign To:</label>
+                <?php render_tech_usernames_dropdown($tech_usernames, null, "assigned_user", false); ?>
+                <label for="step_order">Order:</label>
+                <input type="number" name="step_order" min="1" value="<?= count($workflow_steps) + 1 ?>" required>
+                <label for="step_name">Workflow Step:</label>
+                <textarea name="step_name" id="step_name" class="tinyMCEtextarea"></textarea>
+                <button type="submit" name="add_workflow_step" class="button">Add Step</button>
+            </form>
+            <div>
+                <label for="workflow_template_group_selector">Select Workflow Template Group:</label>
+                <select id="workflow_template_group_selector" name="workflow_template_group">
+                    <option value="">-- Select a Workflow Template Group --</option>
+                    <?php foreach ($workflow_groups as $group): ?>
+                        <option value="<?= htmlspecialchars($group['workflow_group'], ENT_QUOTES, 'UTF-8') ?>">
+                            <?= htmlspecialchars($group['workflow_group'], ENT_QUOTES, 'UTF-8') ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <button id="apply-workflow-template-button" class="button">Apply Workflow Template</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reject/Uncomplete workflow modal -->
+    <div id="uncomplete-step-modal" class="modal-form-background" style="display:none;">
+        <div class="modal-form">
+            <div class="modal-form-header">
+                <span class="modal-form-close" id="uncomplete-step-modal-close">&times;</span>
+            </div>
+            <h3>Uncomplete Workflow Step</h3>
+            <form id="uncomplete-step-form" method="post" action="workflow_handler.php">
+                <input type="hidden" name="uncomplete_step_id" id="uncomplete_step_id">
+                <input type="hidden" name="ticket_id" id="uncomplete_ticket_id">
+                <label for="uncomplete_reason">Reason for uncompleting:</label>
+                <textarea name="uncomplete_reason" id="uncomplete_reason" class="tinyMCEtextarea"></textarea>
+                <br>
+                <button type="submit" class="button">Submit</button>
+            </form>
+        </div>
+    </div>
+
     <div id="note-template-form-background" class="modal-form-background">
         <div id="note-template-form" class="modal-form" style="display: none;">
             <div class="modal-form-header"><span class="modal-form-close" id="note-template-form-close">&times;</span></div>
@@ -1213,27 +1314,32 @@ while ($row = $groups_result->fetch_assoc()) {
                 else
                     echo "<tr>";
             ?>
-                <td data-cell="Date"><a href="edit_note.php?note_id=<?= $note['note_id'] ?>&ticket_id=<?= $ticket_id ?>">
+                <td data-cell="Date">
+                    <a href="edit_note.php?note_id=<?= $note['note_id'] ?>&ticket_id=<?= $ticket_id ?>">
                         <?php
                         $date_override = $note['date_override'];
                         if ($date_override != null)
                             echo $date_override . "*";
                         else
                             echo $note['created'];
-                        ?></a></td>
-                <td data-cell="Created By"><?php
-                                            $creator = $note['creator'];
+                        ?>
+                    </a>
+                </td>
+                <td data-cell="Created By">
+                    <?php
+                    $creator = $note['creator'];
 
-                                            // Check if creator exists as a user
-                                            $creator_found_result = HelpDB::get()->execute_query('SELECT COUNT(*) AS count FROM users WHERE username = ?', [$creator]);
-                                            $creator_found_data = $creator_found_result->fetch_assoc();
-                                            if (isset($creator) && $creator_found_data["count"] > 0) {
-                                                $name = get_local_name_for_user($creator);
-                                                echo $name['firstname'] . ' ' . $name['lastname'];
-                                            } else {
-                                                echo $creator;
-                                            }
-                                            ?></td>
+                    // Check if creator exists as a user
+                    $creator_found_result = HelpDB::get()->execute_query('SELECT COUNT(*) AS count FROM users WHERE username = ?', [$creator]);
+                    $creator_found_data = $creator_found_result->fetch_assoc();
+                    if (isset($creator) && $creator_found_data["count"] > 0) {
+                        $name = get_local_name_for_user($creator);
+                        echo $name['firstname'] . ' ' . $name['lastname'];
+                    } else {
+                        echo $creator;
+                    }
+                    ?>
+                </td>
                 <td class="ticket_note" data-cell="Note Message">
                     <?php
                     $ticket_pattern = "/WO#\\d{1,6}/";
@@ -1507,19 +1613,26 @@ while ($row = $groups_result->fetch_assoc()) {
                                     $note_str = $log_row['field_name'];
                                     break;
                                 case 'location':
-                                    $note_str = 'Location Changed From: ' . location_name_from_id($old_value) . ' To: ' . location_name_from_id($new_value);
+                                    $note_str = 'Location Changed <br>From:<br> ' . location_name_from_id($old_value) . ' <br>To:<br> ' . location_name_from_id($new_value);
                                     break;
                                 case 'department':
-                                    $note_str = 'Location Changed From: ' . location_name_from_id($old_value) . ' To: ' . location_name_from_id($new_value);
+                                    $note_str = 'Location Changed <br>From:<br> ' . location_name_from_id($old_value) . ' <br>To:<br> ' . location_name_from_id($new_value);
                                     break;
                                 case 'priority':
-                                    $note_str = 'Priority Changed From: ' . getPriorityName($old_value) . ' To: ' . getPriorityName($new_value);
+                                    $note_str = 'Priority Changed <br>From:<br> ' . getPriorityName($old_value) . ' <br>To:<br> ' . getPriorityName($new_value);
                                     break;
                                 case 'request_type_id':
-                                    $note_str = 'Request Type Changed From: ' . request_name_for_type($old_value) . ' To: ' . request_name_for_type($new_value);
+                                    $note_str = 'Request Type Changed <br>From:<br> ' . request_name_for_type($old_value) . ' <br>To:<br> ' . request_name_for_type($new_value);
+                                    break;
+                                case 'workflow':
+                                    if (!empty($old_value)) {
+                                        $note_str = 'Workflow Modified <br>From:<br> ' . str_replace(',', '<br>', html_entity_decode($old_value)) . ' <br><br>To:<br> ' . str_replace(',', '<br>', html_entity_decode($new_value));
+                                    } else {
+                                        $note_str = str_replace(',', '<br>', html_entity_decode($new_value));
+                                    }
                                     break;
                                 default:
-                                    $note_str = formatFieldName($log_row['field_name']) . ' From: ' . html_entity_decode($old_value) . ' To: ' . html_entity_decode($new_value);
+                                    $note_str = formatFieldName($log_row['field_name']) . ' <br>From:<br> ' . html_entity_decode($old_value) . ' <br>To:<br> ' . html_entity_decode($new_value);
                                     break;
                             }
                             echo $note_str;
@@ -1819,6 +1932,51 @@ while ($row = $groups_result->fetch_assoc()) {
             .catch(error => {
                 console.error('Error:', error);
                 alert('An error occurred while applying the task group.');
+            });
+    });
+    document.getElementById('add-workflow-step-form').addEventListener('submit', function(e) {
+        var content = tinymce.get('step_name') ? tinymce.get('step_name').getContent({
+            format: 'text'
+        }).trim() : '';
+        if (!content) {
+            alert('Please enter a workflow step.');
+            e.preventDefault();
+            // focus the TinyMCE editor:
+            if (tinymce.get('step_name')) tinymce.get('step_name').focus();
+        }
+    });
+</script>
+<script>
+    document.getElementById('apply-workflow-template-button').addEventListener('click', function() {
+        const selectedGroup = document.getElementById('workflow_template_group_selector').value;
+
+        if (!selectedGroup) {
+            alert('Please select a workflow template group before applying.');
+            return;
+        }
+
+        fetch('/controllers/tickets/apply_workflow_template.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ticket_id: <?= $ticket_id ?>,
+                    workflow_group: selectedGroup,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Workflow template applied successfully!');
+                    location.reload();
+                } else {
+                    alert('Failed to apply workflow template: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while applying the workflow template.');
             });
     });
 </script>

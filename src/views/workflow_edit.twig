@@ -1,0 +1,22 @@
+{% extends "ticket_base.twig" %}
+
+ {% block content %}
+<h1>Edit Workflow Step</h1>
+<form method="post" action="workflow_handler.php">
+    <input type="hidden" name="update_step_id" value="{{ step.id }}">
+    <input type="hidden" name="ticket_id" value="{{ step.ticket_id }}">
+
+    <label for="assigned_user">Assign To:</label>
+    {{ render_tech_usernames_dropdown(tech_usernames, step.assigned_user, 'assigned_user', false) | raw }}
+
+    <label for="step_order">Order:</label>
+    <input type="number" name="step_order" min="1" value="{{ step.step_order|e }}" required>
+
+
+    <label for="step_name">Workflow Step:</label>
+    <textarea type="text" name="step_name" class="tinyMCEtextarea">{{ step.step_name|raw }}</textarea>
+
+    <button type="submit" class="button">Update Step</button>
+</form>
+<a href="edit_ticket.php?id={{ step.ticket_id }}">&larr; Back to Ticket</a>
+ {% endblock %}

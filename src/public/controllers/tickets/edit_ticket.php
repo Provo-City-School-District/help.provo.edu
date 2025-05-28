@@ -416,7 +416,12 @@ $groups = [];
 while ($row = $groups_result->fetch_assoc()) {
     $groups[] = $row;
 }
-
+$workflow_groups_query = "SELECT DISTINCT workflow_group FROM workflow_templates WHERE workflow_group IS NOT NULL AND created_by = ?";
+$workflow_groups_result = HelpDB::get()->execute_query($workflow_groups_query, [$user_settings_id]);
+$workflow_groups = [];
+while ($row = $workflow_groups_result->fetch_assoc()) {
+    $workflow_groups[] = $row;
+}
 // Fetch workflow steps for this ticket
 $workflow_steps_res = HelpDB::get()->execute_query(
     "SELECT * FROM ticket_workflow_steps WHERE ticket_id = ? ORDER BY step_order ASC",
@@ -1207,6 +1212,18 @@ $workflow_steps = $workflow_steps_res ? $workflow_steps_res->fetch_all(MYSQLI_AS
                 <textarea name="step_name" id="step_name" class="tinyMCEtextarea"></textarea>
                 <button type="submit" name="add_workflow_step" class="button">Add Step</button>
             </form>
+            <div>
+                <label for="workflow_template_group_selector">Select Workflow Template Group:</label>
+                <select id="workflow_template_group_selector" name="workflow_template_group">
+                    <option value="">-- Select a Workflow Template Group --</option>
+                    <?php foreach ($workflow_groups as $group): ?>
+                        <option value="<?= htmlspecialchars($group['workflow_group'], ENT_QUOTES, 'UTF-8') ?>">
+                            <?= htmlspecialchars($group['workflow_group'], ENT_QUOTES, 'UTF-8') ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <button id="apply-workflow-template-button" class="button">Apply Workflow Template</button>
+            </div>
         </div>
     </div>
 
@@ -1927,5 +1944,39 @@ $workflow_steps = $workflow_steps_res ? $workflow_steps_res->fetch_all(MYSQLI_AS
             // focus the TinyMCE editor:
             if (tinymce.get('step_name')) tinymce.get('step_name').focus();
         }
+    });
+</script>
+<script>
+    document.getElementById('apply-workflow-template-button').addEventListener('click', function() {
+        const selectedGroup = document.getElementById('workflow_template_group_selector').value;
+
+        if (!selectedGroup) {
+            alert('Please select a workflow template group before applying.');
+            return;
+        }
+
+        fetch('/controllers/tickets/apply_workflow_template.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ticket_id: <?= $ticket_id ?>,
+                    workflow_group: selectedGroup,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Workflow template applied successfully!');
+                    location.reload();
+                } else {
+                    alert('Failed to apply workflow template: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while applying the workflow template.');
+            });
     });
 </script>

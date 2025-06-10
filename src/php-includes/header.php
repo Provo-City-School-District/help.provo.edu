@@ -172,6 +172,13 @@ $num_project_tickets = $num_project_tickets_result->fetch_column(0);
                         <?php
                         }
                         ?>
+                        <?php
+                        if ($_SESSION['permissions']['view_stats'] == 1) {
+                        ?>
+                            <a href="/stats.php">Stats</a>
+                        <?php
+                        }
+                        ?>
                         <a href="/controllers/logout.php">Logout</a>
                     </nav>
 

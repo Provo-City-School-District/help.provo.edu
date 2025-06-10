@@ -1,0 +1,62 @@
+{% extends "base.twig" %}
+
+
+{% block content %}
+
+<h1>Statistics</h1>
+    <p><em>Averages below are calculated using tickets from the past 12 months and include only tickets assigned to the {{ location_name }} department.</em></p>
+
+    <ul class="noblt">
+        <li>Average time to resolve: {{ avg_resolve_business_days }}</li>
+        <li>Total feedback responses: {{ feedback_stats.total_feedback }}</li>
+        <li>Average rating: {{ feedback_stats.avg_rating|number_format(2) }} / 5</li>
+    </ul>
+
+
+<div class="grid2 gap1">
+    <div>
+        <div id="ticketsPerYearChart" class='fullwidth-chart'></div>
+
+        <ul class="noblt">
+            <li>Average per day: {{ open_avg_per_day }}</li>
+            <li>Average per week: {{ open_avg_per_week }}</li>
+            <li>Average per month: {{ open_avg_per_month }}</li>
+        </ul>
+    </div>
+    <div>
+        <div id="ticketsResolvedPerYearChart" class='fullwidth-chart'></div>
+
+        <ul class="noblt">
+            <li>Average per day: {{ resolve_avg_per_day }}</li>
+            <li>Average per week: {{ resolve_avg_per_week }}</li>
+            <li>Average per month: {{ resolve_avg_per_month }}</li>
+        </ul>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block page_scripts %}
+<script src="/includes/js/external/canvasjs.min.js"></script>
+<script>
+window.onload = function() {
+    var ticketsPerYearData = {{ tickets_per_year|json_encode|raw }};
+    var resolvedPerYearData = {{ resolved_per_year|json_encode|raw }};
+    new CanvasJS.Chart("ticketsPerYearChart", {
+        animationEnabled: true,
+        theme: "light2",
+        title: { text: "Tickets Opened Per Year in {{ location_name }}" },
+        axisY: { title: "Tickets Opened" },
+        data: [{ type: "column", dataPoints: ticketsPerYearData }]
+    }).render();
+    new CanvasJS.Chart("ticketsResolvedPerYearChart", {
+        animationEnabled: true,
+        theme: "light2",
+        title: { text: "Tickets Resolved Per Year in {{ location_name }}" },
+        axisY: { title: "Tickets Resolved" },
+        data: [{ type: "column", dataPoints: resolvedPerYearData }]
+    }).render();
+}
+</script>
+{% endblock %}

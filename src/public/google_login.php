@@ -3,7 +3,8 @@ require(from_root('/../vendor/autoload.php'));
 require("authentication_utils.php");
 require "ticket_utils.php";
 
-function generateRandomString($length = 10) {
+function generateRandomString($length = 10)
+{
     $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     $charactersLength = strlen($characters);
     $randomString = '';
@@ -119,6 +120,7 @@ if (isset($_GET['code'])) {
             'is_location_manager' => $local_query_data['is_location_manager'],
             'location_manager_sitenumber' => $local_query_data['location_manager_sitenumber'],
             'can_see_all_techs' => $local_query_data['can_see_all_techs'],
+            'view_stats' => $local_query_data['view_stats'],
         );
         // Set color scheme
         $_SESSION['color_scheme'] = $local_query_data['color_scheme'];
@@ -132,8 +134,8 @@ if (isset($_GET['code'])) {
         $loc = get_client_location($username);
         // Update login timestamp and add google sso code to user record.
         $update_stmt = HelpDB::get()->prepare("UPDATE users SET last_login = NOW(), gsso = ?, ldap_location = ? WHERE email = ?");
-        
-        $login_token = hash('sha256', $_SESSION['user_id'].$_SERVER['HTTP_USER_AGENT'].time().generateRandomString());
+
+        $login_token = hash('sha256', $_SESSION['user_id'] . $_SERVER['HTTP_USER_AGENT'] . time() . generateRandomString());
         $update_stmt->bind_param("sis", $login_token, $loc, $email);
         $update_stmt->execute();
 

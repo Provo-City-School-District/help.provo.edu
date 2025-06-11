@@ -7,7 +7,7 @@
     <p><em>Averages below are calculated using tickets from the past 12 months and include only tickets assigned to the {{ location_name }} department.</em></p>
 
     <ul class="noblt">
-        <li>Average time to resolve: {{ avg_resolve_business_days }}</li>
+        <li>Average time to resolve: {{ avg_resolve_business_days }} days</li>
         <li>Total feedback responses: {{ feedback_stats.total_feedback }}</li>
         <li>Average rating: {{ feedback_stats.avg_rating|number_format(2) }} / 5</li>
     </ul>
@@ -18,18 +18,18 @@
         <div id="ticketsPerYearChart" class='fullwidth-chart'></div>
 
         <ul class="noblt">
-            <li>Average per day: {{ open_avg_per_day }}</li>
-            <li>Average per week: {{ open_avg_per_week }}</li>
-            <li>Average per month: {{ open_avg_per_month }}</li>
+            <li>Average opened per day: {{ open_avg_per_day }}</li>
+            <li>Average opened per week: {{ open_avg_per_week }}</li>
+            <li>Average opened per month: {{ open_avg_per_month }}</li>
         </ul>
     </div>
     <div>
         <div id="ticketsResolvedPerYearChart" class='fullwidth-chart'></div>
 
         <ul class="noblt">
-            <li>Average per day: {{ resolve_avg_per_day }}</li>
-            <li>Average per week: {{ resolve_avg_per_week }}</li>
-            <li>Average per month: {{ resolve_avg_per_month }}</li>
+            <li>Average resolved per day: {{ resolve_avg_per_day }}</li>
+            <li>Average resolved per week: {{ resolve_avg_per_week }}</li>
+            <li>Average resolved per month: {{ resolve_avg_per_month }}</li>
         </ul>
     </div>
 </div>

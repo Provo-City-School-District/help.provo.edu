@@ -11,12 +11,22 @@ $twig = new \Twig\Environment($loader, [
 
 // Check if the user has permission to view reports
 $view_reports = get_user_setting(get_id_for_user($_SESSION['username']), "view_stats") ?? 0;
-if ($view_reports != 1) {
-    // User is not an admin
-    echo 'You do not have permission to view this page.';
+$is_admin = get_user_setting(get_id_for_user($_SESSION['username']), "is_admin") ?? 0;
+if ($view_reports != 1 && $is_admin != 1) {
+    // User is not an admin or doesn't have view_stats permission
+    header('HTTP/1.0 403 Forbidden');
+    echo '<div style="color: #721c24; background: #f8d7da; border: 1px solid #f5c6cb; padding: 16px; border-radius: 4px; margin: 32px 0; text-align: center;">
+        <strong>Error:</strong> You do not have permission to view this page.
+    </div>';
     exit;
 }
 
+if (!isset($_SESSION['department']) || empty($_SESSION['department'])) {
+    echo '<div style="color: #721c24; background: #f8d7da; border: 1px solid #f5c6cb; padding: 16px; border-radius: 4px; margin: 32px 0; text-align: center;">
+        <strong>Error:</strong> Your department is not set. Please contact support to have your department assigned before viewing statistics.
+    </div>';
+    exit;
+}
 
 // init variables and include necessary files
 require_once('helpdbconnect.php');

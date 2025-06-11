@@ -118,6 +118,10 @@ blockquote {
 	min-height: 1000px;
 }
 
+.canvasjsreport h3 {
+	margin: 1em 0;
+}
+
 .warning {
 	color: red;
 	display: inline;

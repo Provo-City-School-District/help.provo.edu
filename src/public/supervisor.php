@@ -229,9 +229,9 @@ $resolved_tickets_today_count = $resolved_tickets_today_row['resolved_count'];
 
     <div class="alerts_wrapper">
         <h3 class="center">Quick Stats</h3>
-        <p>Current Open Tickets for department: <?= $open_tickets_count ?></p>
-        <p>New Tickets Today: <?= $new_tickets_today_count ?></p>
-        <p>Tickets resolve/closed today: <?= $resolved_tickets_today_count ?></p>
+        <p>Current Open Tickets for <?= $department_name ?> : <?= $open_tickets_count ?></p>
+        <p>New <?= $department_name ?> Tickets Today: <?= $new_tickets_today_count ?></p>
+        <p><?= $department_name ?> Tickets Resolve/Closed Today: <?= $resolved_tickets_today_count ?></p>
 
         <h3 class="nextToCanvas">Supervisor Alerts</h3>
         <table id="alertsTable" class="display">

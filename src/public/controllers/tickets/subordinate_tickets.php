@@ -40,6 +40,7 @@ $alerts_query = <<<STR
     JOIN user_settings ON user_settings.user_id = users.id
 	WHERE user_settings.supervisor_username = ?
 	AND alerts.supervisor_alert IN (0, 1)
+	ORDER BY alerts.ticket_id DESC, alerts.alert_level DESC
 STR;
 
 $alerts_result = HelpDB::get()->execute_query($alerts_query, [$username]);
@@ -61,9 +62,9 @@ echo $twig->render('subordinate_tickets.twig', [
 	'subord_count' => $subord_count,
 	'num_assigned_tickets' => $num_assigned_tickets,
 	'num_flagged_tickets' => $num_flagged_tickets,
-    'num_assigned_intern_tickets' => $num_assigned_intern_tickets,
-    'num_assigned_tasks' => $num_assigned_tasks,
-    'num_subordinate_tickets' => $num_subordinate_tickets,
+	'num_assigned_intern_tickets' => $num_assigned_intern_tickets,
+	'num_assigned_tasks' => $num_assigned_tasks,
+	'num_subordinate_tickets' => $num_subordinate_tickets,
 
 	// tickets variables
 	'tickets' => $ticket_data,

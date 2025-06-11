@@ -46,7 +46,7 @@ STR;
 $alerts_result = HelpDB::get()->execute_query($alerts_query, [$username]);
 $alerts = get_parsed_alert_data($alerts_result);
 
-echo $twig->render('subordinate_tickets.twig', [
+echo $twig->render('ticket_table_base.twig', [
 	// base variables
 	'color_scheme' => $color_scheme,
 	'current_year' => $current_year,
@@ -67,6 +67,7 @@ echo $twig->render('subordinate_tickets.twig', [
 	'num_subordinate_tickets' => $num_subordinate_tickets,
 
 	// tickets variables
+	'page_title' => 'Subordinate Tickets',
 	'tickets' => $ticket_data,
 	'alerts' => $alerts,
 	'hide_alerts' => $_SESSION['hide_alerts'],

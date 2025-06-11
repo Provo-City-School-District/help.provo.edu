@@ -14,8 +14,9 @@ require_once("ticket_utils.php");
 
 $department = $_SESSION['department'] ?? null;
 $sitenumber = get_sitenumber_from_location_id($department);
+$department_name = location_name_from_id(get_sitenumber_from_location_id($department)) ?? "Unknown Department";
 
-
+// helper function to process query results for admin report charts
 function process_query_result($query_result, $label_field)
 {
     $count = [];
@@ -40,7 +41,6 @@ function process_query_result($query_result, $label_field)
 
     return $processedData;
 }
-
 
 // process the data for admin report charts
 function process_query_result_wlinks($query_result, $label_field, $id_field, $url_field)
@@ -75,6 +75,8 @@ function process_query_result_wlinks($query_result, $label_field, $id_field, $ur
 
 
 
+
+
 // Check if an error message is set
 if (isset($_SESSION['current_status'])) {
     $status_popup = new StatusPopup($_SESSION["current_status"], StatusPopupType::fromString($_SESSION["status_type"]));
@@ -83,6 +85,23 @@ if (isset($_SESSION['current_status'])) {
     unset($_SESSION['current_status']);
     unset($_SESSION['status_type']);
 }
+
+
+
+
+
+//query for unassigned tickets for location
+$unassigned_ticket_query = <<<unassigned_tickets
+SELECT *
+FROM tickets
+WHERE status NOT IN ('closed', 'resolved') 
+AND (employee IS NULL OR employee = 'unassigned' OR employee = '')
+AND department = ?
+GROUP BY id
+unassigned_tickets;
+$ticket_result = HelpDB::get()->execute_query($unassigned_ticket_query, [$sitenumber]);
+
+
 
 
 // Query open tickets based on tech
@@ -99,7 +118,6 @@ $url_path_techs = "/controllers/users/manage_user.php?id=";
 $allTechs = process_query_result_wlinks($tech_query_result, "employee", "id", $url_path_techs);
 
 // Query open tickets based on location:
-
 $location_query = <<<STR
     SELECT locations.location_name, tickets.location
     FROM tickets 
@@ -114,17 +132,7 @@ STR;
 $location_query_result = HelpDB::get()->execute_query($location_query, [$department]);
 $allLocations = process_query_result($location_query_result, "location_name");
 
-// Query open tickets based on field tech:
-// $field_tech_query = <<<STR
-//     SELECT t.employee 
-//     FROM tickets t
-//     INNER JOIN users u ON t.employee = u.username 
-//     INNER JOIN user_settings us ON u.id = us.user_id
-//     WHERE t.status NOT IN ('closed', 'resolved') AND us.is_tech = 1
-// STR;
 
-// $field_tech_query_result = HelpDB::get()->execute_query($field_tech_query);
-// $fieldTechs = process_query_result($field_tech_query_result, "employee");
 
 
 
@@ -138,11 +146,61 @@ $supervisor_alerts_query = <<<alerts
     AND us.department = ?
 alerts;
 
-
-
 $supervisor_alerts_result = HelpDB::get()->execute_query($supervisor_alerts_query, [$department]);
 $supervisorAlerts = mysqli_fetch_all($supervisor_alerts_result, MYSQLI_ASSOC);
+
+
+
+
+
+// Query for open tickets count for the current department
+$open_tickets_query = <<<SQL
+    SELECT COUNT(*) as open_count
+    FROM tickets
+    WHERE status NOT IN ('closed', 'resolved')
+    AND department = ?
+SQL;
+
+$open_tickets_result = HelpDB::get()->execute_query($open_tickets_query, [$sitenumber]);
+$open_tickets_row = mysqli_fetch_assoc($open_tickets_result);
+$open_tickets_count = $open_tickets_row['open_count'];
+
+
+
+
+// Query for new tickets today
+$new_tickets_today_query = <<<SQL
+    SELECT COUNT(*) as new_count
+    FROM tickets
+    WHERE DATE(created) = CURDATE()
+    AND department = ?
+SQL;
+$new_tickets_today_result = HelpDB::get()->execute_query($new_tickets_today_query, [$sitenumber]);
+$new_tickets_today_row = mysqli_fetch_assoc($new_tickets_today_result);
+$new_tickets_today_count = $new_tickets_today_row['new_count'];
+
+
+
+
+
+// Query for tickets resolved/closed today
+$resolved_tickets_today_query = <<<SQL
+    SELECT COUNT(*) as resolved_count
+    FROM tickets
+    WHERE DATE(last_updated) = CURDATE()
+    AND status IN ('closed', 'resolved')
+    AND department = ?
+SQL;
+$resolved_tickets_today_result = HelpDB::get()->execute_query($resolved_tickets_today_query, [$sitenumber]);
+$resolved_tickets_today_row = mysqli_fetch_assoc($resolved_tickets_today_result);
+$resolved_tickets_today_count = $resolved_tickets_today_row['resolved_count'];
+
 ?>
+
+
+
+
+
 <h1>Supervisor</h1>
 <form>
     <label for="refreshInterval">Select refresh interval:</label>
@@ -158,10 +216,24 @@ $supervisorAlerts = mysqli_fetch_all($supervisor_alerts_result, MYSQLI_ASSOC);
 </form>
 <h2>Reports</h2>
 <div class="grid3 canvasjsreport">
-    <div id="techOpenTicket" style="height: 370px; width: 100%;"></div>
-    <div id="byLocation" style="height: 370px; width: 100%;"></div>
+
+    <div>
+        <h3 class="center"><?= $department_name ?> Department Tech Open Tickets</h3>
+        <div id="techOpenTicket" style="height: 370px; width: 100%;"></div>
+    </div>
+
+    <div>
+        <h3 class="center"><?= $department_name ?> Department Open Tickets By Location</h3>
+        <div id="byLocation" style="height: 370px; width: 100%;"></div>
+    </div>
+
     <div class="alerts_wrapper">
-        <h1 class="nextToCanvas">Supervisor Alerts</h1>
+        <h3 class="center">Quick Stats</h3>
+        <p>Current Open Tickets for department: <?= $open_tickets_count ?></p>
+        <p>New Tickets Today: <?= $new_tickets_today_count ?></p>
+        <p>Tickets resolve/closed today: <?= $resolved_tickets_today_count ?></p>
+
+        <h3 class="nextToCanvas">Supervisor Alerts</h3>
         <table id="alertsTable" class="display">
             <thead>
                 <tr>
@@ -179,7 +251,6 @@ $supervisorAlerts = mysqli_fetch_all($supervisor_alerts_result, MYSQLI_ASSOC);
                         echo "<td><a href='/controllers/tickets/edit_ticket.php?id=" . $alert['ticket_id'] . "'>" . $alert['ticket_id'] . "</a></td>";
                         echo "<td>" . $alert['message'] . "</td>";
                         echo "<td>" . $alert['employee'] . "</td>";
-                        // echo "<td>" . $alert['alert_level'] . "</td>";
                         echo "</tr>";
                     }
                 }
@@ -187,40 +258,77 @@ $supervisorAlerts = mysqli_fetch_all($supervisor_alerts_result, MYSQLI_ASSOC);
             </tbody>
         </table>
     </div>
-    <!-- <div id="fieldTechOpen" style="height: 370px; width: 100%;"></div> -->
+
 </div>
 
 
 
 
 
-
 <h2>Unassigned Tickets</h2>
-
-<?php
-
-//query for unassigned tickets for location
-$unassigned_ticket_query = <<<unassigned_tickets
-SELECT *
-FROM tickets
-WHERE status NOT IN ('closed', 'resolved') 
-AND (employee IS NULL OR employee = 'unassigned' OR employee = '')
-AND department = ?
-GROUP BY id
-unassigned_tickets;
-
-$ticket_result = HelpDB::get()->execute_query($unassigned_ticket_query, [$sitenumber]);
-display_tickets_table($ticket_result, HelpDB::get());
+<?php display_tickets_table($ticket_result, HelpDB::get()); ?>
 
 
-?>
-<script src="/includes/js/charts.js?v=0.1.0" type="text/javascript"></script>
 
+
+
+
+<script src="/includes/js/external/canvasjs.min.js"></script>
 <script>
-    let allTechs = <?php echo json_encode($allTechs, JSON_NUMERIC_CHECK); ?>;
-    let byLocation = <?php echo json_encode($allLocations, JSON_NUMERIC_CHECK); ?>;
-    // let fieldTechOpen = <?php //echo json_encode($fieldTechs, JSON_NUMERIC_CHECK); 
-                            ?>;
+    //================================= Charts =================================
+    // Chart for all techs open tickets in the department
+    window.addEventListener("load", function() {
+        // tech department
+        var allTechsChart = new CanvasJS.Chart("techOpenTicket", {
+            height: 1000,
+            animationEnabled: true,
+            axisY: {
+                title: "Ticket Count",
+                includeZero: true,
+                labelFontSize: 14,
+            },
+            axisX: {
+                interval: 1, // Set the interval of the x-axis labels to 1
+                labelFontSize: 14,
+            },
+            data: [{
+                type: "bar",
+                yValueFormatString: "#,##",
+                indexLabel: "{y}",
+                indexLabelPlacement: "inside",
+                indexLabelFontSize: 1,
+                dataPoints: <?php echo json_encode($allTechs, JSON_NUMERIC_CHECK); ?>,
+                click: function(e) {
+                    window.location.href = e.dataPoint.url;
+                },
+            }, ],
+        });
+        allTechsChart.render();
+
+        // Chart for locations of open tickets in the department
+        var byLocationChart = new CanvasJS.Chart("byLocation", {
+            height: 1000,
+            animationEnabled: true,
+            axisY: {
+                title: "Ticket Count",
+                includeZero: true,
+                labelFontSize: 14,
+            },
+            axisX: {
+                interval: 1, // Set the interval of the x-axis labels to 1
+                labelFontSize: 14,
+            },
+            data: [{
+                type: "bar",
+                yValueFormatString: "#,##",
+                indexLabel: "{y}",
+                indexLabelPlacement: "inside",
+                indexLabelFontSize: 1,
+                dataPoints: <?php echo json_encode($allLocations, JSON_NUMERIC_CHECK); ?>,
+            }, ],
+        });
+        byLocationChart.render();
+    });
 </script>
 <script type="text/javascript">
     // Function to reload the page at the specified interval
@@ -252,10 +360,9 @@ display_tickets_table($ticket_result, HelpDB::get());
         }
     })
 </script>
-<?php include("footer.php"); ?>
-<script src="/includes/js/external/canvasjs.min.js"></script>
 <script>
     $(document).ready(function() {
         $('#alertsTable').DataTable();
     });
 </script>
+<?php include("footer.php"); ?>

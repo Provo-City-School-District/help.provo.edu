@@ -11,9 +11,12 @@ $twig = new \Twig\Environment($loader, [
 
 // Check if the user has permission to view reports
 $view_reports = get_user_setting(get_id_for_user($_SESSION['username']), "view_stats") ?? 0;
-if ($view_reports != 1) {
-    // User is not an admin
+$is_admin = get_user_setting(get_id_for_user($_SESSION['username']), "is_admin") ?? 0;
+if ($view_reports != 1 && $is_admin != 1) {
+    // User is not an admin or doesn't have view_stats permission
+    header('HTTP/1.0 403 Forbidden');
     echo 'You do not have permission to view this page.';
+
     exit;
 }
 

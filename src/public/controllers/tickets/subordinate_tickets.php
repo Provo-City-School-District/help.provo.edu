@@ -69,5 +69,6 @@ echo $twig->render('subordinate_tickets.twig', [
 	// tickets variables
 	'tickets' => $ticket_data,
 	'alerts' => $alerts,
-	'hide_alerts' => $_SESSION['hide_alerts']
+	'hide_alerts' => $_SESSION['hide_alerts'],
+	'num_project_tickets' => $num_project_tickets
 ]);

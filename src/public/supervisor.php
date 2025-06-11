@@ -320,7 +320,7 @@ $resolved_tickets_today_count = $resolved_tickets_today_row['resolved_count'];
             },
             data: [{
                 type: "bar",
-                yValueFormatString: "#,##",
+                yValueFormatString: "###",
                 indexLabel: "{y}",
                 indexLabelPlacement: "inside",
                 indexLabelFontSize: 1,

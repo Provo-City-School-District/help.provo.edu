@@ -1,5 +1,5 @@
 //================================= Charts =================================
-// Chart for all techs open tickets.
+// Chart for all techs open tickets in the department
 window.addEventListener("load", function () {
   // tech department
   var allTechsChart = new CanvasJS.Chart("techOpenTicket", {
@@ -35,7 +35,7 @@ window.addEventListener("load", function () {
   });
   allTechsChart.render();
 
-  // by location
+  // Chart for locations of open tickets in the department
   var byLocationChart = new CanvasJS.Chart("byLocation", {
     height: 1000,
     animationEnabled: true,
@@ -65,33 +65,4 @@ window.addEventListener("load", function () {
     ],
   });
   byLocationChart.render();
-
-  //field techs open tickets
-  // var fieldTechOpenChart = new CanvasJS.Chart("fieldTechOpen", {
-  //   height: 1000,
-  //   animationEnabled: true,
-  //   title: {
-  //     text: "Field Tech's Open Tickets",
-  //   },
-  //   axisY: {
-  //     title: "Ticket Count",
-  //     includeZero: true,
-  //   },
-  //   axisX: {
-  //     interval: 1, // Set the interval of the x-axis labels to 1
-  //   },
-  //   data: [
-  //     {
-  //       type: "bar",
-  //       yValueFormatString: "#,##",
-  //       indexLabel: "{y}",
-  //       indexLabelPlacement: "outside",
-  //       indexLabelFontWeight: "bolder",
-  //       indexLabelFontColor: "white",
-  //       indexLabelFontSize: 2,
-  //       dataPoints: fieldTechOpen,
-  //     },
-  //   ],
-  // });
-  // fieldTechOpenChart.render();
 });

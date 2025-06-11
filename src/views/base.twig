@@ -34,6 +34,9 @@
                     {% if user_permissions.is_admin %}
                         <a href="/admin.php">Admin</a>
                     {% endif %}
+                     {% if user_permissions.view_stats %}
+                        <a href="/stats.php">Stats</a>
+                    {% endif %}
                         <a href="/controllers/logout.php">Logout</a>
                     </nav>
 

@@ -24,6 +24,7 @@ $permissions = [
     "is_tech" => $_SESSION["permissions"]["is_tech"] != 0,
     "is_intern" => $_SESSION["permissions"]["is_intern"] != 0,
     "is_location_manager" => $_SESSION["permissions"]["is_location_manager"] != 0,
+    "view_stats" => $_SESSION["permissions"]["view_stats"] != 0,
 ];
 
 

@@ -290,6 +290,16 @@ code.language-markup:before {
 
 }
 
+.fullwidth-chart {
+	width: 100%;
+	height: 400px;
+	margin-top: 2em;
+}
+
+.noblt {
+	list-style: none;
+}
+
 /* =============================== Header Styles =============================== */
 #mainHeader {
 	background: linear-gradient(to bottom, var(--header-grad-start), var(--header-grad-end) 50%, var(--header-grad-end) 55%, var(--header-grad-start));

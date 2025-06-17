@@ -198,3 +198,72 @@ document.getElementById("department").addEventListener("change", function () {
     assignToSelfCheckbox.style.display = "none";
   }
 });
+
+
+function dismissTemplateView() {
+  const templateModalBackground = document.getElementById(
+    "note-template-form-background"
+  );
+  const templateForm = document.getElementById("note-template-form");
+
+  templateModalBackground.style.display = "none";
+  templateForm.style.display = "none";
+}
+
+const showTemplatesButton = document.getElementById("show-templates-button");
+
+if (showTemplatesButton) {
+    showTemplatesButton.onclick = function (event) {
+        const templateModalBackground = document.getElementById(
+            "note-template-form-background"
+        );
+        const templateForm = document.getElementById("note-template-form");
+        if (templateForm.style.display === "none") {
+            templateForm.style.display = "block";
+            templateModalBackground.style.display = "block";
+        } else {
+            dismissTemplateView();
+        }
+    };
+}
+
+const templateCloseButton = document.getElementById("note-template-form-close");
+if (templateCloseButton) {
+    templateCloseButton.onclick = function (event) {
+        const templateModalBackground = document.getElementById(
+            "note-template-form-background"
+        );
+        const templateForm = document.getElementById("note-template-form");
+        if (event.target == templateCloseButton) {
+            dismissTemplateView();
+        }
+    };
+}
+
+
+window.onclick = function (event) {
+    const templateModalBackground = document.getElementById(
+        "note-template-form-background"
+    );
+    if (event.target == templateModalBackground) {
+        dismissTemplateView();
+    }
+};
+
+function insertTemplate(template_name) {
+    $.ajax({
+        url: "/ajax/note_templates/get_template_content.php",
+        method: "GET",
+        data: {
+            template_name: template_name,
+        },
+        success: function(data, textStatus, xhr) {
+            const template_content = data.content;
+            tinymce.get('note-textbox').setContent(template_content);
+            dismissTemplateView();
+        },
+        error: function() {
+            alert("Error: Note template content AJAX call failed");
+        },
+    });
+}

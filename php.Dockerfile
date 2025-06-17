@@ -90,6 +90,9 @@ RUN chmod +x /root/run_client_response.sh
 COPY run_active_ticket_clear.sh /root/run_active_ticket_clear.sh
 RUN chmod +x /root/run_active_ticket_clear.sh
 
+COPY run_repeat_tickets.sh /root/run_repeat_tickets.sh
+RUN chmod +x /root/run_repeat_tickets.sh
+
 
 # Change document root folder
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public

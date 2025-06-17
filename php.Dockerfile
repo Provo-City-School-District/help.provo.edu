@@ -41,7 +41,7 @@ RUN wget -P /usr/local/share/ca-certificates/ "https://internal-certs.provo.edu/
 RUN chmod 644 /usr/local/share/ca-certificates/pcsd_ca.crt && update-ca-certificates
 
 # # Enable mod_http2
-RUN a2enmod http2 ssl
+RUN a2enmod ssl
 
 # # Update Apache configuration to enable HTTP/2
 RUN echo "Protocols h2 http/1.1" >> /etc/apache2/apache2.conf

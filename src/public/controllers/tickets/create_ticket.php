@@ -107,8 +107,7 @@ while ($topLevelRow = $topLevelResult->fetch_assoc()) {
 }
 
 
-
-
+$note_templates_for_user = HelpDB::get()->execute_query("SELECT * FROM note_templates WHERE user_id = ?", [$_SESSION["user_id"]]);
 
 echo $twig->render('create_ticket.twig', [
     // base variables
@@ -130,5 +129,6 @@ echo $twig->render('create_ticket.twig', [
     'tech_usernames' => $tech_usernames,
     'username' => $_SESSION['username'],
     'can_input_maintenance' => $can_input_maintenance,
+    'note_templates' => $note_templates_for_user,
     '_get' => $_GET
 ]);

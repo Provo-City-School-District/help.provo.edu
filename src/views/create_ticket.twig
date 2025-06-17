@@ -106,18 +106,40 @@
             </div>
 
             <label for="description" class="heading2">Ticket Description:</label>
-            <textarea id="description" name="description" class="tinyMCEtextarea">{{ _get['description']|escape }}</textarea>
+            <textarea id="note-textbox" name="description" class="tinyMCEtextarea">{{ _get['description']|escape }}</textarea>
+            {% if user_permissions.is_tech %}
+                <button id="show-templates-button" type="button" class="button">Insert Description From Template</button>
+            {% endif %}
         </div>
 
         <div id="attachment-fields">
             <label for="attachment">Attachment:</label>
             <input type="file" id="attachment" name="attachment[]" type="file" multiple>
-        </div>
+        </div><br>
         <input type="submit" class="button" value="Create Ticket">
         <div id="message" style="display: none;">
             <p>If you are a teacher, please take your maintenance request to either your head custodian or your admin team for their approval. Upon approval, they will submit the work order for you.</p>
         </div>
     </form>
+    <div id="note-template-form-background" class="modal-form-background">
+        <div id="note-template-form" class="modal-form" style="display: none;">
+            <div class="modal-form-header"><span class="modal-form-close" id="note-template-form-close">&times;</span></div>
+            <h3>Note Templates</h3><br>
+            <a href="/controllers/tickets/manage_note_templates.php">Manage Note Templates</a>
+            <table>
+                <th>Name</th>
+                <th>Content Preview</th>
+                <th>Actions</th>
+                {% for template in note_templates %}
+                    <tr>
+                        <td>{{ template.name }}</td>
+                        <td>{{ template.content }}</td>
+                        <td><button class="button" onclick="insertTemplate('{{ template.name }}')">Insert</button></td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
 </article>
 <script src="/includes/js/external/jquery-3.7.1.min.js"></script>
 <script>

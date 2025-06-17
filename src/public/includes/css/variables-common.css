@@ -3,7 +3,8 @@
     --theme-white: #fff;
     --theme-black: #000;
     --header-location: start;
-    --button-background: #3aa410;
+   /* --button-background: #3aa410; */
+    --button-background: #006ce7;
     --crit-color: #bd0808;
     --warn-color: #fa8907;
     --unread-color: #03a5fc;

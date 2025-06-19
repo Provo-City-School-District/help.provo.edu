@@ -939,6 +939,7 @@ function get_tech_usernames($department = null)
 
     if ($department !== null) {
         $query .= " AND us.department = ?";
+        $query .= " ORDER BY u.username ASC";
         $usernamesResult = HelpDB::get()->execute_query($query, [$department]);
     } else {
         $query .= " ORDER BY u.username ASC";

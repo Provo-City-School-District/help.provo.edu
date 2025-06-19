@@ -108,6 +108,9 @@ while ($topLevelRow = $topLevelResult->fetch_assoc()) {
 
 
 $note_templates_for_user = HelpDB::get()->execute_query("SELECT * FROM note_templates WHERE user_id = ?", [$_SESSION["user_id"]]);
+$twig->addFunction(new \Twig\TwigFunction('render_tech_usernames_dropdown', function ($usernames, $default = null, $name = "assigned", $required = true) {
+    return render_tech_usernames_dropdown($usernames, $default, $name, $required);
+}, ['is_safe' => ['html']]));
 
 echo $twig->render('create_ticket.twig', [
     // base variables

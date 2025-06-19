@@ -56,16 +56,7 @@
         {% if user_permissions.is_tech %}
             <div>
                 <label for="assigned">Assign to:</label>
-                <select id="assigned" name="assigned">
-                    <option value="unassigned">Unassigned</option>
-                    {% for tech_username in tech_usernames %}
-                        {% if tech_username == username %}
-                        <option value="{{ tech_username }}" selected>{{ tech_username }}</option>
-                        {% else %}
-                        <option value="{{ tech_username }}">{{ tech_username }}</option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
+                {{ render_tech_usernames_dropdown(tech_usernames, null, 'assigned', true) }}
                 <div id="assign_to_self" style="display: none;">
                     <input type="checkbox" id="assign_to_self_checkbox" name="assign_to_self" value="1">
                     <label for="assign_to_self_checkbox">Assign to myself</label>

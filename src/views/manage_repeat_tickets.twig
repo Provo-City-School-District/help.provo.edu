@@ -16,6 +16,7 @@
 						<th>Room</th>
 						<th>Client</th>
 						<th>Request Type</th>
+						<th>Active</th>
 						<th>Actions</th>
 					</tr>
 				</thead>
@@ -32,6 +33,12 @@
 							<td>{{ ticket.room }}</td>
 							<td>{{ ticket.client }}</td>
 							<td>{{ request_name_for_type(ticket.request_type) }}</td>
+							<td>
+								    <input type="checkbox"
+										class="toggle-active"
+										data-ticket-id="{{ ticket.id }}"
+										{% if ticket.active %}checked{% endif %}>
+							</td>
 							<td
 								data-cell="Actions" class="action_cell">
 								{# <a href="{{ path('edit_repeat_ticket', {'id': ticket.id}) }}" class="btn btn-primary">Edit</a> #}
@@ -167,9 +174,44 @@
 {% block page_scripts %}
 	<script>
 		document.addEventListener('DOMContentLoaded', function () {
-if (window.jQuery && $.fn.dataTable) {
-$('#repeatTicketsTable').DataTable();
-}
-});
+			if (window.jQuery && $.fn.dataTable) {
+				$('#repeatTicketsTable').DataTable();
+			}
+		});
+	</script>
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			if (window.jQuery && $.fn.dataTable) {
+				$('#repeatTicketsTable').DataTable();
+			}
+
+			// AJAX for toggling active status
+			document.querySelectorAll('.toggle-active').forEach(function(checkbox) {
+				checkbox.addEventListener('change', function() {
+					const ticketId = this.getAttribute('data-ticket-id');
+					const isActive = this.checked ? 1 : 0;
+					console.log(`Toggling ID ${ticketId} active status to ${isActive}`);
+					fetch('/src/public/controllers/tickets/toggle_repeat_ticket_active.php', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/x-www-form-urlencoded',
+							'X-Requested-With': 'XMLHttpRequest'
+						},
+						body: `ticket_id=${encodeURIComponent(ticketId)}&active=${encodeURIComponent(isActive)}`
+					})
+					.then(response => response.json())
+					.then(data => {
+						if (!data.success) {
+							alert('Failed to update status.');
+							this.checked = !this.checked; // revert checkbox
+						}
+					})
+					.catch(() => {
+						alert('Error updating status.');
+						this.checked = !this.checked; // revert checkbox
+					});
+				});
+			});
+		});
 	</script>
 {% endblock %}

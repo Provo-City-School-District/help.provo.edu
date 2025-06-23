@@ -11,7 +11,7 @@ $today = date('Y-m-d');
 
 // Fetch repeatable ticket entries due today or earlier
 // $query = "SELECT * FROM repeatable_ticket_templates WHERE next_run_date <= ? AND status = 'active'";
-$query = "SELECT * FROM repeatable_ticket_templates WHERE next_run_date <= ?";
+$query = "SELECT * FROM repeatable_ticket_templates WHERE active=1 AND next_run_date <= ?";
 $stmt = HelpDB::get()->prepare($query);
 $stmt->bind_param("s", $today);
 $stmt->execute();

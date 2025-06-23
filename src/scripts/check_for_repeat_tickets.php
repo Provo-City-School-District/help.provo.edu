@@ -54,18 +54,22 @@ while ($template = $result->fetch_assoc()) {
     $insert->execute();
 
     // Calculate the next run date
-    $next_run = new DateTime($template['next_run_date']);
-    switch ($template['interval_type']) {
-        case 'daily':
-            $next_run->modify('+' . intval($template['interval_value']) . ' days');
-            break;
-        case 'weekly':
-            $next_run->modify('+' . intval($template['interval_value']) . ' weeks');
-            break;
-        case 'monthly':
-            $next_run->modify('+' . intval($template['interval_value']) . ' months');
-            break;
-    }
+    $next_run = new DateTime($today);
+    do {
+        switch ($template['interval_type']) {
+            case 'daily':
+                $next_run->modify('+' . intval($template['interval_value']) . ' days');
+                break;
+            case 'weekly':
+                $next_run->modify('+' . intval($template['interval_value']) . ' weeks');
+                break;
+            case 'monthly':
+                $next_run->modify('+' . intval($template['interval_value']) . ' months');
+                break;
+        }
+        // Keep looping if next_run is still <= today
+    } while ($next_run->format('Y-m-d') <= $today);
+
     $new_next_run_date = $next_run->format('Y-m-d');
 
     // Update the template's next_run_date

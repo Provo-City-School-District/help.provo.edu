@@ -1,10 +1,16 @@
 # Example
-#* * * * * /bin/sh -c "date >> /var/log/cron.log 2>&1"
+#* * * * * /bin/sh -c "date >> /proc/1/fd/1 2>&1
+
 #Run Ticket Alerts every hour
-0 * * * * /root/run_ticket_alerts.sh >> /var/log/cron.log 2>&1
-* * * * * /root/run_email_check.sh >> /var/log/cron.log 2>&1
+0 * * * * /root/run_ticket_alerts.sh >> /proc/1/fd/1 2>&1
+* * * * * /root/run_email_check.sh >> /proc/1/fd/1 2>&1
+
 # Check active_ticket for clearing every minute
-* * * * * /root/run_active_ticket_clear.sh >> /var/log/cron.log 2>&1
-0 0 * * * /root/run_close_resolved.sh >> /var/log/cron.log 2>&1
+* * * * * /root/run_active_ticket_clear.sh >> /proc/1/fd/1 2>&1
+0 0 * * * /root/run_close_resolved.sh >> /proc/1/fd/1 2>&1
+
 # Run Email Client Response Tickets at 6am
-0 6 * * 1-5 /root/run_client_response.sh >> /var/log/cron.log 2>&1
+0 6 * * 1-5 /root/run_client_response.sh >> /proc/1/fd/1 2>&1
+
+# Run Repeat Tickets Check in the morning at 2am
+0 2 * * 1-5 /root/run_repeat_tickets.sh >> /proc/1/fd/1 2>&1

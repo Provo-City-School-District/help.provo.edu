@@ -1,0 +1,217 @@
+{% extends "base.twig" %}
+
+{% block content %}
+	<div class="container mt-4">
+		<h2>Manage Repeat Tickets</h2>
+		<h3>Current Repeat Ticket</h3>
+		{% if current_tickets|length > 0 %}
+			<table class="table table-striped" id="repeatTicketsTable">
+				<thead>
+					<tr>
+						<th>Title</th>
+						<th>Interval</th>
+						<th>Next Run</th>
+						<th>Department</th>
+						<th>Location</th>
+						<th>Room</th>
+						<th>Client</th>
+						<th>Request Type</th>
+						<th>Active</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for ticket in current_tickets %}
+
+						<tr>
+							<td>{{ ticket.title }}</td>
+							<td>{{ ticket.interval_value }}
+								{{ ticket.interval_type|capitalize }}</td>
+							<td>{{ ticket.next_run_date }}</td>
+							<td>{{ location_name_from_id(ticket.department) }}</td>
+							<td>{{ location_name_from_id(ticket.location) }}</td>
+							<td>{{ ticket.room }}</td>
+							<td>{{ ticket.client }}</td>
+							<td>{{ request_name_for_type(ticket.request_type) }}</td>
+							<td>
+								    <input type="checkbox"
+										class="toggle-active"
+										data-ticket-id="{{ ticket.id }}"
+										{% if ticket.active %}checked{% endif %}>
+							</td>
+							<td
+								data-cell="Actions" class="action_cell">
+								{# <a href="{{ path('edit_repeat_ticket', {'id': ticket.id}) }}" class="btn btn-primary">Edit</a> #}
+								<form method="post" action="">
+									<input type="hidden" name="action" value="delete_repeat_ticket">
+									<input type="hidden" name="ticket_id" value="{{ ticket.id }}">
+
+									<button type="submit" class="button" onclick="return confirm('Are you sure you want to delete this repeat ticket?')">Delete</button>
+								</form>
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		{% else %}
+			<p>No repeat tickets found.</p>
+		{% endif %}
+		<h3>Add New Repeat Ticket</h3>
+		<form method="post" action="">
+			<div class="ticketGrid">
+				<div>
+					<label for="interval_value" class="form-label">Interval Value:</label>
+					<input type="number" class="form-control" id="interval_value" name="interval_value" value="1" min="1" required>
+					<small class="form-text text-muted">E.g., every 2 weeks</small>
+				</div>
+
+				<div>
+					<label for="interval_type" class="form-label">Interval Type:</label>
+					<select class="form-select" id="interval_type" name="interval_type" required>
+						<option value="daily">Daily</option>
+						<option value="weekly">Weekly</option>
+						<option value="monthly">Monthly</option>
+					</select>
+				</div>
+
+				<div>
+					<label for="next_run_date" class="form-label">Next Run Date:</label>
+					<input type="date" class="form-control" id="next_run_date" name="next_run_date" required>
+				</div>
+
+				<div>
+					<label for="department">For Department:</label>
+					<select id="department" name="department">
+						<option hidden disabled selected value></option>
+						{% for dept in depts %}
+							{% if (user_permissions.is_tech and dept.select and _get.department is null)
+                            or (_get.department is defined and _get.department == dept.site_number) %}
+								<option value="{{ dept.site_number }}" selected>{{ dept.site_name }}</option>
+							{% else %}
+								<option value="{{ dept.site_number }}">{{ dept.site_name }}</option>
+							{% endif %}
+						{% endfor %}
+					</select>
+				</div>
+
+				<div>
+					<label for="location">At Location:</label>
+					<select id="location" name="location" required>
+						<option hidden disabled selected value></option>
+
+						{% for location in locations %}
+							{% if user_permissions.is_tech and location.select %}
+								<option value="{{ location.site_number }}" {% if _get.location is defined and _get.location == location.site_number %} selected {% endif %}>{{ location.site_name }}</option>
+							{% else %}
+								<option value="{{ location.site_number }}" {% if _get.location is defined and _get.location == location.site_number %} selected {% endif %}>{{ location.site_name }}</option>
+							{% endif %}
+						{% endfor %}
+
+					</select>
+				</div>
+
+				<div>
+					<label for="phone_number" class="form-label">Phone Number:</label>
+					<input type="text" class="form-control" id="phone_number" name="phone_number">
+				</div>
+
+				<div>
+					<label for="room" class="form-label">Room:</label>
+					<input type="text" class="form-control" id="room" name="room">
+				</div>
+
+				<div>
+					<label for="cc" class="form-label">CC:</label>
+					<input type="text" class="form-control" id="cc" name="cc">
+				</div>
+
+				<div>
+					<label for="client" class="form-label">Client:</label>
+					<input type="text" class="form-control" id="client" name="client">
+				</div>
+
+				<div>
+					<label for="request_type">Request Type:</label>
+					<select id="request_type" name="request_type">
+						<option value="0">Select a more specific request type otherwise (Other)</option>
+						{% for topLevel in requestTypes %}
+							<option disabled value="{{ topLevel.id }}" {% if topLevel.id == _get['request_type'] %} selected {% endif %}>
+								{{ topLevel.name }}
+							</option>
+							{% for child in topLevel.children %}
+								<option value="{{ child.id }}" {% if child.id == _get['request_type'] %} selected {% endif %}>
+									&nbsp;&nbsp;&nbsp;&nbsp;{{ child.name }}
+								</option>
+								{% for grandchild in child.children %}
+									<option value="{{ grandchild.id }}" {% if grandchild.id == _get['request_type'] %} selected {% endif %}>
+										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ grandchild.name }}
+									</option>
+								{% endfor %}
+							{% endfor %}
+						{% endfor %}
+					</select>
+				</div>
+
+			</div>
+			<div class="detailContainer">
+
+				<div class="ticketSubject">
+					<label for="title" class="form-label">Ticket Title:</label>
+					<input type="text" class="form-control" id="title" name="title" required>
+				</div>
+
+				<label for="description" class="form-label heading2">Ticket Request Detail:</label>
+				<textarea class="form-control tinyMCEtextarea" id="description" name="description" rows="3"></textarea>
+
+			</div>
+
+			<input type="hidden" name="action" value="insert_repeat_ticket">
+			<button type="submit" class="button">Add Repeat Ticket</button>
+		</form>
+	</div>
+
+{% endblock %}
+{% block page_scripts %}
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			if (window.jQuery && $.fn.dataTable) {
+				$('#repeatTicketsTable').DataTable();
+			}
+		});
+	</script>
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			if (window.jQuery && $.fn.dataTable) {
+				$('#repeatTicketsTable').DataTable();
+			}
+
+			// AJAX for toggling active status
+			document.querySelectorAll('.toggle-active').forEach(function(checkbox) {
+				checkbox.addEventListener('change', function() {
+					const ticketId = this.getAttribute('data-ticket-id');
+					const isActive = this.checked ? 1 : 0;
+					console.log(`Toggling ID ${ticketId} active status to ${isActive}`);
+					fetch('/ajax/toggle_repeat_ticket_active.php', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/x-www-form-urlencoded',
+							'X-Requested-With': 'XMLHttpRequest'
+						},
+						body: `ticket_id=${encodeURIComponent(ticketId)}&active=${encodeURIComponent(isActive)}`
+					})
+					.then(response => response.json())
+					.then(data => {
+						if (!data.success) {
+							alert('Failed to update status.');
+							this.checked = !this.checked; // revert checkbox
+						}
+					})
+					.catch(() => {
+						alert('Error updating status.');
+						this.checked = !this.checked; // revert checkbox
+					});
+				});
+			});
+		});
+	</script>
+{% endblock %}

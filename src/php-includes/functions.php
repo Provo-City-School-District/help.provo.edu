@@ -268,3 +268,21 @@ function user_is_tech(string $username)
     else
         return false;
 }
+
+// Get username from user.id
+function get_username_by_id($user_id)
+{
+    $username = null;
+    if ($user_id) {
+        $user_id_result = HelpDB::get()->execute_query("SELECT username FROM users WHERE id = ?", [$user_id]);
+        $user_id_data = mysqli_fetch_assoc($user_id_result);
+        if (isset($user_id_data) && isset($user_id_data["username"])) {
+            $username = $user_id_data["username"];
+        } else {
+            log_app(LOG_ERR, "[get_username_by_id] Failed to get username for user ID: $user_id");
+        }
+        print_r($username);
+        // mysqli_stmt_close($user_id_result);
+    }
+    return $username;
+}

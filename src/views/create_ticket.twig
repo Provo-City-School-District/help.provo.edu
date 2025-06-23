@@ -2,140 +2,144 @@
 
 {% block content %}
 
-<article id="ticketWrapper">
-    <h1>Create Ticket</h1>
-    <form method="POST" action="insert_ticket.php" enctype="multipart/form-data">
-        <input type="hidden" name="client" value="{{ username }}">
-        <div class="ticketGrid">
-             <div>
-                <label for="department">For Department:</label>
-                <select id="department" name="department">
-                    <option hidden disabled selected value></option>
-                    {% for dept in depts %}
-                        {% if (user_permissions.is_tech and dept.select and _get.department is null)
+	<article id="ticketWrapper">
+		<h1>Create Ticket</h1>
+		<form method="POST" action="insert_ticket.php" enctype="multipart/form-data">
+			<input type="hidden" name="client" value="{{ username }}">
+			<div class="ticketGrid">
+				<div>
+					<label for="department">For Department:</label>
+					<select id="department" name="department">
+						<option hidden disabled selected value></option>
+						{% for dept in depts %}
+							{% if (user_permissions.is_tech and dept.select and _get.department is null)
                             or (_get.department is defined and _get.department == dept.site_number) %}
-                        <option value="{{ dept.site_number }}" selected>{{ dept.site_name }}</option>
-                        {% else %}
-                        <option value="{{ dept.site_number }}">{{ dept.site_name }}</option>
-                        {% endif %}
-                    {% endfor %}      
-                </select>
-            </div>
-            <div>
-                <label for="location">At Location:</label>
-                <select id="location" name="location" required>
-                    <option hidden disabled selected value></option>
-   
-                     {% for location in locations %}
-                        {% if user_permissions.is_tech and location.select %}
-                            <option value="{{ location.site_number }}" {% if _get.location is defined and _get.location == location.site_number %}selected{% endif %}>{{ location.site_name }}</option>
-                        {% else %}
-                            <option value="{{ location.site_number }}" {% if _get.location is defined and _get.location == location.site_number %}selected{% endif %}>{{ location.site_name }}</option>
-                        {% endif %}
-                    {% endfor %}
-          
-                </select>
-            </div>
+								<option value="{{ dept.site_number }}" selected>{{ dept.site_name }}</option>
+							{% else %}
+								<option value="{{ dept.site_number }}">{{ dept.site_name }}</option>
+							{% endif %}
+						{% endfor %}
+					</select>
+				</div>
+				<div>
+					<label for="location">At Location:</label>
+					<select id="location" name="location" required>
+						<option hidden disabled selected value></option>
 
-            <div>
-                <label for="room">In Room:</label>
-                <input type="text" id="room" name="room" value="{{ _get['room']|escape }}">
-            </div>
-            <div>
-                <label for="phone">My Phone #:</label>
-                <input type="tel" id="phone" name="phone" value="{{ _get['phone']|escape }}">
-            </div>
-            <div>
-                <label for="cc_emails">Carbon Copy:</label>
-                <input type="text" id="cc_emails" name="cc_emails" value="{{ _get['cc_emails']|escape }}">
-            </div>
-            {# <div>
-                <label for="bcc_emails">Blind Carbon Copy:</label>
-                <input type="text" id="bcc_emails" name="bcc_emails" value="{{ _get['bcc_emails']|escape }}">
-            </div> #}
-        {% if user_permissions.is_tech %}
-            <div>
-                <label for="assigned">Assign to:</label>
-                {{ render_tech_usernames_dropdown(tech_usernames, null, 'assigned', true) }}
-                <div id="assign_to_self" style="display: none;">
-                    <input type="checkbox" id="assign_to_self_checkbox" name="assign_to_self" value="1">
-                    <label for="assign_to_self_checkbox">Assign to myself</label>
-                </div>
-            </div>
-            <div>
-                <label for="client">Client Override:</label>
-                <input type="text" id="client" name="client" value="{{ _get['client']|escape }}">
-            </div>
-            <div>
-            <label for="request_type">Request Type:</label>
-            <select id="request_type" name="request_type">
-                <option value="0">Select a more specific request type otherwise (Other)</option>
-                {% for topLevel in requestTypes %}
-                    <option disabled value="{{ topLevel.id }}" {% if topLevel.id == _get['request_type'] %}selected{% endif %}>
-                        {{ topLevel.name }}
-                    </option>
-                    {% for child in topLevel.children %}
-                        <option value="{{ child.id }}" {% if child.id == _get['request_type'] %}selected{% endif %}>
-                            &nbsp;&nbsp;&nbsp;&nbsp;{{ child.name }}
-                        </option>
-                        {% for grandchild in child.children %}
-                            <option value="{{ grandchild.id }}" {% if grandchild.id == _get['request_type'] %}selected{% endif %}>
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ grandchild.name }}
-                            </option>
-                        {% endfor %}
-                    {% endfor %}
-                {% endfor %}
-            </select>
-        </div>
-        {% endif %}
-        </div>
+						{% for location in locations %}
+							{% if user_permissions.is_tech and location.select %}
+								<option value="{{ location.site_number }}" {% if _get.location is defined and _get.location == location.site_number %} selected {% endif %}>{{ location.site_name }}</option>
+							{% else %}
+								<option value="{{ location.site_number }}" {% if _get.location is defined and _get.location == location.site_number %} selected {% endif %}>{{ location.site_name }}</option>
+							{% endif %}
+						{% endfor %}
 
-        <div class="detailContainer">
-            <div class="ticketSubject">
-                <label for="ticket_name">Ticket Title:</label>
-                <input type="text" id="ticket_name" name="ticket_name" value="{{ _get['ticket_name']|escape }}" maxlength="100">
-            </div>
+					</select>
+				</div>
 
-            <label for="description" class="heading2">Ticket Description:</label>
-            <textarea id="note-textbox" name="description" class="tinyMCEtextarea">{{ _get['description']|escape }}</textarea>
-            {% if user_permissions.is_tech %}
-                <button id="show-templates-button" type="button" class="button">Insert Description From Template</button>
-            {% endif %}
-        </div>
+				<div>
+					<label for="room">In Room:</label>
+					<input type="text" id="room" name="room" value="{{ _get['room']|escape }}">
+				</div>
+				<div>
+					<label for="phone">My Phone #:</label>
+					<input type="tel" id="phone" name="phone" value="{{ _get['phone']|escape }}">
+				</div>
+				<div>
+					<label for="cc_emails">Carbon Copy:</label>
+					<input type="text" id="cc_emails" name="cc_emails" value="{{ _get['cc_emails']|escape }}">
+				</div>
+				{# <div>
+								                <label for="bcc_emails">Blind Carbon Copy:</label>
+								                <input type="text" id="bcc_emails" name="bcc_emails" value="{{ _get['bcc_emails']|escape }}">
+								            </div> #}
+				{% if user_permissions.is_tech %}
+					<div>
+						<label for="assigned">Assign to:</label>
+						{{ render_tech_usernames_dropdown(tech_usernames, username, 'assigned', true) }}
+						<div id="assign_to_self" style="display: none;">
+							<input type="checkbox" id="assign_to_self_checkbox" name="assign_to_self" value="1">
+							<label for="assign_to_self_checkbox">Assign to myself</label>
+						</div>
+					</div>
+					<div>
+						<label for="client">Client Override:</label>
+						<input type="text" id="client" name="client" value="{{ _get['client']|escape }}">
+					</div>
+					<div>
+						<label for="request_type">Request Type:</label>
+						<select id="request_type" name="request_type">
+							<option value="0">Select a more specific request type otherwise (Other)</option>
+							{% for topLevel in requestTypes %}
+								<option disabled value="{{ topLevel.id }}" {% if topLevel.id == _get['request_type'] %} selected {% endif %}>
+									{{ topLevel.name }}
+								</option>
+								{% for child in topLevel.children %}
+									<option value="{{ child.id }}" {% if child.id == _get['request_type'] %} selected {% endif %}>
+										&nbsp;&nbsp;&nbsp;&nbsp;{{ child.name }}
+									</option>
+									{% for grandchild in child.children %}
+										<option value="{{ grandchild.id }}" {% if grandchild.id == _get['request_type'] %} selected {% endif %}>
+											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ grandchild.name }}
+										</option>
+									{% endfor %}
+								{% endfor %}
+							{% endfor %}
+						</select>
+					</div>
+				{% endif %}
+			</div>
 
-        <div id="attachment-fields">
-            <label for="attachment">Attachment:</label>
-            <input type="file" id="attachment" name="attachment[]" type="file" multiple>
-        </div><br>
-        <input type="submit" class="button" value="Create Ticket">
-        <div id="message" style="display: none;">
-            <p>If you are a teacher, please take your maintenance request to either your head custodian or your admin team for their approval. Upon approval, they will submit the work order for you.</p>
-        </div>
-    </form>
-    <div id="note-template-form-background" class="modal-form-background">
-        <div id="note-template-form" class="modal-form" style="display: none;">
-            <div class="modal-form-header"><span class="modal-form-close" id="note-template-form-close">&times;</span></div>
-            <h3>Note Templates</h3><br>
-            <a href="/controllers/tickets/manage_note_templates.php">Manage Note Templates</a>
-            <table>
-                <th>Name</th>
-                <th>Content Preview</th>
-                <th>Actions</th>
-                {% for template in note_templates %}
-                    <tr>
-                        <td>{{ template.name }}</td>
-                        <td>{{ template.content }}</td>
-                        <td><button class="button" onclick="insertTemplate('{{ template.name }}')">Insert</button></td>
-                    </tr>
-                {% endfor %}
-            </table>
-        </div>
-    </div>
-</article>
-<script src="/includes/js/external/jquery-3.7.1.min.js"></script>
-<script>
-    var canInputMaintenance = {{ can_input_maintenance ? 'true' : 'false' }};
-    var userDepartment = {{ user_department }};
-</script>
-<script src="/includes/js/pages/create_ticket.js?v=1.0.0"></script>
+			<div class="detailContainer">
+				<div class="ticketSubject">
+					<label for="ticket_name">Ticket Title:</label>
+					<input type="text" id="ticket_name" name="ticket_name" value="{{ _get['ticket_name']|escape }}" maxlength="100">
+				</div>
+
+				<label for="description" class="heading2">Ticket Description:</label>
+				<textarea id="note-textbox" name="description" class="tinyMCEtextarea">{{ _get['description']|escape }}</textarea>
+				{% if user_permissions.is_tech %}
+					<button id="show-templates-button" type="button" class="button">Insert Description From Template</button>
+				{% endif %}
+			</div>
+
+			<div id="attachment-fields">
+				<label for="attachment">Attachment:</label>
+				<input type="file" id="attachment" name="attachment[]" type="file" multiple>
+			</div><br>
+			<input type="submit" class="button" value="Create Ticket">
+			<div id="message" style="display: none;">
+				<p>If you are a teacher, please take your maintenance request to either your head custodian or your admin team for their approval. Upon approval, they will submit the work order for you.</p>
+			</div>
+		</form>
+		<div id="note-template-form-background" class="modal-form-background">
+			<div id="note-template-form" class="modal-form" style="display: none;">
+				<div class="modal-form-header">
+					<span class="modal-form-close" id="note-template-form-close">&times;</span>
+				</div>
+				<h3>Note Templates</h3><br>
+				<a href="/controllers/tickets/manage_note_templates.php">Manage Note Templates</a>
+				<table>
+					<th>Name</th>
+					<th>Content Preview</th>
+					<th>Actions</th>
+					{% for template in note_templates %}
+						<tr>
+							<td>{{ template.name }}</td>
+							<td>{{ template.content }}</td>
+							<td>
+								<button class="button" onclick="insertTemplate('{{ template.name }}')">Insert</button>
+							</td>
+						</tr>
+					{% endfor %}
+				</table>
+			</div>
+		</div>
+	</article>
+	<script src="/includes/js/external/jquery-3.7.1.min.js"></script>
+	<script>
+		var canInputMaintenance = {{ can_input_maintenance ? 'true' : 'false' }};
+var userDepartment = {{ user_department }};
+	</script>
+	<script src="/includes/js/pages/create_ticket.js?v=1.0.0"></script>
 {% endblock %}

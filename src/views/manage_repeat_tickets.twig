@@ -191,7 +191,7 @@
 					const ticketId = this.getAttribute('data-ticket-id');
 					const isActive = this.checked ? 1 : 0;
 					console.log(`Toggling ID ${ticketId} active status to ${isActive}`);
-					fetch('/src/public/controllers/tickets/toggle_repeat_ticket_active.php', {
+					fetch('/ajax/toggle_repeat_ticket_active.php', {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/x-www-form-urlencoded',

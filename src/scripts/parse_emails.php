@@ -21,7 +21,8 @@ function msg_is_auto_submitted($mailbox, $msg_id)
     return false;
 }
 
-class EmailMessage {
+class EmailMessage
+{
     public string $id;
     public string $uid;
     public string $ancestor_id;
@@ -38,7 +39,8 @@ class EmailMessage {
     const INTERNAL_HOSTNAME = 'provo.edu';
 
 
-    public function __construct($connection, $msg_num) {
+    public function __construct($connection, $msg_num)
+    {
         $msg_header = imap_headerinfo($connection, $msg_num);
         if ($msg_header === false) {
             throw new Exception("Failed to get header information for message $msg_num");
@@ -68,7 +70,8 @@ class EmailMessage {
         $this->body = EmailMessage::get_message_body($connection, $msg_num);
     }
 
-    private static function get_message_body($connection, $msg_num) {
+    private static function get_message_body($connection, $msg_num)
+    {
         $obj_structure = imap_fetchstructure($connection, $msg_num);
 
         $obj_section = $obj_structure;
@@ -102,7 +105,8 @@ class EmailMessage {
         return $message;
     }
 
-    public function get_username() {
+    public function get_username()
+    {
         if ($this->is_external) {
             return "External sender: {$this->sender_username}";
         }
@@ -111,11 +115,13 @@ class EmailMessage {
     }
 }
 
-class EmailParser {
+class EmailParser
+{
     private array $blacklisted_emails;
     private IMAP\Connection $connection;
 
-    public function __construct($path, $username, $password, $blacklist) {
+    public function __construct($path, $username, $password, $blacklist)
+    {
         $this->connection = imap_open($path, $username, $password);
         if ($this->connection === false) {
             throw new Exception("Mailbox $path failed to open");
@@ -124,11 +130,13 @@ class EmailParser {
         $this->blacklisted_emails = $blacklist;
     }
 
-    public function __destruct() {
+    public function __destruct()
+    {
         imap_close($this->connection);
     }
 
-    private function parse_message(int $msg_num) {
+    private function parse_message(int $msg_num)
+    {
         $msg = new EmailMessage($this->connection, $msg_num);
 
         // Ignore blacklisted emails
@@ -161,7 +169,7 @@ class EmailParser {
             $subject_ticket_id = count($subject_split) > 1 ? intval($subject_split[1]) : 0;
             if (strtolower($subject_split[0]) == "ticket" && $subject_ticket_id > 0 && count($subject_split) == 2) {
                 // add note
-            /*
+                /*
             if ($msg_is_external && !email_is_referenced_on_ticket($sender_email, $operating_ticket)) {
                 log_app(LOG_INFO, "Email $sender_email doesn't have permission to add a note to ticket $operating_ticket (not found in CC/BCC emails)");
                 continue;
@@ -173,7 +181,8 @@ class EmailParser {
         }
     }
 
-    public function parse_messages() {
+    public function parse_messages()
+    {
         // Parse the oldest messages first
         imap_sort($mbox, SORTDATE, false);
 
@@ -187,12 +196,15 @@ class EmailParser {
 $blacklisted_emails = [
     "dev@provo.edu",
     "help@provo.edu",
-    "helpdesk@provo.edu"
+    "helpdesk@provo.edu",
+    "server@provo.edu"
+
 ];
 
 $mbox_path = '{imap.gmail.com:993/imap/ssl}INBOX';
 $parser = new EmailParser(
-    $mbox_path, 
-    getenv("GMAIL_USER"), 
-    getenv("GMAIL_PASSWORD"), 
-    $blacklisted_emails);
+    $mbox_path,
+    getenv("GMAIL_USER"),
+    getenv("GMAIL_PASSWORD"),
+    $blacklisted_emails
+);

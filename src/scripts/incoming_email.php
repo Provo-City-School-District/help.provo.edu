@@ -9,7 +9,9 @@ require_once("template.php");
 $blacklisted_emails = [
     "dev@provo.edu",
     "help@provo.edu",
-    "helpdesk@provo.edu"
+    "helpdesk@provo.edu",
+    "smtp@provo.edu",
+    "server@provo.edu"
 ];
 
 $move_emails_after_parsed = true;

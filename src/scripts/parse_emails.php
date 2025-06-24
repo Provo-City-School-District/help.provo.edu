@@ -197,7 +197,8 @@ $blacklisted_emails = [
     "dev@provo.edu",
     "help@provo.edu",
     "helpdesk@provo.edu",
-    "server@provo.edu"
+    "server@provo.edu",
+    'smtp@provo.edu'
 
 ];
 

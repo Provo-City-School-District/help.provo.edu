@@ -211,9 +211,11 @@ function get_fast_client_location(string $name)
 
 function log_app(int $priority, string $message)
 {
-    openlog("appLog", LOG_PID | LOG_PERROR, LOG_LOCAL0);
-    syslog($priority, $message);
-    closelog();
+    if (getenv('DEBUG_MODE') === 'true') {
+        openlog("appLog", LOG_PID | LOG_PERROR, LOG_LOCAL0);
+        syslog($priority, $message);
+        closelog();
+    }
 }
 function get_last_login_time($username)
 {

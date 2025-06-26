@@ -134,8 +134,8 @@ function create_note(
     int $travel_minutes,
     bool $visible_to_client,
     ?int $department_id = null,
-    string $date_override = null,
-    string $email_msg_id = null,
+    ?string $date_override = null,
+    ?string $email_msg_id = null,
 ) {
     $ticket_id_clean = trim(htmlspecialchars($ticket_id));
     $note_content_clean = htmlspecialchars(trim($note_content), ENT_QUOTES, 'UTF-8');

@@ -433,6 +433,14 @@ th {
 	background-color: var(--warn-color);
 }
 
+.data-table tr.blue-dot {
+	background-color: var(--unread-color);
+}
+
+.data-table tr.task-dot {
+	background-color: var(--task-color);
+}
+
 .data-table tr.warn a:hover {
 	color: var(--crit-color);
 }

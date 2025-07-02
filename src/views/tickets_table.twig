@@ -1,85 +1,98 @@
 {# tickets_table.twig #}
 <table class="ticketsTable data-table">
-    <thead>
-        <tr>
-            <th class="tID">ID</th>
-            <th class="alerts">Alerts</th>
-            <th class="reqDetail">Request Detail</th>
-            <th class="tLatestNote">Latest Note</th>
-            <th class="client">Client</th>
-            <th class="tLocation">Location</th>
-            <th class="category">Request Category</th>
-            <th class="status">Current Status</th>
-            <th class="priority">Priority</th>
-            <th class="tDate">Created Date</th>
-            <th class="tDate">Last Updated</th>
-            <th class="date">Due</th>
-            <th class="">Assigned</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for ticket in tickets %}
-        {% if show_alerts %}
-                {% if ticket.yellow_alert_enabled and not ticket.red_alert_enabled %}
-                    <tr class="warn">
-                {% elseif ticket.red_alert_enabled %}
-                    <tr class="crit">
-                {% else %}
-                    <tr>
-                {% endif %}
-            {% else %}
-                <tr>
-            {% endif %}
-            <td data-cell="ID"><a href="/controllers/tickets/edit_ticket.php?id={{ ticket.id }}">{{ ticket.id }}</a></td>
-            <td data-cell="Alerts" class="alertsTD">
-                  <div>
-                        {% if ticket.blue_alert_enabled %}
-                            <div title="Ticket unread" class="alert-dot-container">
-                                <div class="blue-dot"></div>
-                            </div>
-                        {% endif %}
-                        {% if ticket.yellow_alert_enabled and not ticket.red_alert_enabled %}
-                            <div title="Ticket warning alert" class="alert-dot-container">
-                                <div class="yellow-dot"></div>
-                            </div>
-                        {% endif %}
-                        {% if ticket.red_alert_enabled %}
-                            <div title="Ticket critical alert" class="alert-dot-container">
-                                <div class="red-dot"></div>
-                            </div>
-                        {% endif %}
-                        {% if ticket.task_alert_enabled %}
-                            <div title="Task assigned to you" class="alert-dot-container">
-                                <div class="task-dot"></div>
-                            </div>
-                        {% endif %}
-                    </div>
-            </td>
-            <td class="details" data-cell="Request Detail"><a href="/controllers/tickets/edit_ticket.php?id={{ ticket.id }}">{{ ticket.title|raw }}</a>{{ ticket.description|raw }}</td>
-            {% if ticket.latest_note is defined and ticket.latest_note is not null %}
-                <td class="latestNote" data-cell="Latest Note:"><strong>{{ ticket.latest_note_author }}: </strong> {{ ticket.latest_note|raw }}</td>
-            {% else %}
-                <td class="latestNote" data-cell="Latest Note:"></td>
-            {% endif %}
-            <td data-cell="Client: ">{{ ticket.client_first_name }} {{ ticket.client_last_name }}</td>
-            <td data-cell="Location">
-                {{ ticket.location_name }}
-                {% if ticket.room is not null %}
-                    <br><br>
-                    RM {{ ticket.room }}
-                {% endif %}
-            </td>
-            <td data-cell="Request Category">{{ ticket.request_category }}</td>
-            <td data-cell="Current Status">{{ ticket.status }}</td>
-            <td data-cell="Priority">
-                <span class="sort-value">{{ ticket.sort_value }}</span>
-                {{ ticket.priority }}
-            </td>
-            <td data-cell="Created">{{ ticket.created }}</td>
-            <td data-cell="Last Updated">{{ ticket.last_updated }}</td>
-            <td data-cell="Due">{{ ticket.due_date }}</td>
-            <td data-cell="Assigned">{{ ticket.assigned_tech }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+	<thead>
+		<tr>
+			<th class="tID">ID</th>
+			<th class="alerts">Alerts</th>
+			<th class="reqDetail">Request Detail</th>
+			<th class="tLatestNote">Latest Note</th>
+			<th class="client">Client</th>
+			<th class="tLocation">Location</th>
+			<th class="category">Request Category</th>
+			<th class="status">Current Status</th>
+			<th class="priority">Priority</th>
+			<th class="tDate">Created Date</th>
+			<th class="tDate">Last Updated</th>
+			<th class="date">Due</th>
+			<th class="">Assigned</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for ticket in tickets %}
+			{% if show_alerts %}
+				{% if ticket.blue_alert_enabled and not ticket.yellow_alert_enabled and not ticket.red_alert_enabled %}
+					<tr class="blue-dot">
+					{% elseif ticket.task_alert_enabled %}
+						<tr class="task-dot">
+						{% elseif ticket.yellow_alert_enabled and not ticket.red_alert_enabled %}
+							<tr class="warn">
+							{% elseif ticket.red_alert_enabled %}
+								<tr class="crit">
+								{% else %}
+									<tr>
+									{% endif %}
+								{% else %}
+									<tr>
+									{% endif %}
+									<td data-cell="ID">
+										<a href="/controllers/tickets/edit_ticket.php?id={{ ticket.id }}">{{ ticket.id }}</a>
+									</td>
+									<td data-cell="Alerts" class="alertsTD">
+										<div>
+											{% if ticket.blue_alert_enabled %}
+												<div title="Ticket unread" class="alert-dot-container">
+													<div class="blue-dot"></div>
+												</div>
+											{% endif %}
+											{% if ticket.yellow_alert_enabled and not ticket.red_alert_enabled %}
+												<div title="Ticket warning alert" class="alert-dot-container">
+													<div class="yellow-dot"></div>
+												</div>
+											{% endif %}
+											{% if ticket.red_alert_enabled %}
+												<div title="Ticket critical alert" class="alert-dot-container">
+													<div class="red-dot"></div>
+												</div>
+											{% endif %}
+											{% if ticket.task_alert_enabled %}
+												<div title="Task assigned to you" class="alert-dot-container">
+													<div class="task-dot"></div>
+												</div>
+											{% endif %}
+										</div>
+									</td>
+									<td class="details" data-cell="Request Detail">
+										<a href="/controllers/tickets/edit_ticket.php?id={{ ticket.id }}">{{ ticket.title|raw }}</a>
+										{{ ticket.description|raw }}</td>
+									{% if ticket.latest_note is defined and ticket.latest_note is not null %}
+										<td class="latestNote" data-cell="Latest Note:">
+											<strong>{{ ticket.latest_note_author }}:
+											</strong>
+											{{ ticket.latest_note|raw }}</td>
+									{% else %}
+										<td class="latestNote" data-cell="Latest Note:"></td>
+									{% endif %}
+									<td data-cell="Client: ">{{ ticket.client_first_name }}
+										{{ ticket.client_last_name }}</td>
+									<td data-cell="Location">
+										{{ ticket.location_name }}
+										{% if ticket.room is not null %}
+											<br><br>
+											RM
+											{{ ticket.room }}
+										{% endif %}
+									</td>
+									<td data-cell="Request Category">{{ ticket.request_category }}</td>
+									<td data-cell="Current Status">{{ ticket.status }}</td>
+									<td data-cell="Priority">
+										<span class="sort-value">{{ ticket.sort_value }}</span>
+										{{ ticket.priority }}
+									</td>
+									<td data-cell="Created">{{ ticket.created }}</td>
+									<td data-cell="Last Updated">{{ ticket.last_updated }}</td>
+									<td data-cell="Due">{{ ticket.due_date }}</td>
+									<td data-cell="Assigned">{{ ticket.assigned_tech }}</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>

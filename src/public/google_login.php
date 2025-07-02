@@ -133,7 +133,7 @@ if (isset($_GET['code'])) {
 
         $loc = get_client_location($username);
         // Update login timestamp and add google sso code to user record.
-        $update_stmt = HelpDB::get()->prepare("UPDATE users SET last_login = NOW(), gsso = ?, ldap_location = ? WHERE email = ?");
+        $update_stmt = HelpDB::get()->prepare("UPDATE users SET last_login = NOW(), remember_me_token = ?, ldap_location = ? WHERE email = ?");
 
         $login_token = hash('sha256', $_SESSION['user_id'] . $_SERVER['HTTP_USER_AGENT'] . time() . generateRandomString());
         $update_stmt->bind_param("sis", $login_token, $loc, $email);

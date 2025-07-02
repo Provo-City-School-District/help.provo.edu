@@ -68,6 +68,12 @@ if (!$user_stmt) {
     die("Query failed: " . mysqli_error(HelpDB::get()));
 }
 
+log_changes_for_fields(
+    ['firstname', 'lastname', 'email', 'ifasid'],
+    $old_user_data,
+    $new_user_data
+);
+
 
 $old_user_settings_result = HelpDB::get()->execute_query("SELECT * FROM user_settings WHERE user_id = ?", [$user_id]);
 $old_user_settings = $old_user_settings_result->fetch_assoc();
@@ -88,13 +94,6 @@ $new_user_data = $new_user_result->fetch_assoc();
 
 $new_user_settings_result = HelpDB::get()->execute_query("SELECT * FROM user_settings WHERE user_id = ?", [$user_id]);
 $new_user_settings = $new_user_settings_result->fetch_assoc();
-
-// log changes to audit log
-log_changes_for_fields(
-    ['firstname', 'lastname', 'email', 'ifasid'],
-    $old_user_data,
-    $new_user_data
-);
 
 log_changes_for_fields(
     [

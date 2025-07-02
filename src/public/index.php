@@ -11,7 +11,7 @@ if (!isset($_SESSION['username'])) {
         $login_token = $_COOKIE['COOKIE_REMEMBER_ME'];
 
         $user_result = HelpDB::get()->execute_query(
-            'SELECT id, username FROM users WHERE (gsso = ? AND last_login >= NOW() - INTERVAL 7 DAY)',
+            'SELECT id, username FROM users WHERE (remember_me_token = ? AND last_login >= NOW() - INTERVAL 7 DAY)',
             [$login_token]
         );
         // found user, log them in

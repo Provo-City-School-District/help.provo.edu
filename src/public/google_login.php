@@ -136,7 +136,8 @@ if (isset($_GET['code'])) {
         $update_stmt = HelpDB::get()->prepare("UPDATE users SET last_login = NOW(), remember_me_token = ?, ldap_location = ? WHERE email = ?");
 
         $login_token = hash('sha256', $_SESSION['user_id'] . $_SERVER['HTTP_USER_AGENT'] . time() . generateRandomString());
-        $update_stmt->bind_param("sis", $login_token, $loc, $email);
+        $hashed_login_token = hash('sha512', $login_token);
+        $update_stmt->bind_param("sis", $hashed_login_token, $loc, $email);
         $update_stmt->execute();
 
         setcookie("COOKIE_REMEMBER_ME", $login_token, time() + (86400 * (int)getenv("REMEMBER_ME_COOKIE_DAYS")), "/", "", false, true);

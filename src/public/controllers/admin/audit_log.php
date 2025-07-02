@@ -31,6 +31,9 @@ if (isset($_SESSION['current_status'])) {
 }
 
 
+$logs = HelpDB::get()->execute_query("SELECT * FROM admin_logs")->fetch_assoc();
+
+
 
 echo $twig->render('audit_log.twig', [
     // base variables
@@ -43,7 +46,8 @@ echo $twig->render('audit_log.twig', [
     'status_alert_type' => $status_alert_type,
     'status_alert_message' => $status_alert_message,
     'app_version' => $app_version,
+    'is_developer' => $is_developer,
 
-
-    'is_developer' => $is_developer
+    // audit_log variables
+    'logs' => $logs
 ]);

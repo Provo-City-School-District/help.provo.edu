@@ -10,7 +10,10 @@ if (!isset($_SESSION['username'])) {
         log_app(LOG_INFO, "Attempting to login from cookie");
         $login_token = $_COOKIE['COOKIE_REMEMBER_ME'];
 
-        $user_result = HelpDB::get()->execute_query('SELECT id, username FROM users WHERE gsso = ?', [$login_token]);
+        $user_result = HelpDB::get()->execute_query(
+            'SELECT id, username FROM users WHERE (gsso = ? AND last_login >= NOW() - INTERVAL 7 DAY)',
+            [$login_token]
+        );
         // found user, log them in
         if ($user_result->num_rows == 1) {
             session_start();

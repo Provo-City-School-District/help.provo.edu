@@ -14,17 +14,17 @@ if (!isset($_POST['id'])) {
 }
 $modified_by = $_SESSION['username'];
 
-function user_audit_log_add(int $changed_by_user_id, string $type, string $field, string $old_value, string $new_value)
+function user_audit_log_add(int $changed_by_user_id, int $affected_user_id, string $type, string $field, string $old_value, string $new_value)
 {
-    $query = HelpDB::get()->execute_query("INSERT INTO admin_logs VALUES (?, ?, ?, ?, ?)",
-        [$changed_by_user_id, $type, $field, $old_value, $new_value]);
+    $query = HelpDB::get()->execute_query("INSERT INTO admin_logs VALUES (?, ?, ?, ?, ?, ?)",
+        [$changed_by_user_id, $affected_user_id, $type, $field, $old_value, $new_value]);
 }
 
-function log_changes_for_fields(array $fields, array $old_data, array $new_data)
+function log_changes_for_fields(int $affected_user_id, array $fields, array $old_data, array $new_data)
 {
     foreach ($fields as $field) {
         if ($old_data[$field] != $new_data[$field]) {
-            user_audit_log_add($_SESSION["user_id"], "user", $field, $old_data[$field], $new_data[$field]);
+            user_audit_log_add($_SESSION["user_id"], $affected_user_id, "user", $field, $old_data[$field], $new_data[$field]);
         }
     }
 }
@@ -68,7 +68,11 @@ if (!$user_stmt) {
     die("Query failed: " . mysqli_error(HelpDB::get()));
 }
 
+$new_user_result = HelpDB::get()->execute_query("SELECT * FROM users WHERE id = ?", [$user_id]);
+$new_user_data = $new_user_result->fetch_assoc();
+
 log_changes_for_fields(
+    $user_id,
     ['firstname', 'lastname', 'email', 'ifasid'],
     $old_user_data,
     $new_user_data
@@ -89,13 +93,11 @@ if (!$settings_stmt) {
     die("Query failed: " . mysqli_error(HelpDB::get()));
 }
 
-$new_user_result = HelpDB::get()->execute_query("SELECT * FROM users WHERE id = ?", [$user_id]);
-$new_user_data = $new_user_result->fetch_assoc();
-
 $new_user_settings_result = HelpDB::get()->execute_query("SELECT * FROM user_settings WHERE user_id = ?", [$user_id]);
 $new_user_settings = $new_user_settings_result->fetch_assoc();
 
 log_changes_for_fields(
+    $user_id,
     [
         'show_alerts',
         'can_view_tickets',

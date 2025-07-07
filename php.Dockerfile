@@ -94,10 +94,12 @@ COPY run_repeat_tickets.sh /root/run_repeat_tickets.sh
 RUN chmod +x /root/run_repeat_tickets.sh
 
 # Setup Xdebug
+COPY config/xdebug.ini /tmp/xdebug.ini
 ARG DEBUG_MODE=false
 ENV DEBUG_MODE=${DEBUG_MODE}
 RUN if [ $DEBUG_MODE = "true" ]; then \
   pecl install xdebug && docker-php-ext-enable xdebug; \
+  mv /tmp/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini; \
   fi
 
 # Change document root folder

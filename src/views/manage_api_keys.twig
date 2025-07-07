@@ -19,11 +19,13 @@
 		<table>
 			<tr>
 				<th>Name</th>
+				<th>Last Authenticated</th>
 				<th>Actions</th>
 			</tr>
 			{% for api_key in api_keys %}
 				<tr>
 					<td data-cell='Key Name'>{{ api_key.name }}</td>
+					<td data-cell='Last Authenticated'>{{ api_key.last_authenticated }}</td>
 					<td data-cell='Actions'>
 						<form method="POST" style="display:inline;">
 							<button name="regenerate" value="{{ api_key.name }}">Regenerate</button>

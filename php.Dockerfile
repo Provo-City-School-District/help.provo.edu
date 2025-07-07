@@ -93,6 +93,12 @@ RUN chmod +x /root/run_active_ticket_clear.sh
 COPY run_repeat_tickets.sh /root/run_repeat_tickets.sh
 RUN chmod +x /root/run_repeat_tickets.sh
 
+# Setup Xdebug
+ARG DEBUG_MODE=false
+ENV DEBUG_MODE=${DEBUG_MODE}
+RUN if [ $DEBUG_MODE = "true" ]; then \
+  pecl install xdebug && docker-php-ext-enable xdebug; \
+  fi
 
 # Change document root folder
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public

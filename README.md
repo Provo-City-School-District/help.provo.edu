@@ -69,6 +69,10 @@ Change to the help.provo.edu directory and build your containers with ```docker 
 If you're restoring from backup, get a copy of the backup database dump from Barracuda and restore it into the database using PHPmyadmin.
 
 If you're setting up a fresh development instance the database should initialize for you, but you may want to get a database dump from backup or a fellow developer to get data to work with.
+### Xdebug
+To enable Xdebug for debugging, set the DEBUG_MODE environment variable to true in the .env file. This will allow vscode and other IDEs to connect to the PHP container for debugging purposes.
+```
+
 
 # Resources Used
 - Docker: https://www.docker.com/

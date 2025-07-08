@@ -3,8 +3,6 @@ require_once 'helpdbconnect.php';
 require_once 'functions.php';
 require_once 'authentication_utils.php';
 
-//login_user(5, 'braxtona');
-
 // Get the user agent
 $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
 
@@ -46,9 +44,14 @@ if (empty($_SESSION['username'])) {
     // attempt login if remember me is set
     if (isset($_COOKIE['COOKIE_REMEMBER_ME'])) {
         log_app(LOG_INFO, "Attempting to login from cookie");
-        $login_token = $_COOKIE['COOKIE_REMEMBER_ME'];
+        $hashed_login_token = hash('sha512', $_COOKIE['COOKIE_REMEMBER_ME']);
 
-        $user_result = HelpDB::get()->execute_query('SELECT id, username FROM users WHERE gsso = ?', [$login_token]);
+        $user_result = HelpDB::get()->execute_query(
+            'SELECT id, username FROM users WHERE (remember_me_token = ? AND last_login >= NOW() - INTERVAL 7 DAY)',
+            [$hashed_login_token]
+        );
+
+
         // found user, log them in
         if ($user_result->num_rows == 1) {
             session_start();

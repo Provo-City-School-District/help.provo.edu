@@ -134,8 +134,8 @@ function create_note(
     int $travel_minutes,
     bool $visible_to_client,
     ?int $department_id = null,
-    string $date_override = null,
-    string $email_msg_id = null,
+    ?string $date_override = null,
+    ?string $email_msg_id = null,
 ) {
     $ticket_id_clean = trim(htmlspecialchars($ticket_id));
     $note_content_clean = htmlspecialchars(trim($note_content), ENT_QUOTES, 'UTF-8');
@@ -635,6 +635,11 @@ function location_name_from_id(?string $site_id): string
     return $location_data["location_name"];
 }
 
+function ticket_change_last_updated(int $ticket_id)
+{
+    HelpDB::get()->execute_query("UPDATE tickets SET last_updated = CURRENT_TIMESTAMP() WHERE tickets.id = ?", [$ticket_id]);
+}
+
 function assigned_tech_for_ticket(int $ticket_id)
 {
 
@@ -1077,6 +1082,9 @@ function set_field_for_ticket(int $ticket_id, string $field, $value)
     // Log the change
     $updated_by = $_SESSION['username'] ?? 'system';
     logTicketChange(HelpDB::get(), $ticket_id, $updated_by, $field, $current_value, $value);
+
+    // update last updated
+    ticket_change_last_updated($ticket_id);
 
     return true;
 }

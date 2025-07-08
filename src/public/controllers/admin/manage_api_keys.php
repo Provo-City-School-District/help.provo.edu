@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Load keys
-$api_keys = $db->execute_query("SELECT name FROM api_keys");
+$api_keys = $db->execute_query("SELECT name,last_authenticated FROM api_keys");
 
 $loader = new \Twig\Loader\FilesystemLoader(from_root('/../views'));
 $twig = new \Twig\Environment($loader, [

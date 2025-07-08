@@ -19,3 +19,6 @@ if (!($result && $result->num_rows > 0)) {
     http_response_code(401);
     exit;
 }
+
+// log api usage
+HelpDB::get()->execute_query("UPDATE api_keys SET last_authenticated = CURRENT_TIMESTAMP() WHERE api_key = ?", [$hashed_key]);

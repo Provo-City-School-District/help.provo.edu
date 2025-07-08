@@ -198,22 +198,14 @@ function get_fast_client_location(string $name)
 
     return $location_data["ldap_location"];
 }
-// function isUserATech($usernameToCheck, HelpDB::get()Connection)
-// {
-//     $sqlQuery = HelpDB::get()Connection->prepare("SELECT is_tech FROM users WHERE username = ?");
-//     $sqlQuery->bind_param("s", $usernameToCheck);
-//     $sqlQuery->execute();
-//     $queryResult = $sqlQuery->get_result();
-//     $userData = $queryResult->fetch_assoc();
-
-//     return $userData['is_tech'] == 1;
-// }
 
 function log_app(int $priority, string $message)
 {
-    openlog("appLog", LOG_PID | LOG_PERROR, LOG_LOCAL0);
-    syslog($priority, $message);
-    closelog();
+    if (getenv('DEBUG_MODE') === 'true') {
+        openlog("appLog", LOG_PID | LOG_PERROR, LOG_LOCAL0);
+        syslog($priority, $message);
+        closelog();
+    }
 }
 function get_last_login_time($username)
 {

@@ -14,6 +14,21 @@ if (!isset($_POST['id'])) {
 }
 $modified_by = $_SESSION['username'];
 
+function user_audit_log_add(int $changed_by_user_id, int $affected_user_id, string $type, string $field, string $old_value, string $new_value)
+{
+    $query = HelpDB::get()->execute_query("INSERT INTO admin_logs VALUES (?, ?, ?, ?, ?, ?)",
+        [$changed_by_user_id, $affected_user_id, $type, $field, $old_value, $new_value]);
+}
+
+function log_changes_for_fields(int $affected_user_id, array $fields, array $old_data, array $new_data)
+{
+    foreach ($fields as $field) {
+        if ($old_data[$field] != $new_data[$field]) {
+            user_audit_log_add($_SESSION["user_id"], $affected_user_id, "user", $field, $old_data[$field], $new_data[$field]);
+        }
+    }
+}
+
 // Retrieve the user ID and data from the form submission
 $user_id = $_POST['id'];
 $firstname = trim(htmlspecialchars($_POST['firstname']));
@@ -39,8 +54,8 @@ $can_input_maintenance_tickets = isset($_POST['can_input_maintenance_tickets']) 
 $is_developer = isset($_POST['is_developer']) ? 1 : 0;
 $view_stats = isset($_POST['view_stats']) ? 1 : 0;
 
-
-
+$old_user_result = HelpDB::get()->execute_query("SELECT * FROM users WHERE id = ?", [$user_id]);
+$old_user_data = $old_user_result->fetch_assoc();
 
 // Update the user data in the users table
 $user_query = "UPDATE users SET firstname = ?, lastname = ?, email = ?, ifasid = ? WHERE id = ?";
@@ -53,6 +68,20 @@ if (!$user_stmt) {
     die("Query failed: " . mysqli_error(HelpDB::get()));
 }
 
+$new_user_result = HelpDB::get()->execute_query("SELECT * FROM users WHERE id = ?", [$user_id]);
+$new_user_data = $new_user_result->fetch_assoc();
+
+log_changes_for_fields(
+    $user_id,
+    ['firstname', 'lastname', 'email', 'ifasid'],
+    $old_user_data,
+    $new_user_data
+);
+
+
+$old_user_settings_result = HelpDB::get()->execute_query("SELECT * FROM user_settings WHERE user_id = ?", [$user_id]);
+$old_user_settings = $old_user_settings_result->fetch_assoc();
+
 // Update the user settings in the user_settings table
 $settings_query = "UPDATE user_settings SET is_admin = ?, is_tech = ?, is_intern = ?, intern_site = ?, is_supervisor = ?, is_location_manager = ?, location_manager_sitenumber = ?, can_view_tickets = ?, can_create_tickets = ?, can_edit_tickets = ?, supervisor_username = ?, department = ?, can_see_all_techs = ?, can_input_maintenance_tickets = ?, is_developer = ?, view_stats = ? WHERE user_id = ?";
 $settings_stmt = mysqli_prepare(HelpDB::get(), $settings_query);
@@ -63,6 +92,39 @@ mysqli_stmt_execute($settings_stmt);
 if (!$settings_stmt) {
     die("Query failed: " . mysqli_error(HelpDB::get()));
 }
+
+$new_user_settings_result = HelpDB::get()->execute_query("SELECT * FROM user_settings WHERE user_id = ?", [$user_id]);
+$new_user_settings = $new_user_settings_result->fetch_assoc();
+
+log_changes_for_fields(
+    $user_id,
+    [
+        'show_alerts',
+        'can_view_tickets',
+        'can_create_tickets',
+        'can_edit_tickets',
+        'is_admin',
+        'is_tech',
+        'is_supervisor',
+        'is_intern',
+        'intern_site',
+        'supervisor_username',
+        'is_location_manager',
+        'location_manager_sitenumber',
+        'color_scheme',
+        'note_order',
+        'hide_alerts',
+        'ticket_limit',
+        'note_count',
+        'department',
+        'can_see_all_techs',
+        'can_input_maintenance_tickets',
+        'is_developer',
+        'view_stats'
+    ],
+    $old_user_settings,
+    $new_user_settings
+);
 
 // Redirect back to the manage user page
 $_SESSION['user_updated'] = 'User updated successfully';

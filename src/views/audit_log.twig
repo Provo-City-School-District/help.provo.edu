@@ -1,0 +1,10 @@
+{% extends "base.twig" %}
+
+{% block menu %}
+     {# Include menu from exterior file so that we can use the same menu on a admin page that is not converted to twig #}
+    {% include "admin_menu.twig" %}
+
+    {% for log in logs %}
+        {{ log }}
+    {% endfor %}
+{% endblock %}

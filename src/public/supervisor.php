@@ -248,9 +248,9 @@ $resolved_tickets_today_count = $resolved_tickets_today_row['resolved_count'];
                 if (count($supervisorAlerts) != 0) {
                     foreach ($supervisorAlerts as $alert) {
                         echo "<tr>";
-                        echo "<td><a href='/controllers/tickets/edit_ticket.php?id=" . $alert['ticket_id'] . "'>" . $alert['ticket_id'] . "</a></td>";
-                        echo "<td>" . $alert['message'] . "</td>";
-                        echo "<td>" . $alert['employee'] . "</td>";
+                        echo "<td data-cell='ID'><a href='/controllers/tickets/edit_ticket.php?id=" . $alert['ticket_id'] . "'>" . $alert['ticket_id'] . "</a></td>";
+                        echo "<td data-cell='Alert Message'>" . $alert['message'] . "</td>";
+                        echo "<td data-cell='Assigned To'>" . $alert['employee'] . "</td>";
                         echo "</tr>";
                     }
                 }

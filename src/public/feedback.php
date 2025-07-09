@@ -1,5 +1,6 @@
 <?php
 require from_root("/../vendor/autoload.php");
+require_once('block_file.php');
 require_once('helpdbconnect.php');
 require_once('functions.php');
 require_once('ticket_utils.php');

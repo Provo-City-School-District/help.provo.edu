@@ -31,8 +31,12 @@ if (isset($_SESSION['current_status'])) {
 }
 
 
-$logs = HelpDB::get()->execute_query("SELECT * FROM admin_logs")->fetch_assoc();
+$logs = HelpDB::get()->execute_query("SELECT * FROM admin_logs")->fetch_all(MYSQLI_ASSOC);
 
+$function = new \Twig\TwigFunction('get_username_from_id', function($id) {
+    return get_username_for_id($id);
+});
+$twig->addFunction($function);
 
 
 echo $twig->render('audit_log.twig', [

@@ -4,7 +4,28 @@
      {# Include menu from exterior file so that we can use the same menu on a admin page that is not converted to twig #}
     {% include "admin_menu.twig" %}
 
-    {% for log in logs %}
-        {{ log }}
-    {% endfor %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Changed By</th>
+                <th>Affected User</th>
+                <th>Type</th>
+                <th>Field</th>
+                <th>Old Value</th>
+                <th>New Value</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for log in logs %}
+            <tr>
+                <td><a href="/controllers/users/manage_user.php?id={{ log.changed_by_user }}">{{ get_username_from_id(log.changed_by_user) }}</a></td>
+                <td><a href="/controllers/users/manage_user.php?id={{ log.affected_user }}">{{ get_username_from_id(log.affected_user) }}</a></td>
+                <td>{{ log.type }}</td>
+                <td>{{ log.field }}</td>
+                <td>{{ log.old_value }}</td>
+                <td>{{ log.new_value }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

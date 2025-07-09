@@ -1006,6 +1006,12 @@ function get_parent_ticket_for_ticket(int $ticket_id)
     return $row["parent_ticket"];
 }
 
+function get_username_for_id(int $user_id)
+{
+    $res = HelpDB::get()->execute_query("SELECT username FROM help.users WHERE id = ?", [$user_id]);
+    return $res->fetch_assoc()["username"];
+}
+
 function get_user_setting($userId, $settingName)
 {
     try {

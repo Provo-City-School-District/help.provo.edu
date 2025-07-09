@@ -4,6 +4,7 @@ require_once('block_file.php');
 require_once('helpdbconnect.php');
 require_once('functions.php');
 require_once('ticket_utils.php');
+require from_root("/new-controllers/base_variables.php");
 
 $feedback_id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_SPECIAL_CHARS);
 
@@ -104,8 +105,14 @@ $twig = new \Twig\Environment($loader, [
 ]);
 echo $twig->render('feedback.twig', [
     // base variables
-    'color_scheme' => 'light',
+    'color_scheme' => $color_scheme,
     'current_year' => $current_year,
+    'user_permissions' => $permissions,
+    'wo_time' => $wo_time,
+    'user_pref' => $user_pref,
+    'ticket_limit' => $ticket_limit,
+    'status_alert_type' => $status_alert_type,
+    'status_alert_message' => $status_alert_message,
     'app_version' => $app_version,
 
     // Page variables

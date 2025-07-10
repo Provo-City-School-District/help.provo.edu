@@ -798,9 +798,6 @@ function get_parsed_ticket_data($ticket_data)
     while ($row = $ticket_data->fetch_assoc()) {
         $tmp = [];
         $tmp["id"] = $row["id"];
-        // Handle missing latest_note_author
-        $tmp["latest_note_author"] = $row["latest_note_author"] ?? "Unknown";
-
         if (isset($row['alert_levels'])) {
             $alerts_split = explode(',', $row['alert_levels']);
             $tmp["red_alert_enabled"] = in_array('crit', $alerts_split);
@@ -815,24 +812,42 @@ function get_parsed_ticket_data($ticket_data)
         $tmp["title"] = $row["name"];
         $tmp["description"] = limitChars(strip_tags(html_entity_decode($row["description"])), 100);
 
-        if (isset($row["latest_note_author"]) && session_is_tech() && are_users_in_same_department($row["latest_note_author"], $_SESSION["username"])) {
-            $notes_query = "SELECT creator, note FROM help.notes WHERE linked_id = ? ORDER BY
-                (CASE WHEN date_override IS NULL THEN created ELSE date_override END) DESC
-            ";
-        } else {
-            $notes_query = "SELECT creator, note FROM help.notes WHERE (linked_id = ? AND visible_to_client = 1) ORDER BY
-            (CASE WHEN date_override IS NULL THEN created ELSE date_override END) DESC";
-        }
+        // Query all notes for the ticket without visibility filter
+        $notes_query = "SELECT creator, note, visible_to_client FROM help.notes WHERE linked_id = ? ORDER BY (CASE WHEN date_override IS NULL THEN created ELSE date_override END) DESC";
         $notes_stmt_result = HelpDB::get()->execute_query($notes_query, [$row["id"]]);
-        $notes_stmt_data = $notes_stmt_result->fetch_assoc();
 
-        $latest_note_str = "";
-        if (
-            isset($notes_stmt_data) && array_key_exists("creator", $notes_stmt_data) &&
-            array_key_exists("note", $notes_stmt_data)
-        ) {
-            $tmp["latest_note_author"] = $notes_stmt_data["creator"];
-            $tmp["latest_note"] = limitChars(strip_tags(html_entity_decode($notes_stmt_data["note"])), 150);
+        $notes = [];
+        while ($note_row = $notes_stmt_result->fetch_assoc()) {
+            $notes[] = $note_row;
+        }
+
+        // Get latest note author if notes exist
+        if (count($notes) > 0) {
+            $tmp["latest_note_author"] = $notes[0]["creator"];
+            $tmp["latest_note"] = limitChars(strip_tags(html_entity_decode($notes[0]["note"])), 150);
+            $latest_note_author = strtolower($notes[0]['creator']);
+        } else {
+            $latest_note_author = "unknown";
+        }
+
+        if (!session_is_tech() || !are_users_in_same_department($latest_note_author, $_SESSION["username"])) {
+            // Only show client-visible notes
+            $notes = array_filter($notes, function ($note) {
+                return isset($note['visible_to_client']) && intval($note['visible_to_client']) === 1;
+            });
+            $notes = array_values($notes); // re-index
+        }
+
+        foreach ($notes as $note) {
+            // Ensure note has required fields
+            if (isset($note['creator']) && isset($note['note'])) {
+                $tmp["latest_note_author"] = $note['creator'];
+                $tmp["latest_note"] = limitChars(strip_tags(html_entity_decode($note['note'])), 150);
+                break; // Only take the first note for latest note
+            } else {
+                $tmp["latest_note_author"] = "Unknown";
+                $tmp["latest_note"] = "";
+            }
         }
 
         $tmp["client_username"] = $row["client"];
@@ -1148,6 +1163,10 @@ function get_user_department_name($department)
 // Check if two users are in the same department
 function are_users_in_same_department($creator_username, $current_username)
 {
+    // convert usernames to lowercase for case-insensitive comparison
+    $creator_username = strtolower($creator_username);
+    $current_username = strtolower($current_username);
+
     // Query to fetch the department of both users
     $query = "SELECT u.username, us.department 
               FROM users u
@@ -1167,6 +1186,8 @@ function are_users_in_same_department($creator_username, $current_username)
 
     // Ensure both users were found and compare their departments
     return isset($departments[$creator_username], $departments[$current_username]) &&
+        $departments[$creator_username] !== null &&
+        $departments[$current_username] !== null &&
         $departments[$creator_username] === $departments[$current_username];
 }
 // Build dropdown for assigned tech that shows all tech in the department

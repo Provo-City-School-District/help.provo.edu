@@ -2,18 +2,22 @@
 require_once("block_file.php");
 require_once('init.php');
 require_once('helpdbconnect.php');
-// Check if the user ID is set
-if (!isset($_POST['id'])) {
-    die("User ID not set");
-}
-$user_id = $_POST['id'];
+
 //catch changes from the users profile page that the user is allowed to change.
 if ($_POST['referer'] == 'profile.php') {
+
+    $user_id = $_SESSION["user_id"];
+
     // Retrieve the color_scheme from the form submission
     $color_scheme = $_POST['color_scheme'] ?? 'system';
     $note_order = $_POST['note_order'] ?? 'desc';
     $hide_alerts = isset($_POST['hide_alerts']) ? 1 : 0;
     $ticket_limit = $_POST['ticket_limit'] ?? 10;
+    if ($ticket_limit < 10) {
+        log_app("[update_user_settings.php] ticket_limit cannot be less than 10");
+        die;
+    }
+
     $note_count = $_POST['note_count'] ?? 5;
     $show_alerts = isset($_POST['show_alerts']) ? 1 : 0;
 
